@@ -9,6 +9,6 @@ You will then need to start the app using the following command
 
 ### `nodemon index`
 
-You should be able to access the various app routes at this point from your web browser by visiting
+You should be able to access the various app routes at this point from your web browser by visiting http://localhost:5000/yourRoute, example restaurants:
 
-### `http://localhost:5000`
+### `http://localhost:5000/restaurants`
