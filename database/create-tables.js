@@ -4,14 +4,14 @@ var connection = mysql.createConnection({
   host: "localhost",
   user: "restaurant",
   password: "S566kcKyQeykBpsY",
-  database: "restaurant-app"
+  database: "restaurantDB"
 });
 
 var sql = '';
 connection.connect();
 
 sql = 'DROP TABLE IF EXISTS customers';
-connection.query(sql , function (error, results) {
+connection.query(sql, function (error, results) {
   if (error) throw error;
   console.log('DROP customer table: ', results);
 });
