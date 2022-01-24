@@ -1,6 +1,6 @@
 // Initially Created by: Devin Brueberg
 // CSC450 Capstone
-// Restaurant Club - Admin.js
+// Restaurant Club - Whoops404.js
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
 
@@ -9,11 +9,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function Admin(props) {
+function Whoops404() {
     return (
-        <div className="admin">
+        <div className="whoops-404">
             <h1>
-                Welcome to the Admin Page!
+                404 - Page not found
             </h1>
             <Link to="/">Back to Home</Link>
         </div>
@@ -21,4 +21,4 @@ function Admin(props) {
 }
 
 // Exporting the component
-export default Admin;
+export default Whoops404;

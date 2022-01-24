@@ -7,6 +7,7 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 function Restaurant(props) {
     return (
@@ -14,6 +15,7 @@ function Restaurant(props) {
             <h1>
                 Welcome to the Restaurant Page!
             </h1>
+            <Link to="/">Back to Home</Link>
         </div>
     )
 }
