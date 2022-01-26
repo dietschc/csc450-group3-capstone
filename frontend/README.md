@@ -1,5 +1,5 @@
 # Frontend readme
-This folder contains the Reace Node.js frontend application.
+This folder contains the React Node.js frontend application.
 
 To use this application you will need to do the following steps:
 
@@ -19,7 +19,7 @@ You will then need to start the react app using the following command
 
 ### `npm start`
 
-You should be able to access the app at this point from your web browser by visiting http://localhost:3000:
+You should be able to access the react app at this point from your web browser by visiting http://localhost:3000:
 
 ### `http://localhost:3000`
 
