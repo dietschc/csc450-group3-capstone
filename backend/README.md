@@ -1,11 +1,21 @@
 # Backend readme
 This folder contains the Express Node.js backend application.
 
-To use this application you will need to run the following command to install the required node modules on your workstation (these are not uploaded to GitHub because diskspace).
+To use this application you will need to do the following steps:
+
+First step, open a command line (like git bash) and change to the project directory
+
+### `cd Documents\Github\csc450-group3-capstone`
+
+Second step, change to the backend directory
+
+### `cd backend`
+
+Next, install the required node modules on your workstation (these are not uploaded to GitHub because diskspace).
 
 ### `npm install`
 
-You will then need to start the app using the following command
+You will then need to start the express app using the following command
 
 ### `nodemon index`
 

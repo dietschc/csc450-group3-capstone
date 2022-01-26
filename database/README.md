@@ -14,6 +14,10 @@ GRANT ALL PRIVILEGES ON restaurantDB.* TO 'restaurant'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
+First step, open a command line (like git bash) and change to the project directory
+
+### `cd Documents\Github\csc450-group3-capstone`
+
 Ensure you are in the correct subdirectory
 
 ### `cd database`
