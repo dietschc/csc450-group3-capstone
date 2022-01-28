@@ -19,6 +19,7 @@ import Review from './components/views/Review';
 import Search from './components/views/Search';
 import UserDashboard from './components/views/UserDashboard';
 import Admin from './components/views/Admin';
+import MainNav from './components/views/MainNav';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path='/admin' element={<Admin/>} />
         <Route path="*" element={<Whoops404/>} />
       </Routes>
+      <MainNav/>
     </div>
   );
 }
