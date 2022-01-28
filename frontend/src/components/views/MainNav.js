@@ -1,26 +1,44 @@
 // Initially Created by: Devin Brueberg
 // CSC450 Capstone
 // Restaurant Club - Chat.js
-// January 24, 2022
+// January 27, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 01/28/2022, Upgraded the color scheme)
+//  (DAB, 01/28/2022, Added state to nav)
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Navbar, Button, Alert, Card, Nav, Row, Col, Form, Container, FormControl } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 function MainNav(props) {
+    const [basicActive, setBasicActive] = useState();
+    const navigate = useNavigate();
+    
+    const setActive = (value) => {
+        if (value === basicActive) return;
+        console.log("Navigating to " + value)
+        setBasicActive(value);
+    }
+
+    const searchHandler = () => {
+        navigate("search");
+        setActive("none")
+    }
+
+    const buttonTheme = "outline-primary";
+    const backgroundTheme = "light";
+    const variantTheme = "light";
+
     return (
-        <div className="mainNav">
-            <h1>
-                Welcome to the Main Navigation!
-            </h1>
-            <Link to="/">Back to Home</Link>
-            <Container fluid>
+        <Container fluid>
             <Navbar
-            className="mainNav bg-light"
+            className="mainNav px-2"
+            bg={backgroundTheme}
+            variant={variantTheme}
             collapseOnSelect
             expand="md"
             style={{ maxHeight: "100px" }}>
@@ -32,45 +50,51 @@ function MainNav(props) {
                         className="flex-begin"
                         alt="Restaurant Club Logo"
                     />
-                    </Navbar.Brand>
-                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                    <Navbar.Collapse id="responsive-navbar-nav">
-                        <Nav fill variant="pills" className="me-auto justify-content-end flex-grow-1 pe-3" defaultActiveKey="/">
-                            <Nav.Item>
-                                <Nav.Link href="/">
+                </Navbar.Brand>
+                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
+                    <Nav fill variant="pills" bg="dark" className="mb-auto pe-3"
+                    activeKey={basicActive}
+                    onSelect={(key) => setActive(key)}>
+                        <Nav.Item className="mx-3">
+                            <LinkContainer to="/">
+                                <Nav.Link>
                                     Home
                                 </Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Nav.Link href="/userDashboard">
+                            </LinkContainer>
+                            
+                        </Nav.Item>
+                        <Nav.Item className="mx-3">
+                            <LinkContainer to="/userDashboard">
+                                <Nav.Link>
                                     Dashboard
                                 </Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Nav.Link href="/login">
+                            </LinkContainer>
+                            
+                        </Nav.Item>
+                        <Nav.Item className="mx-3">
+                            <LinkContainer to="/login">
+                                <Nav.Link>
                                     Login
                                 </Nav.Link>
-                            </Nav.Item>
-                            <Nav.Item>
-                                <Form className="d-flex">
-                                    <FormControl
-                                    type="search"
-                                    placeholder="Search"
-                                    className="me-2"
-                                    aria-label="Search"
-                                    style={{ minWidth:"10rem"}}/>
-                                    <Button variant="outline-success">
-                                        Search
-                                    </Button>
-                                </Form>
-                            </Nav.Item> 
+                            </LinkContainer>
                             
-                        </Nav>
-                    </Navbar.Collapse>
-                    
-                </Navbar>
-            </Container>   
-        </div>
+                        </Nav.Item> 
+                    </Nav>
+                    <Form className="d-flex">
+                                <FormControl
+                                type="search"
+                                placeholder="Search"
+                                className="me-2"
+                                aria-label="Search"
+                                />
+                                <Button variant={buttonTheme} onClick={() => searchHandler()}>
+                                    Search
+                                </Button>
+                            </Form>
+                </Navbar.Collapse>
+            </Navbar>
+        </Container>   
     )
 }
 
