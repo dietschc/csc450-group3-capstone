@@ -15,7 +15,7 @@ const currentYear = new Date().getFullYear();
 function Footer(props) {
     return (
         <footer className="fixed-bottom footer mt-auto py-3 bg-light text-center">
-            <div class="container">
+            <div className="container">
                 <ul className="list-unstyled text-muted">
                     <li>CSC 450 Group 3 Spring 2022</li>
                     <li>Updated @{currentYear}</li>
