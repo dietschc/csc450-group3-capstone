@@ -9,19 +9,22 @@
 // for the app and importing needed components
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
-
-const currentYear = new Date().getFullYear();
+import { Container, ListGroup } from 'react-bootstrap';
 
 function Footer(props) {
+    const currentYear = new Date().getFullYear();
+
     return (
-        <footer className="fixed-bottom footer mt-auto py-3 bg-light text-center">
-            <div className="container">
-                <ul className="list-unstyled text-muted">
-                    <li>CSC 450 Group 3 Spring 2022</li>
-                    <li>Updated @{currentYear}</li>
-                </ul>
-            </div>
-        </footer>
+        <Container fluid className="fixed-bottom">
+            <ListGroup>
+                <ListGroup.Item className="border-0 text-center text-muted pb-0">
+                    CSC 450 Group 3 Spring 2022
+                </ListGroup.Item>
+                <ListGroup.Item className="border-0 text-center text-muted pt-0">
+                    Updated @{currentYear}
+                </ListGroup.Item>
+            </ListGroup>
+        </Container>
     )
 }
 
