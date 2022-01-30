@@ -15,7 +15,7 @@ function Footer(props) {
     const currentYear = new Date().getFullYear();
 
     return (
-        <Container fluid className="fixed-bottom">
+        <Container fluid as="footer" className="fixed-bottom">
             <ListGroup>
                 <ListGroup.Item className="border-0 text-center text-muted pb-0">
                     CSC 450 Group 3 Spring 2022
