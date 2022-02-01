@@ -227,7 +227,7 @@ function EditAccount(props) {
                             </Col>
                         </Form.Group>
 
-                        <div className="d-flex justify-content-around pt-4">
+                        <div className="d-flex justify-content-around pt-4 pb-5">
                             <Button variant="outline-primary" onClick={saveAccount}>
                                 {editing ? "Update" : "Submit"}
                             </Button>
