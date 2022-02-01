@@ -174,24 +174,26 @@ function EditAccount(props) {
                                 />
                             </Col>
                         </Form.Group>
-
-                        <Form.Group as={Row} className="mb-3 justify-content-md-center">
+                        <Row className="justify-content-md-center">
+                        <Form.Group as={Col} sm={4} className="mb-3">
+                            <Row>
                             <Form.Label column sm={3}>Zip:</Form.Label>
-                            <Col sm={5}>
+                            <Col sm={9}>
                                 <Form.Control
-                                    className="w-50"
                                     type="text"
                                     required
                                     value={zip}
                                     onChange={onChangeZip}
                                 />
                             </Col>
+                            </Row>
                         </Form.Group>
-                        <Form.Group as={Row} className="mb-3 justify-content-md-center">
+                        
+                        <Form.Group as={Col} sm={4} className="mb-3">
+                            <Row>
                             <Form.Label column sm={3}>State:</Form.Label>
-                            <Col sm={5}>
+                                <Col sm={9}>
                                 <Form.Select
-                                    className="w-50"
                                     aria-label="select state options"
                                     value={state}
                                     onChange={onChangeState}
@@ -201,8 +203,10 @@ function EditAccount(props) {
                                     <option value="WI">WI</option>
                                     <option value="XX">XX</option>
                                 </Form.Select>
-                            </Col>
+                                </Col>
+                                </Row>
                         </Form.Group>
+                        </Row>
 
                         <Form.Group as={Row} className="mb-3 justify-content-md-center">
                             <Form.Label column sm={3}>Email:</Form.Label>
