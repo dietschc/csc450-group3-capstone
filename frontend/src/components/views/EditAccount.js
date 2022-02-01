@@ -77,6 +77,8 @@ function EditAccount(props) {
             userName: userName,
             firstName: firstName,
             lastname: lastName,
+            address: address,
+            city: city,
             zip: zip,
             state: state,
             email: email,
@@ -100,7 +102,7 @@ function EditAccount(props) {
     }
 
     return (
-        <Container className="text-muted">
+        <Container className="text-muted" style={{ maxWidth: "700px" }}>
             <Container as="header">
                 <div className="text-center p-1">
                     <h1>{editing ? "Edit" : "Create"} Account</h1>
@@ -116,7 +118,7 @@ function EditAccount(props) {
                     </div>
 
                 ) : (
-                    <Form className="ps-5 pe-5">
+                    <Form>
                         <Form.Group as={Row} className="mb-3 justify-content-md-center">
                             <Form.Label column sm={3}>User Name:</Form.Label>
                             <Col sm={5}>
