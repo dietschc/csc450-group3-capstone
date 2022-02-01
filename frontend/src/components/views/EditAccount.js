@@ -116,10 +116,10 @@ function EditAccount(props) {
                     </div>
 
                 ) : (
-                    <Form>
-                        <Form.Group as={Row} className="mb-3 justify-content-md-center pt-2">
-                            <Form.Label column sm={2}>User Name:</Form.Label>
-                            <Col sm={10}>
+                    <Form className="ps-5 pe-5">
+                        <Form.Group as={Row} className="mb-3 justify-content-md-center">
+                            <Form.Label column sm={3}>User Name:</Form.Label>
+                            <Col sm={5}>
                                 <Form.Control
                                     type="text"
                                     required
@@ -129,8 +129,8 @@ function EditAccount(props) {
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                            <Form.Label column sm={2}>First Name:</Form.Label>
-                            <Col sm={10}>
+                            <Form.Label column sm={3}>First Name:</Form.Label>
+                            <Col sm={5}>
                                 <Form.Control
                                     type="text"
                                     required
@@ -140,8 +140,8 @@ function EditAccount(props) {
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                            <Form.Label column sm={2}>Last Name:</Form.Label>
-                            <Col sm={10}>
+                            <Form.Label column sm={3}>Last Name:</Form.Label>
+                            <Col sm={5}>
                                 <Form.Control
                                     type="text"
                                     required
@@ -151,8 +151,8 @@ function EditAccount(props) {
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                            <Form.Label column sm={2}>Address:</Form.Label>
-                            <Col sm={10}>
+                            <Form.Label column sm={3}>Address:</Form.Label>
+                            <Col sm={5}>
                                 <Form.Control
                                     type="text"
                                     required
@@ -162,8 +162,8 @@ function EditAccount(props) {
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                            <Form.Label column sm={2}>City:</Form.Label>
-                            <Col sm={10}>
+                            <Form.Label column sm={3}>City:</Form.Label>
+                            <Col sm={5}>
                                 <Form.Control
                                     type="text"
                                     required
@@ -173,44 +173,38 @@ function EditAccount(props) {
                             </Col>
                         </Form.Group>
 
-                        <Row>
-                            <Col>
-                                <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                                    <Form.Label column>Zip:</Form.Label>
-                                    <Col sm={8}>
-                                        <Form.Control
-                                            type="text"
-                                            required
-                                            value={zip}
-                                            onChange={onChangeZip}
-                                        />
-                                    </Col>
-                                </Form.Group>
+                        <Form.Group as={Row} className="mb-3 justify-content-md-center">
+                            <Form.Label column sm={3}>Zip:</Form.Label>
+                            <Col sm={5}>
+                                <Form.Control
+                                    className="w-50"
+                                    type="text"
+                                    required
+                                    value={zip}
+                                    onChange={onChangeZip}
+                                />
                             </Col>
-                            <Col>
-                                <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                                    <Form.Label column sm={2}>State:</Form.Label>
-                                    <Col sm={10}>
-                                        <Form.Select
-                                            aria-label="select state options"
-                                            value={state}
-                                            onChange={onChangeState}
-                                        >
-                                            <option>Select State</option>
-                                            <option value="MN">MN</option>
-                                            <option value="WI">WI</option>
-                                            <option value="XX">XX</option>
-                                        </Form.Select>
-                                    </Col>
-                                </Form.Group>
+                        </Form.Group>
+                        <Form.Group as={Row} className="mb-3 justify-content-md-center">
+                            <Form.Label column sm={3}>State:</Form.Label>
+                            <Col sm={5}>
+                                <Form.Select
+                                    className="w-50"
+                                    aria-label="select state options"
+                                    value={state}
+                                    onChange={onChangeState}
+                                >
+                                    <option>Select State</option>
+                                    <option value="MN">MN</option>
+                                    <option value="WI">WI</option>
+                                    <option value="XX">XX</option>
+                                </Form.Select>
                             </Col>
-
-
-                        </Row>
+                        </Form.Group>
 
                         <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                            <Form.Label column sm={2}>Email:</Form.Label>
-                            <Col sm={10}>
+                            <Form.Label column sm={3}>Email:</Form.Label>
+                            <Col sm={5}>
                                 <Form.Control
                                     type="text"
                                     required
@@ -220,8 +214,8 @@ function EditAccount(props) {
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                            <Form.Label column sm={2}>Password:</Form.Label>
-                            <Col sm={10}>
+                            <Form.Label column sm={3}>Password:</Form.Label>
+                            <Col sm={5}>
                                 <Form.Control
                                     type="text"
                                     required
