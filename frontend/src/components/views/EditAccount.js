@@ -194,7 +194,7 @@ function EditAccount(props) {
                                     value={state}
                                     onChange={onChangeState}
                                 >
-                                    <option>Select State</option>
+                                    <option>Select</option>
                                     <option value="MN">MN</option>
                                     <option value="WI">WI</option>
                                     <option value="XX">XX</option>
