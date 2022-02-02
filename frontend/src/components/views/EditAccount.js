@@ -102,7 +102,7 @@ function EditAccount(props) {
     }
 
     return (
-        <Container className="text-muted" style={{ maxWidth: "500px" }}>
+        <Container fluid className="text-muted" style={{ maxWidth: "500px" }}>
             <Container as="header">
                 <div className="text-center p-1">
                     <h1>{editing ? "Edit" : "Create"} Account</h1>
