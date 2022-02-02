@@ -9,7 +9,7 @@
 // for the app and importing needed components
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
-import { Row, Col, Form, Container, Button } from 'react-bootstrap';
+import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 
 function EditAccount(props) {
     let editing = false
@@ -76,7 +76,7 @@ function EditAccount(props) {
         var data = {
             userName: userName,
             firstName: firstName,
-            lastname: lastName,
+            lastName: lastName,
             address: address,
             city: city,
             zip: zip,
@@ -102,13 +102,13 @@ function EditAccount(props) {
     }
 
     return (
-        <Container className="text-muted" style={{ maxWidth: "700px" }}>
+        <Container className="text-muted" style={{ maxWidth: "500px" }}>
             <Container as="header">
                 <div className="text-center p-1">
                     <h1>{editing ? "Edit" : "Create"} Account</h1>
                 </div>
             </Container>
-            <Container fluid as="main" className="p-4">
+            <Container fluid as="main" className="p-4 justify-content-center">
                 {submitted ? (
                     <div className="text-center">
                         <h4>Account information submitted successfully</h4>
@@ -119,115 +119,138 @@ function EditAccount(props) {
 
                 ) : (
                     <Form>
-                        <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                            <Form.Label column sm={3}>User Name:</Form.Label>
-                            <Col sm={5}>
-                                <Form.Control
-                                    type="text"
-                                    required
-                                    value={userName}
-                                    onChange={onChangeUserName}
-                                />
-                            </Col>
-                        </Form.Group>
-                        <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                            <Form.Label column sm={3}>First Name:</Form.Label>
-                            <Col sm={5}>
-                                <Form.Control
-                                    type="text"
-                                    required
-                                    value={firstName}
-                                    onChange={onChangeFirstName}
-                                />
-                            </Col>
-                        </Form.Group>
-                        <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                            <Form.Label column sm={3}>Last Name:</Form.Label>
-                            <Col sm={5}>
-                                <Form.Control
-                                    type="text"
-                                    required
-                                    value={lastName}
-                                    onChange={onChangeLastName}
-                                />
-                            </Col>
-                        </Form.Group>
-                        <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                            <Form.Label column sm={3}>Address:</Form.Label>
-                            <Col sm={5}>
-                                <Form.Control
-                                    type="text"
-                                    required
-                                    value={address}
-                                    onChange={onChangeAddress}
-                                />
-                            </Col>
-                        </Form.Group>
-                        <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                            <Form.Label column sm={3}>City:</Form.Label>
-                            <Col sm={5}>
-                                <Form.Control
-                                    type="text"
-                                    required
-                                    value={city}
-                                    onChange={onChangeCity}
-                                />
-                            </Col>
-                        </Form.Group>
+                        <Form.Floating className="mb-3 justify-content-center">
+                            <FloatingLabel 
+                                controlId="floatingUserId" 
+                                label="User Name">
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="User Name"
+                                        required
+                                        value={userName}
+                                        onChange={onChangeUserName}
+                                    />
+                                </FloatingLabel>
+                        </Form.Floating>
 
-                        <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                            <Form.Label column sm={3}>Zip:</Form.Label>
-                            <Col sm={5}>
-                                <Form.Control
-                                    className="w-50"
-                                    type="text"
-                                    required
-                                    value={zip}
-                                    onChange={onChangeZip}
-                                />
-                            </Col>
-                        </Form.Group>
-                        <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                            <Form.Label column sm={3}>State:</Form.Label>
-                            <Col sm={5}>
-                                <Form.Select
-                                    className="w-50"
-                                    aria-label="select state options"
-                                    value={state}
-                                    onChange={onChangeState}
-                                >
-                                    <option>Select</option>
-                                    <option value="MN">MN</option>
-                                    <option value="WI">WI</option>
-                                    <option value="XX">XX</option>
-                                </Form.Select>
-                            </Col>
-                        </Form.Group>
+                        <Form.Floating className="mb-3 justify-content-center">
+                            <FloatingLabel 
+                                controlId="floatingFirstName" 
+                                label="First Name">
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="User Name"
+                                        required
+                                        value={firstName}
+                                        onChange={onChangeFirstName}
+                                    />
+                                </FloatingLabel>
+                        </Form.Floating>
 
-                        <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                            <Form.Label column sm={3}>Email:</Form.Label>
-                            <Col sm={5}>
-                                <Form.Control
-                                    type="text"
-                                    required
-                                    value={email}
-                                    onChange={onChangeEmail}
-                                />
-                            </Col>
-                        </Form.Group>
-                        <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                            <Form.Label column sm={3}>Password:</Form.Label>
-                            <Col sm={5}>
-                                <Form.Control
-                                    type="text"
-                                    required
-                                    value={password}
-                                    onChange={onChangePassword}
-                                />
-                            </Col>
-                        </Form.Group>
+                        <Form.Floating className="mb-3 justify-content-center">
+                            <FloatingLabel 
+                                controlId="floatingLastName" 
+                                label="Last Name">
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Last Name"
+                                        required
+                                        value={lastName}
+                                        onChange={onChangeLastName}
+                                    />
+                                </FloatingLabel>
+                        </Form.Floating>
+                        
+                        <Form.Floating className="mb-3 justify-content-center">
+                            <FloatingLabel 
+                                controlId="floatingAddress" 
+                                label="Address">
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Address"
+                                        required
+                                        value={address}
+                                        onChange={onChangeAddress}
+                                    />
+                                </FloatingLabel>
+                        </Form.Floating>
+                        
+                        <Form.Floating className="mb-3 justify-content-center">
+                            <FloatingLabel 
+                                controlId="floatingCity" 
+                                label="City">
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="City"
+                                        required
+                                        value={city}
+                                        onChange={onChangeCity}
+                                    />
+                                </FloatingLabel>
+                        </Form.Floating>
 
-                        <div className="d-flex justify-content-around pt-4 pb-5">
+                        
+                        <Row className="justify-content-center">
+                            <Form.Floating as={Col} sm={6} className="mb-3 justify-content-center">
+                                <FloatingLabel 
+                                    controlId="floatingState" 
+                                    label="State">
+                                       <Form.Select
+                                        aria-label="select state options"
+                                        value={state}
+                                        onChange={onChangeState}>
+                                            <option>Select</option>
+                                            <option value="MN">MN</option>
+                                            <option value="WI">WI</option>
+                                            <option value="XX">XX</option>
+                                        </Form.Select> 
+                                    </FloatingLabel>
+                            </Form.Floating>
+
+                            <Form.Floating as={Col} sm={6} className="mb-3 justify-content-center">
+                                <FloatingLabel 
+                                    controlId="floatingZip" 
+                                    label="Zip">
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Zip"
+                                            required
+                                            value={zip}
+                                            onChange={onChangeZip}
+                                        />
+                                </FloatingLabel>
+                            </Form.Floating>
+                        </Row>
+
+                        <Form.Floating className="mb-3 justify-content-center">
+                            <FloatingLabel
+                                controlId="floatingEmail" 
+                                label="Email">
+                                    <Form.Control
+                                        type="email"
+                                        placeholder="Email"
+                                        required
+                                        value={email}
+                                        onChange={onChangeEmail}
+                                    />
+                                </FloatingLabel>
+                        </Form.Floating>
+
+                        <Form.Floating className="mb-3 justify-content-center">
+                            <FloatingLabel
+                                controlId="floatingPassword" 
+                                label="Password">
+                                    <Form.Control
+                                        type="password"
+                                        placeholder="Password"
+                                        required
+                                        value={password}
+                                        onChange={onChangePassword}
+                                    />
+                                </FloatingLabel>
+                        </Form.Floating>
+
+                        <div className="d-flex justify-content-around pt-2 pb-5">
                             <Button variant="outline-primary" onClick={saveAccount}>
                                 {editing ? "Update" : "Submit"}
                             </Button>
