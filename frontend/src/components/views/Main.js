@@ -8,23 +8,11 @@
 // for the app and importing needed components
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Navbar, Button, Alert, Card, Nav, Row, Col, Form, Container, FormControl, ListGroup } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 function Main(props) {
     return (
-        <div className="main">
-            <Container fluid>
-                    <ListGroup as="ul">
-                    <ListGroup.Item as="li" className="border-0 text-center text-muted pb-0">
-                        One time
-                    </ListGroup.Item>
-                    <ListGroup.Item as="li" className="border-0 text-center text-muted pt-0">
-                        Two times
-                    </ListGroup.Item>
-                </ListGroup>
-            </Container>
-            
+        <div className="main">  
             <h1>
                 Welcome to the Home Page!
             </h1>
