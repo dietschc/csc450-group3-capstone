@@ -8,15 +8,16 @@
 // for the app and importing needed components
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
+import {  Container } from 'react-bootstrap';
 import EditRestaurantForm from '../form/EditRestaurantForm';
+import BodyContainer from '../template/BodyContainer';
 
 function EditRestaurant(props) {
     const submitted = false;
     const editing = false;
     
     return (
-        <Container fluid className="text-muted" style={{ maxWidth: "500px" }}>
+        <BodyContainer>
             <Container as="header">
                 <div className="text-center p-1">
                     <h1>{editing ? "Edit" : "Create"} Restaurant</h1>
@@ -35,7 +36,7 @@ function EditRestaurant(props) {
                     <EditRestaurantForm />
                 )}
             </Container>
-        </Container>
+        </BodyContainer>
     )
 }
 

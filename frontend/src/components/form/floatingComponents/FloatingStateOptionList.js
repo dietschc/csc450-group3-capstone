@@ -1,6 +1,6 @@
 // Initially Created by: Devin Brueberg
 // CSC450 Capstone
-// Restaurant Club - FloatingOptionList.js
+// Restaurant Club - FloatingStateOptionList.js
 // February 3, 2022
 // Last Edited (Initials, Date, Edits):
 
@@ -9,7 +9,7 @@
 import React from 'react'
 import { FloatingLabel, Form, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import C from '../../constants';
+import C from '../../../constants';
 
 function FloatingStateOptionList(props) {
     const state = props.state;
@@ -18,6 +18,7 @@ function FloatingStateOptionList(props) {
         <option key={index} value={state}>{state}</option>
         )
     )
+
     return (
         <Form.Floating as={Col} sm={6} className="mb-3 justify-content-center">
             <FloatingLabel 
@@ -35,4 +36,5 @@ function FloatingStateOptionList(props) {
     )
 }
 
+// Exporting the component
 export default FloatingStateOptionList;

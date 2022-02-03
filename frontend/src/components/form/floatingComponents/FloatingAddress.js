@@ -1,11 +1,17 @@
+// Initially Created by: Devin Brueberg
+// CSC450 Capstone
+// Restaurant Club - FloatingAddress.js
+// February 3, 2022
+// Last Edited (Initials, Date, Edits):
+
+// Using React library in order to build components 
+// for the app and importing needed components
 import React from 'react'
 import { Form, FloatingLabel } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import C from '../../constants';
 
 function FloatingAddress(props) {
     const { address, onChangeAddress } = props;
-
 
     return (
         <Form.Floating className="mb-3 justify-content-center">
@@ -24,4 +30,5 @@ function FloatingAddress(props) {
     )  
 }
 
+// Exporting the component
 export default FloatingAddress;

@@ -1,16 +1,20 @@
 // Initially Created by: Devin Brueberg
 // CSC450 Capstone
-// Restaurant Club - EditRestaurant.js
-// January 24, 2022
+// Restaurant Club - EditRestaurantForm.js
+// February 3, 2022
 // Last Edited (Initials, Date, Edits):
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
-import FloatingAddress from './FloatingAddress';
-import FloatingStateZip from './FloatingStateZip';
+import { Form, Button} from 'react-bootstrap';
+import FloatingAddress from './floatingComponents/FloatingAddress';
+import FloatingStateZip from './floatingComponents/FloatingStateZip';
+import FloatingCity from './floatingComponents/FloatingCity';
+import FloatingRestaurantName from './floatingComponents/FloatingRestaurantName';
+import FloatingPhone from './floatingComponents/FloatingPhone';
+import FloatingDigitalContact from './floatingComponents/FloatingDigitalContact';
+import FloatingWebsite from './floatingComponents/FloatingWebsite';
 
 function EditRestaurantForm(props) {
     let editing = false
@@ -93,83 +97,17 @@ function EditRestaurantForm(props) {
         setWebsite("");
         console.log("Form cleared")
     }
+
     return (
         <Form>
-            <Form.Floating className="mb-3 justify-content-center">
-                <FloatingLabel 
-                    controlId="floatingRestaurantName" 
-                    label="Restaurant Name">
-                        <Form.Control
-                            type="text"
-                            placeholder="Restaurant Name"
-                            required
-                            value={restaurantName}
-                            onChange={onChangeRestaurantName}
-                        />
-                    </FloatingLabel>
-            </Form.Floating>
-            
+            <FloatingRestaurantName restaurantName={restaurantName} onChangeRestaurantName={onChangeRestaurantName}/>
             <FloatingAddress address={address} onChangeAddress={onChangeAddress}/>
-            
-            <Form.Floating className="mb-3 justify-content-center">
-                <FloatingLabel 
-                    controlId="floatingCity" 
-                    label="City">
-                        <Form.Control
-                            type="text"
-                            placeholder="City"
-                            required
-                            value={city}
-                            onChange={onChangeCity}
-                        />
-                    </FloatingLabel>
-            </Form.Floating>
-
-            
+            <FloatingCity city={city} onChangeCity={onChangeCity}/>
             <FloatingStateZip state={state} zip={zip} onChangeState={onChangeState} onChangeZip={onChangeZip}/>
-
-            <Form.Floating className="mb-3 justify-content-center">
-                <FloatingLabel 
-                    controlId="floatingPhone" 
-                    label="Phone">
-                        <Form.Control
-                            type="phone"
-                            placeholder="Phone"
-                            required
-                            value={phone}
-                            onChange={onChangePhone}
-                        />
-                    </FloatingLabel>
-            </Form.Floating>
-
-            <Form.Floating className="mb-3 justify-content-center">
-                <FloatingLabel
-                    controlId="floatingDigitalContact" 
-                    label="DigitalContact">
-                        <Form.Control
-                            type="text"
-                            placeholder="DigitalContact"
-                            required
-                            value={digitalContact}
-                            onChange={onChangeDigitalContact}
-                        />
-                    </FloatingLabel>
-            </Form.Floating>
-
-            <Form.Floating className="mb-3 justify-content-center">
-                <FloatingLabel 
-                    controlId="floatingWebsite" 
-                    label="Website">
-                        <Form.Control
-                            type="text"
-                            placeholder="Website"
-                            required
-                            value={website}
-                            onChange={onChangeWebsite}
-                        />
-                    </FloatingLabel>
-            </Form.Floating>
-
+            <FloatingPhone phone={phone} onChangePhone={onChangePhone}/>
+            <FloatingDigitalContact digitalContact={digitalContact} onChangeDigitalContact={onChangeDigitalContact}/>
+            <FloatingWebsite website={website} onChangeWebsite={onChangeWebsite}/>
+            
             <div className="d-flex justify-content-around pt-2 pb-5">
                 <Button variant="outline-primary" onClick={saveAccount}>
                     {editing ? "Update" : "Submit"}
