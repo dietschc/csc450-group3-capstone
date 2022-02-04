@@ -7,46 +7,83 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import React from 'react';
-import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { Container, ListGroup } from 'react-bootstrap';
 
 function Main(props) {
     return (
-        <div className="main">  
-            <h1>
-                Welcome to the Home Page!
-            </h1>
-            <ul>
-                <li>
-                    <Link to="/restaurant">Restaurant </Link>  
-                </li>
-                <li>
-                    <Link to="/chat">Chat </Link> 
-                </li>
-                <li>
-                    <Link to="/editAccount">Edit Account </Link>  
-                </li>
-                <li>
-                    <Link to="/editRestaurant">Edit Restaurant </Link>  
-                </li>
-                <li>
-                    <Link to="/login">Login </Link> 
-                </li>
-                <li>
-                    <Link to="/review">Review </Link>
-                </li>
-                <li>
-                    <Link to="/search">Search </Link> 
-                </li>
-                <li>
-                    <Link to="/userDashboard">User Dashboard </Link>
-                </li>
-                <li>
-                    <Link to="/admin">Admin </Link>
-                </li>
-                
-            </ul>
-        </div>
+
+        <Container fluid as="main"
+            style={{ maxWidth: "500px", fontSize: 30 }}
+            className="pt-5"
+        >
+            <ListGroup variant="flush">
+                <ListGroup.Item
+                    className="text-center text-muted"
+                    action
+                    href="/restaurant"
+                >
+                    Restaurant
+                </ListGroup.Item>
+                <ListGroup.Item
+                    className="text-center text-muted"
+                    action
+                    href="/chat"
+                >
+                    Chat
+                </ListGroup.Item>
+                <ListGroup.Item
+                    className="text-center text-muted"
+                    action
+                    href="/editAccount"
+                >
+                    Edit Account
+                </ListGroup.Item>
+                <ListGroup.Item
+                    className="text-center text-muted"
+                    action
+                    href="/editRestaurant"
+                >
+                    Edit Restaurant
+                </ListGroup.Item>
+                <ListGroup.Item
+                    className="text-center text-muted"
+                    action
+                    href="/login"
+                >
+                    Login
+                </ListGroup.Item>
+                <ListGroup.Item
+                    className="text-center text-muted"
+                    action
+                    href="/review"
+                >
+                    Review
+                </ListGroup.Item>
+                <ListGroup.Item
+                    className="text-center text-muted"
+                    action
+                    href="/search"
+                >
+                    Search
+                </ListGroup.Item>
+                <ListGroup.Item
+                    className="text-center text-muted"
+                    action
+                    href="/userDashboard"
+                >
+                    User Dashboard
+                </ListGroup.Item>
+                <ListGroup.Item
+                    className="text-center text-muted"
+                    action
+                    href="/admin"
+                >
+                    Admin
+                </ListGroup.Item>
+            </ListGroup>
+        </Container>
+
     )
 }
 
