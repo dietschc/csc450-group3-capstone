@@ -10,7 +10,7 @@
 // for the app and importing needed components
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Navbar, Button, Alert, Card, Nav, Row, Col, Form, Container, FormControl } from 'react-bootstrap';
+import { Navbar, Button, Nav, Form, Container, FormControl } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
