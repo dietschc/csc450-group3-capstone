@@ -9,6 +9,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { Container, ListGroup } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 function Main(props) {
     return (
@@ -18,72 +19,62 @@ function Main(props) {
             className="pt-5"
         >
             <ListGroup variant="flush">
-                <ListGroup.Item
-                    className="text-center text-muted"
-                    action
-                    href="/restaurant"
-                >
-                    Restaurant
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/restaurant">
+                        Restaurant
+                    </Link>
                 </ListGroup.Item>
-                <ListGroup.Item
-                    className="text-center text-muted"
-                    action
-                    href="/chat"
-                >
-                    Chat
+
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/chat">
+                        Chat
+                    </Link>
                 </ListGroup.Item>
-                <ListGroup.Item
-                    className="text-center text-muted"
-                    action
-                    href="/editAccount"
-                >
-                    Edit Account
+
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/editAccount">
+                        Edit Account
+                    </Link>
                 </ListGroup.Item>
-                <ListGroup.Item
-                    className="text-center text-muted"
-                    action
-                    href="/editRestaurant"
-                >
-                    Edit Restaurant
+
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/editRestaurant">
+                        Edit Restaurant
+                    </Link>
                 </ListGroup.Item>
-                <ListGroup.Item
-                    className="text-center text-muted"
-                    action
-                    href="/login"
-                >
-                    Login
+
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/login">
+                        Login
+                    </Link>
                 </ListGroup.Item>
-                <ListGroup.Item
-                    className="text-center text-muted"
-                    action
-                    href="/review"
-                >
-                    Review
+
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/review">
+                        Review
+                    </Link>
                 </ListGroup.Item>
-                <ListGroup.Item
-                    className="text-center text-muted"
-                    action
-                    href="/search"
-                >
-                    Search
+
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/search">
+                        Search
+                    </Link>
                 </ListGroup.Item>
-                <ListGroup.Item
-                    className="text-center text-muted"
-                    action
-                    href="/userDashboard"
-                >
-                    User Dashboard
+
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/userDashboard">
+                        User Dashboard
+                    </Link>
                 </ListGroup.Item>
-                <ListGroup.Item
-                    className="text-center text-muted"
-                    action
-                    href="/admin"
-                >
-                    Admin
+
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/Admin">
+                        Admin
+                    </Link>
                 </ListGroup.Item>
+
             </ListGroup>
         </Container>
-
     )
 }
 
