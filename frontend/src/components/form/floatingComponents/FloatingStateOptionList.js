@@ -11,9 +11,20 @@ import { FloatingLabel, Form, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import C from '../../../constants';
 
+/**
+ * A React-Bootstrap formatted floating form select option list is
+ * returned with all needed basic functionality. It will 
+ * allow CRUD operations to be performed on the state.
+ * 
+ * @param { state, onChangeState } props 
+ * @returns 
+ */
 function FloatingStateOptionList(props) {
-    const state = props.state;
-    const onChangeState = props.onChangeState;
+    // The form component specific props will be assigned and 
+    // used to process the form element
+    const { state, onChangeState } = props;
+
+    // Maps out options for the floatingState Select
     const stateOptions = C.STATE_LIST.map((state, index) => (
         <option key={index} value={state}>{state}</option>
         )

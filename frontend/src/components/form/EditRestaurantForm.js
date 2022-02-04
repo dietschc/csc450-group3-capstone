@@ -7,7 +7,7 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState } from 'react';
-import { Form, Button} from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import FloatingAddress from './floatingComponents/FloatingAddress';
 import FloatingStateZip from './floatingComponents/FloatingStateZip';
 import FloatingCity from './floatingComponents/FloatingCity';
@@ -15,13 +15,17 @@ import FloatingRestaurantName from './floatingComponents/FloatingRestaurantName'
 import FloatingPhone from './floatingComponents/FloatingPhone';
 import FloatingDigitalContact from './floatingComponents/FloatingDigitalContact';
 import FloatingWebsite from './floatingComponents/FloatingWebsite';
+import EditFormButtons from './button/EditFormButtons';
+import FloatingImageUpload from './floatingComponents/FloatingImageUpload';
 
 function EditRestaurantForm(props) {
-    let editing = false
+    // Is this a restaurant add or update
+    const { isUpdate } = props;
 
     // keeps track of if the form was submitted
-    const [submitted, setSubmitted] = useState(false)
+    const [submitted, setSubmitted] = useState(false);
 
+    //*******The following test states will be replaced by Redux in Milestone 2**********/
     const [restaurantName, setRestaurantName] = useState("");
     const [address, setAddress] = useState("");
     const [city, setCity] = useState("");
@@ -30,45 +34,51 @@ function EditRestaurantForm(props) {
     const [phone, setPhone] = useState("");
     const [digitalContact, setDigitalContact] = useState("");
     const [website, setWebsite] = useState("");
+    const [fileName, setFileName] = useState("");
 
     const onChangeRestaurantName = e => {
-        const restaurantName = e.target.value
+        const restaurantName = e.target.value;
         setRestaurantName(restaurantName);
     }
 
     const onChangeAddress = e => {
-        const address = e.target.value
+        const address = e.target.value;
         setAddress(address);
     }
 
     const onChangeCity = e => {
-        const city = e.target.value
+        const city = e.target.value;
         setCity(city);
     }
 
     const onChangeZip = e => {
-        const zip = e.target.value
+        const zip = e.target.value;
         setZip(zip);
     }
 
     const onChangeState = e => {
-        const state = e.target.value
+        const state = e.target.value;
         setState(state);
     }
 
     const onChangePhone = e => {
-        const phone = e.target.value
+        const phone = e.target.value;
         setPhone(phone);
     }
 
     const onChangeDigitalContact = e => {
-        const digitalContact = e.target.value
+        const digitalContact = e.target.value;
         setDigitalContact(digitalContact);
     }
 
     const onChangeWebsite = e => {
-        const website = e.target.value
+        const website = e.target.value;
         setWebsite(website);
+    }
+
+    const onChangeFileName = e => {
+        const fileName = e.target.value;
+        setFileName(fileName);
     }
 
     const saveAccount = () => {
@@ -80,10 +90,11 @@ function EditRestaurantForm(props) {
             zip: zip,
             phone: phone,
             digitalContact: digitalContact,
-            website: website
+            website: website,
+            fileName: fileName
         }
-        console.log(data)
-        setSubmitted(true)
+        console.log(data);
+        setSubmitted(true);
     }
 
     const clearForm = () => {
@@ -95,9 +106,11 @@ function EditRestaurantForm(props) {
         setPhone("");
         setDigitalContact("");
         setWebsite("");
-        console.log("Form cleared")
+        setFileName("");
+        console.log("Form cleared");
     }
 
+    // The EditRestaurant form will be displayed using floating labels
     return (
         <Form>
             <FloatingRestaurantName restaurantName={restaurantName} onChangeRestaurantName={onChangeRestaurantName}/>
@@ -107,16 +120,9 @@ function EditRestaurantForm(props) {
             <FloatingPhone phone={phone} onChangePhone={onChangePhone}/>
             <FloatingDigitalContact digitalContact={digitalContact} onChangeDigitalContact={onChangeDigitalContact}/>
             <FloatingWebsite website={website} onChangeWebsite={onChangeWebsite}/>
+            <FloatingImageUpload fileName={fileName} onChangeFileName={onChangeFileName}/>
+            <EditFormButtons isUpdate={isUpdate} saveAccount={saveAccount} clearForm={clearForm}/>
             
-            <div className="d-flex justify-content-around pt-2 pb-5">
-                <Button variant="outline-primary" onClick={saveAccount}>
-                    {editing ? "Update" : "Submit"}
-                </Button>
-
-                <Button variant="outline-primary" onClick={clearForm}>
-                    Clear
-                </Button>
-            </div>
         </Form>
     )
 }

@@ -12,7 +12,17 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import FloatingZip from './FloatingZip';
 import FloatingStateOptionList from './FloatingStateOptionList';
 
+/**
+ * A React-Bootstrap formatted Row of the FloatingStateOptionList 
+ * and FloatingZip Components. It allows for the common state/zip 
+ * pairing to be dropped in where needed.
+ * 
+ * @param { zip, onChangeZip, state, onChangeState } props 
+ * @returns 
+ */
 function FloatingStateZip(props) {
+    // The form component specific props will be assigned and 
+    // used to process the form element
     const { zip, onChangeZip, state, onChangeState } = props;
 
     return (

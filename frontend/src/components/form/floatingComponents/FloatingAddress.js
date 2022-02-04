@@ -10,7 +10,18 @@ import React from 'react'
 import { Form, FloatingLabel } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
+/**
+ * A React-Bootstrap formatted floating form text input is
+ * returned with all needed basic functionality. It will 
+ * allow CRUD operations to be performed on a Address.
+ * 
+ * 
+ * @param { address, onChangeAddress } props 
+ * @returns 
+ */
 function FloatingAddress(props) {
+    // The form component specific props will be assigned and 
+    // used to process the form element
     const { address, onChangeAddress } = props;
 
     return (
@@ -19,11 +30,11 @@ function FloatingAddress(props) {
             controlId="floatingAddress" 
             label="Address">
                 <Form.Control
-                    type="text"
-                    placeholder="Address"
-                    required
-                    value={address}
-                    onChange={onChangeAddress}
+                type="text"
+                placeholder="Address"
+                required
+                value={address}
+                onChange={onChangeAddress}
                 />
             </FloatingLabel>
         </Form.Floating>
