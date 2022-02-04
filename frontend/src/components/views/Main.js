@@ -7,46 +7,74 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import React from 'react';
-import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { Container, ListGroup } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 function Main(props) {
     return (
-        <div className="main">  
-            <h1>
-                Welcome to the Home Page!
-            </h1>
-            <ul>
-                <li>
-                    <Link to="/restaurant">Restaurant </Link>  
-                </li>
-                <li>
-                    <Link to="/chat">Chat </Link> 
-                </li>
-                <li>
-                    <Link to="/editAccount">Edit Account </Link>  
-                </li>
-                <li>
-                    <Link to="/editRestaurant">Edit Restaurant </Link>  
-                </li>
-                <li>
-                    <Link to="/login">Login </Link> 
-                </li>
-                <li>
-                    <Link to="/review">Review </Link>
-                </li>
-                <li>
-                    <Link to="/search">Search </Link> 
-                </li>
-                <li>
-                    <Link to="/userDashboard">User Dashboard </Link>
-                </li>
-                <li>
-                    <Link to="/admin">Admin </Link>
-                </li>
-                
-            </ul>
-        </div>
+
+        <Container fluid as="main"
+            style={{ maxWidth: "500px", fontSize: 30 }}
+            className="pt-5"
+        >
+            <ListGroup variant="flush">
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/restaurant">
+                        Restaurant
+                    </Link>
+                </ListGroup.Item>
+
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/chat">
+                        Chat
+                    </Link>
+                </ListGroup.Item>
+
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/editAccount">
+                        Edit Account
+                    </Link>
+                </ListGroup.Item>
+
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/editRestaurant">
+                        Edit Restaurant
+                    </Link>
+                </ListGroup.Item>
+
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/login">
+                        Login
+                    </Link>
+                </ListGroup.Item>
+
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/review">
+                        Review
+                    </Link>
+                </ListGroup.Item>
+
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/search">
+                        Search
+                    </Link>
+                </ListGroup.Item>
+
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/userDashboard">
+                        User Dashboard
+                    </Link>
+                </ListGroup.Item>
+
+                <ListGroup.Item className="text-center text-muted">
+                    <Link className="text-decoration-none text-reset" to="/Admin">
+                        Admin
+                    </Link>
+                </ListGroup.Item>
+
+            </ListGroup>
+        </Container>
     )
 }
 
