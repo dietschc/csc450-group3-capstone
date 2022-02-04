@@ -13,18 +13,39 @@ import { Button, Form, Container, FloatingLabel } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 function Login(props) {
-    const[userName, setUserName] = useState();
-    const [password, setPassword] = useState();
+    const initialFormData = Object.freeze({
+        username: "",
+        password: ""
+    })
+    //const[userName, setUserName] = useState();
+    //const [password, setPassword] = useState();
     const navigate = useNavigate();
     
-    const login = () => {};
+    //const login = () => {};
 
-    const onChangePassword = () => {};
-    const onChangeUserName = () => {};
+    //const onChangePassword = () => {};
+    //const onChangeUserName = () => {};
 
+    const [formData, updateFormData] = React.useState(initialFormData);
+
+    const handleChange = (e) =>
+    {
+        updateFormData({
+            ...formData,
+
+            [e.target.name]: e.target.value.trim()
+        })
+    };
+
+    const handleSubmit = (e) =>
+    {
+        e.preventDefault();
+        //console.log(formData);
+        //TO DO: add login functionality to database
+    }
 
     const createAccountHandler = () => {
-        navigate("../editAccount");
+        navigate("../editAccount", {itemId: 42, });
     }
 
 
@@ -46,8 +67,8 @@ function Login(props) {
                                         type="text"
                                         placeholder="User Name"
                                         required
-                                        value={userName}
-                                        onChange={onChangeUserName}
+                                        name = "username"
+                                        onChange={handleChange}
                                     />
                                 </FloatingLabel>
                         </Form.Floating>
@@ -60,14 +81,14 @@ function Login(props) {
                                         type="password"
                                         placeholder="Password"
                                         required
-                                        value={password}
-                                        onChange={onChangePassword}
+                                        name = "password"
+                                        onChange={handleChange}
                                     />
                                 </FloatingLabel>
                         </Form.Floating>
 
                         <div className="d-flex justify-content-around pt-2 pb-5">
-                            <Button variant="outline-primary" onClick={login}>
+                            <Button variant="outline-primary" onClick={handleSubmit}>
                                 Login
                             </Button>
 
