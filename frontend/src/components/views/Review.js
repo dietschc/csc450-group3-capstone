@@ -106,7 +106,7 @@ function Review(props) {
                             </Form.Group>
                         </Col>
 
-                        <Col style={{ maxWidth: "90px" }}>
+                        <Col xs="3" style={{ maxWidth: "90px" }}>
                             <Form.Floating className="mb-1 p-0">
                                 <FloatingLabel
                                     controlId="floatingTasteRating"
