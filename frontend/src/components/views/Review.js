@@ -9,6 +9,8 @@
 // for the app and importing needed components
 import React, { useState } from 'react'
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
+import FloatingImageUpload from '../form/floatingComponents/FloatingImageUpload';
+import ModalCancelConfirm from '../form/modal/ModalCancelConfirm';
 
 function Review(props) {
 
@@ -18,7 +20,7 @@ function Review(props) {
     const [serviceRating, setServiceRating] = useState("2.5");
     const [cleanRating, setCleanRating] = useState("2.5");
     const [overallRating, setOverallRating] = useState("2.5");
-
+    const [fileName, setFileName] = useState("");
     const [reviewTitle, setReviewTitle] = useState("");
     const [reviewText, setReviewText] = useState("");
 
@@ -40,6 +42,11 @@ function Review(props) {
     const onChangeOverallRating = e => {
         const overallRating = e.target.value
         setOverallRating(overallRating);
+    }
+
+    const onChangeFileName = e => {
+        const fileName = e.target.value;
+        setFileName(fileName);
     }
 
     const onChangeReviewTitle = e => {
@@ -156,22 +163,16 @@ function Review(props) {
                             </Form.Floating>
                         </Col>
 
-                        <Col className="text-center">
+                        <Col>
                             <img
                                 src="reviewImages/3/stock-illustration-retro-diner.jpg"
                                 width="300"
                                 height="200"
-                                className="flex-begin"
-                                alt="Uploaded image preview"
+                                className="p-3 flex-begin"
+                                alt="Upload preview"
                             />
-                        </Col>
-                    </Row>
 
-                    <Row>
-                        <Col xs={{ offset: 9 }}>
-                            <Button className="mb-3" variant="outline-primary">
-                                Add Image
-                            </Button>
+                            <FloatingImageUpload as={Row} fileName={fileName} onChangeFileName={onChangeFileName} />
                         </Col>
                     </Row>
 
@@ -210,9 +211,7 @@ function Review(props) {
                             Submit
                         </Button>
 
-                        <Button className="ml-1 w-25" variant="outline-primary">
-                            Clear
-                        </Button>
+                        <ModalCancelConfirm></ModalCancelConfirm>
                     </div>
                 </Form>
             </Container>
