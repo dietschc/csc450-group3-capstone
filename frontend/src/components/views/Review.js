@@ -16,10 +16,10 @@ function Review(props) {
 
     const restaurantName = "Joe's Burgers";
 
-    const [tasteRating, setTasteRating] = useState("2.5");
-    const [serviceRating, setServiceRating] = useState("2.5");
-    const [cleanRating, setCleanRating] = useState("2.5");
-    const [overallRating, setOverallRating] = useState("2.5");
+    const [tasteRating, setTasteRating] = useState("3");
+    const [serviceRating, setServiceRating] = useState("3");
+    const [cleanRating, setCleanRating] = useState("3");
+    const [overallRating, setOverallRating] = useState("3");
     const [fileName, setFileName] = useState("");
     const [reviewTitle, setReviewTitle] = useState("");
     const [reviewText, setReviewText] = useState("");
@@ -75,9 +75,9 @@ function Review(props) {
                                 <Form.Label>Taste</Form.Label>
                                 <Form.Range
                                     className="mb-2"
-                                    min={0}
+                                    min={1}
                                     max={5}
-                                    step={0.5}
+                                    step={1}
                                     value={tasteRating}
                                     onChange={onChangeTasteRating}
                                 />
@@ -85,9 +85,9 @@ function Review(props) {
                                 <Form.Label>Service</Form.Label>
                                 <Form.Range
                                     className="mb-2"
-                                    min={0}
+                                    min={1}
                                     max={5}
-                                    step={0.5}
+                                    step={1}
                                     value={serviceRating}
                                     onChange={onChangeServiceRating}
                                 />
@@ -95,18 +95,18 @@ function Review(props) {
                                 <Form.Label>Cleanliness</Form.Label>
                                 <Form.Range
                                     className="mb-2"
-                                    min={0}
+                                    min={1}
                                     max={5}
-                                    step={0.5}
+                                    step={1}
                                     value={cleanRating}
                                     onChange={onChangeCleanRating}
                                 />
 
                                 <Form.Label>Overall</Form.Label>
                                 <Form.Range
-                                    min={0}
+                                    min={1}
                                     max={5}
-                                    step={0.5}
+                                    step={1}
                                     value={overallRating}
                                     onChange={onChangeOverallRating}
                                 />
