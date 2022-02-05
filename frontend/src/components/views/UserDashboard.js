@@ -7,85 +7,149 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useEffect, useState } from 'react';
-import { Card, ListGroup } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Card, ListGroup, Col, Row, Button, CardGroup, Container} from 'react-bootstrap';
+import { Link, Navigate } from 'react-router-dom';
 import BodyContainer from '../template/BodyContainer';
 import testData from "../../redux/initialState.json";
+import { useNavigate } from 'react-router-dom';
 
 function UserDashboard(props) {
     // Temporary test data 
-    const [data, setData]=useState([]);
+    const [data, setData]=useState(testData);
 
-    // Temporary test data fetch
-    const getData=()=>{
-        fetch('initialState.json'
-        ,{
-          headers : { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-           }
-        }
-        )
-          .then(function(response){
-            console.log(response)
-            return response.json();
-          })
-          .then(function(myJson) {
-            console.log(myJson);
-            setData(myJson)
-          });
-      }
+    const { user, restaurant, review, message } = data; 
+    const [currentUser, ...otherUser] = user;
+    const { address: currentAddress }  = currentUser;
+    const navigate = useNavigate();
 
-      // Temp test data function call
-      useEffect(() => {
-          getData();
-      }, []);
+    const userInfoHandler = () => {
+        navigate("../editAccount");
+    }
 
-        // const { user } = data.state;
-        // const currentUser = user[0];
-        // const currentAddress = currentUser.address;
-        // const userData = (data && data.length > 0) =>  {}
-        const newData = data.map((testData) => data); 
-        const print = () => console.log(data);
+    const userDetails = (
+        <Card >
+            <Card.Body className="border-0">
+                <Card.Text>
+                    <ListGroup>
+                        
+                        <ListGroup.Item>
+                            <Row>
+                                <Col xs={5} lg={4}>
+                                    User Id:
+                                </Col>
+                                <Col className="justify-content-start" xs={7} lg={8}>
+                                    {currentUser.id}
+                                </Col>
+                            </Row>
+                        </ListGroup.Item>
+                        <ListGroup.Item>
+                            <Row>
+                                <Col xs={5} lg={4}>
+                                    First Name:
+                                </Col>
+                                <Col className="justify-content-start" xs={7} lg={8}>
+                                    {currentUser.firstName}
+                                </Col>
+                            </Row>
+                        </ListGroup.Item>
+                        <ListGroup.Item>
+                            <Row>
+                                <Col xs={5} lg={4}>
+                                    Last Name:
+                                </Col>
+                                <Col className="justify-content-start" xs={7} lg={8}>
+                                    {currentUser.lastName}
+                                </Col>
+                            </Row>
+                        </ListGroup.Item>
+                        <ListGroup.Item>
+                            <Row>
+                                <Col xs={5} lg={4}>
+                                    Address:
+                                </Col>
+                                <Col className="justify-content-start" xs={7} lg={8}>
+                                    {currentAddress.address}
+                                </Col>
+                            </Row>
+                        </ListGroup.Item>
+                        <ListGroup.Item>
+                            <Row>
+                                <Col xs={5} lg={4}>
+                                    City:
+                                </Col>
+                                <Col className="justify-content-start" xs={7} lg={8}>
+                                    {currentAddress.city}
+                                </Col>
+                            </Row>
+                        </ListGroup.Item>
+                        <ListGroup.Item>
+                            <Row>
+                                <Col xs={5} lg={4}>
+                                    State:
+                                </Col>
+                                <Col className="justify-content-start" xs={7} lg={8}>
+                                    {currentAddress.state}
+                                </Col>
+                            </Row>
+                        </ListGroup.Item>
+                        <ListGroup.Item>
+                            <Row>
+                                <Col xs={5} lg={4}>
+                                    Zip:
+                                </Col>
+                                <Col className="justify-content-start" xs={7} lg={8}>
+                                    {currentAddress.zip}
+                                </Col>
+                            </Row>
+                        </ListGroup.Item>
+                        <ListGroup.Item>
+                            <Row>
+                                <Col xs={5} lg={4}>
+                                    Email:
+                                </Col>
+                                <Col className="justify-content-start" xs={7} lg={8}>
+                                    {currentUser.email}
+                                </Col>
+                            </Row>
+                            
+                            
+                        </ListGroup.Item>
+                    </ListGroup>
+                </Card.Text>
+                <Button className="mx-auto d-flex" onClick={() => userInfoHandler()}>Update</Button>
+            </Card.Body>
+        </Card>
+    )
     return (
         
-        <BodyContainer>
+        <Container className="justify-content-center">
             <h1>
                 User Dashboard
             </h1>
-            {print}
-            <Card>
-                <Card.Body>
-                    <Card.Text>
-                        <ListGroup>
-                            
-                            {/* <ListGroup.Item>
-                                {"User Id: " + user.id}
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                {"First Name: " + currentUser.firstName}
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                {"LastName: " + currentUser.lastName}
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                {"Address: " + currentAddress.address}
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                {"City: " + currentAddress.city}
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                {"State: " + currentAddress.state}
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                {"Zip: " + currentAddress.zip}
-                            </ListGroup.Item> */}
-                        </ListGroup>
-                    </Card.Text>
-                </Card.Body>
-            </Card>
+            {console.log("Test is ", user)}
+            {console.log("Current User is ", currentUser)}
+            {console.log("Current Address is ", currentAddress)}
+            {console.log("Test Data .user is ", testData.user)}
+            <Container fluid>
+                <Row>
+                    <Col md={6}>
+                        {userDetails}
+                    </Col>
+                    <Col md={6}>
+                        <Card>
+                        <Card.Title>
+                            Card 2
+                        </Card.Title>
+                    </Card>
+                    </Col>
+                
+                </Row>
+                
+                </Container>
+            
+            
             <Link to="/">Back to Home</Link>
-        </BodyContainer>
+        </Container>
             
         
     )

@@ -6,6 +6,7 @@
             "lastName": "McGee",
             "address": {
                 "addressId": 0,
+                "address": "200 W Fairy Way",
                 "city": "St. Anthony",
                 "state": "MN",
                 "zip": "55421"
@@ -23,6 +24,7 @@
                     "lastModified": ""
                 }
             },
+            "email": "roger@bobby.com",
             "isLoggedIn": false
         },
         {
@@ -32,6 +34,7 @@
             "lastName": "",
             "address": {
                 "addressId": null,
+                "address": "",
                 "city": "",
                 "state": "",
                 "zip": ""
@@ -49,6 +52,7 @@
                     "lastModified": ""
                 }
             },
+            "email": "",
             "isLoggedIn": true
         }
     ],
