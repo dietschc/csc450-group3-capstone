@@ -50,13 +50,13 @@ function UserDashboard(props) {
 
     const deleteFriendHandler = (friend) => {
         setFriend(friend);
-        console.log("FRIEND IN DELETE HANDLER IS ", friend)
+        console.log("FRIEND IN DELETE HANDLER IS ", friend);
         showFriendHandler();
     }
 
     const deleteReviewHandler = (review) => {
         setCurrentReview(review);
-        console.log("FRIEND IN DELETE HANDLER IS ", currentReview)
+        console.log("FRIEND IN DELETE HANDLER IS ", currentReview);
         showReviewHandler();
     }
 
@@ -69,7 +69,23 @@ function UserDashboard(props) {
     }
 
     const reviewEditHandler = (id) => {
-        navigate("../review/" + id)
+        navigate("../review/" + id);
+    }
+
+    const starGenerator = (starCount) => {
+        let totalStarCount = 0;
+        let stars = "";
+
+        for (let i = 0; i < starCount; i++) {
+            stars += '★';
+            totalStarCount += 1;
+        }
+
+        for (let i = totalStarCount; i < 5; i++) {
+            stars += '☆';
+        }
+
+        return stars;
     }
     
 
@@ -164,7 +180,7 @@ function UserDashboard(props) {
                 <Button className="mx-auto d-flex" onClick={() => userInfoHandler()}>Update</Button>
             </Card.Body>
         </Card>
-    )
+    );
 
     const friendList = (
         <Card style={{ height: "449px"}}>
@@ -200,6 +216,7 @@ function UserDashboard(props) {
             </Card.Body>
         </Card>
     );
+
     return (
         
         <Container className="justify-content-center">
@@ -212,10 +229,10 @@ function UserDashboard(props) {
             {console.log("Test Data .user is ", testData.user)}
             <Container fluid>
                 <Row>
-                    <Col className="px-1 pb-2" md={6}>
+                    <Col className="px-md-0 pb-2" md={6}>
                         {userDetails}
                     </Col>
-                    <Col className="px-1 pb-2" md={6}>
+                    <Col className="pe-md-0 pb-2" md={6}>
                         {friendList}
                     </Col>
                 </Row>
@@ -224,14 +241,76 @@ function UserDashboard(props) {
                         <Card className="mb-2" key={review.reviewId} style={{}}>
                             <Card.Body>
                                 <Card.Title as="h2" className="text-center">
-                                    {review.restaurant.name}
+                                    <div>
+                                        {review.restaurant.name}
+                                    </div>
+                                    
+                                    
                                 </Card.Title>
-                                <Card.Text className="text-center">
-                                    {review.author.userName}
+                                <Card.Text as="h4" className="text-center">
+                                    <div>
+                                        {starGenerator(restaurant.filter((restaurant) => (restaurant.id === review.restaurant.id))[0].rating.overallRating)}
+                                    </div>
                                 </Card.Text>
                             </Card.Body>
+                            {/** MAKE SURE TO REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
                             {console.log(review)}
                             <Card.Img className="mx-auto" style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }} src={review.image[0].imageLocation} />
+                            <Card.Text className="text-center pt-1">
+                                {review.author.userName}
+                            </Card.Text>
+                            <Row>
+                                <Col className="d-flex justify-content-center justify-content-sm-start pt-2">
+                                    <ListGroup as="ul">
+                                        <ListGroup.Item as="li" 
+                                        className="d-flex justify-content-between align-items-start pt-1 pb-0 mb-0 border-bottom-0" 
+                                        style={{ maxWidth: "13rem"}}>
+                                            <div className="pe-2">
+                                                Taste
+                                            </div>
+                                            <div>
+                                                {starGenerator(review.tasteRating)}
+                                            </div>
+                                        </ListGroup.Item>
+                                        <ListGroup.Item as="li" 
+                                        className="d-flex justify-content-between align-items-start pt-1 pb-0 mb-0 border-bottom-0" 
+                                        style={{ maxWidth: "13rem"}}>
+                                            <div className="pe-2">
+                                                Service
+                                            </div>
+                                            <div>
+                                                {starGenerator(review.serviceRating)}
+                                            </div>
+                                        </ListGroup.Item>
+                                        <ListGroup.Item as="li" 
+                                        className="d-flex justify-content-between align-items-start pt-1 pb-0 mb-0 border-bottom-0" 
+                                        style={{ maxWidth: "13rem"}}>
+                                            <div className="pe-2">
+                                                Cleanliness
+                                            </div>
+                                            <div>
+                                                {starGenerator(review.cleanlinessRating)}
+                                            </div>
+                                        </ListGroup.Item>
+                                        <ListGroup.Item as="li" 
+                                        className="d-flex justify-content-between align-items-start pt-1 pb-0 mb-0" 
+                                        style={{ maxWidth: "13rem"}}>
+                                            <div className="pe-2">
+                                                Overall 
+                                            </div>
+                                            <div>
+                                                {starGenerator(review.overallRating)}
+                                            </div>
+                                        </ListGroup.Item>
+                                    </ListGroup>
+                                </Col>
+                                <Col className="d-flex justify-content-center justify-content-sm-end align-items-end">
+                                    <span className="text-center" style={{minWidth: "12rem"}}>
+                                        Date Of Visit: {review.history.created}
+                                    </span>
+                                </Col>
+                            </Row>
+                            
                             <Card.Body>
                                 <Card.Title className="text-center">
                                     {review.reviewTitle}
