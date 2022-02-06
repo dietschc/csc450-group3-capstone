@@ -7,29 +7,54 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useEffect, useState } from 'react';
-import { Card, ListGroup, Col, Row, Button, CardGroup, Container} from 'react-bootstrap';
-import { Link, Navigate } from 'react-router-dom';
+import { Card, ListGroup, Col, Row, Button, CardGroup, Container, ListGroupItem, Alert} from 'react-bootstrap';
+import { Link, Navigate, renderMatches } from 'react-router-dom';
 import BodyContainer from '../template/BodyContainer';
 import testData from "../../redux/initialState.json";
 import { useNavigate } from 'react-router-dom';
+import ModalDeleteFriend from '../modal/DeleteFriendConfirm';
 
 function UserDashboard(props) {
     // Temporary test data 
     const [data, setData]=useState(testData);
+    const [show, setShow] = useState(false);
+    const [friend, setFriend] = useState([]);
+
+    
 
     const { user, restaurant, review, message } = data; 
     const [currentUser, ...otherUser] = user;
     const { address: currentAddress }  = currentUser;
+    const { friend: currentFriendList } = currentUser;
+
     const navigate = useNavigate();
+    const showHandler = () => setShow(true);
+    const closeHandler = () => setShow(false);
+
+    const deleteFriend = () => {
+        // Delete Friend Code Here
+        console.log(friend.userName + " was deleted!");
+    }
+
+    const deleteHandler = (friend) => {
+        setFriend(friend);
+        console.log("FRIEND IN DELETE HANDLER IS ", friend)
+        showHandler();
+    }
 
     const userInfoHandler = () => {
         navigate("../editAccount");
     }
 
+    const chatHandler = (id) => {
+        navigate("../chat/" + id);
+    }
+    
+
     const userDetails = (
-        <Card >
+        <Card>
             <Card.Body className="border-0">
-                <Card.Text>
+                <Card.Text as="div" className="mb-3">
                     <ListGroup>
                         
                         <ListGroup.Item>
@@ -120,6 +145,41 @@ function UserDashboard(props) {
             </Card.Body>
         </Card>
     )
+
+    const friendList = (
+        <Card style={{ height: "415px"}}>
+            <Card.Title className="text-center">
+                Friends
+            </Card.Title>
+            <Card.Body style={{ overflow: "auto"}}>
+                <Card.Text as="div">
+                    {currentFriendList.map((friend) => (
+                        <ListGroup.Item key={friend.userId} id={friend.userId}>
+                            <Row>
+                                <Col className="d-flex align-items-center my-1 me-0 pe-0 flex-shrink-1">
+                                    {friend.userName}
+                                </Col>
+                                <Col className="d-flex justify-content-end my-1 px-0 flex-shrink-1">
+                                    <Button onClick={() => chatHandler(friend.userId)}>Chat</Button>
+                                </Col>
+                                <Col className="d-flex justify-content-center my-1 px-0 flex-shrink-1">
+                                    <Button onClick={() => deleteHandler(friend)}>
+                                        Delete
+                                    </Button>
+                                    
+                                </Col>
+                            </Row>
+                        </ListGroup.Item>
+                    ))}
+                    <ModalDeleteFriend 
+                    show={show} 
+                    deleteFriend={deleteFriend}
+                    closeHandler={closeHandler} 
+                    friend={friend} />
+                </Card.Text>
+            </Card.Body>
+        </Card>
+    );
     return (
         
         <Container className="justify-content-center">
@@ -136,18 +196,10 @@ function UserDashboard(props) {
                         {userDetails}
                     </Col>
                     <Col md={6}>
-                        <Card>
-                        <Card.Title>
-                            Card 2
-                        </Card.Title>
-                    </Card>
+                        {friendList}
                     </Col>
-                
                 </Row>
-                
-                </Container>
-            
-            
+            </Container>
             <Link to="/">Back to Home</Link>
         </Container>
             

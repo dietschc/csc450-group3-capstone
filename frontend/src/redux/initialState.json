@@ -25,6 +25,16 @@
                 }
             },
             "email": "roger@bobby.com",
+            "friend": [
+                {
+                    "userId": 1,
+                    "userName": "Member1"
+                },
+                {
+                    "userId": 2,
+                    "userName": "Member2"
+                }
+            ],
             "isLoggedIn": false
         },
         {
@@ -53,6 +63,16 @@
                 }
             },
             "email": "",
+            "friend": [
+                {
+                    "userId": 0,
+                    "userName": "Guest1"
+                },
+                {
+                    "userId": 2,
+                    "userName": "Member2"
+                }
+            ],
             "isLoggedIn": true
         }
     ],

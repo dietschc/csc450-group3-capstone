@@ -29,6 +29,7 @@ function App() {
         <Route exact path='/' element={<Main/>} />
         <Route path='/restaurant' element={<Restaurant/>} />
         <Route path='/chat' element={<Chat/>} />
+        <Route path='/chat/:id' element={<Chat/>} />
         <Route path='/editAccount' element={<EditAccount/>} />
         <Route path='/editRestaurant' element={<EditRestaurant/>} />
         <Route path='/login' element={<Login/>} />
