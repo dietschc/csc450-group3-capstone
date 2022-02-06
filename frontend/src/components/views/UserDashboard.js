@@ -3,6 +3,9 @@
 // Restaurant Club - UserDashboard.js
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 02/04/2022, wrote the code that will be the UserInfo Component)
+//  (DAB, 02/05/2022, fine tuned code for UserInfo Component)
+//  (DAB, 02/05/2022, wrote the code that will be the FriendList Component)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -13,12 +16,15 @@ import BodyContainer from '../template/BodyContainer';
 import testData from "../../redux/initialState.json";
 import { useNavigate } from 'react-router-dom';
 import ModalDeleteFriend from '../modal/DeleteFriendConfirm';
+import DeleteReviewConfirm from '../modal/DeleteReviewConfirm';
 
 function UserDashboard(props) {
     // Temporary test data 
     const [data, setData]=useState(testData);
-    const [show, setShow] = useState(false);
+    const [showFriendConfirm, setShowFriendConfirm] = useState(false);
+    const [showReviewConfirm, setShowReviewConfirm] = useState(false);
     const [friend, setFriend] = useState([]);
+    const [currentReview, setCurrentReview] = useState([]);
 
     
 
@@ -28,18 +34,30 @@ function UserDashboard(props) {
     const { friend: currentFriendList } = currentUser;
 
     const navigate = useNavigate();
-    const showHandler = () => setShow(true);
-    const closeHandler = () => setShow(false);
+    const showFriendHandler = () => setShowFriendConfirm(true);
+    const closeFriendHandler = () => setShowFriendConfirm(false);
+    const showReviewHandler = () => setShowReviewConfirm(true);
+    const closeReviewHandler = () => setShowReviewConfirm(false);
 
     const deleteFriend = () => {
         // Delete Friend Code Here
         console.log(friend.userName + " was deleted!");
     }
+    const deleteReview = () => {
+        // Delete Friend Code Here
+        console.log(currentReview.reviewId + " review was deleted!");
+    }
 
-    const deleteHandler = (friend) => {
+    const deleteFriendHandler = (friend) => {
         setFriend(friend);
         console.log("FRIEND IN DELETE HANDLER IS ", friend)
-        showHandler();
+        showFriendHandler();
+    }
+
+    const deleteReviewHandler = (review) => {
+        setCurrentReview(review);
+        console.log("FRIEND IN DELETE HANDLER IS ", currentReview)
+        showReviewHandler();
     }
 
     const userInfoHandler = () => {
@@ -49,14 +67,19 @@ function UserDashboard(props) {
     const chatHandler = (id) => {
         navigate("../chat/" + id);
     }
+
+    const reviewEditHandler = (id) => {
+        navigate("../review/" + id)
+    }
     
 
     const userDetails = (
         <Card>
+            <Card.Title className="text-center">
+                User Information
+            </Card.Title>
             <Card.Body className="border-0">
-                <Card.Text as="div" className="mb-3">
-                    <ListGroup>
-                        
+                    <ListGroup className="mb-3">
                         <ListGroup.Item>
                             <Row>
                                 <Col xs={5} lg={4}>
@@ -136,23 +159,20 @@ function UserDashboard(props) {
                                     {currentUser.email}
                                 </Col>
                             </Row>
-                            
-                            
                         </ListGroup.Item>
                     </ListGroup>
-                </Card.Text>
                 <Button className="mx-auto d-flex" onClick={() => userInfoHandler()}>Update</Button>
             </Card.Body>
         </Card>
     )
 
     const friendList = (
-        <Card style={{ height: "415px"}}>
+        <Card style={{ height: "449px"}}>
             <Card.Title className="text-center">
                 Friends
             </Card.Title>
             <Card.Body style={{ overflow: "auto"}}>
-                <Card.Text as="div">
+                <ListGroup className="mb-3">
                     {currentFriendList.map((friend) => (
                         <ListGroup.Item key={friend.userId} id={friend.userId}>
                             <Row>
@@ -163,7 +183,7 @@ function UserDashboard(props) {
                                     <Button onClick={() => chatHandler(friend.userId)}>Chat</Button>
                                 </Col>
                                 <Col className="d-flex justify-content-center my-1 px-0 flex-shrink-1">
-                                    <Button onClick={() => deleteHandler(friend)}>
+                                    <Button onClick={() => deleteFriendHandler(friend)}>
                                         Delete
                                     </Button>
                                     
@@ -171,12 +191,12 @@ function UserDashboard(props) {
                             </Row>
                         </ListGroup.Item>
                     ))}
+                    </ListGroup>
                     <ModalDeleteFriend 
-                    show={show} 
+                    show={showFriendConfirm} 
                     deleteFriend={deleteFriend}
-                    closeHandler={closeHandler} 
+                    closeHandler={closeFriendHandler} 
                     friend={friend} />
-                </Card.Text>
             </Card.Body>
         </Card>
     );
@@ -192,12 +212,49 @@ function UserDashboard(props) {
             {console.log("Test Data .user is ", testData.user)}
             <Container fluid>
                 <Row>
-                    <Col md={6}>
+                    <Col className="px-1 pb-2" md={6}>
                         {userDetails}
                     </Col>
-                    <Col md={6}>
+                    <Col className="px-1 pb-2" md={6}>
                         {friendList}
                     </Col>
+                </Row>
+                <Row>
+                    {review.map((review) => (
+                        <Card className="mb-2" key={review.reviewId} style={{}}>
+                            <Card.Body>
+                                <Card.Title as="h2" className="text-center">
+                                    {review.restaurant.name}
+                                </Card.Title>
+                                <Card.Text className="text-center">
+                                    {review.author.userName}
+                                </Card.Text>
+                            </Card.Body>
+                            {console.log(review)}
+                            <Card.Img className="mx-auto" style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }} src={review.image[0].imageLocation} />
+                            <Card.Body>
+                                <Card.Title className="text-center">
+                                    {review.reviewTitle}
+                                </Card.Title>
+                                <Card.Text>
+                                    {review.reviewText}
+                                </Card.Text>
+                                <Container  fluid className="d-flex px-0 justify-content-center justify-content-sm-center justify-content-md-end ">
+                                    <Button className="mx-1" style={{ width: "5rem" }} onClick={() => {reviewEditHandler(review.reviewId)}}>
+                                        Edit
+                                    </Button>
+                                    <Button className="mx-1" style={{ width: "5rem" }} onClick={() => {deleteReviewHandler(review)}}>
+                                        Delete
+                                    </Button>
+                                </Container>
+                            </Card.Body>
+                        </Card>
+                    ))}
+                    <DeleteReviewConfirm 
+                    show={showReviewConfirm} 
+                    deleteReview={deleteReview}
+                    closeHandler={closeReviewHandler} 
+                    review={review} />
                 </Row>
             </Container>
             <Link to="/">Back to Home</Link>

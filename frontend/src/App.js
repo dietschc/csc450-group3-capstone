@@ -34,6 +34,7 @@ function App() {
         <Route path='/editRestaurant' element={<EditRestaurant/>} />
         <Route path='/login' element={<Login/>} />
         <Route path='/review' element={<Review/>} />
+        <Route path='/review/:id' element={<Review/>} />
         <Route path='/search' element={<Search/>} />
         <Route path='/userDashboard' element={<UserDashboard/>} />
         <Route path='/admin' element={<Admin/>} />
