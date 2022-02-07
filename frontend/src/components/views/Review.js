@@ -11,6 +11,8 @@ import React, { useState } from 'react'
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 import FloatingImageUpload from '../form/floatingComponents/FloatingImageUpload';
 import ModalCancelConfirm from '../form/modal/ModalCancelConfirm';
+import { printStarTotal, printReviewTotal } from '../../helperFunction/StringGenerator';
+
 
 function Review(props) {
 
@@ -59,6 +61,8 @@ function Review(props) {
         setReviewText(reviewText);
     }
 
+    const starFont = { color: "gold" }
+
     return (
         <Container fluid className="text-muted" style={{ maxWidth: "1000px" }}>
             <Container as="header">
@@ -67,8 +71,8 @@ function Review(props) {
                 </div>
             </Container>
             <Container fluid as="main" className="pb-5 justify-content-center">
-                <div className="text-center">
-                    <strong>Please rate your visit!!!</strong>
+                <div className="text-center pb-3">
+                    <strong>Please rate your visit!</strong>
                 </div>
 
                 <Form>
@@ -116,14 +120,16 @@ function Review(props) {
                             </Form.Group>
                         </Col>
 
-                        <Col xs="3" style={{ maxWidth: "90px" }}>
+                        <Col xs="3" style={{ maxWidth: "120px" }}>
                             <Form.Floating className="mb-1 p-0">
                                 <FloatingLabel
                                     controlId="floatingTasteRating"
                                     label="Taste">
                                     <Form.Control
-                                        className="text-center"
-                                        value={tasteRating}
+                                        disabled
+                                        style={starFont}
+                                        className="text-center bg-white"
+                                        value={printStarTotal(tasteRating)}
                                         onChange={onChangeTasteRating}
                                     />
                                 </FloatingLabel>
@@ -134,8 +140,10 @@ function Review(props) {
                                     controlId="floatingServiceRating"
                                     label="Service">
                                     <Form.Control
-                                        className="text-center"
-                                        value={serviceRating}
+                                        disabled
+                                        style={starFont}
+                                        className="text-center bg-white"
+                                        value={printStarTotal(serviceRating)}
                                         onChange={onChangeServiceRating}
                                     />
                                 </FloatingLabel>
@@ -146,8 +154,10 @@ function Review(props) {
                                     controlId="floatingCleanRating}"
                                     label="Clean">
                                     <Form.Control
-                                        className="text-center"
-                                        value={cleanRating}
+                                        disabled
+                                        style={starFont}
+                                        className="text-center bg-white"
+                                        value={printStarTotal(cleanRating)}
                                         onChange={onChangeCleanRating}
                                     />
                                 </FloatingLabel>
@@ -158,8 +168,10 @@ function Review(props) {
                                     controlId="floatingOverallRating"
                                     label="Overall">
                                     <Form.Control
-                                        className="text-center"
-                                        value={overallRating}
+                                        disabled
+                                        style={starFont}
+                                        className="text-center bg-white"
+                                        value={printStarTotal(overallRating)}
                                         onChange={onChangeOverallRating}
                                     />
                                 </FloatingLabel>
