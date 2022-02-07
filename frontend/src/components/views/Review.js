@@ -68,7 +68,7 @@ function Review(props) {
             </Container>
             <Container fluid as="main" className="pb-5 justify-content-center">
                 <div className="text-center">
-                    <strong>Please rate your visit!</strong>
+                    <strong>Please rate your visit!!!</strong>
                 </div>
 
                 <Form>
