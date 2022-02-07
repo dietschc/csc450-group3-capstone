@@ -24,6 +24,7 @@ function RestaurantReviewDetail(props) {
     //**********NOTE: Feel free to add props but do not remove props you did not add
     // Also do not edit the styles in this component, only outside is allowed ******
     const { review, restaurant, buttons, modal } = props;
+    
 
     return (
         <Container fluid>
@@ -46,7 +47,7 @@ function RestaurantReviewDetail(props) {
                                 </Card.Text>
                             </Card.Body>
                             {/** MAKE SURE TO REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
-                            {console.log(review)}
+                            {console.log("REVIEW IN RRD IS ", review)}
                             <Card.Img className="mx-auto" style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }} src={review.image[0].imageLocation} />
                             <Card.Text className="text-center pt-1">
                                 {review.author.userName}
@@ -112,7 +113,7 @@ function RestaurantReviewDetail(props) {
                                 <Container  fluid className="d-flex px-0 justify-content-center justify-content-sm-center justify-content-md-end ">
                                     {/**Buttons to add function for this Container will generate here, add the 
                                      * buttons to the container by passing them as props*/}
-                                    {buttons}
+                                    {buttons(review)}
                                 </Container>
                             </Card.Body>
                         </Card>

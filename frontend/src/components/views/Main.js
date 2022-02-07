@@ -6,19 +6,41 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { Container, ListGroup } from 'react-bootstrap';
+import mockStateData from "../../redux/initialState.json";
+import { useNavigate } from 'react-router-dom';
+import { Container, ListGroup, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import RestaurantReviewDetail from '../subComponent/RestaurantReviewDetail';
+import MainRRDetailButtonGroup from '../form/button/MainRRDetailButtonGroup';
 
 function Main(props) {
-    return (
+        const [data, setData]=useState(mockStateData);
 
-        <Container fluid as="main"
-            style={{ maxWidth: "500px", fontSize: 30 }}
-            className="pt-5"
-        >
-            <ListGroup variant="flush">
+        const navigate = useNavigate();
+
+        const moreHandler = (authorId, restaurantId) => {
+            navigate("search/" + authorId + "/" + restaurantId);
+        }
+
+        const restaurantHandler = (restaurantId) => {
+            navigate("restaurant/" + restaurantId);
+        }
+
+        const friendHandler = (friendId) => {
+            // Add review author id to friend list
+            console.log("UserId " + friendId + " was added to friend list.")
+        }
+
+        // Destructuring the needed data from the intitialState.json file
+        const { user, restaurant, review, message } = data; 
+        const [currentUser, ...otherUser] = user;
+        const { address: currentAddress }  = currentUser;
+        const { friend: currentFriendList } = currentUser;
+    const devNav = (
+        
+        <ListGroup variant="flush">
                 <ListGroup.Item className="text-center text-muted">
                     <Link className="text-decoration-none text-reset" to="/restaurant">
                         Restaurant
@@ -74,7 +96,32 @@ function Main(props) {
                 </ListGroup.Item>
 
             </ListGroup>
+    );
+
+    const RRDButtonGroup = (review) => (
+        <div>
+            <MainRRDetailButtonGroup review={review}
+            moreHandler={moreHandler}
+            restaurantHandler={restaurantHandler} 
+            friendHandler={friendHandler}/>
+        </div>
+    );
+
+    return (
+        <Container fluid className="justify-content-center" style={{maxWidth: "1000px"}}>
+            <h1 className="mb-2">
+                Restaurant Club
+            </h1>
+            <RestaurantReviewDetail restaurant={restaurant} review={review} buttons={RRDButtonGroup}/>
+                
+            <Container fluid
+            style={{ maxWidth: "500px", fontSize: 30 }}
+            className="pt-5"
+            >
+                {devNav}
+            </Container>
         </Container>
+        
     )
 }
 

@@ -96,8 +96,10 @@ function UserDashboard(props) {
     }
 
     // These buttons will be passed into the RestaurantReviewDetail.js 
-    // Component to allow the desired functionality with the component
-    const buttons = (
+    // Component to allow the desired functionality with the component. 
+    // The review variable needs to be passed as an argument so it can 
+    // be generated in the parent
+    const buttons = (review) => (
         <UDRestaurantReviewDetail reviewEditHandler={reviewEditHandler} 
         deleteReviewHandler={deleteReviewHandler} review={review}/>
     )
