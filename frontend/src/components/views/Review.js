@@ -163,7 +163,7 @@ function Review(props) {
                             </Form.Floating>
                         </Col>
 
-                        <Col>
+                        <Col className="text-center">
                             <img
                                 src="reviewImages/3/stock-illustration-retro-diner.jpg"
                                 width="300"
