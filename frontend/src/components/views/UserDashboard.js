@@ -1,345 +1,144 @@
 // Initially Created by: Devin Brueberg
 // CSC450 Capstone
 // Restaurant Club - UserDashboard.js
-// January 24, 2022
+// February 3, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 02/04/2022, wrote the code that will be the UserInfo Component)
 //  (DAB, 02/05/2022, fine tuned code for UserInfo Component)
 //  (DAB, 02/05/2022, wrote the code that will be the FriendList Component)
+//  (DAB, 02/06/2022, finished the code for RestaurantDetailDetail Component)
+//  (DAB, 02/06/2022, breaking up components/functionality into their own .js files)
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useEffect, useState } from 'react';
-import { Card, ListGroup, Col, Row, Button, CardGroup, Container, ListGroupItem, Alert} from 'react-bootstrap';
-import { Link, Navigate, renderMatches } from 'react-router-dom';
-import BodyContainer from '../template/BodyContainer';
-import testData from "../../redux/initialState.json";
+import React, { useState } from 'react';
+import { Container, Row, Col, Button } from 'react-bootstrap';
+import mockStateData from "../../redux/initialState.json";
 import { useNavigate } from 'react-router-dom';
-import ModalDeleteFriend from '../modal/DeleteFriendConfirm';
+import FriendList from '../subComponent/FriendList';
+import UserInfo from '../subComponent/UserInfo';
+import RestaurantReviewDetail from '../subComponent/RestaurantReviewDetail';
+import UDRestaurantReviewDetail from '../form/button/UDRestaurantReviewDetail';
 import DeleteReviewConfirm from '../modal/DeleteReviewConfirm';
 
 function UserDashboard(props) {
-    // Temporary test data 
-    const [data, setData]=useState(testData);
+    // *** Temporary test data, this will be replaced with Redux in the future ***
+    const [data, setData]=useState(mockStateData);
     const [showFriendConfirm, setShowFriendConfirm] = useState(false);
     const [showReviewConfirm, setShowReviewConfirm] = useState(false);
     const [friend, setFriend] = useState([]);
     const [currentReview, setCurrentReview] = useState([]);
 
-    
-
+    // Destructuring the needed data from the intitialState.json file
     const { user, restaurant, review, message } = data; 
     const [currentUser, ...otherUser] = user;
     const { address: currentAddress }  = currentUser;
     const { friend: currentFriendList } = currentUser;
 
+    // Allows for the navigation to the specified webpage
     const navigate = useNavigate();
+
+    // Handlers for the DeleteFriendConfirm modal
     const showFriendHandler = () => setShowFriendConfirm(true);
     const closeFriendHandler = () => setShowFriendConfirm(false);
-    const showReviewHandler = () => setShowReviewConfirm(true);
-    const closeReviewHandler = () => setShowReviewConfirm(false);
 
-    const deleteFriend = () => {
-        // Delete Friend Code Here
-        console.log(friend.userName + " was deleted!");
-    }
-    const deleteReview = () => {
-        // Delete Friend Code Here
-        console.log(currentReview.reviewId + " review was deleted!");
-    }
-
+    // Handles the click on the delete friend button and sets 
+    // the selected friend into state
     const deleteFriendHandler = (friend) => {
         setFriend(friend);
         console.log("FRIEND IN DELETE HANDLER IS ", friend);
         showFriendHandler();
     }
 
+    // Deletes the friend with the returned friend.userId
+    const deleteFriend = () => {
+            // Delete Friend Code Here, use friend.userId to 
+            // grab the correct friend
+            console.log(friend.userName + " was deleted!");
+        }
+
+    // Handlers for the DeleteReviewConfirm modal
+    const showReviewHandler = () => setShowReviewConfirm(true);
+    const closeReviewHandler = () => setShowReviewConfirm(false);
+
+    // Deletes the review with the returned reviewId
+    const deleteReview = () => {
+        // Delete Review Code Here
+        console.log(currentReview.reviewId + " review was deleted!");
+    }
+
+    // Handles the click on the delete review button and sets 
+    // the selected review into state
     const deleteReviewHandler = (review) => {
         setCurrentReview(review);
-        console.log("FRIEND IN DELETE HANDLER IS ", currentReview);
+        console.log("REVIEW IN DELETE HANDLER IS ", currentReview);
         showReviewHandler();
     }
 
+    // Navigates to the user editAccount page. This is used 
+    // in the UserInfo.js component to edit the current account
     const userInfoHandler = () => {
         navigate("../editAccount");
     }
 
+    // Navigates to the Chat page passing the requested friend to 
+    // chat with's ID into the URL. Used with the FriendList.js 
+    // Component
     const chatHandler = (id) => {
         navigate("../chat/" + id);
     }
 
+    // Navigates to the Review page passing the requested review to 
+    // Review with the review ID into the URL. Used with the 
+    // RestaurantReviewDetail.js Component
     const reviewEditHandler = (id) => {
         navigate("../review/" + id);
     }
 
-    const starGenerator = (starCount) => {
-        let totalStarCount = 0;
-        let stars = "";
+    // These buttons will be passed into the RestaurantReviewDetail.js 
+    // Component to allow the desired functionality with the component
+    const buttons = (
+        <UDRestaurantReviewDetail reviewEditHandler={reviewEditHandler} 
+        deleteReviewHandler={deleteReviewHandler} review={review}/>
+    )
 
-        for (let i = 0; i < starCount; i++) {
-            stars += '★';
-            totalStarCount += 1;
-        }
-
-        for (let i = totalStarCount; i < 5; i++) {
-            stars += '☆';
-        }
-
-        return stars;
-    }
-    
-
-    const userDetails = (
-        <Card>
-            <Card.Title className="text-center">
-                User Information
-            </Card.Title>
-            <Card.Body className="border-0">
-                    <ListGroup className="mb-3">
-                        <ListGroup.Item>
-                            <Row>
-                                <Col xs={5} lg={4}>
-                                    User Id:
-                                </Col>
-                                <Col className="justify-content-start" xs={7} lg={8}>
-                                    {currentUser.id}
-                                </Col>
-                            </Row>
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                            <Row>
-                                <Col xs={5} lg={4}>
-                                    First Name:
-                                </Col>
-                                <Col className="justify-content-start" xs={7} lg={8}>
-                                    {currentUser.firstName}
-                                </Col>
-                            </Row>
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                            <Row>
-                                <Col xs={5} lg={4}>
-                                    Last Name:
-                                </Col>
-                                <Col className="justify-content-start" xs={7} lg={8}>
-                                    {currentUser.lastName}
-                                </Col>
-                            </Row>
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                            <Row>
-                                <Col xs={5} lg={4}>
-                                    Address:
-                                </Col>
-                                <Col className="justify-content-start" xs={7} lg={8}>
-                                    {currentAddress.address}
-                                </Col>
-                            </Row>
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                            <Row>
-                                <Col xs={5} lg={4}>
-                                    City:
-                                </Col>
-                                <Col className="justify-content-start" xs={7} lg={8}>
-                                    {currentAddress.city}
-                                </Col>
-                            </Row>
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                            <Row>
-                                <Col xs={5} lg={4}>
-                                    State:
-                                </Col>
-                                <Col className="justify-content-start" xs={7} lg={8}>
-                                    {currentAddress.state}
-                                </Col>
-                            </Row>
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                            <Row>
-                                <Col xs={5} lg={4}>
-                                    Zip:
-                                </Col>
-                                <Col className="justify-content-start" xs={7} lg={8}>
-                                    {currentAddress.zip}
-                                </Col>
-                            </Row>
-                        </ListGroup.Item>
-                        <ListGroup.Item>
-                            <Row>
-                                <Col xs={5} lg={4}>
-                                    Email:
-                                </Col>
-                                <Col className="justify-content-start" xs={7} lg={8}>
-                                    {currentUser.email}
-                                </Col>
-                            </Row>
-                        </ListGroup.Item>
-                    </ListGroup>
-                <Button className="mx-auto d-flex" onClick={() => userInfoHandler()}>Update</Button>
-            </Card.Body>
-        </Card>
-    );
-
-    const friendList = (
-        <Card style={{ height: "449px"}}>
-            <Card.Title className="text-center">
-                Friends
-            </Card.Title>
-            <Card.Body style={{ overflow: "auto"}}>
-                <ListGroup className="mb-3">
-                    {currentFriendList.map((friend) => (
-                        <ListGroup.Item key={friend.userId} id={friend.userId}>
-                            <Row>
-                                <Col className="d-flex align-items-center my-1 me-0 pe-0 flex-shrink-1">
-                                    {friend.userName}
-                                </Col>
-                                <Col className="d-flex justify-content-end my-1 px-0 flex-shrink-1">
-                                    <Button onClick={() => chatHandler(friend.userId)}>Chat</Button>
-                                </Col>
-                                <Col className="d-flex justify-content-center my-1 px-0 flex-shrink-1">
-                                    <Button onClick={() => deleteFriendHandler(friend)}>
-                                        Delete
-                                    </Button>
-                                    
-                                </Col>
-                            </Row>
-                        </ListGroup.Item>
-                    ))}
-                    </ListGroup>
-                    <ModalDeleteFriend 
-                    show={showFriendConfirm} 
-                    deleteFriend={deleteFriend}
-                    closeHandler={closeFriendHandler} 
-                    friend={friend} />
-            </Card.Body>
-        </Card>
-    );
+    // This modal will be passed into the RestaurantReviewDetail.js 
+    // Component to allow a confirmation before a review is deleted
+    const deleteButtonModal = (
+        <DeleteReviewConfirm 
+        show={showReviewConfirm} 
+        deleteReview={deleteReview}
+        closeHandler={closeReviewHandler} 
+        review={review} />
+    )
 
     return (
-        
         <Container className="justify-content-center">
-            <h1>
-                User Dashboard
-            </h1>
             {console.log("Test is ", user)}
             {console.log("Current User is ", currentUser)}
             {console.log("Current Address is ", currentAddress)}
-            {console.log("Test Data .user is ", testData.user)}
-            <Container fluid>
-                <Row>
-                    <Col className="px-md-0 pb-2" md={6}>
-                        {userDetails}
-                    </Col>
-                    <Col className="pe-md-0 pb-2" md={6}>
-                        {friendList}
-                    </Col>
-                </Row>
-                <Row>
-                    {review.map((review) => (
-                        <Card className="mb-2" key={review.reviewId} style={{}}>
-                            <Card.Body>
-                                <Card.Title as="h2" className="text-center">
-                                    <div>
-                                        {review.restaurant.name}
-                                    </div>
-                                    
-                                    
-                                </Card.Title>
-                                <Card.Text as="h4" className="text-center">
-                                    <div>
-                                        {starGenerator(restaurant.filter((restaurant) => (restaurant.id === review.restaurant.id))[0].rating.overallRating)}
-                                    </div>
-                                </Card.Text>
-                            </Card.Body>
-                            {/** MAKE SURE TO REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
-                            {console.log(review)}
-                            <Card.Img className="mx-auto" style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }} src={review.image[0].imageLocation} />
-                            <Card.Text className="text-center pt-1">
-                                {review.author.userName}
-                            </Card.Text>
-                            <Row>
-                                <Col className="d-flex justify-content-center justify-content-sm-start pt-2">
-                                    <ListGroup as="ul">
-                                        <ListGroup.Item as="li" 
-                                        className="d-flex justify-content-between align-items-start pt-1 pb-0 mb-0 border-bottom-0" 
-                                        style={{ maxWidth: "13rem"}}>
-                                            <div className="pe-2">
-                                                Taste
-                                            </div>
-                                            <div>
-                                                {starGenerator(review.tasteRating)}
-                                            </div>
-                                        </ListGroup.Item>
-                                        <ListGroup.Item as="li" 
-                                        className="d-flex justify-content-between align-items-start pt-1 pb-0 mb-0 border-bottom-0" 
-                                        style={{ maxWidth: "13rem"}}>
-                                            <div className="pe-2">
-                                                Service
-                                            </div>
-                                            <div>
-                                                {starGenerator(review.serviceRating)}
-                                            </div>
-                                        </ListGroup.Item>
-                                        <ListGroup.Item as="li" 
-                                        className="d-flex justify-content-between align-items-start pt-1 pb-0 mb-0 border-bottom-0" 
-                                        style={{ maxWidth: "13rem"}}>
-                                            <div className="pe-2">
-                                                Cleanliness
-                                            </div>
-                                            <div>
-                                                {starGenerator(review.cleanlinessRating)}
-                                            </div>
-                                        </ListGroup.Item>
-                                        <ListGroup.Item as="li" 
-                                        className="d-flex justify-content-between align-items-start pt-1 pb-0 mb-0" 
-                                        style={{ maxWidth: "13rem"}}>
-                                            <div className="pe-2">
-                                                Overall 
-                                            </div>
-                                            <div>
-                                                {starGenerator(review.overallRating)}
-                                            </div>
-                                        </ListGroup.Item>
-                                    </ListGroup>
-                                </Col>
-                                <Col className="d-flex justify-content-center justify-content-sm-end align-items-end">
-                                    <span className="text-center" style={{minWidth: "12rem"}}>
-                                        Date Of Visit: {review.history.created}
-                                    </span>
-                                </Col>
-                            </Row>
-                            
-                            <Card.Body>
-                                <Card.Title className="text-center">
-                                    {review.reviewTitle}
-                                </Card.Title>
-                                <Card.Text>
-                                    {review.reviewText}
-                                </Card.Text>
-                                <Container  fluid className="d-flex px-0 justify-content-center justify-content-sm-center justify-content-md-end ">
-                                    <Button className="mx-1" style={{ width: "5rem" }} onClick={() => {reviewEditHandler(review.reviewId)}}>
-                                        Edit
-                                    </Button>
-                                    <Button className="mx-1" style={{ width: "5rem" }} onClick={() => {deleteReviewHandler(review)}}>
-                                        Delete
-                                    </Button>
-                                </Container>
-                            </Card.Body>
-                        </Card>
-                    ))}
-                    <DeleteReviewConfirm 
-                    show={showReviewConfirm} 
-                    deleteReview={deleteReview}
-                    closeHandler={closeReviewHandler} 
-                    review={review} />
-                </Row>
-            </Container>
-            <Link to="/">Back to Home</Link>
+            {console.log("Test Data .user is ", mockStateData.user)}
+            <h1>
+                User Dashboard
+            </h1>
+            <Row>
+                <Col className="pb-2" md={6}>
+                    <UserInfo 
+                    currentUser={currentUser}   
+                    currentAddress={currentAddress} 
+                    userInfoHandler={userInfoHandler}/>
+                </Col>
+                <Col className="pb-2" md={6}>
+                    <FriendList friend={friend} chatHandler={chatHandler} 
+                    deleteFriendHandler={deleteFriendHandler} showFriendConfirm={showFriendConfirm} 
+                    deleteFriend={deleteFriend} closeFriendHandler={closeFriendHandler}
+                    currentFriendList={currentFriendList} closeReviewHandler={closeReviewHandler} 
+                    restaurant={restaurant}/>
+                </Col>
+            </Row>
+            <RestaurantReviewDetail review={review} restaurant={restaurant} 
+            buttons={buttons} modal={deleteButtonModal}/>
         </Container>
-            
-        
     )
 }
 
