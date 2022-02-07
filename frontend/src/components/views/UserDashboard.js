@@ -113,7 +113,7 @@ function UserDashboard(props) {
     )
 
     return (
-        <Container className="justify-content-center">
+        <Container className="justify-content-center" style={{maxWidth: "1000px"}}>
             {console.log("Test is ", user)}
             {console.log("Current User is ", currentUser)}
             {console.log("Current Address is ", currentAddress)}
