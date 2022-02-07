@@ -8,11 +8,12 @@
 //  (DAB, 02/05/2022, wrote the code that will be the FriendList Component)
 //  (DAB, 02/06/2022, finished the code for RestaurantDetailDetail Component)
 //  (DAB, 02/06/2022, breaking up components/functionality into their own .js files)
+//  (DAB, 02/07/2022, changed buttons to buttonGroup function)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState } from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import mockStateData from "../../redux/initialState.json";
 import { useNavigate } from 'react-router-dom';
 import FriendList from '../subComponent/FriendList';
@@ -99,7 +100,7 @@ function UserDashboard(props) {
     // Component to allow the desired functionality with the component. 
     // The review variable needs to be passed as an argument so it can 
     // be generated in the parent
-    const buttons = (review) => (
+    const buttonGroup = (review) => (
         <UDRestaurantReviewDetail reviewEditHandler={reviewEditHandler} 
         deleteReviewHandler={deleteReviewHandler} review={review}/>
     )
@@ -139,7 +140,7 @@ function UserDashboard(props) {
                 </Col>
             </Row>
             <RestaurantReviewDetail review={review} restaurant={restaurant} 
-            buttons={buttons} modal={deleteButtonModal}/>
+            buttonGroup={buttonGroup} modal={deleteButtonModal}/>
         </Container>
     )
 }

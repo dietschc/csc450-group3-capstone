@@ -10,7 +10,7 @@ import React from 'react';
 import { Container, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import EditRestaurantForm from '../form/EditRestaurantForm';
-import BodyContainer from '../template/BodyContainer';
+import FormContainer from '../template/FormContainer';
 
 function EditRestaurant(props) {
     // These variables will keep track if the form was submitted and weather the 
@@ -54,10 +54,10 @@ function EditRestaurant(props) {
     // The EditRestaurant View will display a header and main content. The content is 
     // wrapped in a page formatting BodyContainer
     return (
-        <BodyContainer>
+        <FormContainer>
             {header}
             {main}
-        </BodyContainer>
+        </FormContainer>
     )
 }
 

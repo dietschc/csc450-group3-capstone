@@ -1,8 +1,9 @@
 // Initially Created by: Devin Brueberg
 // CSC450 Capstone
-// Restaurant Club - BodyContainer.js
+// Restaurant Club - FormContainer.js
 // February 3, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 02/07/2022, Changed the name to FormContainer)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -13,10 +14,10 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 /**
  * This template will be the formatting for the body of the app. 
  * 
- * @param {*} props 
+ * @param { children } props 
  * @returns 
  */
-function BodyContainer(props) {
+function FormContainer(props) {
     // Saving props.children to a variable so they can be wrapped
     const children = props.children;
     
@@ -28,4 +29,4 @@ function BodyContainer(props) {
 }
 
 // Exporting the component
-export default BodyContainer;
+export default FormContainer;

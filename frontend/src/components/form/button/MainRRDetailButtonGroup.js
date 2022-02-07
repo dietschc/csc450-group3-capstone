@@ -11,11 +11,14 @@ import { Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 /**
- * A React-Bootstrap Button is returned that will work with both Edit Views. 
- * The button will update depending on what parent form is loaded.
+ * The MainRRDetailButtonGroup will display the buttons for the 
+ * RestaurantReviewDetail Component on the Main View. The buttons will 
+ * allow a search to be performed based off the current review, the 
+ * Restaurant View referencing that review to be opened, and the 
+ * ability to add the review author as a friend. 
  * 
- * @param { isUpdate, saveAccount, clearForm } props 
- * @returns
+ * @param { moreHandler, restaurantHandler, friendHandler, review } props 
+ * @returns 
  */
 function MainRRDetailButtonGroup(props) {
     // The form component specific props will be assigned and 

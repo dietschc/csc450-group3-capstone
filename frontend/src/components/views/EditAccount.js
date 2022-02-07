@@ -10,6 +10,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
+import FormContainer from '../template/FormContainer'
 
 function EditAccount(props) {
     let editing = false
@@ -102,7 +103,7 @@ function EditAccount(props) {
     }
 
     return (
-        <Container fluid className="text-muted" style={{ maxWidth: "500px" }}>
+        <FormContainer>
             <Container as="header">
                 <div className="text-center p-1">
                     <h1>{editing ? "Edit" : "Create"} Account</h1>
@@ -262,7 +263,7 @@ function EditAccount(props) {
                     </Form>
                 )}
             </Container>
-        </Container>
+        </FormContainer>
     )
 }
 
