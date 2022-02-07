@@ -40,8 +40,7 @@ function MainNav(props) {
             bg={backgroundTheme}
             variant={variantTheme}
             collapseOnSelect
-            expand="md"
-            style={{ maxHeight: "100px" }}>
+            expand="md">
                 <Navbar.Brand>
                     <img
                         src="logo.gif"
