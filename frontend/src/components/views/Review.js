@@ -3,7 +3,7 @@
 // Restaurant Club - Review.js
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
-// (CPD, 2/4/22, Review View Layout #33 - Initial layout and styling)
+// (CPD, 02/4/22, Review View Layout #33 - Initial layout and styling)
 
 // Using React library in order to build components 
 // for the app and importing needed components
