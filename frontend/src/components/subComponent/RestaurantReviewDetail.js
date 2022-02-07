@@ -3,6 +3,7 @@
 // Restaurant Club - RestaurantReviewDetail.js
 // February 6, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 02/07/2022, Changed plain buttons variable to a buttonGroup function)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -15,7 +16,7 @@ import { printStarTotal, printReviewTotal } from '../../helperFunction/StringGen
  * A React-Bootstrap formatted component that shows the restaurant 
  * details will be generated. 
  * 
- * @param { review, restaurant, buttons, modal } props 
+ * @param { review, restaurant, buttonGroup, modal } props 
  * @returns 
  */
 function RestaurantReviewDetail(props) {
@@ -23,7 +24,8 @@ function RestaurantReviewDetail(props) {
     // used to process the form element. 
     //**********NOTE: Feel free to add props but do not remove props you did not add
     // Also do not edit the styles in this component, only outside is allowed ******
-    const { review, restaurant, buttons, modal } = props;
+    const { review, restaurant, buttonGroup, modal } = props;
+    
 
     return (
         <Container fluid>
@@ -46,7 +48,7 @@ function RestaurantReviewDetail(props) {
                                 </Card.Text>
                             </Card.Body>
                             {/** MAKE SURE TO REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
-                            {console.log(review)}
+                            {console.log("REVIEW IN RRD IS ", review)}
                             <Card.Img className="mx-auto" style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }} src={review.image[0].imageLocation} />
                             <Card.Text className="text-center pt-1">
                                 {review.author.userName}
@@ -111,8 +113,8 @@ function RestaurantReviewDetail(props) {
                                 </Card.Text> 
                                 <Container  fluid className="d-flex px-0 justify-content-center justify-content-sm-center justify-content-md-end ">
                                     {/**Buttons to add function for this Container will generate here, add the 
-                                     * buttons to the container by passing them as props*/}
-                                    {buttons}
+                                     * buttons to the container by passing them as functional props*/}
+                                    {buttonGroup(review)}
                                 </Container>
                             </Card.Body>
                         </Card>
