@@ -11,6 +11,8 @@ import { Card } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 /**
+ * The ReviewTextCardBody is wrapped in a Card.Body and will 
+ * display the review's title and text.
  * 
  * @param { review } props 
  * @returns 

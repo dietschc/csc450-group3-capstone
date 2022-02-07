@@ -12,6 +12,10 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { printStarTotal } from '../../helperFunction/StringGenerator';
 
 /**
+ * The FullStarRatingCol is a React Bootstrap Col Component that will
+ * accept the standard Restaurant Club ratings. These ratings will then 
+ * be returned in a nicely formatted box that will display in the bottom 
+ * left of the screen.
  * 
  * @param { rating } props 
  * @returns 

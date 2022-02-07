@@ -12,6 +12,10 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import FullStarRatingCol from './FullStarRatingCol';
 
 /**
+ * The FullStarRatingRow will accept a review for a prop and 
+ * return a beautifully styled row that will contain a 
+ * FullStarRatingCol on the bottom left and a created history 
+ * date on the right.
  * 
  * @param { review } props 
  * @returns 

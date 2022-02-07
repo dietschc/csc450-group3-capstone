@@ -13,7 +13,7 @@ import { Card, Row, Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import FullStarRatingRow from './FullStarRatingRow';
 import ReviewTextCardBody from './ReviewTextCardBody';
-import RestaurantHeadingCardBody from './RestaurantHeadingCardBody';
+import ReviewHeadingCardBody from './ReviewHeadingCardBody';
 
 /**
  * A React-Bootstrap formatted component that shows the restaurant 
@@ -34,7 +34,7 @@ function RestaurantReviewDetail(props) {
                 <Row>
                     {review.map((review) => (
                         <Card className="mb-2" key={review.reviewId} style={{}}>
-                            <RestaurantHeadingCardBody review={review} restaurant={restaurant}/>
+                            <ReviewHeadingCardBody review={review} restaurant={restaurant}/>
                             {/** MAKE SURE TO REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
                             {console.log("REVIEW IN RRD IS ", review)}
                             <Card.Img className="mx-auto" 
