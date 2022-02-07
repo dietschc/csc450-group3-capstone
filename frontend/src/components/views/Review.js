@@ -67,9 +67,12 @@ function Review(props) {
                 </div>
             </Container>
             <Container fluid as="main" className="pb-5 justify-content-center">
-                <strong>Please rate your visit!</strong>
+                <div className="text-center">
+                    <strong>Please rate your visit!</strong>
+                </div>
+
                 <Form>
-                    <Row>
+                    <Row className="justify-content-center">
                         <Col xs="6">
                             <Form.Group>
                                 <Form.Label>Taste</Form.Label>
