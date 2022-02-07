@@ -30,7 +30,7 @@ function FloatingDigitalContact(props) {
                 label="DigitalContact">
                     <Form.Control
                         type="text"
-                        placeholder="DigitalContact"
+                        placeholder="Digital Contact"
                         required
                         value={digitalContact}
                         onChange={onChangeDigitalContact}

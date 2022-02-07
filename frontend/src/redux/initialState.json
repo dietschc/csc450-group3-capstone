@@ -6,6 +6,7 @@
             "lastName": "McGee",
             "address": {
                 "addressId": 0,
+                "address": "200 W Fairy Way",
                 "city": "St. Anthony",
                 "state": "MN",
                 "zip": "55421"
@@ -23,6 +24,17 @@
                     "lastModified": ""
                 }
             },
+            "email": "roger@bobby.com",
+            "friend": [
+                {
+                    "userId": 1,
+                    "userName": "Member1"
+                },
+                {
+                    "userId": 2,
+                    "userName": "Member2"
+                }
+            ],
             "isLoggedIn": false
         },
         {
@@ -32,6 +44,7 @@
             "lastName": "",
             "address": {
                 "addressId": null,
+                "address": "",
                 "city": "",
                 "state": "",
                 "zip": ""
@@ -49,13 +62,27 @@
                     "lastModified": ""
                 }
             },
+            "email": "",
+            "friend": [
+                {
+                    "userId": 0,
+                    "userName": "Guest1"
+                },
+                {
+                    "userId": 2,
+                    "userName": "Member2"
+                }
+            ],
             "isLoggedIn": true
         }
     ],
     "restaurant": [
         {
             "id": 0,
-            "userId": 1,
+            "author": {
+                "userId": 1,
+                "userName": "Member1"
+            },
             "ownerId": null,
             "name": "Olive Garden",
             "digitalContact": "https://m.olivegarden.com/contact-us",
@@ -85,7 +112,10 @@
         },
         {
             "id": 1,
-            "userId": 2,
+            "author": {
+                "userId": 2,
+                "userName": "Member2"
+            },
             "ownerId": null,
             "name": "Texas Roadhouse",
             "digitalContact": "https://www.texasroadhouse.com/contact-us",
@@ -115,7 +145,10 @@
         },
         {
             "id": 2,
-            "userId": 10,
+            "author": {
+                "userId": 1,
+                "userName": "Member10"
+            },
             "ownerId": null,
             "name": "Willy McCoys",
             "digitalContact": "",
@@ -147,8 +180,15 @@
     "review": [
         {
             "reviewId": 0,
-            "userId": 0,
-            "restaurantId": 0,
+            "author": {
+                "userId": 1,
+                "userName": "Guest1"
+            },
+            "restaurant": {
+                "id": 0,
+                "name": "Olive Garden"
+            },
+            
             "ratingId": 1,
             "tasteRating": 5,
             "serviceRating": 4,
@@ -170,8 +210,14 @@
         },
         {
             "reviewId": 1,
-            "userId": 0,
-            "restaurantId": 1,
+            "author": {
+                "userId": 0,
+                "userName": "Guest1"
+            },
+            "restaurant": {
+                "id": 1,
+                "name": "Texas Roadhouse"
+            },
             "ratingId": 2,
             "tasteRating": 5,
             "serviceRating": 3,
@@ -179,7 +225,7 @@
             "overallRating": 3,
             "reviewTitle": "Best Burgers in Town!!",
             "reviewText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque efficitur ante non sem elementum, id lacinia sapien malesuada. Ut vel elementum ipsum, a placerat mauris. Nam augue felis, viverra a molestie at, varius eu libero. Aliquam massa sapien, tempor at lectus vitae, efficitur tincidunt neque. Ut euismod vestibulum dolor, sit amet faucibus ante efficitur vel. Suspendisse potenti. Nam auctor tristique molestie. Nam vitae dictum diam, eget scelerisque elit. Aliquam erat volutpat. Nullam neque erat, ornare in placerat et, tempus et massa. Fusce arcu diam, imperdiet sed imperdiet ac, dignissim quis mi. Integer tincidunt non dolor vel consequat. Donec ac metus sit amet risus egestas fermentum ut ac odio. Maecenas commodo lectus ex, in tincidunt lorem sollicitudin vitae. In id quam elementum, hendrerit sapien eget, aliquet massa. Curabitur id faucibus orci, et pharetra ex.",
-            "images": [
+            "image": [
                 {
                     "imageId": 1,
                     "imageLocation": "/reviewImages/1/roadhouse.jpg"
@@ -193,8 +239,14 @@
         },
         {
             "reviewId": 2,
-            "userId": 1,
-            "restaurantId": 2,
+            "author": {
+                "userId": 1,
+                "userName": "Member1"
+            },
+            "restaurant": {
+                "id": 2,
+                "name": "Willy McCoys"
+            },
             "ratingId": 3,
             "tasteRating": 5,
             "serviceRating": 5,
