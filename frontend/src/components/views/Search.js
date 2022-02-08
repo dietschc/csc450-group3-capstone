@@ -24,7 +24,7 @@ function Search(props) {
     return (
         <XLContainer>
             <Container as="header">
-                <div className="text-center p-1">
+                <div className="text-center p-1 text-muted">
                     <h1>Search Results</h1>
                 </div>
             </Container>
