@@ -8,15 +8,35 @@
 // for the app and importing needed components
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Row, Col, Form, Container, Button, FloatingLabel, Card } from 'react-bootstrap';
+import FormContainer from '../template/XLContainer';
 
 function Chat(props) {
     return (
-        <div className="chat">
+        <FormContainer>
             <h1>
                 Welcome to the Chat Page!
             </h1>
-            <Link to="/">Back to Home</Link>
-        </div>
+            <Card className="w-100 h-100">
+                <Card.Title className="text-center">
+                    Chatting with Thomas
+                </Card.Title>
+                <Card.Text className="border h-50">
+                    Alternating text from messages
+                </Card.Text>
+                <Card.Body className="justify-content-end w-auto ms-sm-auto">
+                    <Form className="">
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                            <Form.Label>Example textarea</Form.Label>
+                            <Form.Control as="textarea" rows={3} />
+                        </Form.Group>
+                        <Button className="d-flex ms-auto justify-content-center" style={{ width: "5rem"}}>Send</Button>
+                    </Form>
+                </Card.Body>
+                
+            </Card>
+        </FormContainer>
+            
     )
 }
 
