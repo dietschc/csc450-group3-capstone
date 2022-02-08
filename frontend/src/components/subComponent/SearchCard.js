@@ -21,7 +21,7 @@ function SearchCard(props) {
 
     return (
         <Link className="text-decoration-none text-reset" to={"/restaurant/" + props.restaurantId}>
-            <Card className="border-0 text-muted">
+            <Card className="border-0 text-muted hoverable mb-2">
                 <Card.Body className="text-center">
                     <Card.Title>{props.restaurantName}</Card.Title>
                     <ListGroup variant="horizontal" className="justify-content-center">
