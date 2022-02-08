@@ -18,6 +18,7 @@ function MainNav(props) {
     const [basicActive, setBasicActive] = useState();
     const navigate = useNavigate();
     
+    
     const setActive = (value) => {
         if (value === basicActive) return;
         console.log("Navigating to " + value)
