@@ -180,7 +180,7 @@ function Review(props) {
 
                         <Col className="text-center">
                             <img
-                                src="reviewImages/3/stock-illustration-retro-diner.jpg"
+                                src="../reviewImages/3/stock-illustration-retro-diner.jpg"
                                 width="300"
                                 height="200"
                                 className="p-3 flex-begin"
