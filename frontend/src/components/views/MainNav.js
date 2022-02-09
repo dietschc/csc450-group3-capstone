@@ -44,7 +44,7 @@ function MainNav(props) {
             expand="md">
                 <Navbar.Brand>
                     <img
-                        src="logo.gif"
+                        src="../logo.gif"
                         width="90"
                         height="90"
                         className="flex-begin"
