@@ -78,7 +78,7 @@ function Chat(props) {
                             <Col></Col>
                             <Col sm={12} md={6}>
                                 <Form.Group className="mb-3" controlId="formMessageInput" >
-                                    <Form.Label hidden>Message</Form.Label>
+                                    <Form.Label className="visually-hidden">Message</Form.Label>
                                     <Form.Control as="textarea" className="p-2"rows={3} value={chatMessage} onChange={e=>setChatMessage(e.target.value)}/>
                                 </Form.Group>
                             <Button type="submit" className="d-flex ms-auto justify-content-center" style={{ width: "5rem"}} onClick={(e)=>sendMessageHandler(e)}>Send</Button>
