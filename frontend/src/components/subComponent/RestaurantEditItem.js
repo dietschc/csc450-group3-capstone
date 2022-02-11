@@ -9,7 +9,7 @@
 import React from 'react'
 import { ListGroup, Col, Row, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { phoneNumberFormat } from '../../helperFunction/FormatString';
+import { formatPhoneNumber } from '../../helperFunction/FormatString';
 
 /**
  * The RestaurantEditItem Component allows the manipulation of restaurant data 
@@ -25,8 +25,8 @@ function RestaurantEditItem(props) {
     const { restaurant } = props;
 
     return (
-        <ListGroup className="justify-content-center px-0 mb-2">
-            <ListGroup.Item  className="border-3" style={{minHeight:"3rem"}} action>
+        <ListGroup as="ul" className="justify-content-center px-0 mb-2">
+            <ListGroup.Item  as="li" className="border-3" style={{minHeight:"3rem"}} action>
                 <Row className="d-flex justify-content-between align-items-center">
                     <Col sm={6}>
                         <Row>
@@ -38,7 +38,7 @@ function RestaurantEditItem(props) {
                             <Col xs={6} 
                             className="d-flex justify-content-center justify-content-sm-start ps-0">
                                 <div>
-                                    {phoneNumberFormat(restaurant.phone)}
+                                    {formatPhoneNumber(restaurant.phone)}
                                 </div>
                             </Col>
                         </Row>
