@@ -3,6 +3,7 @@
 // Restaurant Club - Admin.js
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 2/10/2022, Added in basic Layout and functionality)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -10,33 +11,107 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar, Button, Nav, Form, Container, FormControl, FormGroup, Row, Col, ButtonGroup, ListGroup } from 'react-bootstrap';
 import XLContainer from '../template/XLContainer';
+import mockStateData from "../../redux/initialState.json";
+import RestaurantEditItem from '../subComponent/RestaurantEditItem';
+import UserEditItem from '../subComponent/UserEditItem';
 
 function Admin(props) {
     // The mock state will be held as data
     const [data, setData] = useState(mockStateData);
-    const [chatMessage, setChatMessage] = useState("");
-    const [messageHistory, setMessageHistory] = useState(data.message);
-    const [ searchOption, setSearchOption ] = useState();
+    const [ searchInput, setSearchInput ] = useState("");
+    const [ searchType, setSearchType ] = useState("");
 
+    // Destructuring the data to be used in the search
     const { user, restaurant } = data;
 
+    // This submit handler will handle the search form when submitted and assign the 
+    // search input and search type to their respective state variables
     const searchSubmitHandler= (e) => {
         e.preventDefault();
+        setSearchType(e.target.searchOption.value);
+        setSearchInput(e.target.search.value)
+        
+        //DEBUG
         console.log("FORM SUBMITTED")
-        console.log(e.target.search.value)
-        console.log(e.target.searchOption.value)
-        setSearchOption(e.target.searchOption.value)
     }
 
+    // The userSearch method will filter user and return the filtered array with the results
     const userSearch = (userName) => {
-        let searchResults = user.filter((user) => userName.match("/hello.*/")
+        // Code for userName search
+        let searchResults = user.filter((user) => ((user.auth.userName).toLowerCase()).match(userName.toLowerCase() + ".*"));
+
+        // Code for first name last name search
+        // let searchResults = user.filter((user) => ((user.firstName).toLowerCase() + " " + (user.lastName).toLowerCase()).match(userName.toLowerCase() + ".*"));
+
+        //DEBUG
+        console.log("Search Results are ", searchResults)
+
+        return searchResults;
     }
 
+    // The restaurantSearch method will filter restaurant and return only the items that match the search input
     const restaurantSearch = (restaurantName) => {
+        // Searching based off restaurant name
+        let searchResults = restaurant.filter((restaurant) => (restaurant.name).toLowerCase().match((restaurantName.toLowerCase()) + ".*"));
 
+        // DEBUG
+        console.log("Search Results are ", searchResults)
+
+        return searchResults;
     }
 
-    
+    // The searchList method will return either the User or Restaurant EditItem component 
+    // based off the search input and search criteria. If there are no matches the user 
+    // is notified
+    const searchList = () => {
+        if (searchInput === "") {
+            return
+        }
+        else {
+            if (searchType === "user") {
+                //DEBUG
+                console.log("Searching User")
+                console.log(userSearch(searchInput));
+
+                // The results of the userSearch
+                const results = userSearch(searchInput);
+                if (results.length < 1) {
+                    return (
+                        <h4 className="text-center">
+                            Sorry  no results found for {searchInput}.
+                        </h4>
+                    )
+                }
+                else {
+                    return (
+                        results.map((user) => <UserEditItem key={user.id} user={user}/>)
+                    )  
+                }
+            }
+            else {
+                //DEBUG
+                console.log("Restaurant Search");
+                console.log(restaurantSearch(searchInput))
+
+                // The results of the restaurantSearch
+                const results = restaurantSearch(searchInput);
+
+                if (results.length < 1) {
+                    return (
+                        <h4 className="text-center">
+                            Sorry no results found for {searchInput}.
+                        </h4>
+                    )
+                }
+                else {
+                    return (
+                        results.map((restaurant) => <RestaurantEditItem key={restaurant.id} restaurant={restaurant}/>)
+                    )  
+                }
+            }
+        }
+    }
+
     return (
         <XLContainer>
             <h1>
@@ -77,66 +152,10 @@ function Admin(props) {
                         id="searchOptionRadio1"
                         />
                     </ButtonGroup>
-                    
                 </Row>
-                    </Form>
-
-                    <ListGroup className="justify-content-center px-0 mb-2">
-                        <ListGroup.Item  className="border-3" style={{minHeight:"3rem"}} action>
-                            <Row className="d-flex justify-content-between align-items-center">
-                                <Col sm={6}>
-                                    <div className="pb-1">
-                                        User Name
-                                    </div>
-                                </Col>
-                                <Col sm={6} className="d-flex justify-content-between">
-                                    <Button className="mx-1" style={{width:"7rem"}}>
-                                        Dashboard
-                                    </Button>
-                                    <Button className="mx-1" style={{width:"7rem"}}>
-                                        Ban
-                                    </Button>
-                                    <Button className="mx-1" style={{width:"7rem"}}>
-                                        Delete
-                                    </Button>
-                                </Col>
-                            </Row>
-                        </ListGroup.Item>
-                    </ListGroup>
-                    <ListGroup className="justify-content-center px-0 mb-2">
-                        <ListGroup.Item  className="border-3" style={{minHeight:"3rem"}} action>
-                            <Row className="d-flex justify-content-between align-items-center">
-                                <Col sm={6}>
-                                    <Row>
-                                        <Col xs={6} className="d-flex align-content-center pe-0">
-                                            <div>
-                                                Restaurant Name
-                                            </div>
-                                        </Col>
-                                        <Col xs={6} 
-                                        className="d-flex justify-content-end justify-content-sm-center ps-0">
-                                            <div>
-                                                Phone Number
-                                            </div>
-                                        </Col>
-                                    </Row>
-                                </Col>
-                                <Col sm={6} className="d-flex justify-content-between">
-                                    <Button className="mx-1" style={{width:"7rem"}}>
-                                        View
-                                    </Button>
-                                    <Button className="mx-1" style={{width:"7rem"}}>
-                                        Edit
-                                    </Button>
-                                    <Button className="mx-1" style={{width:"7rem"}}>
-                                        Delete
-                                    </Button>
-                                </Col>
-                            </Row>
-                        </ListGroup.Item>
-                    </ListGroup>
-                    <Link to="/">Back to Home</Link>
-                </XLContainer>
+            </Form>
+            {searchList()}
+        </XLContainer>
     )
 }
 
