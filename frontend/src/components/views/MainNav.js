@@ -82,16 +82,16 @@ function MainNav(props) {
                         </Nav.Item> 
                     </Nav>
                     <Form className="d-flex">
-                                <FormControl
-                                type="search"
-                                placeholder="Search"
-                                className="me-2"
-                                aria-label="Search"
-                                />
-                                <Button variant={buttonTheme} onClick={() => searchHandler()}>
-                                    Search
-                                </Button>
-                            </Form>
+                        <FormControl
+                        type="search"
+                        placeholder="Search"
+                        className="me-2"
+                        aria-label="Search"
+                        />
+                        <Button variant={buttonTheme} onClick={() => searchHandler()}>
+                            Search
+                        </Button>
+                    </Form>
                 </Navbar.Collapse>
             </Navbar>
         </Container>   
