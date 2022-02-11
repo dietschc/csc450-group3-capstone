@@ -12,13 +12,28 @@ import { Navbar, Button, Nav, Form, Container, FormControl, FormGroup, Row, Col,
 import XLContainer from '../template/XLContainer';
 
 function Admin(props) {
+    // The mock state will be held as data
+    const [data, setData] = useState(mockStateData);
+    const [chatMessage, setChatMessage] = useState("");
+    const [messageHistory, setMessageHistory] = useState(data.message);
     const [ searchOption, setSearchOption ] = useState();
+
+    const { user, restaurant } = data;
+
     const searchSubmitHandler= (e) => {
         e.preventDefault();
         console.log("FORM SUBMITTED")
         console.log(e.target.search.value)
         console.log(e.target.searchOption.value)
         setSearchOption(e.target.searchOption.value)
+    }
+
+    const userSearch = (userName) => {
+        let searchResults = user.filter((user) => user.
+    }
+
+    const restaurantSearch = (restaurantName) => {
+
     }
 
     
@@ -70,8 +85,8 @@ function Admin(props) {
                         <ListGroup.Item  className="border-3" style={{minHeight:"3rem"}} action>
                             <Row className="d-flex justify-content-between align-items-center">
                                 <Col sm={6}>
-                                    <div>
-                                        User Id
+                                    <div className="pb-1">
+                                        User Name
                                     </div>
                                 </Col>
                                 <Col sm={6} className="d-flex justify-content-between">
@@ -91,13 +106,20 @@ function Admin(props) {
                     <ListGroup className="justify-content-center px-0 mb-2">
                         <ListGroup.Item  className="border-3" style={{minHeight:"3rem"}} action>
                             <Row className="d-flex justify-content-between align-items-center">
-                                <Col sm={6} className="d-flex justify-content-sm-center justify-content-start">
-                                    <div className="pb-1">
-                                        Restaurant Name
-                                    </div>
-                                    <div className="mx-auto pb-1">
-                                        Phone Number
-                                    </div>
+                                <Col sm={6}>
+                                    <Row>
+                                        <Col xs={6} className="d-flex align-content-center pe-0">
+                                            <div>
+                                                Restaurant Name
+                                            </div>
+                                        </Col>
+                                        <Col xs={6} 
+                                        className="d-flex justify-content-end justify-content-sm-center ps-0">
+                                            <div>
+                                                Phone Number
+                                            </div>
+                                        </Col>
+                                    </Row>
                                 </Col>
                                 <Col sm={6} className="d-flex justify-content-between">
                                     <Button className="mx-1" style={{width:"7rem"}}>
