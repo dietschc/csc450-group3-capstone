@@ -11,7 +11,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar, Button, Nav, Form, Container, FormControl, FormGroup, Row, Col, ButtonGroup, ListGroup } from 'react-bootstrap';
 import XLContainer from '../template/XLContainer';
-import mockStateData from "../../redux/initialState.json";
+import mockStateData from '../../redux/initialState.json';
 import RestaurantEditItem from '../subComponent/RestaurantEditItem';
 import UserEditItem from '../subComponent/UserEditItem';
 
