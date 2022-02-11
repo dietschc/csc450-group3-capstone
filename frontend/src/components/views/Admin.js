@@ -29,7 +29,7 @@ function Admin(props) {
     }
 
     const userSearch = (userName) => {
-        let searchResults = user.filter((user) => user.
+        let searchResults = user.filter((user) => userName.match("/hello.*/")
     }
 
     const restaurantSearch = (restaurantName) => {
