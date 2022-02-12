@@ -24,8 +24,8 @@ function UserEditItem(props) {
     const { user } = props;
 
     return (
-        <ListGroup className="justify-content-center px-0 mb-2">
-            <ListGroup.Item  className="border-3" style={{minHeight:"3rem"}} action>
+        <ListGroup as="ul" className="justify-content-center px-0 mb-2">
+            <ListGroup.Item  as="li" className="border-3" style={{minHeight:"3rem"}} action>
                 <Row className="d-flex justify-content-between align-items-center">
                     <Col sm={6} className="d-flex justify-content-center justify-content-sm-start align-content-center pe-0">
                         <div className="pb-1">
