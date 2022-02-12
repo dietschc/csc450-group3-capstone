@@ -3,20 +3,149 @@
 // Restaurant Club - Restaurant.js
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 02/07/2022, Constructed the layout view for this component)
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useHistory, useNavigate } from 'react-router-dom';
+import XLContainer from '../template/XLContainer';
+import mockStateData from "../../redux/initialState.json";
+import { Card, ListGroup, Col, Row, Button, ListGroupItem, Container } from 'react-bootstrap';
+import { useParams } from "react-router-dom";
+import { printStarTotal, printReviewTotal } from '../../helperFunction/StringGenerator';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import RestaurantHeadingCardBody from '../subComponent/RestaurantHeadingCardBody';
+import FullStarRatingCol from '../subComponent/FullStarRatingCol';
+import RestaurantReviewDetail from '../subComponent/RestaurantReviewDetail';
+import ReviewHeadingCardBody from '../subComponent/ReviewHeadingCardBody';
+import FullStarRatingRow from '../subComponent/FullStarRatingRow';
+import ReviewTextCardBody from '../subComponent/ReviewTextCardBody';
 
+/**
+ * The Restaurant Component will display the Restaurant details and 
+ * all of the reviews for that restaurant in typical theme style. 
+ * 
+ * @param {*} props 
+ * @returns 
+ */
 function Restaurant(props) {
+    // *** Temporary test data, this will be replaced with Redux in the future ***
+    const [data, setData]=useState(mockStateData);
+    const { id } = useParams();
+    const navigate = useNavigate();
+
+    const newReviewHandler = (id) => {
+        navigate("../review/" + id);
+    }
+
+    // Destructuring the needed data from the intitialState.json file
+    const { user, restaurant, review, message } = data; 
+    const [currentUser, ...otherUser] = user;
+    const { address: currentAddress }  = currentUser;
+    const { friend: currentFriendList } = currentUser;
+    
     return (
-        <div className="restaurant">
+        <XLContainer>
             <h1>
-                Welcome to the Restaurant Page!
+                Welcome to the Restaurant Page
             </h1>
-            <Link to="/">Back to Home</Link>
-        </div>
+            {console.log("PARAMS IS ", id)}
+            {console.log(restaurant.filter((restaurant) => (1 === restaurant.id)))}
+            
+            {id === undefined ? (
+                <h2 className="text-center">
+                    Sorry, no restaurants found!
+                </h2> 
+                ) : 
+                restaurant.filter((restaurant) => (id === restaurant.id.toString())).map((restaurant) => (
+                    <Card className="mb-2 p-2" key={restaurant.id}>
+                        <RestaurantHeadingCardBody restaurant={restaurant}/>
+                        <Card.Img className="mx-auto" 
+                        style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }} 
+                        src={restaurant.image[0].imageLocation} />
+                        <FullStarRatingCol rating={restaurant.rating}/>
+                        
+                        <ListGroup className="mx-auto mx-sm-0 border-0 border-right mt-2">
+                            <ListGroup.Item as="li" 
+                            className="d-flex justify-content-start align-items-start pt-1 pb-0 mb-0 border-bottom-0" 
+                            >
+                                <div className="pe-2" style={{ minWidth: "7.5rem"}}>
+                                    Address:
+                                </div>
+                                <div>
+                                    {restaurant.address.address}
+                                </div>
+                            </ListGroup.Item>
+                            <ListGroup.Item as="li" 
+                            className="d-flex justify-content-start align-items-start pt-1 pb-0 mb-0 border-bottom-0" 
+                            >
+                                <div className="pe-2" style={{ minWidth: "7.5rem"}}>
+                                    City
+                                </div>
+                                <div style={{ maxWidth: "7.5rem"}}>
+                                    {restaurant.address.city}
+                                </div>
+                            </ListGroup.Item>
+                            <ListGroup.Item as="li" 
+                            className="d-flex justify-content-start align-items-start pt-1 pb-0 mb-0 border-bottom-0" 
+                            >
+                                <div className="pe-2" style={{ minWidth: "7.5rem"}}>
+                                    State:
+                                </div>
+                                <div style={{ maxWidth: "7.5rem"}}>
+                                    {restaurant.address.state}
+                                </div>
+                            </ListGroup.Item>
+                            <ListGroup.Item as="li" 
+                            className="d-flex justify-content-start align-items-start pt-1 pb-0 mb-0 border-bottom-0" 
+                            >
+                                <div className="pe-2" style={{ minWidth: "7.5rem"}}>
+                                    Zip:
+                                </div>
+                                <div className="mr-auto">
+                                    {restaurant.address.zip}
+                                </div>
+                            </ListGroup.Item>
+                            
+                            <ListGroup.Item as="li" 
+                            className="d-flex justify-content-start align-items-start pt-1 pb-1 mb-0" 
+                            >
+                                <div className="pe-2" style={{ minWidth: "7.5rem"}}>
+                                    <a href={restaurant.digitalContact} target="_blank">Digital Contact</a>
+                                </div>
+                                <div >
+                                    <a href={restaurant.website} target="_blank">Website</a>
+                                </div>
+                            </ListGroup.Item>
+                            <ListGroup.Item className="d-flex justify-content-center border-0">
+                                <Button onClick={() => newReviewHandler(restaurant.id)}>New Review</Button>
+                            </ListGroup.Item>
+                        </ListGroup>
+
+                        <Container fluid>
+                            <Row>
+                            {review.map((review) => ( (review.restaurant.id === restaurant.id) ? (
+                                <Card className="mb-2" key={review.reviewId} style={{}}>
+                                    <RestaurantHeadingCardBody restaurant={restaurant}/>
+                                    {/** MAKE SURE TO REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
+                                    {console.log("REVIEW IN RRD IS ", review)}
+                                    <Card.Img className="mx-auto" 
+                                    style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }} 
+                                    src={review.image[0].imageLocation} />
+                                    <Card.Text className="text-center pt-1">
+                                        {review.author.userName}
+                                    </Card.Text>
+                                    <FullStarRatingRow review={review}/>
+                                    <ReviewTextCardBody review={review}/>
+                                </Card>
+                            ) : (console.log("nothing"))))}
+                            </Row>
+                        </Container>
+                    </Card>
+                    ))
+            }
+        </XLContainer>
     )
 }
 
