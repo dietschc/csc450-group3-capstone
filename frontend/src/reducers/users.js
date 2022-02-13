@@ -12,6 +12,8 @@ import C from '../constants';
 // altered
 export const users = (state = [], action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }
 
@@ -19,6 +21,8 @@ export const users = (state = [], action) => {
 // altered
 export const user = (state = {}, action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }
 
@@ -26,6 +30,8 @@ export const user = (state = {}, action) => {
 // altered
 export const auth = (state = {}, action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }
 
@@ -33,6 +39,8 @@ export const auth = (state = {}, action) => {
 // altered
 export const permission = (state = {}, action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }
 
@@ -47,6 +55,8 @@ export const history = (state = {}, action) => {
 // altered
 export const address = (state = {}, action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }
 
@@ -54,6 +64,8 @@ export const address = (state = {}, action) => {
 // altered
 export const friends = (state = [], action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }
 
@@ -61,5 +73,7 @@ export const friends = (state = [], action) => {
 // altered
 export const friend = (state = {}, action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }

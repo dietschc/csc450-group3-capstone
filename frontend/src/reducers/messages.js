@@ -12,6 +12,8 @@ import C from '../constants';
 // altered
 export const messages = (state = [], action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }
 
@@ -19,6 +21,8 @@ export const messages = (state = [], action) => {
 // altered
 export const message = (state = {}, action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }
 
@@ -26,5 +30,7 @@ export const message = (state = {}, action) => {
 // altered
 export const userMessage = (state = {}, action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }

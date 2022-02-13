@@ -8,12 +8,14 @@
 // for the app and importing needed components
 import C from '../constants';
 // The address reducer from users is the same as used in restaurants
-import { address } from '/users';
+import { address } from './users';
 
 // The restaurants reducer will allow the restaurants [] state to be 
 // altered
 export const restaurants = (state = [], action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }
 
@@ -21,6 +23,8 @@ export const restaurants = (state = [], action) => {
 // altered
 export const restaurant = (state = {}, action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }
 
@@ -28,6 +32,8 @@ export const restaurant = (state = {}, action) => {
 // altered
 export const author = (state = {}, action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }
 
@@ -39,6 +45,8 @@ export const restaurantAddress = (state = [], action) => address(state, action);
 // altered
 export const rating = (state = {}, action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }
 
@@ -46,6 +54,8 @@ export const rating = (state = {}, action) => {
 // altered
 export const images = (state = [], action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }
 
@@ -53,5 +63,7 @@ export const images = (state = [], action) => {
 // altered
 export const image = (state = {}, action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }

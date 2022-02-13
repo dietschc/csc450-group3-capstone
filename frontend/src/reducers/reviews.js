@@ -16,13 +16,17 @@ import { author, rating, images, image } from './restaurants';
 // altered
 export const reviews = (state = [], action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }
 
 // The review reducer will allow the review {} state to be 
 // altered
-export const review = (state = [], action) => {
+export const review = (state = {}, action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }
 
@@ -34,6 +38,8 @@ export const reviewAuthor = (state = {}, action) => author(state, action);
 // state to be altered
 export const reviewRestaurant = (state = {}, action) => {
     switch (action.type) {
+        default:
+            return state;
     }
 }
 
