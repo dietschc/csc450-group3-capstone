@@ -21,7 +21,8 @@
                 "password": "password",
                 "history": {
                     "historyId": 0,
-                    "lastModified": ""
+                    "created": "",
+                    "modified": ""
                 }
             },
             "email": "roger@bobby.com",
@@ -59,7 +60,8 @@
                 "password": "",
                 "history": {
                     "historyId": null,
-                    "lastModified": ""
+                    "created": "",
+                    "modified": ""
                 }
             },
             "email": "",
