@@ -4,6 +4,7 @@
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/10/2022, Added in basic Layout and functionality)
+//  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -22,7 +23,7 @@ function Admin(props) {
     const [ searchType, setSearchType ] = useState("");
 
     // Destructuring the data to be used in the search
-    const { user, restaurant } = data;
+    const { users, restaurants } = data;
 
     // This submit handler will handle the search form when submitted and assign the 
     // search input and search type to their respective state variables
@@ -38,7 +39,7 @@ function Admin(props) {
     // The userSearch method will filter user and return the filtered array with the results
     const userSearch = (userName) => {
         // Code for userName search
-        let searchResults = user.filter((user) => ((user.auth.userName).toLowerCase()).match(userName.toLowerCase() + ".*"));
+        let searchResults = users.filter((user) => ((user.auth.userName).toLowerCase()).match(userName.toLowerCase() + ".*"));
 
         // Code for first name last name search
         // let searchResults = user.filter((user) => ((user.firstName).toLowerCase() + " " + (user.lastName).toLowerCase()).match(userName.toLowerCase() + ".*"));
@@ -52,7 +53,7 @@ function Admin(props) {
     // The restaurantSearch method will filter restaurant and return only the items that match the search input
     const restaurantSearch = (restaurantName) => {
         // Searching based off restaurant name
-        let searchResults = restaurant.filter((restaurant) => (restaurant.name).toLowerCase().match((restaurantName.toLowerCase()) + ".*"));
+        let searchResults = restaurants.filter((restaurant) => (restaurant.name).toLowerCase().match((restaurantName.toLowerCase()) + ".*"));
 
         // DEBUG
         console.log("Search Results are ", searchResults)

@@ -22,7 +22,7 @@ import { printStarTotal, printReviewTotal } from '../../helperFunction/StringGen
 function ReviewHeadingCardBody(props) {
     // The form component specific props will be assigned and 
     // used to process the form element
-    const { review, restaurant } = props;
+    const { review, restaurants } = props;
 
     return (
         <Card.Body>
@@ -33,10 +33,10 @@ function ReviewHeadingCardBody(props) {
             </Card.Title>
             <Card.Text as="h4" className="text-center">
                 <div>
-                    {printStarTotal(restaurant.filter((restaurant) => (restaurant.id === review.restaurant.id))[0].rating.overallRating)}
+                    {printStarTotal(restaurants.filter((restaurant) => (restaurant.id === review.restaurant.id))[0].rating.overallRating)}
                 </div>
                 <div className="h6 mb-0">
-                    {printReviewTotal(restaurant.filter((restaurant) => (restaurant.id === review.restaurant.id))[0].reviewCount)}
+                    {printReviewTotal(restaurants.filter((restaurant) => (restaurant.id === review.restaurant.id))[0].reviewCount)}
                 </div>
             </Card.Text>
         </Card.Body>

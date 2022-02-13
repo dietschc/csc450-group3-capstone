@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 02/07/2022, Changed plain buttons variable to a buttonGroup function)
 //  (DAB, 02/07/2022, Broke up into multiple reusable components)
+//  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -19,7 +20,7 @@ import ReviewHeadingCardBody from './ReviewHeadingCardBody';
  * A React-Bootstrap formatted component that shows the restaurant 
  * details will be generated. 
  * 
- * @param { review, restaurant, buttonGroup, modal } props 
+ * @param { reviews, restaurants, buttonGroup, modal } props 
  * @returns 
  */
 function RestaurantReviewDetail(props) {
@@ -27,19 +28,19 @@ function RestaurantReviewDetail(props) {
     // used to process the form element. 
     //**********NOTE: Feel free to add props but do not remove props you did not add
     // Also do not edit the styles in this component, only outside is allowed ******
-    const { review, restaurant, buttonGroup, modal } = props;
+    const { reviews, restaurants, buttonGroup, modal } = props;
     
     return (
         <Container fluid>
                 <Row>
-                    {review.map((review) => (
+                    {reviews.map((review) => (
                         <Card className="mb-2" key={review.reviewId} style={{}}>
-                            <ReviewHeadingCardBody review={review} restaurant={restaurant}/>
-                            {/** MAKE SURE TO REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
+                            <ReviewHeadingCardBody review={review} restaurants={restaurants}/>
+                            {/** DEBUG MAKE SURE TO REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
                             {console.log("REVIEW IN RRD IS ", review)}
                             <Card.Img className="mx-auto" 
                             style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }} 
-                            src={review.image[0].imageLocation} />
+                            src={review.images[0].imageLocation} />
                             <Card.Text className="text-center pt-1">
                                 {review.author.userName}
                             </Card.Text>

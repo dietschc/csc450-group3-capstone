@@ -4,6 +4,7 @@
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 02/07/2022, The Main Layout was constructed)
+//  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -51,10 +52,10 @@ function Main(props) {
     }
 
     // Destructuring the needed data from the intitialState.json file
-    const { user, restaurant, review, message } = data; 
-    const [currentUser, ...otherUser] = user;
-    const { address: currentAddress }  = currentUser;
-    const { friend: currentFriendList } = currentUser;
+    const { users, restaurants, reviews, messages } = data; 
+    const [user, ...otherUser] = users;
+    const { address: currentAddress }  = user;
+    const { friend: currentFriendList } = user;
 
     // The RRDButtonGroup will accept the review array and 
     // construct a MainRRDetailButtonGroup Component
@@ -72,7 +73,7 @@ function Main(props) {
             <h1 className="mb-2">
                 Restaurant Club
             </h1>
-            <RestaurantReviewDetail restaurant={restaurant} review={review} buttonGroup={RRDButtonGroup}/>
+            <RestaurantReviewDetail restaurants={restaurants} reviews={reviews} buttonGroup={RRDButtonGroup}/>
 
             {/* {Developers Nav---Delete anytime} */}
             <Container fluid

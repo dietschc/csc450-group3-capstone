@@ -1,5 +1,5 @@
 {
-    "user": [
+    "users": [
         {
             "id": 0,
             "firstName": "Dave",
@@ -25,7 +25,7 @@
                 }
             },
             "email": "roger@bobby.com",
-            "friend": [
+            "friends": [
                 {
                     "userId": 1,
                     "userName": "Member1"
@@ -63,7 +63,7 @@
                 }
             },
             "email": "",
-            "friend": [
+            "friends": [
                 {
                     "userId": 0,
                     "userName": "Guest1"
@@ -76,7 +76,7 @@
             "isLoggedIn": true
         }
     ],
-    "restaurant": [
+    "restaurants": [
         {
             "id": 0,
             "author": {
@@ -103,7 +103,7 @@
                 "overallRating": 4
             },
             "reviewCount": 1,
-            "image": [
+            "images": [
                 {
                     "imageId": 0,
                     "imageLocation": "/reviewImages/0/olive-garden-restaurants-italian-style-g2-rdv.jpg"
@@ -136,7 +136,7 @@
                 "overallRating": 3
             },
             "reviewCount": 1,
-            "image": [
+            "images": [
                 {
                     "imageId": 1,
                     "imageLocation": "/reviewImages/1/roadhouse.jpg"
@@ -169,7 +169,7 @@
                 "overallRating": 5
             },
             "reviewCount": 1,
-            "image": [
+            "images": [
                 {
                     "imageId": 2,
                     "imageLocation": "/reviewImages/2/willyMcoysChamplin.jpg"
@@ -177,7 +177,7 @@
             ]
         }
     ],
-    "review": [
+    "reviews": [
         {
             "reviewId": 0,
             "author": {
@@ -188,15 +188,16 @@
                 "id": 0,
                 "name": "Olive Garden"
             },
-            
-            "ratingId": 1,
-            "tasteRating": 5,
-            "serviceRating": 4,
-            "cleanlinessRating": 3,
-            "overallRating": 4,
+            "rating": {
+                "ratingId": 1,
+                "tasteRating": 5,
+                "serviceRating": 4,
+                "cleanlinessRating": 3,
+                "overallRating": 4
+            },
             "reviewTitle": "Best Pasta in Town!!",
             "reviewText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sit amet mauris ac eros efficitur consectetur in eget nunc. Vestibulum ac venenatis tortor, id finibus.",
-            "image": [
+            "images": [
                 {
                     "imageId": 0,
                     "imageLocation": "/reviewImages/0/olive-garden-restaurants-italian-style-g2-rdv.jpg"
@@ -218,14 +219,16 @@
                 "id": 1,
                 "name": "Texas Roadhouse"
             },
-            "ratingId": 2,
-            "tasteRating": 5,
-            "serviceRating": 3,
-            "cleanlinessRating": 1,
-            "overallRating": 3,
+            "rating": {
+                "ratingId": 2,
+                "tasteRating": 5,
+                "serviceRating": 3,
+                "cleanlinessRating": 1,
+                "overallRating": 3
+            },
             "reviewTitle": "Best Burgers in Town!!",
             "reviewText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque efficitur ante non sem elementum, id lacinia sapien malesuada. Ut vel elementum ipsum, a placerat mauris. Nam augue felis, viverra a molestie at, varius eu libero. Aliquam massa sapien, tempor at lectus vitae, efficitur tincidunt neque. Ut euismod vestibulum dolor, sit amet faucibus ante efficitur vel. Suspendisse potenti. Nam auctor tristique molestie. Nam vitae dictum diam, eget scelerisque elit. Aliquam erat volutpat. Nullam neque erat, ornare in placerat et, tempus et massa. Fusce arcu diam, imperdiet sed imperdiet ac, dignissim quis mi. Integer tincidunt non dolor vel consequat. Donec ac metus sit amet risus egestas fermentum ut ac odio. Maecenas commodo lectus ex, in tincidunt lorem sollicitudin vitae. In id quam elementum, hendrerit sapien eget, aliquet massa. Curabitur id faucibus orci, et pharetra ex.",
-            "image": [
+            "images": [
                 {
                     "imageId": 1,
                     "imageLocation": "/reviewImages/1/roadhouse.jpg"
@@ -247,14 +250,16 @@
                 "id": 2,
                 "name": "Willy McCoys"
             },
-            "ratingId": 3,
-            "tasteRating": 5,
-            "serviceRating": 5,
-            "cleanlinessRating": 5,
-            "overallRating": 5,
+            "rating": {
+                "ratingId": 3,
+                "tasteRating": 5,
+                "serviceRating": 5,
+                "cleanlinessRating": 5,
+                "overallRating": 5  
+            },
             "reviewTitle": "Best Steaks in Town!!",
             "reviewText": "Morbi semper tincidunt justo, dignissim mattis enim. Duis porttitor ante vitae mi finibus molestie. Nulla cursus pretium eros, sed fermentum lacus luctus a. Duis aliquet mi non tincidunt porta. Aliquam in ornare ligula. Nulla dignissim nisi metus, et consectetur lorem mollis pellentesque. Pellentesque aliquam rutrum tellus, sit amet tempor ipsum dictum in. In condimentum volutpat malesuada. Nulla ornare eleifend ex porttitor sagittis. Nam volutpat, lacus nec tempus cursus, metus nulla ullamcorper dui, at ultrices ante dui id urna. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam volutpat non ante vitae viverra. Maecenas massa lorem, rhoncus nec eros eu, tempus suscipit quam. Etiam et suscipit elit. Maecenas id finibus quam.\n\nFusce ac neque feugiat, tincidunt ex eget, ultricies lectus. Suspendisse potenti. Fusce imperdiet nibh ut nunc pretium, nec ultricies urna fringilla. Integer at rhoncus lacus, at varius lectus. Nam et lorem a massa lobortis blandit. Pellentesque metus nisl, malesuada quis semper gravida, condimentum nec velit. Sed ut imperdiet justo. Integer posuere arcu enim, a tempus ex accumsan quis.\n\nMauris vitae tincidunt ligula. Proin sollicitudin sodales laoreet. Quisque pharetra magna ac tellus viverra, quis porta eros gravida. Sed quis quam sapien. Fusce accumsan sapien vel erat suscipit scelerisque. Pellentesque interdum consequat dolor at tempor. Sed molestie felis ut malesuada placerat. Aliquam interdum dictum consectetur. Quisque finibus mi eu augue vehicula feugiat. Suspendisse euismod metus tristique ex feugiat, eu semper arcu sollicitudin. Vivamus arcu lorem, cursus ac erat a, pulvinar iaculis enim. Donec accumsan cursus ipsum at tincidunt. Nulla diam dui, scelerisque sit amet nisl et, fringilla molestie leo. Duis placerat, neque sed sollicitudin dapibus, nunc mi vulputate ex, et placerat orci purus sed erat. Nunc pharetra vitae dui sit amet posuere. Aenean ligula orci, tristique id metus aliquam, lobortis aliquam ligula. In consectetur cursus nibh, sit amet volutpat massa pretium vel.",
-            "image": [
+            "images": [
                 {
                     "imageId": 2,
                     "imageLocation": "/reviewImages/2/willyMcoysChamplin.jpg"
@@ -267,7 +272,7 @@
             }
         }
     ],
-    "message": [
+    "messages": [
         {
             "messageId": 0,
             "userMessage": {

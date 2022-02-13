@@ -4,6 +4,7 @@
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 02/07/2022, Constructed the layout view for this component)
+//  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -40,10 +41,10 @@ function Restaurant(props) {
     }
 
     // Destructuring the needed data from the intitialState.json file
-    const { user, restaurant, review, message } = data; 
-    const [currentUser, ...otherUser] = user;
-    const { address: currentAddress }  = currentUser;
-    const { friend: currentFriendList } = currentUser;
+    const { users, restaurants, reviews, messages } = data; 
+    const [user, ...otherUser] = users;
+    const { address: currentAddress }  = user;
+    const { friend: currentFriendList } = user;
     
     return (
         <XLContainer>
@@ -51,19 +52,19 @@ function Restaurant(props) {
                 Welcome to the Restaurant Page
             </h1>
             {console.log("PARAMS IS ", id)}
-            {console.log(restaurant.filter((restaurant) => (1 === restaurant.id)))}
+            {console.log(restaurants.filter((restaurant) => (1 === restaurant.id)))}
             
             {id === undefined ? (
                 <h2 className="text-center">
                     Sorry, no restaurants found!
                 </h2> 
                 ) : 
-                restaurant.filter((restaurant) => (id === restaurant.id.toString())).map((restaurant) => (
+                restaurants.filter((restaurant) => (id === restaurant.id.toString())).map((restaurant) => (
                     <Card className="mb-2 p-2" key={restaurant.id}>
                         <RestaurantHeadingCardBody restaurant={restaurant}/>
                         <Card.Img className="mx-auto" 
                         style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }} 
-                        src={restaurant.image[0].imageLocation} />
+                        src={restaurant.images[0].imageLocation} />
                         <FullStarRatingCol rating={restaurant.rating}/>
                         
                         <ListGroup className="mx-auto mx-sm-0 border-0 border-right mt-2">
@@ -125,14 +126,14 @@ function Restaurant(props) {
 
                         <Container fluid>
                             <Row>
-                            {review.map((review) => ( (review.restaurant.id === restaurant.id) ? (
+                            {reviews.map((review) => ( (review.restaurant.id === restaurant.id) ? (
                                 <Card className="mb-2" key={review.reviewId} style={{}}>
                                     <RestaurantHeadingCardBody restaurant={restaurant}/>
                                     {/** MAKE SURE TO REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
                                     {console.log("REVIEW IN RRD IS ", review)}
                                     <Card.Img className="mx-auto" 
                                     style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }} 
-                                    src={review.image[0].imageLocation} />
+                                    src={review.images[0].imageLocation} />
                                     <Card.Text className="text-center pt-1">
                                         {review.author.userName}
                                     </Card.Text>

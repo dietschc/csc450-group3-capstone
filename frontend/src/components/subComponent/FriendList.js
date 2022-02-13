@@ -18,7 +18,7 @@ import ModalDeleteFriend from '../modal/DeleteFriendConfirm';
  * 
  * @param { friend, chatHandler, deleteFriendHandler, showFriendConfirm, 
  * deleteFriendHandler, showFriendConfirm, deleteFriend, closeFriendHandler, 
- * currentFriendList 
+ * friends 
  * } props 
  * @returns 
  */
@@ -29,7 +29,7 @@ function FriendList(props) {
         friend, chatHandler, 
         deleteFriendHandler, showFriendConfirm, 
         deleteFriend, closeFriendHandler, 
-        currentFriendList 
+        friends 
     } = props;
 
     return (
@@ -39,7 +39,7 @@ function FriendList(props) {
             </Card.Title>
             <Card.Body style={{ overflow: "auto"}}>
                 <ListGroup className="mb-3">
-                    {currentFriendList.map((friend) => (
+                    {friends.map((friend) => (
                         <ListGroup.Item key={friend.userId} id={friend.userId}>
                             <Row>
                                 <Col className="d-flex align-items-center my-1 me-0 pe-0 flex-shrink-1">
