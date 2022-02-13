@@ -3,6 +3,7 @@
 // Restaurant Club - Chat.js
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
 
 // Using React library in order to build components 
 // for the app and importing needed components

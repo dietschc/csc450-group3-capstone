@@ -9,6 +9,7 @@
 //  (DAB, 02/06/2022, finished the code for RestaurantDetailDetail Component)
 //  (DAB, 02/06/2022, breaking up components/functionality into their own .js files)
 //  (DAB, 02/07/2022, changed buttons to buttonGroup function)
+//  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
 
 // Using React library in order to build components 
 // for the app and importing needed components
