@@ -21,7 +21,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
  */
 function DeleteReviewConfirm(props) {
     // Destructuring the needed functions and variables from props
-    const { show, review, deleteReview, closeHandler } = props;
+    const { show, deleteReview, closeHandler } = props;
 
     // The yesHandler will call both the deleteFriend and closeHandler 
     // functions in order to delete the friend

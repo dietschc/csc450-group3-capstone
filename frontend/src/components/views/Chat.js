@@ -17,7 +17,7 @@ function Chat(props) {
     // The mock state will be held as data
     const [data, setData]=useState(mockStateData);
     const [chatMessage, setChatMessage]=useState("");
-    const [messageHistory, setMessageHistory]=useState(data.message);
+    const [messageHistory, setMessageHistory]=useState(data.messages);
 
    
 
@@ -49,10 +49,10 @@ function Chat(props) {
     
 
     // Destructuring the needed data from the intitialState.json file
-    const { user, restaurant, review, message } = data; 
-    const [currentUser, ...otherUser] = user;
-    const { address: currentAddress }  = currentUser;
-    const { friend: currentFriendList } = currentUser;
+    const { users } = data; 
+    const [user, ...otherUsers] = users;
+    const { address: currentAddress }  = user;
+    const { friend: currentFriendList } = user;
     return (
         <FormContainer>
             <h1>
@@ -60,12 +60,12 @@ function Chat(props) {
             </h1>
             <Card className="" style={{height:"200rem"}}>
                 <Card.Title className="text-center mt-2 mb-0">
-                    {user[0].auth.userName} chatting with {user[1].auth.userName}
+                    {users[0].auth.userName} chatting with {users[1].auth.userName}
                 </Card.Title>
                 <Card.Text className="border m-3 p-2 mh-50" style={{minHeight:"10rem", maxHeight:"15rem",  overflow:"auto"}}>
                     {messageHistory.map((message) => (
-                        (message.userMessage.from === user[0].id) ?  (<span style={{color:"darkblue"}}>{user[0].auth.userName + "[" + message.timeStamp + "]" + ": "}<span style={{color:"blue"}}>{message.message}</span><br/><br/></span>) :
-                        (<span style={{color:"darkred"}}>{user[1].auth.userName + "[" + message.timeStamp + "]" + ": "}<span style={{color:"red"}}>{message.message + "\n"}</span><br/><br/></span>)
+                        (message.userMessage.from === users[0].id) ?  (<span style={{color:"darkblue"}}>{users[0].auth.userName + "[" + message.timeStamp + "]" + ": "}<span style={{color:"blue"}}>{message.message}</span><br/><br/></span>) :
+                        (<span style={{color:"darkred"}}>{users[1].auth.userName + "[" + message.timeStamp + "]" + ": "}<span style={{color:"red"}}>{message.message + "\n"}</span><br/><br/></span>)
                     ))}
                     <br/>
                     <br/>
@@ -79,17 +79,19 @@ function Chat(props) {
                             <Col sm={12} md={6}>
                                 <Form.Group className="mb-3" controlId="formMessageInput" >
                                     <Form.Label className="visually-hidden">Message</Form.Label>
-                                    <Form.Control as="textarea" className="p-2"rows={3} value={chatMessage} onChange={e=>setChatMessage(e.target.value)}/>
+                                    <Form.Control as="textarea" 
+                                    className="p-2"rows={3} 
+                                    value={chatMessage} 
+                                    onChange={e=>setChatMessage(e.target.value)}/>
                                 </Form.Group>
-                            <Button type="submit" className="d-flex ms-auto justify-content-center" style={{ width: "5rem"}} onClick={(e)=>sendMessageHandler(e)}>Send</Button>
-
+                            <Button type="submit" 
+                            className="d-flex ms-auto justify-content-center" 
+                            style={{ width: "5rem"}} 
+                            onClick={(e)=>sendMessageHandler(e)}>Send</Button>
                             </Col>
                         </Row>
-
-                        
                     </Form>
                 </Card.Body>
-                
             </Card>
         </FormContainer>
             

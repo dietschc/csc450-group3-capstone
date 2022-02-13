@@ -31,10 +31,10 @@ function UserDashboard(props) {
     const [currentReview, setCurrentReview] = useState([]);
 
     // Destructuring the needed data from the intitialState.json file
-    const { user, restaurant, review, message } = data; 
-    const [currentUser, ...otherUser] = user;
-    const { address: currentAddress }  = currentUser;
-    const { friend: currentFriendList } = currentUser;
+    const { users, restaurants, reviews, messages } = data; 
+    const [user, ...otherUser] = users;
+    const { address: currentAddress }  = user;
+    const { friends } = user;
 
     // Allows for the navigation to the specified webpage
     const navigate = useNavigate();
@@ -111,23 +111,22 @@ function UserDashboard(props) {
         <DeleteReviewConfirm 
         show={showReviewConfirm} 
         deleteReview={deleteReview}
-        closeHandler={closeReviewHandler} 
-        review={review} />
+        closeHandler={closeReviewHandler} />
     )
 
     return (
         <Container className="justify-content-center" style={{maxWidth: "1000px"}}>
-            {console.log("Test is ", user)}
-            {console.log("Current User is ", currentUser)}
+            {console.log("Test is ", users)}
+            {console.log("Current User is ", user)}
             {console.log("Current Address is ", currentAddress)}
-            {console.log("Test Data .user is ", mockStateData.user)}
+            {console.log("Test Data .user is ", mockStateData.users)}
             <h1>
                 User Dashboard
             </h1>
             <Row>
                 <Col className="pb-2" md={6}>
                     <UserInfo 
-                    currentUser={currentUser}   
+                    currentUser={user}   
                     currentAddress={currentAddress} 
                     userInfoHandler={userInfoHandler}/>
                 </Col>
@@ -135,11 +134,11 @@ function UserDashboard(props) {
                     <FriendList friend={friend} chatHandler={chatHandler} 
                     deleteFriendHandler={deleteFriendHandler} showFriendConfirm={showFriendConfirm} 
                     deleteFriend={deleteFriend} closeFriendHandler={closeFriendHandler}
-                    currentFriendList={currentFriendList} closeReviewHandler={closeReviewHandler} 
-                    restaurant={restaurant}/>
+                    friends={friends} closeReviewHandler={closeReviewHandler} 
+                    restaurant={restaurants}/>
                 </Col>
             </Row>
-            <RestaurantReviewDetail review={review} restaurant={restaurant} 
+            <RestaurantReviewDetail reviews={reviews} restaurants={restaurants} 
             buttonGroup={buttonGroup} modal={deleteButtonModal}/>
         </Container>
     )
