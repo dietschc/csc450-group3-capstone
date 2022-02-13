@@ -1,5 +1,5 @@
 // Devin Brueberg
-// CSC435 Adv Web App Development
+// CSC450 Capstone
 // Restaurant Club - constants.js
 // February 3, 2021
 // Last Edited (Initials, Date, Edits):
