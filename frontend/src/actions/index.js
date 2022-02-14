@@ -9,7 +9,8 @@
 import C from '../constants';
 import { v4 } from 'uuid';
 
-// Use constants to build actions below
+// Use constants to build actions below. Still looking into 
+// correct file structure
 
 // This action will add a new user to state
 export const addUser = (userName, 
