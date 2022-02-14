@@ -6,7 +6,7 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, {useState} from 'react';
+import React, {useState, useEffect, useRef, useLayoutEffect} from 'react';
 import MainNav from '../views/MainNav';
 import Footer from '../views/Footer';
 import App from '../../App';
