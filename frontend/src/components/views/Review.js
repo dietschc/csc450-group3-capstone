@@ -12,9 +12,13 @@ import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstra
 import FloatingImageUpload from '../form/floatingComponents/FloatingImageUpload';
 import ModalCancelConfirm from '../form/modal/ModalCancelConfirm';
 import { printStarTotal, printReviewTotal } from '../../helperFunction/StringGenerator';
+import { connect } from 'react-redux';
+import { addReview } from '../../actions';
 
 
 function Review(props) {
+
+    const { addReview } = props;
 
     const restaurantName = "Joe's Burgers";
 
@@ -59,6 +63,15 @@ function Review(props) {
     const onChangeReviewText = e => {
         const reviewText = e.target.value
         setReviewText(reviewText);
+    }
+
+    const saveReview = () => {
+        
+        console.log(props.users)
+        console.log(props.reviews)
+        console.log(props.users[0].auth.userName)
+        addReview(props.users[0].auth.userName, restaurantName, tasteRating, serviceRating, cleanRating, overallRating, 
+            reviewTitle, reviewText, fileName)
     }
 
     const starFont = { color: "gold" }
@@ -222,7 +235,7 @@ function Review(props) {
                     </Form.Floating>
 
                     <div className="d-flex justify-content-around pt-2 pb-5">
-                        <Button className="mr-1 w-25" variant="outline-primary">
+                        <Button className="mr-1 w-25" variant="outline-primary" onClick={saveReview}>
                             Submit
                         </Button>
 
@@ -234,5 +247,27 @@ function Review(props) {
     )
 }
 
-// Exporting the component
-export default Review;
+// Mapping the redux store states to props
+const mapStateToProps = state => 
+    ({
+        reviews: [...state.reviews],
+        users: [...state.users]
+    });
+
+// Mapping the state actions to props
+const mapDispatchToProps = dispatch => 
+    ({
+        // This method will add a new review
+        addReview(userName, restaurantName, tasteRating, 
+            serviceRating, cleanlinessRating, overallRating, reviewTitle, 
+            reviewText, imageLocation) {
+            dispatch(addReview(userName, restaurantName, tasteRating, 
+                serviceRating, cleanlinessRating, overallRating, reviewTitle, 
+                reviewText, imageLocation)
+                )
+        }
+    })
+
+
+// Exporting the connect Wrapped EditAccount Component
+export default connect(mapStateToProps, mapDispatchToProps)(Review);

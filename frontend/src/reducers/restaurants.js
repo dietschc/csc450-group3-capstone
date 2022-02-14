@@ -7,8 +7,6 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import C from '../constants';
-// The address reducer from users is the same as used in restaurants
-import { address } from './users';
 
 // The restaurants reducer will allow the restaurants [] state to be 
 // altered
@@ -38,8 +36,13 @@ export const author = (state = {}, action) => {
 }
 
 // The restaurants reducer will allow the restaurants [] state to be 
-// altered. ADDRESS IS THE SAME FOR USERS AND RESTAURANTS
-export const restaurantAddress = (state = [], action) => address(state, action);
+// altered
+export const restaurantAddress = (state = [], action) => {
+    switch (action.type) {
+        default:
+            return state;
+    }
+}
 
 // The rating reducer will allow the rating {} state to be 
 // altered

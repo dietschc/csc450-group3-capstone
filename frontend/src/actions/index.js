@@ -44,3 +44,39 @@ export const addUser = (userName,
         email: email,
         isLoggedIn: false
 })
+
+export const addReview = (userName, restaurantName, tasteRating, 
+    serviceRating, cleanlinessRating, overallRating, reviewTitle, 
+    reviewText, imageLocation) => ({
+        type: C.ADD_REVIEW,
+        id: v4(),
+        author: {
+            id: v4(),
+            userName: userName
+        },
+        restaurant: {
+            id: v4(),
+            name: restaurantName
+        },
+        rating: {
+            id: v4(),
+            tasteRating: tasteRating,
+            serviceRating: serviceRating,
+            cleanlinessRating: cleanlinessRating,
+            overallRating: overallRating
+        },
+        reviewTitle: reviewTitle,
+        reviewText: reviewText,
+        images: [
+            {
+                id: v4(),
+                imageLocation: imageLocation
+            }
+        ],
+        history: {
+            id: v4(),
+            created: new Date(),
+            modified: null
+        }
+
+    })
