@@ -5,14 +5,14 @@
             "firstName": "Dave",
             "lastName": "McGee",
             "address": {
-                "addressId": 0,
+                "id": 0,
                 "address": "200 W Fairy Way",
                 "city": "St. Anthony",
                 "state": "MN",
                 "zip": "55421"
             },
             "auth": {
-                "authId": 1,
+                "id": 1,
                 "userName": "Guest1",
                 "permission": {
                     "id": 0,
@@ -20,8 +20,9 @@
                 },
                 "password": "password",
                 "history": {
-                    "historyId": 0,
-                    "lastModified": ""
+                    "id": 0,
+                    "created": "",
+                    "modified": ""
                 }
             },
             "email": "roger@bobby.com",
@@ -43,7 +44,7 @@
             "firstName": "",
             "lastName": "",
             "address": {
-                "addressId": null,
+                "id": null,
                 "address": "",
                 "city": "",
                 "state": "",
@@ -58,8 +59,9 @@
                 },
                 "password": "",
                 "history": {
-                    "historyId": null,
-                    "lastModified": ""
+                    "id": null,
+                    "created": "",
+                    "modified": ""
                 }
             },
             "email": "",
