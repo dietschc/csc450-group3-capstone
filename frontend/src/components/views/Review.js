@@ -11,14 +11,16 @@ import React, { useState } from 'react'
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 import FloatingImageUpload from '../form/floatingComponents/FloatingImageUpload';
 import ModalCancelConfirm from '../form/modal/ModalCancelConfirm';
+import { useParams } from "react-router-dom";
 import { printStarTotal, printReviewTotal } from '../../helperFunction/StringGenerator';
 import { connect } from 'react-redux';
-import { addReview } from '../../actions';
+import { addReview, deleteAllReviews, deleteReview } from '../../actions';
 
 
 function Review(props) {
 
-    const { addReview } = props;
+    const { id: restaurantId } = useParams();
+    const { addReview, deleteAllReviews, deleteReview } = props;
 
     const restaurantName = "Joe's Burgers";
 
@@ -70,8 +72,11 @@ function Review(props) {
         console.log(props.users)
         console.log(props.reviews)
         console.log(props.users[0].auth.userName)
-        addReview(props.users[0].auth.userName, restaurantName, tasteRating, serviceRating, cleanRating, overallRating, 
-            reviewTitle, reviewText, fileName)
+        addReview(props.users[0].auth.userName, props.users[0].id, restaurantId, restaurantName, 
+            tasteRating, serviceRating, cleanRating, overallRating, reviewTitle, 
+            reviewText, fileName);
+        // deleteAllReviews();
+        // deleteReview(0)
     }
 
     const starFont = { color: "gold" }
@@ -258,13 +263,20 @@ const mapStateToProps = state =>
 const mapDispatchToProps = dispatch => 
     ({
         // This method will add a new review
-        addReview(userName, restaurantName, tasteRating, 
+        addReview(userName, userId, restaurantId, restaurantName, tasteRating, 
             serviceRating, cleanlinessRating, overallRating, reviewTitle, 
             reviewText, imageLocation) {
-            dispatch(addReview(userName, restaurantName, tasteRating, 
+            dispatch(addReview(userName, userId, restaurantId, restaurantName, tasteRating, 
                 serviceRating, cleanlinessRating, overallRating, reviewTitle, 
                 reviewText, imageLocation)
                 )
+        },
+        deleteAllReviews() {
+            dispatch(deleteAllReviews()
+            )
+        },
+        deleteReview(id) {
+            dispatch(deleteReview(id))
         }
     })
 

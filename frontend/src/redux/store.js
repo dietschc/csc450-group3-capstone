@@ -11,6 +11,7 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import {createStore, applyMiddleware} from 'redux';
+import thunk from 'redux-thunk';
 import reducers from '../reducers'
 import stateData from './initialState.json';
 
@@ -40,7 +41,7 @@ return result;
 // localStorage if it is there, otherwise it will load in the props 
 // initialState data for the store
 const storeFactory = (initialState = stateData) =>
-applyMiddleware(logger, saver)(createStore)(
+applyMiddleware(logger, saver, thunk)(createStore)(
     reducers,
     (localStorage['redux-store']) ? 
         JSON.parse(localStorage['redux-store']) : 

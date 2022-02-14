@@ -17,6 +17,14 @@ export const reviews = (state = [], action) => {
                 ...state,
                 review({}, action)
             ]
+        case C.DELETE_ALL_REVIEWS:
+            return []
+        case C.DELETE_REVIEW:
+            return state.filter((review) => review.id !== action.id)
+        case C.UPDATE_REVIEW:
+            return [
+                ...state
+            ]
         default:
             return state;
     }
@@ -94,9 +102,7 @@ export const reviewImages = (state = [], action) => {
         case C.ADD_REVIEW:
             return [
                 ...state,
-                action.images.map((image) => 
-                reviewImage(image, action)
-                )
+                reviewImage({}, action)
             ]
         default:
             return state;
@@ -109,8 +115,8 @@ export const reviewImage = (state = {}, action) => {
     switch (action.type) {
         case C.ADD_REVIEW:
             return {
-                id: state.id,
-                imageLocation: state.imageLocation
+                id: action.images.id,
+                imageLocation: action.images.imageLocation
             }
         default:
             return state;
