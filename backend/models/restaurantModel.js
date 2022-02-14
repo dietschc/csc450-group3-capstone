@@ -3,7 +3,7 @@ import db from "../config/database.js";
  
 const { DataTypes } = Sequelize;
  
-const Restaurant = db.define('restaurants',{
+const Restaurant = db.define('restaurant',{
     name:{
         type: DataTypes.STRING
     },
