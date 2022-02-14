@@ -44,3 +44,45 @@ export const addUser = (userName,
         email: email,
         isLoggedIn: false
 })
+
+export const addReview = (userName, userId, restaurantId, restaurantName, tasteRating, 
+    serviceRating, cleanlinessRating, overallRating, reviewTitle, 
+    reviewText, imageLocation) => ({
+        type: C.ADD_REVIEW,
+        id: v4(),
+        author: {
+            id: userId,
+            userName: userName
+        },
+        restaurant: {
+            id: restaurantId,
+            name: restaurantName
+        },
+        rating: {
+            id: v4(),
+            tasteRating: tasteRating,
+            serviceRating: serviceRating,
+            cleanlinessRating: cleanlinessRating,
+            overallRating: overallRating
+        },
+        reviewTitle: reviewTitle,
+        reviewText: reviewText,
+        images: {
+            id: v4(),
+            imageLocation: imageLocation
+        },
+        history: {
+            id: v4(),
+            created: new Date(),
+            modified: null
+        }
+    })
+
+    export const deleteReview = (id) => ({
+        type: C.DELETE_REVIEW,
+        id: id
+    })
+
+    export const deleteAllReviews = () => ({
+        type: C.DELETE_ALL_REVIEWS
+    })

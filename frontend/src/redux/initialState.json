@@ -28,11 +28,11 @@
             "email": "roger@bobby.com",
             "friends": [
                 {
-                    "userId": 1,
+                    "id": 1,
                     "userName": "Member1"
                 },
                 {
-                    "userId": 2,
+                    "id": 2,
                     "userName": "Member2"
                 }
             ],
@@ -51,7 +51,7 @@
                 "zip": ""
             },
             "auth": {
-                "authId": 1,
+                "id": 1,
                 "userName": "Member1",
                 "permission": {
                     "id": 1,
@@ -67,11 +67,11 @@
             "email": "",
             "friends": [
                 {
-                    "userId": 0,
+                    "id": 0,
                     "userName": "Guest1"
                 },
                 {
-                    "userId": 2,
+                    "id": 2,
                     "userName": "Member2"
                 }
             ],
@@ -82,7 +82,7 @@
         {
             "id": 0,
             "author": {
-                "userId": 1,
+                "id": 1,
                 "userName": "Member1"
             },
             "ownerId": null,
@@ -91,14 +91,14 @@
             "website": "https://www.olivegarden.com/locations/mn/roseville/roseville-snelling-and-county-road-c/1245?cmpid=br:og_ag:ie_ch:loc_ca:OGGMB_sn:gmb_gt:roseville-mn-1245_pl:locurl_rd:1184",
             "phone": "6516389557",
             "address": {
-                "addressId": 0,
+                "id": 0,
                 "address": "1525 County Rd C West",
                 "city": "Roseville",
                 "state": "MN",
                 "zip": "55113"
             },
             "rating": {
-                "ratingId": 0,
+                "id": 0,
                 "tasteRating": 5,
                 "serviceRating": 4,
                 "cleanlinessRating": 3,
@@ -107,7 +107,7 @@
             "reviewCount": 1,
             "images": [
                 {
-                    "imageId": 0,
+                    "id": 0,
                     "imageLocation": "/reviewImages/0/olive-garden-restaurants-italian-style-g2-rdv.jpg"
                 }
             ]
@@ -115,7 +115,7 @@
         {
             "id": 1,
             "author": {
-                "userId": 2,
+                "id": 2,
                 "userName": "Member2"
             },
             "ownerId": null,
@@ -124,14 +124,14 @@
             "website": "https://www.texasroadhouse.com/locations/661-woodburymn",
             "phone": "6124217171",
             "address": {
-                "addressId": 1,
+                "id": 1,
                 "address": "209 Radio Dr",
                 "city": "Woodbury",
                 "state": "MN",
                 "zip": "55125"
             },
             "rating" : {
-                "ratingId": 1,
+                "id": 1,
                 "tasteRating": 5,
                 "serviceRating": 3,
                 "cleanlinessRating": 1,
@@ -140,7 +140,7 @@
             "reviewCount": 1,
             "images": [
                 {
-                    "imageId": 1,
+                    "id": 1,
                     "imageLocation": "/reviewImages/1/roadhouse.jpg"
                 }
             ]
@@ -148,7 +148,7 @@
         {
             "id": 2,
             "author": {
-                "userId": 1,
+                "id": 1,
                 "userName": "Member10"
             },
             "ownerId": null,
@@ -157,14 +157,14 @@
             "website": "https://www.willymccoys.com/location/champlin/",
             "phone": "7634225020",
             "address": {
-                "addressId": 2,
+                "id": 2,
                 "address": "12450 Business Park Blvd N",
                 "city": "Champlin",
                 "state": "MN",
                 "zip": "55301"
             },
             "rating": {
-                "ratingId": 5,
+                "id": 5,
                 "tasteRating": 5,
                 "serviceRating": 5,
                 "cleanlinessRating": 5,
@@ -173,7 +173,7 @@
             "reviewCount": 1,
             "images": [
                 {
-                    "imageId": 2,
+                    "id": 2,
                     "imageLocation": "/reviewImages/2/willyMcoysChamplin.jpg"
                 }
             ]
@@ -181,9 +181,9 @@
     ],
     "reviews": [
         {
-            "reviewId": 0,
+            "id": 0,
             "author": {
-                "userId": 1,
+                "id": 1,
                 "userName": "Guest1"
             },
             "restaurant": {
@@ -191,7 +191,7 @@
                 "name": "Olive Garden"
             },
             "rating": {
-                "ratingId": 1,
+                "id": 1,
                 "tasteRating": 5,
                 "serviceRating": 4,
                 "cleanlinessRating": 3,
@@ -201,20 +201,20 @@
             "reviewText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque sit amet mauris ac eros efficitur consectetur in eget nunc. Vestibulum ac venenatis tortor, id finibus.",
             "images": [
                 {
-                    "imageId": 0,
+                    "id": 0,
                     "imageLocation": "/reviewImages/0/olive-garden-restaurants-italian-style-g2-rdv.jpg"
                 }
             ],
             "history": {
-                "historyId": 3,
+                "id": 3,
                 "created": "2022 1 30",
                 "modified": "2022 1 30"
             }
         },
         {
-            "reviewId": 1,
+            "id": 1,
             "author": {
-                "userId": 0,
+                "id": 0,
                 "userName": "Guest1"
             },
             "restaurant": {
@@ -222,7 +222,7 @@
                 "name": "Texas Roadhouse"
             },
             "rating": {
-                "ratingId": 2,
+                "id": 2,
                 "tasteRating": 5,
                 "serviceRating": 3,
                 "cleanlinessRating": 1,
@@ -232,20 +232,20 @@
             "reviewText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque efficitur ante non sem elementum, id lacinia sapien malesuada. Ut vel elementum ipsum, a placerat mauris. Nam augue felis, viverra a molestie at, varius eu libero. Aliquam massa sapien, tempor at lectus vitae, efficitur tincidunt neque. Ut euismod vestibulum dolor, sit amet faucibus ante efficitur vel. Suspendisse potenti. Nam auctor tristique molestie. Nam vitae dictum diam, eget scelerisque elit. Aliquam erat volutpat. Nullam neque erat, ornare in placerat et, tempus et massa. Fusce arcu diam, imperdiet sed imperdiet ac, dignissim quis mi. Integer tincidunt non dolor vel consequat. Donec ac metus sit amet risus egestas fermentum ut ac odio. Maecenas commodo lectus ex, in tincidunt lorem sollicitudin vitae. In id quam elementum, hendrerit sapien eget, aliquet massa. Curabitur id faucibus orci, et pharetra ex.",
             "images": [
                 {
-                    "imageId": 1,
+                    "id": 1,
                     "imageLocation": "/reviewImages/1/roadhouse.jpg"
                 }
             ],
             "history": {
-                "historyId": 4,
+                "id": 4,
                 "created": "2022 1 29",
                 "modified": "2022 1 31"
             }
         },
         {
-            "reviewId": 2,
+            "id": 2,
             "author": {
-                "userId": 1,
+                "id": 1,
                 "userName": "Member1"
             },
             "restaurant": {
@@ -253,7 +253,7 @@
                 "name": "Willy McCoys"
             },
             "rating": {
-                "ratingId": 3,
+                "id": 3,
                 "tasteRating": 5,
                 "serviceRating": 5,
                 "cleanlinessRating": 5,
@@ -263,12 +263,12 @@
             "reviewText": "Morbi semper tincidunt justo, dignissim mattis enim. Duis porttitor ante vitae mi finibus molestie. Nulla cursus pretium eros, sed fermentum lacus luctus a. Duis aliquet mi non tincidunt porta. Aliquam in ornare ligula. Nulla dignissim nisi metus, et consectetur lorem mollis pellentesque. Pellentesque aliquam rutrum tellus, sit amet tempor ipsum dictum in. In condimentum volutpat malesuada. Nulla ornare eleifend ex porttitor sagittis. Nam volutpat, lacus nec tempus cursus, metus nulla ullamcorper dui, at ultrices ante dui id urna. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam volutpat non ante vitae viverra. Maecenas massa lorem, rhoncus nec eros eu, tempus suscipit quam. Etiam et suscipit elit. Maecenas id finibus quam.\n\nFusce ac neque feugiat, tincidunt ex eget, ultricies lectus. Suspendisse potenti. Fusce imperdiet nibh ut nunc pretium, nec ultricies urna fringilla. Integer at rhoncus lacus, at varius lectus. Nam et lorem a massa lobortis blandit. Pellentesque metus nisl, malesuada quis semper gravida, condimentum nec velit. Sed ut imperdiet justo. Integer posuere arcu enim, a tempus ex accumsan quis.\n\nMauris vitae tincidunt ligula. Proin sollicitudin sodales laoreet. Quisque pharetra magna ac tellus viverra, quis porta eros gravida. Sed quis quam sapien. Fusce accumsan sapien vel erat suscipit scelerisque. Pellentesque interdum consequat dolor at tempor. Sed molestie felis ut malesuada placerat. Aliquam interdum dictum consectetur. Quisque finibus mi eu augue vehicula feugiat. Suspendisse euismod metus tristique ex feugiat, eu semper arcu sollicitudin. Vivamus arcu lorem, cursus ac erat a, pulvinar iaculis enim. Donec accumsan cursus ipsum at tincidunt. Nulla diam dui, scelerisque sit amet nisl et, fringilla molestie leo. Duis placerat, neque sed sollicitudin dapibus, nunc mi vulputate ex, et placerat orci purus sed erat. Nunc pharetra vitae dui sit amet posuere. Aenean ligula orci, tristique id metus aliquam, lobortis aliquam ligula. In consectetur cursus nibh, sit amet volutpat massa pretium vel.",
             "images": [
                 {
-                    "imageId": 2,
+                    "id": 2,
                     "imageLocation": "/reviewImages/2/willyMcoysChamplin.jpg"
                 }
             ],
             "history": {
-                "historyId": 5,
+                "id": 5,
                 "created": "2022 1 29",
                 "modified": "2022 1 30"
             }
@@ -276,9 +276,9 @@
     ],
     "messages": [
         {
-            "messageId": 0,
+            "id": 0,
             "userMessage": {
-                "userMessageId": 0,
+                "id": 0,
                 "to": 1,
                 "from": 0
             },
@@ -286,9 +286,9 @@
             "timeStamp": "2022 1 30 15:30"
         },
         {
-            "messageId": 0,
+            "id": 0,
             "userMessage": {
-                "userMessageId": 0,
+                "id": 0,
                 "to": 1,
                 "from": 0
             },
@@ -296,9 +296,9 @@
             "timeStamp": "2022 1 30 15:30"
         },
         {
-            "messageId": 0,
+            "id": 0,
             "userMessage": {
-                "userMessageId": 1,
+                "id": 1,
                 "to": 0,
                 "from": 1
             },
@@ -306,9 +306,9 @@
             "timeStamp": "2022 1 30 15:30"
         },
         {
-            "messageId": 0,
+            "id": 0,
             "userMessage": {
-                "userMessageId": 0,
+                "id": 0,
                 "to": 1,
                 "from": 0
             },
@@ -316,9 +316,9 @@
             "timeStamp": "2022 1 30 15:30"
         },
         {
-            "messageId": 0,
+            "id": 0,
             "userMessage": {
-                "userMessageId": 1,
+                "id": 1,
                 "to": 0,
                 "from": 1
             },
