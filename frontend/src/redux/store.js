@@ -10,11 +10,8 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import {createStore, 
-    combineReducers, 
-    applyMiddleware} from 'redux';
+import {createStore, applyMiddleware} from 'redux';
 import reducers from '../reducers'
-import { users } from '../reducers/users';
 import stateData from './initialState.json';
 
 // The logger simply logs each action and state change as they 

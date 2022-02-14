@@ -12,6 +12,11 @@ import C from '../constants';
 // altered
 export const users = (state = [], action) => {
     switch (action.type) {
+        case C.ADD_USER:
+            return [
+                ...state,
+                user({}, action)
+            ]
         default:
             return state;
     }
@@ -21,6 +26,17 @@ export const users = (state = [], action) => {
 // altered
 export const user = (state = {}, action) => {
     switch (action.type) {
+        case C.ADD_USER:
+            return {
+                id: action.id,
+                firstName: action.firstName,
+                lastName: action.lastName,
+                email: action.email,
+                friends: friends([], action),
+                address: address({}, action),
+                auth: auth({}, action),
+                isLoggedIn: action.isLoggedIn
+            }
         default:
             return state;
     }
@@ -30,6 +46,14 @@ export const user = (state = {}, action) => {
 // altered
 export const auth = (state = {}, action) => {
     switch (action.type) {
+        case C.ADD_USER:
+            return {
+                id: action.id,
+                userName: action.auth.userName,
+                permission: permission({}, action),
+                password: action.auth.password,
+                history: history({}, action)
+            }
         default:
             return state;
     }
@@ -39,6 +63,11 @@ export const auth = (state = {}, action) => {
 // altered
 export const permission = (state = {}, action) => {
     switch (action.type) {
+        case C.ADD_USER:
+            return {
+                id: action.auth.permission.id,
+                permissionName: action.auth.permission.permissionName
+            }
         default:
             return state;
     }
@@ -48,6 +77,14 @@ export const permission = (state = {}, action) => {
 // altered
 export const history = (state = {}, action) => {
     switch (action.type) {
+        case C.ADD_USER: 
+            return {
+                id: action.id,
+                created: action.auth.history.created,
+                modified: action.auth.history.modified
+            }
+        default:
+            return state;
     }
 }
 
@@ -55,6 +92,14 @@ export const history = (state = {}, action) => {
 // altered
 export const address = (state = {}, action) => {
     switch (action.type) {
+        case C.ADD_USER:
+            return {
+                id: action.address.id,
+                address: action.address.address,
+                city: action.address.city,
+                state: action.address.state,
+                zip: action.address.zip
+            }
         default:
             return state;
     }
@@ -64,6 +109,8 @@ export const address = (state = {}, action) => {
 // altered
 export const friends = (state = [], action) => {
     switch (action.type) {
+        case C.ADD_USER:
+            return []
         default:
             return state;
     }

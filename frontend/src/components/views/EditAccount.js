@@ -3,14 +3,17 @@
 // Restaurant Club - EditAccount.js
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
-// (CPD, 1/29/22, GitHub-#29-EditAccount View Layout)
+//  (CPD, 1/29/22, GitHub-#29-EditAccount View Layout)
+//  (DAB, 2/13/2022, Added in react redux connect)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
-import FormContainer from '../template/FormContainer'
+import FormContainer from '../template/FormContainer';
+import { addUser } from '../../actions';
 
 function EditAccount(props) {
     let editing = false
@@ -27,6 +30,8 @@ function EditAccount(props) {
     const [state, setState] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const { addUser } = props;
 
     const onChangeUserName = e => {
         const userName = e.target.value
@@ -85,6 +90,7 @@ function EditAccount(props) {
             email: email,
             password: password
         }
+        addUser(userName, firstName, lastName, address, city, zip, state, email, password);
         console.log(data)
         setSubmitted(true)
     }
@@ -267,5 +273,23 @@ function EditAccount(props) {
     )
 }
 
-// Exporting the component
-export default EditAccount;
+// Mapping the redux store states to props
+const mapStateToProps = state => 
+    ({
+        users: [...state.users]
+    });
+
+// Mapping the state actions to props
+const mapDispatchToProps = dispatch => 
+    ({
+        // This method will add a new user to users
+        addUser(userName, firstName, lastName, 
+            address, city, state, zip, email, password) {
+            dispatch(addUser(userName, firstName, lastName, 
+                address, city, state, zip, email, password))
+        }
+    })
+
+
+// Exporting the connect Wrapped EditAccount Component
+export default connect(mapStateToProps, mapDispatchToProps)(EditAccount);
