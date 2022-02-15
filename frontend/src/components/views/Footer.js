@@ -7,7 +7,7 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React from 'react';
+import React, { useLayoutEffect, useRef, useState, useCallback, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { Container, ListGroup } from 'react-bootstrap';
 
@@ -25,7 +25,7 @@ function Footer(props) {
                 </ListGroup.Item>
             </ListGroup>
         </Container>
-    )
+    );
 }
 
 // Exporting the component

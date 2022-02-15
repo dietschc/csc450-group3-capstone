@@ -3,6 +3,7 @@
 // Restaurant Club - App.js
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
+// TJI, 13 Feb 2022, Added pb-5 to stop sticky footer covering low content
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -24,7 +25,7 @@ import MainTemplate from './components/template/MainTemplate';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App pb-5">
       <Routes>
         <Route exact path='/' element={<Main/>} />
         <Route path='/restaurant' element={<Restaurant/>} />
