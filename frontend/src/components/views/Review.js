@@ -14,13 +14,13 @@ import ModalCancelConfirm from '../form/modal/ModalCancelConfirm';
 import { useParams } from "react-router-dom";
 import { printStarTotal, printReviewTotal } from '../../helperFunction/StringGenerator';
 import { connect } from 'react-redux';
-import { addReview, deleteAllReviews, deleteReview } from '../../actions';
+import { addReview, deleteAllReviews, deleteReview, updateReview } from '../../actions';
 
 
 function Review(props) {
 
     const { id: restaurantId } = useParams();
-    const { addReview, deleteAllReviews, deleteReview } = props;
+    const { addReview, deleteAllReviews, deleteReview, updateReview } = props;
 
     const restaurantName = "Joe's Burgers";
 
@@ -68,15 +68,19 @@ function Review(props) {
     }
 
     const saveReview = () => {
-        
-        console.log(props.users)
-        console.log(props.reviews)
-        console.log(props.users[0].auth.userName)
-        addReview(props.users[0].auth.userName, props.users[0].id, restaurantId, restaurantName, 
-            tasteRating, serviceRating, cleanRating, overallRating, reviewTitle, 
-            reviewText, fileName);
+        // Review redux actions can be tested here*****
+        // const reviewId = 1;
+        // console.log(props.users)
+        // console.log(props.reviews)
+        // console.log(props.users[0].auth.userName)
+        // addReview(props.users[0].auth.userName, props.users[0].id, restaurantId, restaurantName, 
+        //     tasteRating, serviceRating, cleanRating, overallRating, reviewTitle, 
+        //     reviewText, fileName);
         // deleteAllReviews();
         // deleteReview(0)
+        // updateReview(1,tasteRating, 
+        //     serviceRating, cleanRating, overallRating, reviewTitle, 
+        //     reviewText, fileName)
     }
 
     const starFont = { color: "gold" }
@@ -277,6 +281,13 @@ const mapDispatchToProps = dispatch =>
         },
         deleteReview(id) {
             dispatch(deleteReview(id))
+        },
+        updateReview(reviewId, tasteRating, 
+            serviceRating, cleanlinessRating, overallRating, reviewTitle, 
+            reviewText, imageLocation) {
+                dispatch(updateReview(reviewId, tasteRating, 
+                    serviceRating, cleanlinessRating, overallRating, reviewTitle, 
+                    reviewText, imageLocation))    
         }
     })
 

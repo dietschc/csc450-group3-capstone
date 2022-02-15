@@ -3,6 +3,8 @@
 // Restaurant Club - reviews.js
 // February 13, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 2/14/2022, Started writing basic redux reducers)
+//  (DAB, 2/15/2022, Finished writing basic redux reducers)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -22,9 +24,15 @@ export const reviews = (state = [], action) => {
         case C.DELETE_REVIEW:
             return state.filter((review) => review.id !== action.id)
         case C.UPDATE_REVIEW:
-            return [
-                ...state
-            ]
+                return state.map((currentReview) => {
+                    if (currentReview.id === action.id) {
+                        return review(currentReview, action)
+                    }
+                    else {
+                        return currentReview
+                    }
+                })
+            
         default:
             return state;
     }
@@ -44,6 +52,15 @@ export const review = (state = {}, action) => {
                 reviewText: action.reviewText,
                 images: reviewImages([], action),
                 history: reviewHistory({}, action)
+            }
+        case C.UPDATE_REVIEW:
+            return {
+                ...state,
+                rating: reviewRating(state.rating, action),
+                reviewTitle: action.reviewTitle,
+                reviewText: action.reviewText,
+                images: reviewImages(state.images, action),
+                history: reviewHistory(state.history, action)
             }
         default:
             return state;
@@ -90,6 +107,14 @@ export const reviewRating = (state = {}, action) => {
                 cleanlinessRating: action.rating.cleanlinessRating,
                 overallRating: action.rating.cleanlinessRating
             }
+        case C.UPDATE_REVIEW:
+            return {
+                ...state,
+                tasteRating: action.rating.tasteRating,
+                serviceRating: action.rating.serviceRating,
+                cleanlinessRating: action.rating.cleanlinessRating,
+                overallRating: action.rating.overallRating
+            }
         default:
             return state;
     }
@@ -104,6 +129,19 @@ export const reviewImages = (state = [], action) => {
                 ...state,
                 reviewImage({}, action)
             ]
+        case C.UPDATE_REVIEW:
+            return state.map((image) => {
+                // NEED TO DECIDE WHAT TO FILTER IMAGE BY, id or imageLocation. This currently 
+                // is built to support one image in state only which is the current 
+                // standard.
+                // 
+                if (true) {
+                    return reviewImage(image, action)
+                }
+                else {
+                    return image
+                }
+            })
         default:
             return state;
     }
@@ -116,6 +154,11 @@ export const reviewImage = (state = {}, action) => {
         case C.ADD_REVIEW:
             return {
                 id: action.images.id,
+                imageLocation: action.images.imageLocation
+            }
+        case C.UPDATE_REVIEW:
+            return {
+                ...state,
                 imageLocation: action.images.imageLocation
             }
         default:
@@ -131,6 +174,11 @@ export const reviewHistory = (state = {}, action) => {
             return {
                 id: action.history.id,
                 created: action.history.created,
+                modified: action.history.modified
+            }
+        case C.UPDATE_REVIEW:
+            return {
+                ...state,
                 modified: action.history.modified
             }
         default:

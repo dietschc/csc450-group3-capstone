@@ -3,6 +3,7 @@
 // Restaurant Club - users.js
 // February 13, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 2/14/2022, Wrote reducer to add a user to users)
 
 // Using React library in order to build components 
 // for the app and importing needed components
