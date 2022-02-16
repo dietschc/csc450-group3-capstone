@@ -13,6 +13,8 @@ import { Row, Col, Form, Container, Button, FloatingLabel, Card } from 'react-bo
 import mockStateData from "../../redux/initialState.json";
 import { useNavigate } from 'react-router-dom';
 import FormContainer from '../template/XLContainer';
+import { connect } from 'react-redux';
+import { addMessage, deleteAllMessages, deleteMessage } from '../../actions/messages';
 
 function Chat(props) {
     // The mock state will be held as data
@@ -20,7 +22,7 @@ function Chat(props) {
     const [chatMessage, setChatMessage]=useState("");
     const [messageHistory, setMessageHistory]=useState(data.messages);
 
-   
+   const { addMessage, deleteAllMessages, deleteMessage } = props;
 
     // navigate will allow navigation between the Views
     const navigate = useNavigate();
@@ -30,7 +32,16 @@ function Chat(props) {
     const sendMessageHandler = (e) => {
         e.preventDefault();
         console.log(chatMessage);
-        
+
+        const testState = {
+            messageId: 1,
+            toUserId: 1,
+            fromUserId: 2,
+            message: "Test message"
+        }
+        addMessage(testState.toUserId, testState.fromUserId, testState.message)
+        // deleteMessage(testState.messageId)
+        // deleteAllMessages()
         // setMessageHistory( 
         //     ...messageHistory,
         //     {
@@ -99,5 +110,31 @@ function Chat(props) {
     )
 }
 
-// Exporting the component
-export default Chat;
+// Mapping the redux store states to props
+const mapStateToProps = state => 
+    ({
+        reviews: [...state.reviews],
+        users: [...state.users],
+        messages: [...state.messages]
+    });
+
+// Mapping the state actions to props
+const mapDispatchToProps = dispatch => 
+    ({
+        // This method will add a new review
+        addMessage(toUserId, fromUserId, message) {
+            dispatch(addMessage(toUserId, fromUserId, message)
+                )
+        },
+        deleteAllMessages() {
+            dispatch(deleteAllMessages()
+            )
+        },
+        deleteMessage(id) {
+            dispatch(deleteMessage(id))
+        }
+    })
+
+
+// Exporting the connect Wrapped EditAccount Component
+export default connect(mapStateToProps, mapDispatchToProps)(Chat);
