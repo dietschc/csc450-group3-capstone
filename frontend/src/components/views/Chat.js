@@ -20,9 +20,10 @@ function Chat(props) {
     // The mock state will be held as data
     const [data, setData]=useState(mockStateData);
     const [chatMessage, setChatMessage]=useState("");
-    const [messageHistory, setMessageHistory]=useState(data.messages);
+    // const [messageHistory, setMessageHistory]=useState(data.messages);
 
-   const { addMessage, deleteAllMessages, deleteMessage } = props;
+    const { messages: messageHistory } = props;
+    const { addMessage, deleteAllMessages, deleteMessage } = props;
 
     // navigate will allow navigation between the Views
     const navigate = useNavigate();
@@ -34,7 +35,7 @@ function Chat(props) {
         console.log(chatMessage);
 
         const testState = {
-            messageId: 1,
+            messageId: 0,
             toUserId: 1,
             fromUserId: 2,
             message: "Test message"
