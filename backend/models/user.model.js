@@ -8,7 +8,8 @@ module.exports = (sequelize, Sequelize) => {
 	const User = sequelize.define("user", {
 		userId: {
 			type: Sequelize.INTEGER,
-			primaryKey: true
+			primaryKey: true,
+			autoIncrement: true
 		},
 		addressId: {
 			type: Sequelize.INTEGER

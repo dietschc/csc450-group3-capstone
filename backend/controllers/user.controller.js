@@ -39,9 +39,7 @@ exports.create = (req, res) => {
 
 // Retrieve all Users from the database.
 exports.findAll = (req, res) => {
-    const userEmail = req.query.userEmail;
-    var condition = userEmail ? { userEmail: { [Op.like]: `%${userEmail}%` } } : null;
-    User.findAll({ where: condition })
+    User.findAll()
         .then(data => {
             res.send(data);
         })
