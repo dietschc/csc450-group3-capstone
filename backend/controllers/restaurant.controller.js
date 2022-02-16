@@ -1,6 +1,5 @@
 const db = require("../models");
 const Restaurant = db.restaurants;
-const Op = db.Sequelize.Op;
 
 // Create and Save a new Restaurant
 exports.create = (req, res) => {
@@ -33,9 +32,7 @@ exports.create = (req, res) => {
 
 // Retrieve all Restaurants from the database.
 exports.findAll = (req, res) => {
-    const restaurantEmail = req.query.restaurantEmail;
-    var condition = restaurantEmail ? { restaurantEmail: { [Op.like]: `%${restaurantEmail}%` } } : null;
-    Restaurant.findAll({ where: condition })
+    Restaurant.findAll()
         .then(data => {
             res.send(data);
         })

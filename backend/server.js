@@ -20,7 +20,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Database configuration
 const db = require("./models");
-db.sequelize.sync();
+// db.sequelize.sync();
+db.sequelize.sync({ force: true }).then(() => {
+  console.log("Drop and re-sync db.");
+});
 
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to the Restaurant Club backend application." });
@@ -29,6 +32,8 @@ app.get("/", (req, res) => {
 // Set app routes
 require("./routes/user.routes")(app);
 require("./routes/restaurant.routes")(app);
+require("./routes/authentication.routes")(app);
+require("./routes/address.routes")(app);
 
 // set port, listen for requests
 const PORT = 5000;
