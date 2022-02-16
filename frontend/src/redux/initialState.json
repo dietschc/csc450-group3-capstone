@@ -40,7 +40,6 @@
         },
         {
             "id": 1,
-            "password": "",
             "firstName": "",
             "lastName": "",
             "address": {

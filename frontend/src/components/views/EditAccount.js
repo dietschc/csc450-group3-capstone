@@ -13,7 +13,10 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 import FormContainer from '../template/FormContainer';
-import { addUser } from '../../actions';
+import { addUser, deleteUser, deleteAllUsers, 
+    updateUser, addFriend, deleteFriend, deleteAllFriends, 
+    login, logout, updatePermission } 
+    from '../../actions/users';
 
 function EditAccount(props) {
     let editing = false
@@ -31,7 +34,9 @@ function EditAccount(props) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const { addUser } = props;
+    const { addUser, deleteUser, deleteAllUsers, 
+        updateUser, addFriend, deleteFriend, deleteAllFriends, 
+        login, logout, updatePermission } = props;
 
     const onChangeUserName = e => {
         const userName = e.target.value
@@ -79,7 +84,7 @@ function EditAccount(props) {
     }
 
     const saveAccount = () => {
-        var data = {
+        let data = {
             userName: userName,
             firstName: firstName,
             lastName: lastName,
@@ -90,7 +95,45 @@ function EditAccount(props) {
             email: email,
             password: password
         }
-        addUser(userName, firstName, lastName, address, city, zip, state, email, password);
+
+        // This variable is used for testing the following 
+        // reducers/actions
+        let testData = {
+            userId: 0,
+            userName: "uName",
+            firstName: "fName",
+            lastName: "lName",
+            address: "address",
+            city: "city",
+            zip: "zip",
+            state: "state",
+            email: "email",
+            password: "password",
+            friendId: 2,
+            friendUserName: "testFriend",
+            permissionId: 1,
+            permissionName: "testPermission"
+        }
+
+        // addUser(testData.userName, testData.firstName, 
+        //     testData.lastName, testData.address, 
+        //     testData.city, testData.zip, testData.state, 
+        //     testData.email, testData.password);
+
+        // deleteUser(testData.userId)
+        // deleteAllUsers()
+        // updateUser(testData.userId, testData.userName, testData.firstName, 
+        //     testData.lastName, testData.address, 
+        //     testData.city, testData.zip, testData.state, 
+        //     testData.email, testData.password)
+        // addFriend(testData.userId, testData.friendId, testData.friendUserName)
+        // deleteFriend(testData.userId, testData.friendId)
+        // deleteAllFriends(testData.userId)
+        // login(testData.userId)
+        // logout(testData.userId)
+        // updatePermission(testData.userId, testData.permissionId, testData.permissionName)
+
+
         console.log(data)
         setSubmitted(true)
     }
@@ -287,7 +330,37 @@ const mapDispatchToProps = dispatch =>
             address, city, state, zip, email, password) {
             dispatch(addUser(userName, firstName, lastName, 
                 address, city, state, zip, email, password))
+        },
+        deleteUser(userId) {
+            dispatch(deleteUser(userId))
+        },
+        deleteAllUsers() {
+            dispatch(deleteAllUsers())
+        },
+        updateUser(userId, userName, firstName, lastName, 
+            address, city, state, zip, email, password) {
+            dispatch(updateUser(userId, userName, firstName, lastName, 
+                address, city, state, zip, email, password))
+        },
+        addFriend(userId, friendId, friendUserName) {
+            dispatch(addFriend(userId, friendId, friendUserName))
+        },
+        deleteFriend(userId, friendId) {
+            dispatch(deleteFriend(userId, friendId))
+        },
+        deleteAllFriends(userId) {
+            dispatch(deleteAllFriends(userId))
+        },
+        login(userId) {
+            dispatch(login(userId))
+        },
+        logout(userId) {
+            dispatch(logout(userId))
+        },
+        updatePermission(userId, permissionId, permissionName) {
+            dispatch(updatePermission(userId, permissionId, permissionName))
         }
+
     })
 
 
