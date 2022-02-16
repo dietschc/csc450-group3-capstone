@@ -4,7 +4,8 @@
 // February 13, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/14/2022, Wrote reducer to add a user to users)
-//  (DAB, 2/15/2022, Wrote reducers for login, logout, friends, and remaining users)
+//  (DAB, 2/15/2022, Wrote redux reducers/actions for login, logout, friends, and remaining users)
+//  (DAB, 2/16/2022, Wrote redux reducers/actions for permissions and tested)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -77,6 +78,15 @@ export const users = (state = [], action) => {
                         return currentUser
                     }
                 })
+            case C.UPDATE_PERMISSION:
+                return state.map((currentUser) => {
+                    if (currentUser.id === action.id) {
+                        return user(currentUser, action)
+                    }
+                    else {
+                        return currentUser
+                    }
+                })
         default:
             return state;
     }
@@ -131,6 +141,11 @@ export const user = (state = {}, action) => {
                 ...state,
                 isLoggedIn: action.isLoggedIn
             }
+        case C.UPDATE_PERMISSION:
+            return {
+                ...state,
+                auth: auth(state.auth, action)
+            }
         default:
             return state;
     }
@@ -155,6 +170,11 @@ export const auth = (state = {}, action) => {
                 password: action.auth.password,
                 history: history(state.history, action)
             }
+        case C.UPDATE_PERMISSION:
+            return {
+                ...state,
+                permission: permission(state.permission, action)
+            }
         default:
             return state;
     }
@@ -168,6 +188,11 @@ export const permission = (state = {}, action) => {
             return {
                 id: action.auth.permission.id,
                 permissionName: action.auth.permission.permissionName
+            }
+        case C.UPDATE_PERMISSION:
+            return {
+                id: action.permissionId,
+                permissionName: action.permissionName
             }
         default:
             return state;

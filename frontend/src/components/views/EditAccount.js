@@ -15,7 +15,7 @@ import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstra
 import FormContainer from '../template/FormContainer';
 import { addUser, deleteUser, deleteAllUsers, 
     updateUser, addFriend, deleteFriend, deleteAllFriends, 
-    login, logout } 
+    login, logout, updatePermission } 
     from '../../actions/users';
 
 function EditAccount(props) {
@@ -36,7 +36,7 @@ function EditAccount(props) {
 
     const { addUser, deleteUser, deleteAllUsers, 
         updateUser, addFriend, deleteFriend, deleteAllFriends, 
-        login, logout } = props;
+        login, logout, updatePermission } = props;
 
     const onChangeUserName = e => {
         const userName = e.target.value
@@ -96,8 +96,10 @@ function EditAccount(props) {
             password: password
         }
 
+        // This variable is used for testing the following 
+        // reducers/actions
         let testData = {
-            userId: 1,
+            userId: 0,
             userName: "uName",
             firstName: "fName",
             lastName: "lName",
@@ -108,7 +110,9 @@ function EditAccount(props) {
             email: "email",
             password: "password",
             friendId: 2,
-            friendUserName: "testFriend"
+            friendUserName: "testFriend",
+            permissionId: 1,
+            permissionName: "testPermission"
         }
 
         // addUser(testData.userName, testData.firstName, 
@@ -127,6 +131,7 @@ function EditAccount(props) {
         // deleteAllFriends(testData.userId)
         // login(testData.userId)
         // logout(testData.userId)
+        // updatePermission(testData.userId, testData.permissionId, testData.permissionName)
 
 
         console.log(data)
@@ -351,6 +356,9 @@ const mapDispatchToProps = dispatch =>
         },
         logout(userId) {
             dispatch(logout(userId))
+        },
+        updatePermission(userId, permissionId, permissionName) {
+            dispatch(updatePermission(userId, permissionId, permissionName))
         }
 
     })
