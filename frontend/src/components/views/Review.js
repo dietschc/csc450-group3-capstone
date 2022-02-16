@@ -14,7 +14,7 @@ import ModalCancelConfirm from '../form/modal/ModalCancelConfirm';
 import { useParams } from "react-router-dom";
 import { printStarTotal, printReviewTotal } from '../../helperFunction/StringGenerator';
 import { connect } from 'react-redux';
-import { addReview, deleteAllReviews, deleteReview, updateReview } from '../../actions';
+import { addReview, deleteAllReviews, deleteReview, updateReview } from '../../actions/reviews';
 
 
 function Review(props) {

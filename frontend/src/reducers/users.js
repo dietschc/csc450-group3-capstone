@@ -4,6 +4,7 @@
 // February 13, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/14/2022, Wrote reducer to add a user to users)
+//  (DAB, 2/15/2022, Wrote reducers for login, logout, friends, and remaining users)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -18,6 +19,64 @@ export const users = (state = [], action) => {
                 ...state,
                 user({}, action)
             ]
+        case C.DELETE_ALL_USERS:
+            return []
+        case C.DELETE_USER:
+            return state.filter((user) => user.id !== action.id)
+        case C.UPDATE_USER:
+            return state.map((currentUser) => {
+                if (currentUser.id === action.id) {
+                    return user(currentUser, action)
+                }
+                else {
+                    return currentUser
+                }
+            })
+        case C.ADD_FRIEND:
+            return state.map((currentUser) => {
+                if (currentUser.id === action.userId) {
+                    return user(currentUser, action)
+                }
+                else {
+                    return currentUser
+                }
+            })
+        case C.DELETE_ALL_FRIENDS:
+            return state.map((currentUser) => {
+                if (currentUser.id === action.id) {
+                    return user(currentUser, action)
+                }
+                else {
+                    return currentUser
+                }
+            })
+            case C.DELETE_FRIEND:
+                return state.map((currentUser) => {
+                    if (currentUser.id === action.userId) {
+                        return user(currentUser, action)
+                    }
+                    else {
+                        return currentUser
+                    }
+                })
+            case C.LOGIN:
+                return state.map((currentUser) => {
+                    if (currentUser.id === action.id) {
+                        return user(currentUser, action)
+                    }
+                    else {
+                        return currentUser
+                    }
+                })
+            case C.LOGOUT:
+                return state.map((currentUser) => {
+                    if (currentUser.id === action.id) {
+                        return user(currentUser, action)
+                    }
+                    else {
+                        return currentUser
+                    }
+                })
         default:
             return state;
     }
@@ -38,6 +97,40 @@ export const user = (state = {}, action) => {
                 auth: auth({}, action),
                 isLoggedIn: action.isLoggedIn
             }
+        case C.UPDATE_USER:
+            return {
+                ...state,
+                firstName: action.firstName,
+                lastName: action.lastName,
+                email: action.email,
+                address: address(state.address, action),
+                auth: auth(state.auth, action)
+            }
+        case C.ADD_FRIEND:
+            return {
+                ...state,
+                friends: friends(state.friends, action)
+            }
+        case C.DELETE_ALL_FRIENDS:
+            return {
+                ...state,
+                friends: friends([], action)
+            }
+        case C.DELETE_FRIEND:
+            return {
+                ...state,
+                friends: friends(state.friends, action)
+            }
+        case C.LOGIN:
+            return {
+                ...state,
+                isLoggedIn: action.isLoggedIn
+            }
+        case C.LOGOUT:
+            return {
+                ...state,
+                isLoggedIn: action.isLoggedIn
+            }
         default:
             return state;
     }
@@ -54,6 +147,13 @@ export const auth = (state = {}, action) => {
                 permission: permission({}, action),
                 password: action.auth.password,
                 history: history({}, action)
+            }
+        case C.UPDATE_USER:
+            return {
+                ...state,
+                userName: action.auth.userName,
+                password: action.auth.password,
+                history: history(state.history, action)
             }
         default:
             return state;
@@ -84,6 +184,11 @@ export const history = (state = {}, action) => {
                 created: action.auth.history.created,
                 modified: action.auth.history.modified
             }
+        case C.UPDATE_USER:
+            return {
+                ...state,
+                modified: action.auth.history.modified
+            }
         default:
             return state;
     }
@@ -101,6 +206,14 @@ export const address = (state = {}, action) => {
                 state: action.address.state,
                 zip: action.address.zip
             }
+        case C.UPDATE_USER:
+            return {
+                ...state,
+                address: action.address.address,
+                city: action.address.city,
+                state: action.address.state,
+                zip: action.address.zip
+            }
         default:
             return state;
     }
@@ -112,6 +225,16 @@ export const friends = (state = [], action) => {
     switch (action.type) {
         case C.ADD_USER:
             return []
+        case C.ADD_FRIEND:
+            console.log("STATE IN FRIEND", state)
+            return [
+                ...state,
+                friend({}, action)
+            ]
+        case C.DELETE_ALL_FRIENDS:
+            return []
+        case C.DELETE_FRIEND:
+            return state.filter((friend) => friend.id !== action.id)
         default:
             return state;
     }
@@ -121,6 +244,11 @@ export const friends = (state = [], action) => {
 // altered
 export const friend = (state = {}, action) => {
     switch (action.type) {
+        case C.ADD_FRIEND:
+            return {
+                id: action.id,
+                userName: action.userName
+            }
         default:
             return state;
     }
