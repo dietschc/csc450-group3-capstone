@@ -1,25 +1,25 @@
 module.exports = (sequelize, Sequelize) => {
-	const Restaurant = sequelize.define("restaurant", {
-		restaurantId: {
+	const Address = sequelize.define("address", {
+		addressId: {
 			type: Sequelize.INTEGER,
 			primaryKey: true,
 			autoIncrement: true
 		},
-		addressId: {
-			type: Sequelize.INTEGER
-		},
-		fName: {
+		address: {
 			type: Sequelize.STRING
 		},
-		lName: {
+		city: {
 			type: Sequelize.STRING
 		},
-		restaurantEmail: {
+		state: {
+			type: Sequelize.STRING
+		},
+		zip: {
 			type: Sequelize.STRING
 		}
 	}, {
 		freezeTableName: true,
 		timestamps: false
 	});
-	return Restaurant;
+	return Address;
 };
