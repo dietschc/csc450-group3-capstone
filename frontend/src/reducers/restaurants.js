@@ -7,11 +7,75 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import C from '../constants';
+import { address } from './users';
 
 // The restaurants reducer will allow the restaurants [] state to be 
 // altered
 export const restaurants = (state = [], action) => {
     switch (action.type) {
+        case C.ADD_RESTAURANT:
+            return [
+                ...state,
+                restaurant({}, action)
+            ]
+        case C.DELETE_ALL_RESTAURANTS:
+            return []
+        case C.DELETE_RESTAURANT:
+            return state.filter((restaurant) => restaurant.id !== action.id)
+        case C.INCREMENT_RESTAURANT_REVIEW_COUNT:
+            return state.map((currentRestaurant) => {
+                if (currentRestaurant.id === action.id) {
+                    return restaurant(currentRestaurant, action)
+                }
+                else {
+                    return currentRestaurant
+                }
+            })
+        case C.DECREMENT_RESTAURANT_REVIEW_COUNT:
+            return state.map((currentRestaurant) => {
+                if (currentRestaurant.id === action.id) {
+                    return restaurant(currentRestaurant, action)
+                }
+                else {
+                    return currentRestaurant
+                }
+            })
+        case C.UPDATE_RESTAURANT_REVIEW_COUNT:
+            return state.map((currentRestaurant) => {
+                if (currentRestaurant.id === action.id) {
+                    return restaurant(currentRestaurant, action)
+                }
+                else {
+                    return currentRestaurant
+                }
+            })
+        case C.UPDATE_RESTAURANT:
+            return state.map((currentRestaurant) => {
+                if (currentRestaurant.id === action.id) {
+                    return restaurant(currentRestaurant, action)
+                }
+                else {
+                    return currentRestaurant
+                }
+            })
+        case C.UPDATE_RESTAURANT_RATING:
+            return state.map((currentRestaurant) => {
+                if (currentRestaurant.id === action.id) {
+                    return restaurant(currentRestaurant, action)
+                }
+                else {
+                    return currentRestaurant
+                }
+            })
+        case C.UPDATE_RESTAURANT_OWNER:
+            return state.map((currentRestaurant) => {
+                if (currentRestaurant.id === action.id) {
+                    return restaurant(currentRestaurant, action)
+                }
+                else {
+                    return currentRestaurant
+                }
+            })
         default:
             return state;
     }
@@ -21,6 +85,57 @@ export const restaurants = (state = [], action) => {
 // altered
 export const restaurant = (state = {}, action) => {
     switch (action.type) {
+        case C.ADD_RESTAURANT:
+            return {
+                id: action.id,
+                author: author({}, action),
+                ownerId: action.ownerId,
+                name: action.name,
+                digitalContact: action.digitalContact,
+                website: action.website,
+                phone: action.phone,
+                address: address({}, action),
+                rating: rating({}, action),
+                reviewCount: action.reviewCount,
+                images: images([], action)
+            }
+        case C.INCREMENT_RESTAURANT_REVIEW_COUNT:
+            return {
+                ...state,
+                reviewCount: ++state.reviewCount
+            }
+        case C.DECREMENT_RESTAURANT_REVIEW_COUNT:
+            return {
+                ...state,
+                reviewCount: --state.reviewCount
+            }
+        case C.UPDATE_RESTAURANT:
+            return {
+                ...state,
+                author: author(state.author, action),
+                name: action.name,
+                digitalContact: action.digitalContact,
+                website: action.website,
+                phone: action.phone,
+                address: address(state.address, action),
+                images: images(state.images, action)
+            }
+        case C.UPDATE_RESTAURANT_RATING: {
+            return {
+                ...state,
+                rating: rating(state.rating, action)
+            }
+        }
+        case C.UPDATE_RESTAURANT_REVIEW_COUNT:
+            return {
+                ...state,
+                reviewCount: action.reviewCount
+            }
+        case C.UPDATE_RESTAURANT_OWNER:
+            return {
+                ...state,
+                ownerId: action.ownerId
+            }
         default:
             return state;
     }
@@ -30,6 +145,16 @@ export const restaurant = (state = {}, action) => {
 // altered
 export const author = (state = {}, action) => {
     switch (action.type) {
+        case C.ADD_RESTAURANT:
+            return {
+                id: action.author.id,
+                userName: action.author.userName
+            }
+        case C.UPDATE_RESTAURANT:
+            return {
+                id: action.author.id,
+                userName: action.author.userName
+            }
         default:
             return state;
     }
@@ -39,6 +164,22 @@ export const author = (state = {}, action) => {
 // altered
 export const restaurantAddress = (state = [], action) => {
     switch (action.type) {
+        case C.ADD_RESTAURANT:
+            return {
+                id: action.address.id,
+                address: action.address.address,
+                city: action.address.city,
+                state: action.address.state,
+                zip: action.address.zip
+            }
+        case C.UPDATE_RESTAURANT:
+            return {
+                ...state,
+                address: action.address.id,
+                city: action.address.city,
+                state: action.address.city,
+                zip: action.address.zip
+            }
         default:
             return state;
     }
@@ -48,6 +189,23 @@ export const restaurantAddress = (state = [], action) => {
 // altered
 export const rating = (state = {}, action) => {
     switch (action.type) {
+        case C.ADD_RESTAURANT:
+            return {
+                id: action.rating.id,
+                tasteRating: action.rating.tasteRating,
+                serviceRating: action.rating.serviceRating,
+                cleanlinessRating: action.rating.cleanlinessRating,
+                overallRating: action.rating.overallRating
+            }
+        case C.UPDATE_RESTAURANT_RATING: {
+            return {
+                ...state,
+                tasteRating: action.rating.tasteRating,
+                serviceRating: action.rating.serviceRating,
+                cleanlinessRating: action.rating.cleanlinessRating,
+                overallRating: action.rating.overallRating
+            }
+        }
         default:
             return state;
     }
@@ -57,6 +215,20 @@ export const rating = (state = {}, action) => {
 // altered
 export const images = (state = [], action) => {
     switch (action.type) {
+        case C.ADD_RESTAURANT:
+            return [
+                ...state,
+                image({}, action)
+            ]
+        case C.UPDATE_RESTAURANT:
+            return state.map((image) => {
+                if (action.images.imageLocation !== state.images.imageLocation) {
+                    return image
+                }
+                else {
+                    return image(image, action)
+                }
+            })
         default:
             return state;
     }
@@ -66,6 +238,16 @@ export const images = (state = [], action) => {
 // altered
 export const image = (state = {}, action) => {
     switch (action.type) {
+        case C.ADD_RESTAURANT:
+            return {
+                id: action.images.id,
+                imageLocation: action.images.imageLocation
+            }
+        case C.UPDATE_RESTAURANT:
+            return {
+                id: action.images.id,
+                imageLocation: action.images.imageLocation
+            }
         default:
             return state;
     }
