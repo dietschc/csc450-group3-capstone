@@ -27,7 +27,7 @@ db.authentication = require("./authentication.model.js")(sequelize, Sequelize);
 db.address = require("./address.model.js")(sequelize, Sequelize);
 
 // User 1-1 Authentication Associations
-db.users.hasOne(db.authentication);
+db.users.hasOne(db.authentication, { foreignKey: 'userId' });
 db.authentication.belongsTo(db.users, { foreignKey: 'userId' });
 
 module.exports = db;

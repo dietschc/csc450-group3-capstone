@@ -3,8 +3,6 @@
 // Restaurant Club - authentication.model.js
 // February 15, 2022
 // Last Edited (Initials, Date, Edits):
-const db = require("../models");
-const User = db.user;
 
 module.exports = (sequelize, Sequelize) => {
 	const Authentication = sequelize.define("authentication", {
