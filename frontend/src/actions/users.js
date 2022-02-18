@@ -9,55 +9,51 @@
 // for the app and importing needed components
 import C from '../constants';
 import { v4 } from 'uuid';
-
-// Use constants to build actions below. Still looking into 
-// correct file structure
+import UserDataService from "../services/user.service";
 
 /**
- * React Redux action will add a new user to state.
+ * The addUser action is called from components/views/EditAccount.js in saveAccount. It passes
+ * parameters obtained from the text input form fields on the frontend to the backend via
+ * the user data service.
  * 
  * @param {*} userName 
- * @param {*} firstName 
- * @param {*} lastName 
+ * @param {*} fName 
+ * @param {*} lName 
  * @param {*} address 
  * @param {*} city 
- * @param {*} state 
  * @param {*} zip 
- * @param {*} email 
- * @param {*} password 
+ * @param {*} state 
+ * @param {*} userEmail 
+ * @param {*} userPassword 
  * @returns 
  */
-export const addUser = (userName, 
-    firstName, lastName, address, 
-    city, state, zip, email, password) => ({
-        type: C.ADD_USER,
-        id: v4(),
-        firstName: firstName,
-        lastName: lastName,
-        address: {
-            id: v4(),
-            address: address,
-            city: city,
-            state: state,
-            zip: zip
-        },
-        auth: {
-            id: v4(),
-            userName: userName,
-            permission: {
-                id: 0,
-                permissionName: "general"
-            },
-            password: password,
-            history: {
-                id: v4(),
-                created: new Date(),
-                modified: ""
-            }
-        },
-        email: email,
-        isLoggedIn: false
-})
+export const addUser = (
+    userName, fName, lName, address,
+    city, zip, state, userEmail, userPassword) => async (dispatch) => {
+        try {
+
+            /**
+             * Call and await the user data service create method, passing the parameters and storing the 
+             * results in a constant.
+             */
+            const res = await UserDataService.create({
+                userName, fName, lName, address, city, zip, state, userEmail, userPassword
+            });
+
+            /**
+             * Dispatch result data to reducer which extracts values like userId, and authId from the res.data
+             * and loads that into state.
+             */
+            dispatch({
+                type: C.ADD_USER,
+                payload: res.data,
+            });
+
+            return Promise.resolve(res.data);
+        } catch (err) {
+            return Promise.reject(err);
+        }
+    };
 
 /**
  * React Redux action that will delete a user from state 
