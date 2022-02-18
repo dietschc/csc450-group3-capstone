@@ -94,7 +94,7 @@ export const restaurant = (state = {}, action) => {
                 digitalContact: action.digitalContact,
                 website: action.website,
                 phone: action.phone,
-                address: address({}, action),
+                address: restaurantAddress({}, action),
                 rating: rating({}, action),
                 reviewCount: action.reviewCount,
                 images: images([], action)
@@ -117,7 +117,7 @@ export const restaurant = (state = {}, action) => {
                 digitalContact: action.digitalContact,
                 website: action.website,
                 phone: action.phone,
-                address: address(state.address, action),
+                address: restaurantAddress(state.address, action),
                 images: images(state.images, action)
             }
         case C.UPDATE_RESTAURANT_RATING: {
@@ -175,9 +175,9 @@ export const restaurantAddress = (state = [], action) => {
         case C.UPDATE_RESTAURANT:
             return {
                 ...state,
-                address: action.address.id,
+                address: action.address.address,
                 city: action.address.city,
-                state: action.address.city,
+                state: action.address.state,
                 zip: action.address.zip
             }
         default:
@@ -216,19 +216,10 @@ export const rating = (state = {}, action) => {
 export const images = (state = [], action) => {
     switch (action.type) {
         case C.ADD_RESTAURANT:
-            return [
-                ...state,
-                image({}, action)
-            ]
+                return action.images.map((currentImage) => image(currentImage, action))
         case C.UPDATE_RESTAURANT:
-            return state.map((image) => {
-                if (action.images.imageLocation !== state.images.imageLocation) {
-                    return image
-                }
-                else {
-                    return image(image, action)
-                }
-            })
+            // Set up to only allow for one image in the array
+            return state.map((currentImage) => image(currentImage, action))
         default:
             return state;
     }
@@ -240,12 +231,12 @@ export const image = (state = {}, action) => {
     switch (action.type) {
         case C.ADD_RESTAURANT:
             return {
-                id: action.images.id,
-                imageLocation: action.images.imageLocation
+                id: state.id,
+                imageLocation: state.imageLocation
             }
         case C.UPDATE_RESTAURANT:
             return {
-                id: action.images.id,
+                ...state,
                 imageLocation: action.images.imageLocation
             }
         default:

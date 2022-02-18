@@ -175,5 +175,5 @@ const mapDispatchToProps = dispatch =>
     })
 
 
-// Exporting the connect Wrapped EditAccount Component
+// Exporting the connect Wrapped Restaurant Component
 export default connect(mapStateToProps, mapDispatchToProps)(Restaurant);

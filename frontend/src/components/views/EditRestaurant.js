@@ -11,12 +11,22 @@ import { Container, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import EditRestaurantForm from '../form/EditRestaurantForm';
 import FormContainer from '../template/FormContainer';
+import { connect } from 'react-redux';
+import { addRestaurant, decrementRestaurantReviewCount, deleteAllRestaurants,
+deleteRestaurant, incrementRestaurantReviewCount, updateRestaurant, updateRestaurantRating,
+updateRestaurantReviewCount, updateRestaurantOwner } from '../../actions/restaurants';
 
 function EditRestaurant(props) {
     // These variables will keep track if the form was submitted and weather the 
     // form should load as an update or add
     const submitted = false;
     const isUpdate = false;
+
+    const { addRestaurant, decrementRestaurantReviewCount, deleteAllRestaurants,
+        deleteRestaurant, incrementRestaurantReviewCount, updateRestaurant, updateRestaurantRating,
+        updateRestaurantReviewCount, updateRestaurantOwner } = props;
+
+    
 
     // Displays the header of EditRestaurant page. Depending on if the form will loaded 
     // in to update or add a restaurant
@@ -61,5 +71,63 @@ function EditRestaurant(props) {
     )
 }
 
-// Exporting the component
-export default EditRestaurant;
+// Mapping the redux store states to props
+const mapStateToProps = state => 
+    ({
+        reviews: [...state.reviews],
+        users: [...state.users],
+        messages: [...state.messages]
+    });
+
+// Mapping the state actions to props
+const mapDispatchToProps = dispatch => 
+    ({
+        // This method will add a new review
+        addRestaurant(restaurantId, authorId, authorUserName, ownerId, restaurantName, digitalContact, website, 
+            phone, addressId, address, city, state, zip, ratingId, tasteRating, serviceRating, cleanlinessRating, overallRating, 
+            reviewCount, imageId, imageLocation) {
+            dispatch(addRestaurant(restaurantId, authorId, authorUserName, ownerId, restaurantName, digitalContact, website, 
+                phone, addressId, address, city, state, zip, ratingId, tasteRating, serviceRating, cleanlinessRating, overallRating, 
+                reviewCount, imageId, imageLocation)
+                )
+        },
+        decrementRestaurantReviewCount(restaurantId) {
+            dispatch(decrementRestaurantReviewCount(restaurantId)
+            )
+        },
+        deleteAllRestaurants() {
+            dispatch(deleteAllRestaurants()
+            )
+        },
+        deleteRestaurant(id) {
+            dispatch(deleteRestaurant(id))
+        },
+        incrementRestaurantReviewCount(restaurantId) {
+            dispatch(incrementRestaurantReviewCount(restaurantId)
+            )
+        },
+        updateRestaurantOwner(ownerId) {
+            dispatch(updateRestaurantOwner(ownerId)
+            )
+        },
+        updateRestaurant(restaurantName, authorId, authorUserName, address, 
+            city, state, zip, phone, digitalContact, website, imageLocation) {
+            dispatch(updateRestaurant(restaurantName, authorId, authorUserName, address, 
+                city, state, zip, phone, digitalContact, website, imageLocation)
+                )
+        },
+        updateRestaurantRating(restaurantId, tasteRating, serviceRating, 
+            cleanlinessRating, overallRating) {
+            dispatch(updateRestaurantRating(restaurantId, tasteRating, serviceRating, 
+                cleanlinessRating, overallRating)
+                )
+        },
+        updateRestaurantReviewCount(restaurantId, reviewCount) {
+            dispatch(updateRestaurantReviewCount(restaurantId, reviewCount) 
+            )
+        }
+    })
+
+
+// Exporting the connect Wrapped EditRestaurant Component
+export default connect(mapStateToProps, mapDispatchToProps)(EditRestaurant);
