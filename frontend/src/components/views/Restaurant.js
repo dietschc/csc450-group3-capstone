@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 02/07/2022, Constructed the layout view for this component)
 //  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
+//  (DAB, 2/17/2022, Added redux connect and restaurants actions)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -12,16 +13,14 @@ import React, { useState } from 'react';
 import { Link, useHistory, useNavigate } from 'react-router-dom';
 import XLContainer from '../template/XLContainer';
 import mockStateData from "../../redux/initialState.json";
-import { Card, ListGroup, Col, Row, Button, ListGroupItem, Container } from 'react-bootstrap';
+import { Card, ListGroup, Row, Button, Container } from 'react-bootstrap';
 import { useParams } from "react-router-dom";
-import { printStarTotal, printReviewTotal } from '../../helperFunction/StringGenerator';
-import 'bootstrap/dist/css/bootstrap.min.css'
 import RestaurantHeadingCardBody from '../subComponent/RestaurantHeadingCardBody';
 import FullStarRatingCol from '../subComponent/FullStarRatingCol';
-import RestaurantReviewDetail from '../subComponent/RestaurantReviewDetail';
-import ReviewHeadingCardBody from '../subComponent/ReviewHeadingCardBody';
 import FullStarRatingRow from '../subComponent/FullStarRatingRow';
 import ReviewTextCardBody from '../subComponent/ReviewTextCardBody';
+import { connect } from 'react-redux';
+import {  } from '../../actions/restaurants';
 
 /**
  * The Restaurant Component will display the Restaurant details and 
@@ -150,5 +149,31 @@ function Restaurant(props) {
     )
 }
 
-// Exporting the component
-export default Restaurant;
+// Mapping the redux store states to props
+const mapStateToProps = state => 
+    ({
+        reviews: [...state.reviews],
+        users: [...state.users],
+        messages: [...state.messages]
+    });
+
+// Mapping the state actions to props
+const mapDispatchToProps = dispatch => 
+    ({
+        // This method will add a new review
+        // addRestaurant(toUserId, fromUserId, message) {
+        //     dispatch(addRestaurant(toUserId, fromUserId, message)
+        //         )
+        // },
+        // deleteAllRestaurants() {
+        //     dispatch(deleteAllRestaurants()
+        //     )
+        // },
+        // deleteRestaurant(id) {
+        //     dispatch(deleteRestaurant(id))
+        // }
+    })
+
+
+// Exporting the connect Wrapped EditAccount Component
+export default connect(mapStateToProps, mapDispatchToProps)(Restaurant);

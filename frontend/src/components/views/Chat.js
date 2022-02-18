@@ -77,8 +77,8 @@ function Chat(props) {
                 </Card.Title>
                 <Card.Text className="border m-3 p-2 mh-50" style={{minHeight:"10rem", maxHeight:"15rem",  overflow:"auto"}}>
                     {messageHistory.map((message) => (
-                        (message.userMessage.from === users[0].id) ?  (<span style={{color:"darkblue"}}>{users[0].auth.userName + "[" + message.timeStamp + "]" + ": "}<span style={{color:"blue"}}>{message.message}</span><br/><br/></span>) :
-                        (<span style={{color:"darkred"}}>{users[1].auth.userName + "[" + message.timeStamp + "]" + ": "}<span style={{color:"red"}}>{message.message + "\n"}</span><br/><br/></span>)
+                        (message.userMessage.from === users[0].id) ?  (<span style={{color:"darkblue"}}>{users[0].auth.userName + "[" + message.timeStamp + "]: "}<span style={{color:"blue"}}>{message.message}</span><br/><br/></span>) :
+                        (<span style={{color:"darkred"}}>{users[1].auth.userName + "[" + message.timeStamp + "]: "}<span style={{color:"red"}}>{message.message + "\n"}</span><br/><br/></span>)
                     ))}
                     <br/>
                     <br/>
