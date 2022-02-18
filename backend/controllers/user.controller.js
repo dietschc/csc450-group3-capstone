@@ -99,7 +99,7 @@ exports.addUser = async (req, res) => {
     // Build parameters for authentication table insert
     const authentication = {
         userId: newUser.userId,
-        permissionId: "1",
+        permissionId: 1,
         userName: req.body.userName,
         userPassword: req.body.userPassword,
         historyId: req.body.historyId,
