@@ -9,7 +9,9 @@ import { useLocation } from "react-router-dom";
 
 /**
  * This function will be used to scroll the browser to the top after a route change
- * from a page with a lot of content.
+ * from a page with a lot of content. This is a well documented issue that happens with
+ * react router, so much so that this code snippet actually comes directly from them!
+ * https://v5.reactrouter.com/web/guides/scroll-restoration
  * 
  * @returns 
  */
