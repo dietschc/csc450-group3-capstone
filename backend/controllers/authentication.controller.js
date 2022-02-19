@@ -6,6 +6,7 @@
 
 const db = require("../models");
 const Authentication = db.authentication;
+const Op = db.Sequelize.Op;
 
 // Create and Save a new Authentication
 exports.create = (req, res) => {
@@ -35,6 +36,51 @@ exports.create = (req, res) => {
             res.status(500).send({
                 message:
                     err.message || "Some error occurred while creating the Authentication."
+            });
+        });
+};
+
+// Authentication login callback function
+exports.login = (req, res) => {
+    // Validate request
+    if ((!req.body.userName) || (!req.body.userPassword)) {
+        res.status(400).send({
+            message: "You must supply a username and password!"
+        });
+        return;
+    }
+
+    // Set parameters for db lookup
+    const userName = req.body.userName;
+    const userPassword = req.body.userPassword;
+
+    Authentication.findOne({
+        where: {
+            userName: userName,
+            userPassword: userPassword
+        }
+    })
+        .then(data => {
+            // Debug code
+            // console.log("data: " + data);
+            // console.log(status instanceof Authentication);
+
+            // If where condition has a match
+            if (data instanceof Authentication) {
+                res.send({
+                    message: "OK"
+                });
+            } else {
+                // Pretty sure this should eventually be 400 but I was getting a promise
+                // error from redux when the status code returned was 400
+                res.status(200).send({
+                    message: "Incorrect username/password"
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error authenticating"
             });
         });
 };

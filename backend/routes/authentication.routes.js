@@ -5,24 +5,27 @@
 // Last Edited (Initials, Date, Edits):
 
 module.exports = app => {
-    const authentication = require("../controllers/authentication.controller.js");
-    var router = require("express").Router();
+  const authentication = require("../controllers/authentication.controller.js");
+  var router = require("express").Router();
 
-    // Create a new Authentication
-    router.post("/", authentication.create);
+  // Create a new Authentication
+  router.post("/", authentication.create);
 
-    // Retrieve all Authentications
-    router.get("/", authentication.findAll);
+  // Call login function
+  router.post("/login", authentication.login);
 
-    // Retrieve a single Authentication with id
-    router.get("/:id", authentication.findOne);
+  // Retrieve all Authentications
+  router.get("/", authentication.findAll);
 
-    // Update a Authentication with id
-    router.put("/:id", authentication.update);
+  // Retrieve a single Authentication with id
+  router.get("/:id", authentication.findOne);
 
-    // Delete a Authentication with id
-    router.delete("/:id", authentication.delete);
+  // Update a Authentication with id
+  router.put("/:id", authentication.update);
 
-    // URL to authentication for route
-    app.use('/authentication', router);
-  };
+  // Delete a Authentication with id
+  router.delete("/:id", authentication.delete);
+
+  // URL to authentication for route
+  app.use('/authentication', router);
+};
