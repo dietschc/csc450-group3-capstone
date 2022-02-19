@@ -43,9 +43,9 @@ exports.create = (req, res) => {
 // Alters the user, address, and authentication tables (and eventually history)
 exports.addUser = async (req, res) => {
     // Validate request
-    if ((!req.body.userEmail) || (!req.body.address)) {
+    if ((!req.body.userEmail) || (!req.body.address) || (!req.body.userName)) {
         res.status(400).send({
-            message: "Required fields are userEmail and address"
+            message: "Required fields are userEmail, address, and userName"
         });
         return;
     }
