@@ -3,6 +3,7 @@
 // Restaurant Club - EditRestaurantForm.js
 // February 3, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 2/18/2022, Added in redux connect for state)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -127,10 +128,20 @@ function EditRestaurantForm(props) {
             cleanlinessRating: 3,
             overallRating: 5,
             reviewCount: 100,
-            imageId: 10,
-            imageLocation: "Fake Image Test"
+            images: [
+                {
+                    imageId: 10,
+                    imageLocation: "Fake Image Test"
+                },
+                {
+                    imageId: 15,
+                    imageLocation: "Fake Image 2"
+                }
+            ]
+            
         }
 
+        // DEBUG REDUX METHODS
         // addRestaurant(testData.restaurantId, testData.authorId, testData.authorUserName, testData.ownerId, 
         //     testData.restaurantName, testData.digitalContact, testData.website, 
         //     testData.phone, testData.addressId, testData.address, testData.city, testData.state, testData.zip, 
@@ -142,9 +153,9 @@ function EditRestaurantForm(props) {
         // deleteRestaurant(testData.restaurantId)
         // updateRestaurantOwner(testData.restaurantId, testData.ownerId)
 
-        // updateRestaurant(testData.restaurantId, testData.restaurantName, testData.authorId, testData.authorUserName, 
-        //     testData.address, testData.city, testData.state, testData.zip, testData.phone, 
-        //     testData.digitalContact, testData.website, testData.imageLocation)
+        updateRestaurant(testData.restaurantId, testData.restaurantName, testData.authorId, testData.authorUserName, 
+            testData.address, testData.city, testData.state, testData.zip, testData.phone, 
+            testData.digitalContact, testData.website, testData.imageArray)
         
         // updateRestaurantRating(testData.restaurantId, testData.tasteRating, testData.serviceRating, 
         //     testData.cleanlinessRating, testData.overallRating)
@@ -222,9 +233,9 @@ const mapDispatchToProps = dispatch =>
             )
         },
         updateRestaurant(restaurantId, restaurantName, authorId, authorUserName, address, 
-            city, state, zip, phone, digitalContact, website, imageLocation) {
+            city, state, zip, phone, digitalContact, website, imageArray) {
             dispatch(updateRestaurant(restaurantId, restaurantName, authorId, authorUserName, address, 
-                city, state, zip, phone, digitalContact, website, imageLocation)
+                city, state, zip, phone, digitalContact, website, imageArray)
                 )
         },
         updateRestaurantRating(restaurantId, tasteRating, serviceRating, 

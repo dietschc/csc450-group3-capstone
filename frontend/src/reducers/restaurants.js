@@ -3,11 +3,12 @@
 // Restaurant Club - restaurants.js
 // February 13, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 2/19/2022, Added in comments, altered code for images update)
+
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import C from '../constants';
-import { address } from './users';
 
 // The restaurants reducer will allow the restaurants [] state to be 
 // altered
@@ -219,7 +220,32 @@ export const images = (state = [], action) => {
                 return action.images.map((currentImage) => image(currentImage, action))
         case C.UPDATE_RESTAURANT:
             // Set up to only allow for one image in the array
-            return state.map((currentImage) => image(currentImage, action))
+            console.log(action.images)
+            return action.images.map((currentImage) => {
+                console.log("CURRENT IMAGE", currentImage)
+                return image(currentImage, action)
+            })
+            // return state.map((currentImage) => image(currentImage, action))
+            // return state.map((currentImage) => {
+            //     return action.images.map((actionImage) => {
+            //         if (currentImage.imageLocation === actionImage.imageLocation) {
+            //             return image(currentImage, action)
+            //         }
+            //         else {
+            //             return actionImage
+            //         }
+            //     })
+            // })
+            // return action.images.map((currentImage) => {
+            //     return state.map((stateImage) => {
+            //         if (currentImage.imageLocation === stateImage.imageLocation) {
+            //             return image(currentImage, action)
+            //         }
+            //         else {
+            //             return currentImage
+            //         }
+            //     })
+            // })
         default:
             return state;
     }
@@ -237,7 +263,7 @@ export const image = (state = {}, action) => {
         case C.UPDATE_RESTAURANT:
             return {
                 ...state,
-                imageLocation: action.images.imageLocation
+                imageLocation: state.imageLocation
             }
         default:
             return state;
