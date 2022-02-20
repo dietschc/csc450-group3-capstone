@@ -8,17 +8,12 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 import FormContainer from '../template/FormContainer';
-import {
-    addUser, deleteUser, deleteAllUsers,
-    updateUser, addFriend, deleteFriend, deleteAllFriends,
-    login, logout, updatePermission
-}
-    from '../../actions/users';
+import { addUserThunk } from '../../actions/users';
 
 function EditAccount(props) {
     let editing = false
@@ -36,9 +31,7 @@ function EditAccount(props) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const { addUser, deleteUser, deleteAllUsers,
-        updateUser, addFriend, deleteFriend, deleteAllFriends,
-        login, logout, updatePermission } = props;
+    const { addUserThunk } = props;
 
     const onChangeUserName = e => {
         const userName = e.target.value
@@ -88,7 +81,7 @@ function EditAccount(props) {
     const saveAccount = () => {
 
         // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
-        addUser(userName, firstName, lastName, address, city, state, zip, email, password)
+        addUserThunk(userName, firstName, lastName, address, city, state, zip, email, password)
 
         let data = {
             userName: userName,
@@ -371,4 +364,4 @@ const mapStateToProps = state =>
 
 // Exporting the connect Wrapped EditAccount Component
 // export default connect(mapStateToProps, mapDispatchToProps)(EditAccount);
-export default connect(mapStateToProps, { addUser })(EditAccount);
+export default connect(mapStateToProps, { addUserThunk })(EditAccount);

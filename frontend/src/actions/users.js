@@ -27,24 +27,24 @@ import UserDataService from "../services/user.service";
  * @param {*} userPassword 
  * @returns 
  */
-export const addUser = (
+export const addUserThunk = (
     userName, fName, lName, address,
     city, zip, state, userEmail, userPassword) => async dispatch => {
-            /**
-             * Call and await the user data service create method, passing the parameters and storing the 
-             * results in a constant.
-             */
-            await UserDataService.create({
-                userName, fName, lName, address, city, zip, state, userEmail, userPassword
-            })
+        /**
+         * Call and await the user data service create method, passing the parameters and storing the 
+         * results in a constant.
+         */
+        await UserDataService.create({
+            userName, fName, lName, address, city, zip, state, userEmail, userPassword
+        })
             .then(res => {
-                const result = { ...res.data.newUser, ...res.data.newAddress, ...res.data.newAuth}
-                dispatch(addUser1(result))
+                const result = { ...res.data.newUser, ...res.data.newAddress, ...res.data.newAuth }
+                dispatch(addUser(result))
             })
             .catch(err => {
                 console.log(err)
             })
-        }
+    }
 
 // export const addUser = (
 //     userName, fName, lName, address,
@@ -72,23 +72,29 @@ export const addUser = (
 //         }
 //     };
 
-    /**
- * React Redux action will add a new user to state.
+/**
+ * * React Redux action will add a new user to state.
  * 
- * @param {*} userName 
- * @param {*} fName 
- * @param {*} lName 
- * @param {*} address 
- * @param {*} city 
- * @param {*} state 
- * @param {*} zip 
- * @param {*} userEmail 
- * @param {*} userPassword 
+ * @param {
+ * userId, 
+ * userName,
+ * fName, 
+ * lName, 
+ * address,
+ * addressId, 
+ * authId,
+ * city, 
+ * state, 
+ * zip, 
+ * userEmail, 
+ * permissionId, 
+ * userPassword
+ * } param0 
  * @returns 
  */
-export const addUser1 = ({userId, userName, 
+export const addUser = ({ userId, userName,
     fName, lName, address, addressId, authId,
-    city, state, zip, userEmail, permissionId, userPassword}) => ({
+    city, state, zip, userEmail, permissionId, userPassword }) => ({
         type: C.ADD_USER,
         id: userId,
         firstName: fName,
@@ -116,7 +122,7 @@ export const addUser1 = ({userId, userName,
         },
         email: userEmail,
         isLoggedIn: false
-})
+    })
 
 /**
  * React Redux action that will delete a user from state 
