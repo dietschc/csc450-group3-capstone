@@ -8,15 +8,12 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 import FormContainer from '../template/FormContainer';
-import { addUser, deleteUser, deleteAllUsers, 
-    updateUser, addFriend, deleteFriend, deleteAllFriends, 
-    login, logout, updatePermission } 
-    from '../../actions/users';
+import { addUserThunk } from '../../actions/users';
 
 function EditAccount(props) {
     let editing = false
@@ -34,9 +31,7 @@ function EditAccount(props) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const { addUser, deleteUser, deleteAllUsers, 
-        updateUser, addFriend, deleteFriend, deleteAllFriends, 
-        login, logout, updatePermission } = props;
+    const { addUserThunk } = props;
 
     const onChangeUserName = e => {
         const userName = e.target.value
@@ -84,6 +79,10 @@ function EditAccount(props) {
     }
 
     const saveAccount = () => {
+
+        // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
+        addUserThunk(userName, firstName, lastName, address, city, state, zip, email, password)
+
         let data = {
             userName: userName,
             firstName: firstName,
@@ -133,7 +132,6 @@ function EditAccount(props) {
         // logout(testData.userId)
         // updatePermission(testData.userId, testData.permissionId, testData.permissionName)
 
-
         console.log(data)
         setSubmitted(true)
     }
@@ -170,134 +168,134 @@ function EditAccount(props) {
                 ) : (
                     <Form>
                         <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel 
-                                controlId="floatingUserId" 
+                            <FloatingLabel
+                                controlId="floatingUserId"
                                 label="User Name">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="User Name"
-                                        required
-                                        value={userName}
-                                        onChange={onChangeUserName}
-                                    />
-                                </FloatingLabel>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="User Name"
+                                    required
+                                    value={userName}
+                                    onChange={onChangeUserName}
+                                />
+                            </FloatingLabel>
                         </Form.Floating>
 
                         <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel 
-                                controlId="floatingFirstName" 
+                            <FloatingLabel
+                                controlId="floatingFirstName"
                                 label="First Name">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="User Name"
-                                        required
-                                        value={firstName}
-                                        onChange={onChangeFirstName}
-                                    />
-                                </FloatingLabel>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="User Name"
+                                    required
+                                    value={firstName}
+                                    onChange={onChangeFirstName}
+                                />
+                            </FloatingLabel>
                         </Form.Floating>
 
                         <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel 
-                                controlId="floatingLastName" 
+                            <FloatingLabel
+                                controlId="floatingLastName"
                                 label="Last Name">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Last Name"
-                                        required
-                                        value={lastName}
-                                        onChange={onChangeLastName}
-                                    />
-                                </FloatingLabel>
-                        </Form.Floating>
-                        
-                        <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel 
-                                controlId="floatingAddress" 
-                                label="Address">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Address"
-                                        required
-                                        value={address}
-                                        onChange={onChangeAddress}
-                                    />
-                                </FloatingLabel>
-                        </Form.Floating>
-                        
-                        <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel 
-                                controlId="floatingCity" 
-                                label="City">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="City"
-                                        required
-                                        value={city}
-                                        onChange={onChangeCity}
-                                    />
-                                </FloatingLabel>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Last Name"
+                                    required
+                                    value={lastName}
+                                    onChange={onChangeLastName}
+                                />
+                            </FloatingLabel>
                         </Form.Floating>
 
-                        
+                        <Form.Floating className="mb-3 justify-content-center">
+                            <FloatingLabel
+                                controlId="floatingAddress"
+                                label="Address">
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Address"
+                                    required
+                                    value={address}
+                                    onChange={onChangeAddress}
+                                />
+                            </FloatingLabel>
+                        </Form.Floating>
+
+                        <Form.Floating className="mb-3 justify-content-center">
+                            <FloatingLabel
+                                controlId="floatingCity"
+                                label="City">
+                                <Form.Control
+                                    type="text"
+                                    placeholder="City"
+                                    required
+                                    value={city}
+                                    onChange={onChangeCity}
+                                />
+                            </FloatingLabel>
+                        </Form.Floating>
+
+
                         <Row className="justify-content-center">
                             <Form.Floating as={Col} sm={6} className="mb-3 justify-content-center">
-                                <FloatingLabel 
-                                    controlId="floatingState" 
+                                <FloatingLabel
+                                    controlId="floatingState"
                                     label="State">
-                                       <Form.Select
+                                    <Form.Select
                                         aria-label="select state options"
                                         value={state}
                                         onChange={onChangeState}>
-                                            <option>Select</option>
-                                            <option value="MN">MN</option>
-                                            <option value="WI">WI</option>
-                                            <option value="XX">XX</option>
-                                        </Form.Select> 
-                                    </FloatingLabel>
+                                        <option>Select</option>
+                                        <option value="MN">MN</option>
+                                        <option value="WI">WI</option>
+                                        <option value="XX">XX</option>
+                                    </Form.Select>
+                                </FloatingLabel>
                             </Form.Floating>
 
                             <Form.Floating as={Col} sm={6} className="mb-3 justify-content-center">
-                                <FloatingLabel 
-                                    controlId="floatingZip" 
+                                <FloatingLabel
+                                    controlId="floatingZip"
                                     label="Zip">
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Zip"
-                                            required
-                                            value={zip}
-                                            onChange={onChangeZip}
-                                        />
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Zip"
+                                        required
+                                        value={zip}
+                                        onChange={onChangeZip}
+                                    />
                                 </FloatingLabel>
                             </Form.Floating>
                         </Row>
 
                         <Form.Floating className="mb-3 justify-content-center">
                             <FloatingLabel
-                                controlId="floatingEmail" 
+                                controlId="floatingEmail"
                                 label="Email">
-                                    <Form.Control
-                                        type="email"
-                                        placeholder="Email"
-                                        required
-                                        value={email}
-                                        onChange={onChangeEmail}
-                                    />
-                                </FloatingLabel>
+                                <Form.Control
+                                    type="email"
+                                    placeholder="Email"
+                                    required
+                                    value={email}
+                                    onChange={onChangeEmail}
+                                />
+                            </FloatingLabel>
                         </Form.Floating>
 
                         <Form.Floating className="mb-3 justify-content-center">
                             <FloatingLabel
-                                controlId="floatingPassword" 
+                                controlId="floatingPassword"
                                 label="Password">
-                                    <Form.Control
-                                        type="password"
-                                        placeholder="Password"
-                                        required
-                                        value={password}
-                                        onChange={onChangePassword}
-                                    />
-                                </FloatingLabel>
+                                <Form.Control
+                                    type="password"
+                                    placeholder="Password"
+                                    required
+                                    value={password}
+                                    onChange={onChangePassword}
+                                />
+                            </FloatingLabel>
                         </Form.Floating>
 
                         <div className="d-flex justify-content-around pt-2 pb-5">
@@ -317,52 +315,53 @@ function EditAccount(props) {
 }
 
 // Mapping the redux store states to props
-const mapStateToProps = state => 
-    ({
-        users: [...state.users]
-    });
+const mapStateToProps = state =>
+({
+    users: [...state.users]
+});
 
-// Mapping the state actions to props
-const mapDispatchToProps = dispatch => 
-    ({
-        // This method will add a new user to users
-        addUser(userName, firstName, lastName, 
-            address, city, state, zip, email, password) {
-            dispatch(addUser(userName, firstName, lastName, 
-                address, city, state, zip, email, password))
-        },
-        deleteUser(userId) {
-            dispatch(deleteUser(userId))
-        },
-        deleteAllUsers() {
-            dispatch(deleteAllUsers())
-        },
-        updateUser(userId, userName, firstName, lastName, 
-            address, city, state, zip, email, password) {
-            dispatch(updateUser(userId, userName, firstName, lastName, 
-                address, city, state, zip, email, password))
-        },
-        addFriend(userId, friendId, friendUserName) {
-            dispatch(addFriend(userId, friendId, friendUserName))
-        },
-        deleteFriend(userId, friendId) {
-            dispatch(deleteFriend(userId, friendId))
-        },
-        deleteAllFriends(userId) {
-            dispatch(deleteAllFriends(userId))
-        },
-        login(userId) {
-            dispatch(login(userId))
-        },
-        logout(userId) {
-            dispatch(logout(userId))
-        },
-        updatePermission(userId, permissionId, permissionName) {
-            dispatch(updatePermission(userId, permissionId, permissionName))
-        }
+// // Mapping the state actions to props
+// const mapDispatchToProps = dispatch => 
+//     ({
+//         // This method will add a new user to users
+//         addUser(userName, firstName, lastName, 
+//             address, city, state, zip, email, password) {
+//             dispatch(addUser(userName, firstName, lastName, 
+//                 address, city, state, zip, email, password))
+//         },
+//         deleteUser(userId) {
+//             dispatch(deleteUser(userId))
+//         },
+//         deleteAllUsers() {
+//             dispatch(deleteAllUsers())
+//         },
+//         updateUser(userId, userName, firstName, lastName, 
+//             address, city, state, zip, email, password) {
+//             dispatch(updateUser(userId, userName, firstName, lastName, 
+//                 address, city, state, zip, email, password))
+//         },
+//         addFriend(userId, friendId, friendUserName) {
+//             dispatch(addFriend(userId, friendId, friendUserName))
+//         },
+//         deleteFriend(userId, friendId) {
+//             dispatch(deleteFriend(userId, friendId))
+//         },
+//         deleteAllFriends(userId) {
+//             dispatch(deleteAllFriends(userId))
+//         },
+//         login(userId) {
+//             dispatch(login(userId))
+//         },
+//         logout(userId) {
+//             dispatch(logout(userId))
+//         },
+//         updatePermission(userId, permissionId, permissionName) {
+//             dispatch(updatePermission(userId, permissionId, permissionName))
+//         }
 
-    })
+//     })
 
 
 // Exporting the connect Wrapped EditAccount Component
-export default connect(mapStateToProps, mapDispatchToProps)(EditAccount);
+// export default connect(mapStateToProps, mapDispatchToProps)(EditAccount);
+export default connect(mapStateToProps, { addUserThunk })(EditAccount);
