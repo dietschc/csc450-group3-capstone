@@ -3,6 +3,7 @@
 // Restaurant Club - index.js
 // February 14, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 2/20/2022, Added in image, reviewImage, review and rating models)
 
 const dbConfig = require("../config/db.config.js");
 const Sequelize = require("sequelize");
@@ -25,6 +26,10 @@ db.users = require("./user.model.js")(sequelize, Sequelize);
 db.restaurants = require("./restaurant.model.js")(sequelize, Sequelize);
 db.authentication = require("./authentication.model.js")(sequelize, Sequelize);
 db.address = require("./address.model.js")(sequelize, Sequelize);
+// db.image = require("./image.model.js")(sequelize, Sequelize);
+// db.reviewImage = require("./reviewImage.model.js")(sequelize, Sequelize);
+// db.rating = require("./rating.model.js")(sequelize, Sequelize);
+// db.review = require("./review.model.js")(sequelize, Sequelize);
 
 // User 1-1 Authentication Associations
 db.users.hasOne(db.authentication, { foreignKey: 'userId' });
