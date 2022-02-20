@@ -40,13 +40,14 @@ export const addUser = (
                 userName, fName, lName, address, city, zip, state, userEmail, userPassword
             });
 
+            const result = { ...res.data.newUser, ...res.data.newAddress, ...res.data.newAuth}
             /**
              * Dispatch result data to reducer which extracts values like userId, and authId from the res.data
              * and loads that into state.
              */
             dispatch({
                 type: C.ADD_USER,
-                payload: res.data,
+                payload: result
             });
 
             return Promise.resolve(res.data);
