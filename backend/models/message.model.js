@@ -1,31 +1,28 @@
-// Initially Created by: Coleman Dietsch
+// Initially Created by: Devin Brueberg
 // CSC450 Capstone
-// Restaurant Club - address.model.js
-// February 14, 2022
+// Restaurant Club - message.model.js
+// February 20, 2022
 // Last Edited (Initials, Date, Edits):
 
 module.exports = (sequelize, Sequelize) => {
-	const Address = sequelize.define("address", {
-		addressId: {
+	const Message = sequelize.define("message", {
+		messageId: {
 			type: Sequelize.INTEGER,
 			primaryKey: true,
 			autoIncrement: true
 		},
-		address: {
+		conversationId: {
+			type: Sequelize.INTEGER
+		},
+		message: {
 			type: Sequelize.STRING
 		},
-		city: {
-			type: Sequelize.STRING
-		},
-		state: {
-			type: Sequelize.STRING
-		},
-		zip: {
+		timeStamp: {
 			type: Sequelize.STRING
 		}
 	}, {
 		freezeTableName: true,
 		timestamps: false
 	});
-	return Address;
+	return Message;
 };
