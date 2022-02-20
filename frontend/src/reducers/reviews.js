@@ -32,7 +32,6 @@ export const reviews = (state = [], action) => {
                         return currentReview
                     }
                 })
-            
         default:
             return state;
     }
