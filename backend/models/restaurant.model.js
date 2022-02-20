@@ -30,13 +30,13 @@ module.exports = (sequelize, Sequelize) => {
 		restaurantName: {
 			type: Sequelize.STRING
 		},
-		restDigiContact: {
+		restaurantDigiContact: {
 			type: Sequelize.STRING
 		},
-		restWebsite: {
+		restaurantWebsite: {
 			type: Sequelize.STRING
 		},
-		restPhone: {
+		restaurantPhone: {
 			type: Sequelize.STRING
 		},
 		reviewCount: {
