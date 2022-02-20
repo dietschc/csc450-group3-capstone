@@ -31,8 +31,43 @@ db.reviewImage = require("./reviewImage.model.js")(sequelize, Sequelize);
 db.rating = require("./rating.model.js")(sequelize, Sequelize);
 db.review = require("./review.model.js")(sequelize, Sequelize);
 
-// User 1-1 Authentication Associations
+// User to Authentication Association
 db.users.hasOne(db.authentication, { foreignKey: 'userId' });
 db.authentication.belongsTo(db.users, { foreignKey: 'userId' });
 
+// User to Address Association
+db.address.hasOne(db.users, { foreignKey: 'addressId' });
+db.users.belongsTo(db.address, { foreignKey: 'addressId' });
+
+// Restaurant to User Association
+db.restaurants.belongsTo(db.users, { foreignKey: { name: 'userCreatorId' } });
+db.restaurants.belongsTo(db.users, { foreignKey: { name: 'userOwnerId' } });
+db.users.hasOne(db.restaurants, { foreignKey: { name: 'userCreatorId' } });
+db.users.hasOne(db.restaurants, { foreignKey: { name: 'userOwnerId' } });
+
+// Restaurant to Rating Association
+db.rating.hasOne(db.restaurants, { foreignKey: 'ratingId' });
+db.restaurants.belongsTo(db.rating, { foreignKey: 'ratingId' });
+
+// Restaurant to Address Association
+db.address.hasOne(db.restaurants, { foreignKey: 'addressId' });
+db.restaurants.belongsTo(db.address, { foreignKey: 'addressId' });
+
+// Review to Rating Association
+db.rating.hasOne(db.review, { foreignKey: 'ratingId' });
+db.review.belongsTo(db.rating, { foreignKey: 'ratingId' });
+
+// Restaurant to Image Association
+db.image.hasOne(db.restaurants, { foreignKey: 'imageId' });
+db.restaurants.belongsTo(db.image, { foreignKey: 'imageId' });
+
+// Restaurant to Review Association
+db.review.belongsTo(db.restaurants, { foreignKey: 'restaurantId' });
+db.restaurants.hasMany(db.review, { foreignKey: 'restaurantId' });
+
+// Review to Image Association
+db.review.belongsToMany(db.image, { through: db.reviewImage,  foreignKey: 'reviewId'})
+db.image.belongsToMany(db.review, { through: db.reviewImage, foreignKey: 'imageId' })
+
+// Exporting the database
 module.exports = db;
