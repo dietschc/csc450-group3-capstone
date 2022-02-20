@@ -29,31 +29,94 @@ import UserDataService from "../services/user.service";
  */
 export const addUser = (
     userName, fName, lName, address,
-    city, zip, state, userEmail, userPassword) => async (dispatch) => {
-        try {
-
+    city, zip, state, userEmail, userPassword) => async dispatch => {
             /**
              * Call and await the user data service create method, passing the parameters and storing the 
              * results in a constant.
              */
-            const res = await UserDataService.create({
+            await UserDataService.create({
                 userName, fName, lName, address, city, zip, state, userEmail, userPassword
-            });
-
-            /**
-             * Dispatch result data to reducer which extracts values like userId, and authId from the res.data
-             * and loads that into state.
-             */
-            dispatch({
-                type: C.ADD_USER,
-                payload: res.data,
-            });
-
-            return Promise.resolve(res.data);
-        } catch (err) {
-            return Promise.reject(err);
+            })
+            .then(res => {
+                const result = { ...res.data.newUser, ...res.data.newAddress, ...res.data.newAuth}
+                dispatch(addUser1(result))
+            })
+            .catch(err => {
+                console.log(err)
+            })
         }
-    };
+
+// export const addUser = (
+//     userName, fName, lName, address,
+//     city, zip, state, userEmail, userPassword) => async dispatch => {
+//         try {
+
+//             /**
+//              * Call and await the user data service create method, passing the parameters and storing the 
+//              * results in a constant.
+//              */
+//             const res = await UserDataService.create({
+//                 userName, fName, lName, address, city, zip, state, userEmail, userPassword
+//             });
+
+//             const result = { ...res.data.newUser, ...res.data.newAddress, ...res.data.newAuth }
+//             /**
+//              * Dispatch result data to reducer which extracts values like userId, and authId from the res.data
+//              * and loads that into state.
+//              */
+//             dispatch(addUser1(result))
+
+//             return Promise.resolve(result);
+//         } catch (err) {
+//             return Promise.reject(err);
+//         }
+//     };
+
+    /**
+ * React Redux action will add a new user to state.
+ * 
+ * @param {*} userName 
+ * @param {*} fName 
+ * @param {*} lName 
+ * @param {*} address 
+ * @param {*} city 
+ * @param {*} state 
+ * @param {*} zip 
+ * @param {*} userEmail 
+ * @param {*} userPassword 
+ * @returns 
+ */
+export const addUser1 = ({userId, userName, 
+    fName, lName, address, addressId, authId,
+    city, state, zip, userEmail, permissionId, userPassword}) => ({
+        type: C.ADD_USER,
+        id: userId,
+        firstName: fName,
+        lastName: lName,
+        address: {
+            id: addressId,
+            address: address,
+            city: city,
+            state: state,
+            zip: zip
+        },
+        auth: {
+            id: authId,
+            userName: userName,
+            permission: {
+                id: permissionId,
+                permissionName: "general"
+            },
+            password: userPassword,
+            history: {
+                id: v4(),
+                created: new Date(),
+                modified: ""
+            }
+        },
+        email: userEmail,
+        isLoggedIn: false
+})
 
 /**
  * React Redux action that will delete a user from state 
