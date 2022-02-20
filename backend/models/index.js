@@ -36,7 +36,6 @@ db.conversation = require("./conversation.model")(sequelize, Sequelize);
 db.message = require("./message.model")(sequelize, Sequelize);
 db.permission = require("./permission.model")(sequelize, Sequelize);
 
-/*
 // Authentication to Permission Association
 db.authentication.belongsTo(db.permission, { foreignKey: 'permissionId' });
 db.permission.hasMany(db.authentication, { foreignKey: 'permissionId' });
@@ -110,6 +109,6 @@ db.friend.belongsTo(db.users, { foreignKey: 'friendTwoId' });
 // User to Review Association
 db.review.belongsTo(db.users, { foreignKey: 'userId' });
 db.users.hasMany(db.review, { foreignKey: 'userId' });
-**/
+
 // Exporting the database
 module.exports = db;
