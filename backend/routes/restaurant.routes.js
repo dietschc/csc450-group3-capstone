@@ -20,8 +20,8 @@ module.exports = app => {
     // Update a Restaurant with id
     router.put("/:id", restaurants.update);
 
-    // Delete a Restaurant with id
-    router.delete("/:id", restaurants.delete);
+    // Delete a Restaurant with ids
+    router.delete("/:restaurantId/:ratingId/:imageId/:addressId", restaurants.delete);
 
     // URL to restaurant for route
     app.use('/restaurants', router);
