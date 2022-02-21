@@ -14,6 +14,9 @@ module.exports = app => {
   // Call login function
   router.post("/login", authentication.login);
 
+  // Call checkUserName function
+  router.post("/checkusername", authentication.checkUserName);
+
   // Retrieve all Authentications
   router.get("/", authentication.findAll);
 

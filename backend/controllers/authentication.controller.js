@@ -68,12 +68,12 @@ exports.login = (req, res) => {
             // If where condition has a match
             if (data instanceof Authentication) {
                 res.send({
-                    message: "OK"
+                    message: "OK for user " + data.userId
                 });
             } else {
                 // Pretty sure this should eventually be 400 but I was getting a promise
                 // error from redux when the status code returned was 400
-                res.status(200).send({
+                res.status(400).send({
                     message: "Incorrect username/password"
                 });
             }
@@ -81,6 +81,47 @@ exports.login = (req, res) => {
         .catch(err => {
             res.status(500).send({
                 message: "Error authenticating"
+            });
+        });
+};
+
+// Authentication checkUsername callback function
+exports.checkUserName = (req, res) => {
+    // Validate request
+    if (!req.body.userName) {
+        res.status(400).send({
+            message: "You must supply a username!"
+        });
+        return;
+    }
+
+    // Set parameters for db lookup
+    const userName = req.body.userName;
+
+    Authentication.findOne({
+        where: {
+            userName: userName
+        }
+    })
+        .then(data => {
+            // Debug code
+            // console.log("data: " + data);
+            // console.log(data instanceof Authentication);
+
+            // If where condition has a match the username already exists
+            if (data instanceof Authentication) {
+                res.status(400).send({
+                    message: "User name already exists!"
+                });
+            } else {
+                res.status(200).send({
+                    message: "User name available!"
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error checking username"
             });
         });
 };
