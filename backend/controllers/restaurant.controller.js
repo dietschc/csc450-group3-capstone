@@ -1,24 +1,96 @@
 const db = require("../models");
 const Restaurant = db.restaurants;
+const Image = db.image;
+const Address = db.address;
+const Rating = db.rating;
+const Users = db.users;
 
 // Create and Save a new Restaurant
-exports.create = (req, res) => {
+exports.create = async(req, res) => {
     // Validate request
-    if (!req.body.restaurantEmail) {
+    if (!req.body.restaurantWebsite) {
         res.status(400).send({
             message: "Content can not be empty!"
         });
         return;
     }
+
+    // Data for an Address row for the Restaurant
+    const address = {
+        address: req.body.address,
+        city: req.body.city,
+        state: req.body.state,
+        zip: req.body.zip
+    }
+
+    // Wait for the address to be created, then copy to a const
+    const newAddress = await Address.create(address)
+        .then(newAddress => {
+            return newAddress;
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while creating the Address."
+            });
+        });
+
+    // Debug code
+    // console.log("new address: ", newAddress);
+
+    // Data for an Image row for the Restaurant
+    const image = {
+        imageLocation: req.body.imageLocation
+    }
+
+    // Wait for the image to be created, then copy to a const
+    const newImage = await Image.create(image)
+        .then(newImage => {
+            return newImage;
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while creating the Image."
+            });
+        });
+
+    // Data for a Rating row for the Restaurant 
+    const rating = {
+        tasteRating: null,
+        serviceRating: null,
+        cleanlinessRating: null,
+        overallRating: null
+    }
+
+    // Wait for the rating to be created, then copy to a const
+    const newRating = await Rating.create(rating)
+        .then(newAddress => {
+            return newAddress;
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while creating the Address."
+            });
+        });
+
     // Create a Restaurant
     const restaurant = {
-        addressId: req.body.addressId,
-        fName: req.body.fName,
-        lName: req.body.lName,
-        restaurantEmail: req.body.restaurantEmail,
+        userCreatorId: req.body.userCreatorId,
+        userOwnerId: null,
+        ratingId: newRating.ratingId,
+        addressId: newAddress.addressId,
+        imageId: newImage.imageId,
+        restaurantName: req.body.restaurantName,
+        restaurantDigiContact: req.body.restaurantDigiContact,
+        restaurantWebsite: req.body.restaurantWebsite,
+        restaurantPhone: req.body.restaurantPhone,
+        reviewCount: 0
     };
+
     // Save Restaurant in the database
-    Restaurant.create(restaurant)
+    const newRestaurant = await Restaurant.create(restaurant)
         .then(data => {
             res.send(data);
         })
@@ -32,7 +104,7 @@ exports.create = (req, res) => {
 
 // Retrieve all Restaurants from the database.
 exports.findAll = (req, res) => {
-    Restaurant.findAll()
+    Restaurant.findAll({ include: [ Users, Address, Rating, Image ] })
         .then(data => {
             res.send(data);
         })
@@ -47,7 +119,9 @@ exports.findAll = (req, res) => {
 // Find a single Restaurant with an id
 exports.findOne = (req, res) => {
     const id = req.params.id;
-    Restaurant.findByPk(id)
+    Restaurant.findOne({ where: { restaurantId: id },
+        include: [ Users, Address, Rating, Image ] 
+    })
         .then(data => {
             if (data) {
                 res.send(data);
@@ -89,9 +163,9 @@ exports.update = (req, res) => {
 };
 
 // Delete a Restaurant with the specified id in the request
-exports.delete = (req, res) => {
+exports.delete = async(req, res) => {
     const id = req.params.id;
-    Restaurant.destroy({
+    const deleteRestaurant = await Restaurant.destroy({
         where: { restaurantId: id }
     })
         .then(num => {

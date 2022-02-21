@@ -37,8 +37,8 @@ db.message = require("./message.model")(sequelize, Sequelize);
 db.permission = require("./permission.model")(sequelize, Sequelize);
 
 // Authentication to Permission Association
-db.authentication.belongsTo(db.permission, { foreignKey: 'permissionId' });
 db.permission.hasMany(db.authentication, { foreignKey: 'permissionId' });
+db.authentication.belongsTo(db.permission, { foreignKey: 'permissionId' });
 
 // Conversation to Message Association
 db.conversation.hasMany(db.message, { foreignKey: 'conversationId' });
@@ -69,14 +69,15 @@ db.rating.hasOne(db.restaurants, { foreignKey: 'ratingId' });
 db.restaurants.belongsTo(db.rating, { foreignKey: 'ratingId' });
 
 // Restaurant to Review Association
-db.review.belongsTo(db.restaurants, { foreignKey: 'restaurantId' });
 db.restaurants.hasMany(db.review, { foreignKey: 'restaurantId' });
+db.review.belongsTo(db.restaurants, { foreignKey: 'restaurantId' });
 
 // Restaurant to User Association
-db.restaurants.belongsTo(db.users, { foreignKey: { name: 'userCreatorId' } });
-db.restaurants.belongsTo(db.users, { foreignKey: { name: 'userOwnerId' } });
 db.users.hasOne(db.restaurants, { foreignKey: { name: 'userCreatorId' } });
 db.users.hasOne(db.restaurants, { foreignKey: { name: 'userOwnerId' } });
+db.restaurants.belongsTo(db.users, { foreignKey: { name: 'userCreatorId' } });
+db.restaurants.belongsTo(db.users, { foreignKey: { name: 'userOwnerId' } });
+
 
 // Review to Rating Association
 db.rating.hasOne(db.review, { foreignKey: 'ratingId' });
@@ -107,8 +108,8 @@ db.friend.belongsTo(db.users, { foreignKey: 'friendOneId' });
 db.friend.belongsTo(db.users, { foreignKey: 'friendTwoId' });
 
 // User to Review Association
-db.review.belongsTo(db.users, { foreignKey: 'userId' });
 db.users.hasMany(db.review, { foreignKey: 'userId' });
+db.review.belongsTo(db.users, { foreignKey: 'userId' });
 
 // Exporting the database
 module.exports = db;
