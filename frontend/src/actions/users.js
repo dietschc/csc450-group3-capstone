@@ -38,6 +38,8 @@ export const addUserThunk = (
             userName, fName, lName, address, city, zip, state, userEmail, userPassword
         })
             .then(res => {
+                console.log("data: ", res.data);
+
                 const result = { ...res.data.newUser, ...res.data.newAddress, ...res.data.newAuth }
                 dispatch(addUser(result))
             })
@@ -46,7 +48,7 @@ export const addUserThunk = (
             })
     }
 
-// export const addUser = (
+// export const addUserThunk = (
 //     userName, fName, lName, address,
 //     city, zip, state, userEmail, userPassword) => async dispatch => {
 //         try {
@@ -64,7 +66,7 @@ export const addUserThunk = (
 //              * Dispatch result data to reducer which extracts values like userId, and authId from the res.data
 //              * and loads that into state.
 //              */
-//             dispatch(addUser1(result))
+//             dispatch(addUser(result))
 
 //             return Promise.resolve(result);
 //         } catch (err) {
@@ -104,7 +106,7 @@ export const addUser = ({ userId, userName,
             address: address,
             city: city,
             state: state,
-            zip: zip
+            zip: zip,
         },
         auth: {
             id: authId,
@@ -225,12 +227,35 @@ export const deleteAllFriends = (userId) => ({
 })
 
 /**
+ * 
+ * @param {*} userName 
+ * @param {*} userPassword 
+ * @returns 
+ */
+export const loginThunk = (userName, userPassword) => async dispatch => {
+    /**
+     * Call and await the user data service login method, passing the parameters and storing the 
+     * results in res
+     */
+    return await UserDataService.login({ userName, userPassword })
+        .then(res => {
+            // console.log("res data: ", res);
+
+            // Dispatch to login state action
+            return dispatch(login(res.data));
+        })
+        .catch(err => {
+            console.log(err)
+        })
+}
+
+/**
  * React Redux action that log in a user with matching user Id.
  * 
  * @param {*} userId 
  * @returns 
  */
-export const login = (userId) => ({
+export const login = ({ userId }) => ({
     type: C.LOGIN,
     id: userId,
     isLoggedIn: true

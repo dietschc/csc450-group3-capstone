@@ -10,7 +10,7 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import C from '../constants';
-import { v4 } from 'uuid';
+// import { v4 } from 'uuid';
 
 // The users reducer will allow the users [] state to be 
 // altered
@@ -62,14 +62,10 @@ export const users = (state = [], action) => {
                     }
                 })
             case C.LOGIN:
-                return state.map((currentUser) => {
-                    if (currentUser.id === action.id) {
-                        return user(currentUser, action)
-                    }
-                    else {
-                        return currentUser
-                    }
-                })
+                return [
+                    ...state,
+                    user({}, action)
+                ]
             case C.LOGOUT:
                 return state.map((currentUser) => {
                     if (currentUser.id === action.id) {
@@ -134,7 +130,7 @@ export const user = (state = {}, action) => {
             }
         case C.LOGIN:
             return {
-                ...state,
+                id: action.id,
                 isLoggedIn: action.isLoggedIn
             }
         case C.LOGOUT:
