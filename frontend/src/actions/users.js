@@ -17,8 +17,8 @@ import UserDataService from "../services/user.service";
  * the user data service.
  * 
  * @param {*} userName 
- * @param {*} fName 
- * @param {*} lName 
+ * @param {*} firstName 
+ * @param {*} lastName 
  * @param {*} address 
  * @param {*} city 
  * @param {*} zip 
@@ -28,14 +28,14 @@ import UserDataService from "../services/user.service";
  * @returns 
  */
 export const addUserThunk = (
-    userName, fName, lName, address,
+    userName, firstName, lastName, address,
     city, zip, state, userEmail, userPassword) => async dispatch => {
         /**
          * Call and await the user data service create method, passing the parameters and storing the 
          * results in a constant.
          */
         await UserDataService.create({
-            userName, fName, lName, address, city, zip, state, userEmail, userPassword
+            userName, firstName, lastName, address, city, zip, state, userEmail, userPassword
         })
             .then(res => {
                 // console.log("data: ", res.data);
@@ -50,7 +50,7 @@ export const addUserThunk = (
     }
 
 // export const addUserThunk = (
-//     userName, fName, lName, address,
+//     userName, firstName, lastName, address,
 //     city, zip, state, userEmail, userPassword) => async dispatch => {
 //         try {
 
@@ -59,7 +59,7 @@ export const addUserThunk = (
 //              * results in a constant.
 //              */
 //             const res = await UserDataService.create({
-//                 userName, fName, lName, address, city, zip, state, userEmail, userPassword
+//                 userName, firstName, lastName, address, city, zip, state, userEmail, userPassword
 //             });
 
 //             const result = { ...res.data.newUser, ...res.data.newAddress, ...res.data.newAuth }
@@ -81,8 +81,8 @@ export const addUserThunk = (
  * @param {
  * userId, 
  * userName,
- * fName, 
- * lName, 
+ * firstName, 
+ * lastName, 
  * address,
  * addressId, 
  * authId,
@@ -96,12 +96,12 @@ export const addUserThunk = (
  * @returns 
  */
 export const addUser = ({ userId, userName,
-    fName, lName, address, addressId, authId,
+    firstName, lastName, address, addressId, authId,
     city, state, zip, userEmail, permissionId, userPassword }) => ({
         type: C.ADD_USER,
         id: userId,
-        firstName: fName,
-        lastName: lName,
+        firstName: firstName,
+        lastName: lastName,
         address: {
             id: addressId,
             address: address,
@@ -242,11 +242,20 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
         .then(res => {
             // console.log("res data: ", res);
 
-            // Dispatch to login state action
-            return dispatch(login(res.data));
+            const result = { ...res.data.getUser, ...res.data.getAddress, ...res.data.getAuth }
+            // Dispatch userId to add user state action
+            return dispatch(addUser(result));
+        })
+
+        .then(res => {
+            // console.log("res data: ", res);
+
+            // Dispatch userId (now stored in id) to login state action
+            return dispatch(login(res.id));
         })
         .catch(err => {
             console.log(err)
+            return err;
         })
 }
 
@@ -256,7 +265,7 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
  * @param {*} userId 
  * @returns 
  */
-export const login = ({ userId }) => ({
+export const login = (userId) => ({
     type: C.LOGIN,
     id: userId,
     isLoggedIn: true

@@ -12,16 +12,17 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Form, Container, FloatingLabel, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { connect } from 'react-redux';
-import { loginThunk } from '../../actions/users';
+import { loginThunk, deleteUser } from '../../actions/users';
 import { Link } from 'react-router-dom';
 
 function Login(props) {
     const [submitted, setSubmitted] = useState(false)
     const [showError, setShowError] = useState(false)
+    const [isLoggedIn, setIsloggedIn] = useState(false)
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
 
-    const { loginThunk } = props;
+    const { loginThunk, deleteUser, users } = props;
 
     const onChangeUserName = e => {
         setShowError(false);
@@ -38,16 +39,20 @@ function Login(props) {
     const navigate = useNavigate();
 
     const loginAccount = async () => {
-        // console.log("Username: " + userName);
-        // console.log("Password: " + password);
+        // login(1);
+        // logout(1);
+
+        // console.log("Users: ", users);
+        // console.log("Users: " + users[1].isLoggedIn);
 
         await loginThunk(userName, password)
             .then(res => {
-                // console.log("Results: ", res);
+                console.log("Results: ", res);
 
-                if (res != null) {
+                if (res.isLoggedIn === true) {
                     console.log("SUCCESS");
-                    setSubmitted(true);
+                    setIsloggedIn(true);
+                    // setSubmitted(true);
                 } else {
                     clearForm();
                     setShowError(true);
@@ -57,6 +62,12 @@ function Login(props) {
             .catch(err => {
                 console.log(err)
             })
+    }
+
+    const logoutAccount = () => {
+        // This will remove the user from state
+        setIsloggedIn(false);
+        deleteUser(users[0].id);
     }
 
     const clearForm = () => {
@@ -83,7 +94,6 @@ function Login(props) {
                             Back to Dashboard
                         </Link>
                     </div>
-
                 ) : (
                     <Form>
 
@@ -117,29 +127,37 @@ function Login(props) {
                             </FloatingLabel>
                         </Form.Floating>
 
-                        <div className="d-flex justify-content-around pt-2 pb-5">
-                            <Button variant="outline-primary" onClick={loginAccount}>
-                                Login
-                            </Button>
+                        <div className="text-center">
+                            {isLoggedIn ? (
+                                <Button variant="outline-primary" onClick={logoutAccount}>
+                                    Logout
+                                </Button>
 
-                            <Button variant="outline-primary" onClick={() => createAccountHandler()}>
-                                Create Account
-                            </Button>
+                            ) : (
+                                <div>
+                                    <div className="d-flex justify-content-around pt-2 pb-5">
+                                        <Button variant="outline-primary" onClick={loginAccount}>
+                                            Login
+                                        </Button>
+
+                                        <Button variant="outline-primary" onClick={() => createAccountHandler()}>
+                                            Create Account
+                                        </Button>
+                                    </div>
+
+                                    <div>
+                                        {showError &&
+                                            <Alert variant="danger" className="text-center">
+                                                Incorrect user name or password!
+                                            </Alert>
+                                        }
+                                    </div>
+                                </div>
+                            )}
                         </div>
-
-                        <div>
-                            {showError ? (
-                                <Alert variant="danger" className="text-center">
-                                    Incorrect user name or password!
-                                </Alert>
-                            ) : (<div> {/* Hide error */} </div>)}
-                        </div>
-
                     </Form>
-
                 )}
             </Container>
-
         </Container>
     )
 }
@@ -152,4 +170,4 @@ const mapStateToProps = state =>
 
 // Exporting the component
 // export default Login;
-export default connect(mapStateToProps, { loginThunk })(Login);
+export default connect(mapStateToProps, { loginThunk, deleteUser })(Login);

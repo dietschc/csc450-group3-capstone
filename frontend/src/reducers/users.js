@@ -62,10 +62,14 @@ export const users = (state = [], action) => {
                     }
                 })
             case C.LOGIN:
-                return [
-                    ...state,
-                    user({}, action)
-                ]
+                return state.map((currentUser) => {
+                    if (currentUser.id === action.id) {
+                        return user(currentUser, action)
+                    }
+                    else {
+                        return currentUser
+                    }
+                })
             case C.LOGOUT:
                 return state.map((currentUser) => {
                     if (currentUser.id === action.id) {
@@ -130,7 +134,7 @@ export const user = (state = {}, action) => {
             }
         case C.LOGIN:
             return {
-                id: action.id,
+                ...state,
                 isLoggedIn: action.isLoggedIn
             }
         case C.LOGOUT:
