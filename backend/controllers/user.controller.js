@@ -21,8 +21,8 @@ exports.create = (req, res) => {
     // Build parameters for user table insert
     const user = {
         addressId: null, // FK constraint with Address
-        fName: req.body.fName,
-        lName: req.body.lName,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         userEmail: req.body.userEmail,
     };
 
@@ -101,8 +101,8 @@ exports.addUser = async (req, res) => {
         // Build parameters for user table insert
         const user = {
             addressId: newAddress.addressId,
-            fName: req.body.fName,
-            lName: req.body.lName,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
             userEmail: req.body.userEmail,
         };
 
