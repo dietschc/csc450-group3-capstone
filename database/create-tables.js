@@ -101,9 +101,6 @@ sql = 'CREATE TABLE IF NOT EXISTS review (';
 sql += 'revId INT NOT NULL AUTO_INCREMENT, ';
 sql += 'userId INT NOT NULL, ';
 sql += 'restaurantId INT NOT NULL, ';
-sql += 'rating1 DECIMAL (1, 1), ';
-sql += 'rating2 DECIMAL (1, 1), ';
-sql += 'rating3 DECIMAL (1, 1), ';
 sql += 'revTitle VARCHAR(64), ';
 sql += 'revText VARCHAR(255), ';
 sql += 'imageId INT, '
@@ -117,6 +114,21 @@ connection.query(sql, function (error, results) {
   console.log('CREATE review table: ', results);
 });
 
+
+sql = 'CREATE TABLE IF NOT EXISTS rating (';
+sql += 'revId INT NOT NULL, ';
+sql += 'tasteRating FLOAT(1), ';
+sql += 'serviceRating FLOAT(1), ';
+sql += 'cleanlinessRating FLOAT(1), ';
+sql += 'overallRating FLOAT(1), ';
+sql += 'PRIMARY KEY (revId), ';
+sql += 'FOREIGN KEY (revId) REFERENCES review(revId))';
+
+connection.query(sql, function(error, results) {
+  if (error) throw error;
+  console.log('CREATE review TABLE: ', results);
+});
+
 sql = 'CREATE TABLE IF NOT EXISTS permission (';
 sql += 'permissionId INT NOT NULL AUTO_INCREMENT, ';
 sql += 'permissionName VARCHAR(32), ';
@@ -125,6 +137,19 @@ sql += 'PRIMARY KEY (permissionId))';
 connection.query(sql, function (error, results) {
   if (error) throw error;
   console.log('CREATE permission table: ', results);
+});
+
+sql = 'CREATE TABLE IF NOT EXISTS friend (';
+sql += 'friendId INT NOT NULL AUTO_INCREMENT, ';
+sql += 'userId1 INT NOT NULL, ';
+sql += 'userId2 INT NOT NULL, ';
+sql += 'PRIMARY KEY (friendId), ';
+sql += 'CONSTRAINT CK_VAL CHECK (userId1 < userId2), '
+sql += 'CONSTRAINT UQ_PAIR UNIQUE (userId1, userId2))';
+
+connection.query(sql, function(error, results) {
+  if(error) throw error;
+  console.log('CREATE friend TABLE: ', results);
 });
 
 sql = 'CREATE TABLE IF NOT EXISTS authentication (';

@@ -224,4 +224,72 @@ connection.query(sql, function (error, results) {
   console.log('ADD addRestaurant ', results);
 });
 
+
+sql = 'DROP PROCEDURE IF EXISTS addRating';
+
+connection.query(sql, function (error, results) {
+  if (error) throw error;
+  console.log('DROP addRating ', results);
+});
+
+
+sql = "CREATE PROCEDURE addRating (";
+sql += 'IN revIdIn INT, ';
+sql += 'IN tasteRatingIn FLOAT(1), ';
+sql += 'IN serviceRatingIn FLOAT(1), ';
+sql += 'IN cleanlinessRatingIn FLOAT(1), ';
+sql += 'IN overallRatingIn FLOAT(1)) ';
+
+sql += 'BEGIN ';
+
+sql += 'INSERT INTO rating (revId, tasteRating, serviceRating, cleanlinessRating, overallRating) ';
+sql += 'VALUES (revIdIn, tasteRatingIn, serviceRatingIn, cleanlinessRatingIn, overallRatingIn); ';
+
+sql += 'END';
+
+connection.query(sql, function (error, results) {
+  if (error) throw error;
+  console.log('ADD addRating ', results);
+});
+
+
+sql = 'DROP PROCEDURE IF EXISTS addReview';
+
+connection.query(sql, function (error, results) {
+  if (error) throw error;
+  console.log('DROP addReview ', results);
+});
+
+
+sql = "CREATE PROCEDURE addReview (";
+sql += 'IN userIdIn INT, ';
+sql += 'IN restaurantIdIn INT, ';
+sql += 'IN tasteRatingIn FLOAT(1), ';
+sql += 'IN serviceRatingIn FLOAT(1), ';
+sql += 'IN cleanlinessRatingIn FLOAT(1), ';
+sql += 'IN overallRatingIn FLOAT(1), ';
+sql += 'IN revTitleIn VARCHAR(64), ';
+sql += 'IN revTextIn VARCHAR(255), ';
+sql += 'IN imageLocation VARCHAR(255)) ';
+
+sql += 'BEGIN ';
+
+sql += 'IF imageLocation = "" THEN SET @imageId = NULL; ';
+sql += 'ELSE ';
+sql += 'CALL addImage(imageLocation, @imageId); ';
+sql += 'END IF; '
+
+sql += 'INSERT INTO review (userId, restaurantId, revTitle, revText, imageId) ';
+sql += 'VALUES (userIdIn, restaurantIdIn, revTitleIn, revTextIn, @imageId); ';
+
+sql += 'SET @revId = LAST_INSERT_ID(); ';
+sql += 'CALL addRating(@revId, tasteRatingIn, serviceRatingIn, cleanlinessRatingIn, overallRatingIn); ';
+
+sql += 'END';
+
+connection.query(sql, function (error, results) {
+  if (error) throw error;
+  console.log('ADD addReview ', results);
+});
+
 connection.end();
