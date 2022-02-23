@@ -21,7 +21,7 @@ module.exports = app => {
     router.put("/:id", restaurants.update);
 
     // Delete a Restaurant with ids
-    router.delete("/:restaurantId/:ratingId/:imageId/:addressId", restaurants.delete);
+    router.delete("/:id", restaurants.delete);
 
     // URL to restaurant for route
     app.use('/restaurants', router);
