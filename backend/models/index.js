@@ -23,12 +23,12 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 db.users = require("./user.model")(sequelize, Sequelize);
-Restaurants = db.restaurants = require("./restaurant.model")(sequelize, Sequelize);
+db.restaurants = require("./restaurant.model")(sequelize, Sequelize);
 db.authentication = require("./authentication.model")(sequelize, Sequelize);
-Address = db.address = require("./address.model")(sequelize, Sequelize);
-Images = db.image = require("./image.model")(sequelize, Sequelize);
+db.address = require("./address.model")(sequelize, Sequelize);
+db.image = require("./image.model")(sequelize, Sequelize);
 db.reviewImage = require("./reviewImage.model")(sequelize, Sequelize);
-Rating = db.rating = require("./rating.model.js")(sequelize, Sequelize);
+db.rating = require("./rating.model.js")(sequelize, Sequelize);
 db.review = require("./review.model.js")(sequelize, Sequelize);
 db.friend = require("./friend.model")(sequelize, Sequelize);
 db.history = require("./history.model")(sequelize, Sequelize);
@@ -58,16 +58,16 @@ db.image.hasOne(db.reviewImage, { foreignKey: 'imageId' });
 db.reviewImage.belongsTo(db.image, { foreignKey: 'imageId' })
 
 // Restaurant to Address Association
-Address.Restaurants = db.address.hasOne(db.restaurants, { foreignKey: 'addressId', onDelete: 'RESTRICT' });
-Restaurants.Address = db.restaurants.belongsTo(db.address, { foreignKey: 'addressId' });
+db.address.hasOne(db.restaurants, { foreignKey: 'addressId', onDelete: 'RESTRICT' });
+db.restaurants.belongsTo(db.address, { foreignKey: 'addressId' });
 
 // Restaurant to Image Association
-Images.Restaurants = db.image.hasOne(db.restaurants, { foreignKey: 'imageId', onDelete: 'RESTRICT' });
-Restaurants.Images = db.restaurants.belongsTo(db.image, { foreignKey: 'imageId' });
+db.image.hasOne(db.restaurants, { foreignKey: 'imageId', onDelete: 'RESTRICT' });
+db.restaurants.belongsTo(db.image, { foreignKey: 'imageId' });
 
 // Restaurant to Rating Association
-Rating.Restaurants = db.rating.hasOne(db.restaurants, { foreignKey: 'ratingId', onDelete: 'RESTRICT' });
-Restaurants.Rating = db.restaurants.belongsTo(db.rating, { foreignKey: 'ratingId' });
+db.rating.hasOne(db.restaurants, { foreignKey: 'ratingId', onDelete: 'RESTRICT' });
+db.restaurants.belongsTo(db.rating, { foreignKey: 'ratingId' });
 
 // Restaurant to Review Association
 db.restaurants.hasMany(db.review, { foreignKey: 'restaurantId' });
