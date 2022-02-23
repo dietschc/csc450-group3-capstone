@@ -241,7 +241,8 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
     return await UserDataService.login({ userName, userPassword })
         .then(res => {
             // console.log("res data: ", res);
-
+            // Delete the current users in the Users state array
+            dispatch(deleteAllUsers());
             const result = { ...res.data.getUser, ...res.data.getAddress, ...res.data.getAuth }
             // Dispatch userId to add user state action
             return dispatch(addUser(result));

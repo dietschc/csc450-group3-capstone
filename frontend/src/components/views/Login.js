@@ -18,7 +18,7 @@ import { Link } from 'react-router-dom';
 function Login(props) {
     const [submitted, setSubmitted] = useState(false)
     const [showError, setShowError] = useState(false)
-    const [isLoggedIn, setIsloggedIn] = useState(false)
+    // const [isLoggedIn, setIsloggedIn] = useState(false)
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
 
@@ -36,6 +36,16 @@ function Login(props) {
         setPassword(password);
     }
 
+    const checkLogin = () => {
+        if (users.length > 0 && typeof (users[0].isLoggedIn) !== 'undefined' && users[0].isLoggedIn != null) {
+            // console.log("Not Undefined and Not Null " + users[0].isLoggedIn);
+            return true;
+        } else {
+            // console.log('Undefined or Null')
+            return false;
+        }
+    }
+
     const navigate = useNavigate();
 
     const loginAccount = async () => {
@@ -51,7 +61,7 @@ function Login(props) {
 
                 if (res.isLoggedIn === true) {
                     console.log("SUCCESS");
-                    setIsloggedIn(true);
+                    // setIsloggedIn(true);
                     // setSubmitted(true);
                 } else {
                     clearForm();
@@ -66,7 +76,7 @@ function Login(props) {
 
     const logoutAccount = () => {
         // This will remove the user from state
-        setIsloggedIn(false);
+        // setIsloggedIn(false);
         deleteUser(users[0].id);
     }
 
@@ -128,7 +138,7 @@ function Login(props) {
                         </Form.Floating>
 
                         <div className="text-center">
-                            {isLoggedIn ? (
+                            {checkLogin() ? (
                                 <Button variant="outline-primary" onClick={logoutAccount}>
                                     Logout
                                 </Button>
