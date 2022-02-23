@@ -4,9 +4,11 @@
 // February 15, 2022
 // Last Edited (Initials, Date, Edits):
 
+const { address } = require("../models");
 const db = require("../models");
 const Authentication = db.authentication;
-const Op = db.Sequelize.Op;
+const User = db.users;
+const Address = db.address;
 
 // Create and Save a new Authentication
 exports.create = (req, res) => {
@@ -41,7 +43,7 @@ exports.create = (req, res) => {
 };
 
 // Authentication login callback function
-exports.login = (req, res) => {
+exports.login = async (req, res) => {
     // Validate request
     if ((!req.body.userName) || (!req.body.userPassword)) {
         res.status(400).send({
@@ -54,35 +56,69 @@ exports.login = (req, res) => {
     const userName = req.body.userName;
     const userPassword = req.body.userPassword;
 
-    Authentication.findOne({
+    // Create getAuth object
+    const getAuth = await Authentication.findOne({
         where: {
             userName: userName,
             userPassword: userPassword
         }
     })
         .then(data => {
-            // Debug code
-            // console.log("data: " + data);
-            // console.log(status instanceof Authentication);
-
-            // If where condition has a match
-            if (data instanceof Authentication) {
-                res.send({
-                    message: "OK for user " + data.userId
-                });
+            if (data) {
+                return data;
             } else {
-                // Pretty sure this should eventually be 400 but I was getting a promise
-                // error from redux when the status code returned was 400
-                res.status(400).send({
-                    message: "Incorrect username/password"
+                return "incorrect username password";
+            }
+        })
+        .catch(err => {
+            return err;
+        });
+
+        // Setup out userId parameter (if it exists)
+        let id = 0;
+        if (getAuth) {
+            id = getAuth.userId;
+        }
+
+        // Get user info
+        const getUser = await User.findByPk(id)
+        .then(data => {
+            if (data) {
+                return data;
+            } else {
+                return `Cannot find User with id=${id}.`;
+
+            }
+        })
+        .catch(err => {
+            return err;
+        });
+
+        // Setup out addressId parameter (if it exists)
+        let addressId = 0;
+        if (getUser) {
+            addressId = getUser.addressId;
+        }
+
+        // Get address info
+        Address.findByPk(addressId)
+        .then(getAddress => {
+            if (getAddress) {
+                // Return all 3 JSON objects in an array in the response
+                res.json({ getAuth, getUser, getAddress });
+            } else {
+                res.status(404).send({
+                    message: `Cannot find User`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error authenticating"
+                message: "Error retrieving User with id"
             });
         });
+
+
 };
 
 // Authentication checkUsername callback function

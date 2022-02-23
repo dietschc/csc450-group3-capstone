@@ -14,10 +14,10 @@ module.exports = (sequelize, Sequelize) => {
 		addressId: {
 			type: Sequelize.INTEGER
 		},
-		fName: {
+		firstName: {
 			type: Sequelize.STRING
 		},
-		lName: {
+		lastName: {
 			type: Sequelize.STRING
 		},
 		userEmail: {

@@ -23,6 +23,11 @@ class UserDataService {
     return http.post("/users/adduser", data);
   }
 
+  // Attempt to authenticate using the authentication.controller
+  login(data) {
+    return http.post("/authentication/login", data);
+  }
+
   // Updates a specific user
   update(id, data) {
     return http.put(`/users/${id}`, data);

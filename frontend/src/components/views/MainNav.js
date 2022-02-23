@@ -13,12 +13,26 @@ import { useNavigate } from 'react-router-dom';
 import { Navbar, Button, Nav, Form, Container, FormControl } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { useSelector, connect } from 'react-redux';
+import { deleteUser } from '../../actions/users';
 
 function MainNav(props) {
     const [basicActive, setBasicActive] = useState();
     const navigate = useNavigate();
-    
-    
+
+    // Get user state from props
+    const { deleteUser, users } = props;
+
+    const checkLogin = () => {
+        if (users.length > 0 && typeof (users[0].isLoggedIn) !== 'undefined' && users[0].isLoggedIn != null) {
+            // console.log("Not Undefined and Not Null " + users[0].isLoggedIn);
+            return true;
+        } else {
+            // console.log('Undefined or Null')
+            return false;
+        }
+    }
+
     const setActive = (value) => {
         if (value === basicActive) return;
         console.log("Navigating to " + value)
@@ -30,6 +44,11 @@ function MainNav(props) {
         setActive("none")
     }
 
+    const logoutAccount = () => {
+        // This will remove the user from state
+        // deleteUser(users[0].id);
+    }
+
     const buttonTheme = "outline-primary";
     const backgroundTheme = "light";
     const variantTheme = "light";
@@ -37,11 +56,11 @@ function MainNav(props) {
     return (
         <Container fluid>
             <Navbar
-            className="mainNav px-2"
-            bg={backgroundTheme}
-            variant={variantTheme}
-            collapseOnSelect
-            expand="md">
+                className="mainNav px-2"
+                bg={backgroundTheme}
+                variant={variantTheme}
+                collapseOnSelect
+                expand="md">
                 <Navbar.Brand>
                     <img
                         src="../logo.gif"
@@ -54,15 +73,15 @@ function MainNav(props) {
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
                     <Nav fill variant="pills" bg="dark" className="mb-auto pe-3"
-                    activeKey={basicActive}
-                    onSelect={(key) => setActive(key)}>
+                        activeKey={basicActive}
+                        onSelect={(key) => setActive(key)}>
                         <Nav.Item className="mx-3">
                             <LinkContainer to="/">
                                 <Nav.Link>
                                     Home
                                 </Nav.Link>
                             </LinkContainer>
-                            
+
                         </Nav.Item>
                         <Nav.Item className="mx-3">
                             <LinkContainer to="/userDashboard">
@@ -70,23 +89,24 @@ function MainNav(props) {
                                     Dashboard
                                 </Nav.Link>
                             </LinkContainer>
-                            
+
                         </Nav.Item>
                         <Nav.Item className="mx-3">
+
                             <LinkContainer to="/login">
                                 <Nav.Link>
-                                    Login
+                                    {checkLogin() ? <div onClick={logoutAccount}>Logout</div> : "Login"}
                                 </Nav.Link>
                             </LinkContainer>
-                            
-                        </Nav.Item> 
+
+                        </Nav.Item>
                     </Nav>
                     <Form className="d-flex">
                         <FormControl
-                        type="search"
-                        placeholder="Search"
-                        className="me-2"
-                        aria-label="Search"
+                            type="search"
+                            placeholder="Search"
+                            className="me-2"
+                            aria-label="Search"
                         />
                         <Button variant={buttonTheme} onClick={() => searchHandler()}>
                             Search
@@ -94,9 +114,16 @@ function MainNav(props) {
                     </Form>
                 </Navbar.Collapse>
             </Navbar>
-        </Container>   
+        </Container>
     )
 }
 
+// Mapping the redux store states to props
+const mapStateToProps = state =>
+({
+    users: [...state.users]
+});
+
 // Exporting the component
-export default MainNav;
+// export default MainNav;
+export default connect(mapStateToProps, { deleteUser })(MainNav);
