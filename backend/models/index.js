@@ -25,6 +25,8 @@ db.users = require("./user.model.js")(sequelize, Sequelize);
 db.restaurants = require("./restaurant.model.js")(sequelize, Sequelize);
 db.authentication = require("./authentication.model.js")(sequelize, Sequelize);
 db.address = require("./address.model.js")(sequelize, Sequelize);
+db.review = require("./review.model.js")(sequelize, Sequelize);
+db.rating = require("./rating.model.js")(sequelize, Sequelize);
 
 // User 1-1 Authentication Associations
 db.users.hasOne(db.authentication, { foreignKey: 'userId' });

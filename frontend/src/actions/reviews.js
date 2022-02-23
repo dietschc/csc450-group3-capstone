@@ -11,55 +11,39 @@
 // for the app and importing needed components
 import C from '../constants';
 import { v4 } from 'uuid';
-
+import ReviewDataService from "../services/review.service";
 /**
  * React-Redux action to add a review to redux state.
  * 
- * @param {*} userName - User name of the user who wrote this review.
  * @param {*} userId - User Id of the user who wrote this review.
  * @param {*} restaurantId - Restaurant Id of the restaurant being reviewed.
- * @param {*} restaurantName - Name of the restaurant being reviewed.
  * @param {*} tasteRating - Taste rating for the review.
  * @param {*} serviceRating - Service rating for the review.
  * @param {*} cleanlinessRating - Cleanliness rating for the review.
  * @param {*} overallRating - Overall rating for the review.
- * @param {*} reviewTitle - Title of the review.
- * @param {*} reviewText - Body review text.
- * @param {*} imageLocation - File location the image will be stored at.
+ * @param {*} revTitle - Title of the review.
+ * @param {*} revText - Body review text.
+ * @param {*} imageId - File location the image will be stored at.
  * @returns 
  */
- export const addReview = (userName, userId, restaurantId, restaurantName, tasteRating, 
-    serviceRating, cleanlinessRating, overallRating, reviewTitle, 
-    reviewText, imageLocation) => ({
-        type: C.ADD_REVIEW,
-        id: v4(),
-        author: {
-            id: userId,
-            userName: userName
-        },
-        restaurant: {
-            id: restaurantId,
-            name: restaurantName
-        },
-        rating: {
-            id: v4(),
-            tasteRating: tasteRating,
-            serviceRating: serviceRating,
-            cleanlinessRating: cleanlinessRating,
-            overallRating: overallRating
-        },
-        reviewTitle: reviewTitle,
-        reviewText: reviewText,
-        images: {
-            id: v4(),
-            imageLocation: imageLocation
-        },
-        history: {
-            id: v4(),
-            created: new Date(),
-            modified: null
-        }
-    })
+
+export const addReview = (
+    userId, restaurantId, revTitle, revText, imageId,
+    tasteRating, serviceRating, cleanlinessRating, overallRating
+    ) => async (dispatch) => {
+    
+    try {
+        const res = await ReviewDataService.create({userId, restaurantId, revTitle,
+        revText, imageId, tasteRating, serviceRating, cleanlinessRating, overallRating});
+
+        dispatch({
+            type: C.ADD_REVIEW,
+            payload: res.data,
+        });
+    } catch (err) {
+        return Promise.reject(err);
+    }
+}
 
     // React-Redux action to delete a review based off id from redux state
     export const deleteReview = (id) => ({
