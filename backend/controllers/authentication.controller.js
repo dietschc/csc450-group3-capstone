@@ -4,8 +4,11 @@
 // February 15, 2022
 // Last Edited (Initials, Date, Edits):
 
+const { address } = require("../models");
 const db = require("../models");
 const Authentication = db.authentication;
+const User = db.users;
+const Address = db.address;
 
 // Create and Save a new Authentication
 exports.create = (req, res) => {
@@ -35,6 +38,126 @@ exports.create = (req, res) => {
             res.status(500).send({
                 message:
                     err.message || "Some error occurred while creating the Authentication."
+            });
+        });
+};
+
+// Authentication login callback function
+exports.login = async (req, res) => {
+    // Validate request
+    if ((!req.body.userName) || (!req.body.userPassword)) {
+        res.status(400).send({
+            message: "You must supply a username and password!"
+        });
+        return;
+    }
+
+    // Set parameters for db lookup
+    const userName = req.body.userName;
+    const userPassword = req.body.userPassword;
+
+    // Create getAuth object
+    const getAuth = await Authentication.findOne({
+        where: {
+            userName: userName,
+            userPassword: userPassword
+        }
+    })
+        .then(data => {
+            if (data) {
+                return data;
+            } else {
+                return "incorrect username password";
+            }
+        })
+        .catch(err => {
+            return err;
+        });
+
+        // Setup out userId parameter (if it exists)
+        let id = 0;
+        if (getAuth) {
+            id = getAuth.userId;
+        }
+
+        // Get user info
+        const getUser = await User.findByPk(id)
+        .then(data => {
+            if (data) {
+                return data;
+            } else {
+                return `Cannot find User with id=${id}.`;
+
+            }
+        })
+        .catch(err => {
+            return err;
+        });
+
+        // Setup out addressId parameter (if it exists)
+        let addressId = 0;
+        if (getUser) {
+            addressId = getUser.addressId;
+        }
+
+        // Get address info
+        Address.findByPk(addressId)
+        .then(getAddress => {
+            if (getAddress) {
+                // Return all 3 JSON objects in an array in the response
+                res.json({ getAuth, getUser, getAddress });
+            } else {
+                res.status(404).send({
+                    message: `Cannot find User`
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error retrieving User with id"
+            });
+        });
+
+
+};
+
+// Authentication checkUsername callback function
+exports.checkUserName = (req, res) => {
+    // Validate request
+    if (!req.body.userName) {
+        res.status(400).send({
+            message: "You must supply a username!"
+        });
+        return;
+    }
+
+    // Set parameters for db lookup
+    const userName = req.body.userName;
+
+    Authentication.findOne({
+        where: {
+            userName: userName
+        }
+    })
+        .then(data => {
+            // Debug code
+            // console.log("data: " + data);
+            // console.log(data instanceof Authentication);
+
+            // If where condition has a match the username already exists
+            if (data instanceof Authentication) {
+                res.status(400).send({
+                    message: "User name already exists!"
+                });
+            } else {
+                res.status(200).send({
+                    message: "User name available!"
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error checking username"
             });
         });
 };

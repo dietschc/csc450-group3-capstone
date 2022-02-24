@@ -8,44 +8,85 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { Button, Form, Container, FloatingLabel } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { Button, Form, Container, FloatingLabel, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { connect } from 'react-redux';
+import { loginThunk, deleteUser } from '../../actions/users';
+import { Link } from 'react-router-dom';
 
 function Login(props) {
-    const initialFormData = Object.freeze({
-        username: "",
-        password: ""
-    })
-    //const[userName, setUserName] = useState();
-    //const [password, setPassword] = useState();
+    const [submitted, setSubmitted] = useState(false)
+    const [showError, setShowError] = useState(false)
+    // const [isLoggedIn, setIsloggedIn] = useState(false)
+    const [userName, setUserName] = useState("");
+    const [password, setPassword] = useState("");
+
+    const { loginThunk, deleteUser, users } = props;
+
+    const onChangeUserName = e => {
+        setShowError(false);
+        const userName = e.target.value
+        setUserName(userName);
+    }
+
+    const onChangePassword = e => {
+        setShowError(false);
+        const password = e.target.value
+        setPassword(password);
+    }
+
+    const checkLogin = () => {
+        if (users.length > 0 && typeof (users[0].isLoggedIn) !== 'undefined' && users[0].isLoggedIn != null) {
+            // console.log("Not Undefined and Not Null " + users[0].isLoggedIn);
+            return true;
+        } else {
+            // console.log('Undefined or Null')
+            return false;
+        }
+    }
+
     const navigate = useNavigate();
-    
-    //const login = () => {};
 
-    //const onChangePassword = () => {};
-    //const onChangeUserName = () => {};
+    const loginAccount = async () => {
+        // login(1);
+        // logout(1);
 
-    const [formData, updateFormData] = React.useState(initialFormData);
+        // console.log("Users: ", users);
+        // console.log("Users: " + users[1].isLoggedIn);
 
-    const handleChange = (e) =>
-    {
-        updateFormData({
-            ...formData,
+        await loginThunk(userName, password)
+            .then(res => {
+                console.log("Results: ", res);
 
-            [e.target.name]: e.target.value.trim()
-        })
-    };
+                if (res.isLoggedIn === true) {
+                    console.log("SUCCESS");
+                    // setIsloggedIn(true);
+                    // setSubmitted(true);
+                } else {
+                    clearForm();
+                    setShowError(true);
+                    console.log("FAIL");
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
 
-    const handleSubmit = (e) =>
-    {
-        e.preventDefault();
-        //console.log(formData);
-        //TO DO: add login functionality to database
+    const logoutAccount = () => {
+        // This will remove the user from state
+        // setIsloggedIn(false);
+        deleteUser(users[0].id);
+    }
+
+    const clearForm = () => {
+        setUserName("");
+        setPassword("");
     }
 
     const createAccountHandler = () => {
-        navigate("../editAccount", {itemId: 42, });
+        navigate("../editAccount", { itemId: 42, });
     }
 
 
@@ -53,57 +94,90 @@ function Login(props) {
         <Container fluid className="text-muted login" style={{ maxWidth: "500px" }}>
 
             <Container className="mt-2" as="header">
-                    <h1>Login</h1>
+                <h1>Login</h1>
             </Container>
             <Container fluid as="main" className="mt-5 justify-content-center align-center">
-            
+                {submitted ? (
+                    <div className="text-center">
+                        <h4>Account logged in successfully!</h4>
+                        <Link to={"/"}>
+                            Back to Dashboard
+                        </Link>
+                    </div>
+                ) : (
                     <Form>
 
                         <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel 
-                                controlId="floatingUserId" 
+                            <FloatingLabel
+                                controlId="floatingUserId"
                                 label="User Name">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="User Name"
-                                        required
-                                        name = "username"
-                                        onChange={handleChange}
-                                    />
-                                </FloatingLabel>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="User Name"
+                                    required
+                                    name="username"
+                                    value={userName}
+                                    onChange={onChangeUserName}
+                                />
+                            </FloatingLabel>
                         </Form.Floating>
 
                         <Form.Floating className="mb-3 justify-content-center">
                             <FloatingLabel
-                                controlId="floatingPassword" 
+                                controlId="floatingPassword"
                                 label="Password">
-                                    <Form.Control
-                                        type="password"
-                                        placeholder="Password"
-                                        required
-                                        name = "password"
-                                        onChange={handleChange}
-                                    />
-                                </FloatingLabel>
+                                <Form.Control
+                                    type="password"
+                                    placeholder="Password"
+                                    required
+                                    name="password"
+                                    value={password}
+                                    onChange={onChangePassword}
+                                />
+                            </FloatingLabel>
                         </Form.Floating>
 
-                        <div className="d-flex justify-content-around pt-2 pb-5">
-                            <Button variant="outline-primary" onClick={handleSubmit}>
-                                Login
-                            </Button>
+                        <div className="text-center">
+                            {checkLogin() ? (
+                                <Button variant="outline-primary" onClick={logoutAccount}>
+                                    Logout
+                                </Button>
 
-                            <Button variant="outline-primary" onClick={() => createAccountHandler()}>
-                                Create Account
-                            </Button>
+                            ) : (
+                                <div>
+                                    <div className="d-flex justify-content-around pt-2 pb-5">
+                                        <Button variant="outline-primary" onClick={loginAccount}>
+                                            Login
+                                        </Button>
+
+                                        <Button variant="outline-primary" onClick={() => createAccountHandler()}>
+                                            Create Account
+                                        </Button>
+                                    </div>
+
+                                    <div>
+                                        {showError &&
+                                            <Alert variant="danger" className="text-center">
+                                                Incorrect user name or password!
+                                            </Alert>
+                                        }
+                                    </div>
+                                </div>
+                            )}
                         </div>
-
                     </Form>
-                
+                )}
             </Container>
-
         </Container>
     )
 }
 
+// Mapping the redux store states to props
+const mapStateToProps = state =>
+({
+    users: [...state.users]
+});
+
 // Exporting the component
-export default Login;
+// export default Login;
+export default connect(mapStateToProps, { loginThunk, deleteUser })(Login);

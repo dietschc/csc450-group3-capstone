@@ -1,3 +1,9 @@
+// Initially Created by: Coleman Dietsch
+// CSC450 Capstone
+// Restaurant Club - restaurant.routes.js
+// February 14, 2022
+// Last Edited (Initials, Date, Edits):
+
 module.exports = app => {
     const restaurants = require("../controllers/restaurant.controller.js");
     var router = require("express").Router();
@@ -14,7 +20,7 @@ module.exports = app => {
     // Update a Restaurant with id
     router.put("/:id", restaurants.update);
 
-    // Delete a Restaurant with id
+    // Delete a Restaurant with ids
     router.delete("/:id", restaurants.delete);
 
     // URL to restaurant for route

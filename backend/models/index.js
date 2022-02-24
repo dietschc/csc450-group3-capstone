@@ -3,6 +3,7 @@
 // Restaurant Club - index.js
 // February 14, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 2/20/2022, Added in image, reviewImage, review and rating models)
 
 const dbConfig = require("../config/db.config.js");
 const Sequelize = require("sequelize");
@@ -19,6 +20,7 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
 });
 
 const db = {};
+
 db.users = require("./user.model")(sequelize, Sequelize);
 db.restaurants = require("./restaurant.model")(sequelize, Sequelize);
 db.authentication = require("./authentication.model")(sequelize, Sequelize);
@@ -33,8 +35,80 @@ db.conversation = require("./conversation.model")(sequelize, Sequelize);
 db.message = require("./message.model")(sequelize, Sequelize);
 db.permission = require("./permission.model")(sequelize, Sequelize);
 
-// User 1-1 Authentication Associations
+
+// Authentication to Permission Association
+db.permission.hasMany(db.authentication, { foreignKey: 'permissionId', onDelete: 'RESTRICT' });
+db.authentication.belongsTo(db.permission, { foreignKey: 'permissionId' });
+
+// Conversation to Message Association
+db.conversation.hasMany(db.message, { foreignKey: 'conversationId' });
+db.message.belongsTo(db.conversation, { foreignKey: 'conversationId' });
+
+// History to Authentication Association
+db.history.hasOne(db.authentication, { foreignKey: 'historyId', onDelete: 'RESTRICT' })
+db.authentication.belongsTo(db.history, { foreignKey: 'historyId' })
+
+// History to Review Association
+db.history.hasOne(db.review, { foreignKey: 'historyId', onDelete: 'RESTRICT' })
+db.review.belongsTo(db.history, { foreignKey: 'historyId' })
+
+// Image to ReviewImage Association
+db.image.hasOne(db.reviewImage, { foreignKey: 'imageId' });
+db.reviewImage.belongsTo(db.image, { foreignKey: 'imageId' })
+
+// Restaurant to Address Association
+db.address.hasOne(db.restaurants, { foreignKey: 'addressId', onDelete: 'RESTRICT' });
+db.restaurants.belongsTo(db.address, { foreignKey: 'addressId' });
+
+// Restaurant to Image Association
+db.image.hasOne(db.restaurants, { foreignKey: 'imageId', onDelete: 'RESTRICT' });
+db.restaurants.belongsTo(db.image, { foreignKey: 'imageId' });
+
+// Restaurant to Rating Association
+db.rating.hasOne(db.restaurants, { foreignKey: 'ratingId', onDelete: 'RESTRICT' });
+db.restaurants.belongsTo(db.rating, { foreignKey: 'ratingId' });
+
+// Restaurant to Review Association
+db.restaurants.hasMany(db.review, { foreignKey: 'restaurantId' });
+db.review.belongsTo(db.restaurants, { foreignKey: 'restaurantId' });
+
+// Restaurant to User Association
+db.users.hasOne(db.restaurants, { foreignKey: { name: 'userCreatorId', onDelete: 'SET NULL' } });
+db.users.hasOne(db.restaurants, { foreignKey: { name: 'userOwnerId', onDelete: 'SET NULL' } });
+db.restaurants.belongsTo(db.users, { foreignKey: { name: 'userCreatorId' } });
+db.restaurants.belongsTo(db.users, { foreignKey: { name: 'userOwnerId' } });
+
+// Review to Rating Association
+db.rating.hasOne(db.review, { foreignKey: 'ratingId', onDelete: 'RESTRICT' });
+db.review.belongsTo(db.rating, { foreignKey: 'ratingId' });
+
+// Review to ReviewImage Association
+db.review.hasMany(db.reviewImage, { foreignKey: 'reviewId' });
+db.reviewImage.belongsTo(db.review, { foreignKey: 'reviewId' });
+
+// User to Authentication Association
 db.users.hasOne(db.authentication, { foreignKey: 'userId' });
 db.authentication.belongsTo(db.users, { foreignKey: 'userId' });
 
+// User to Address Association
+db.address.hasOne(db.users, { foreignKey: 'addressId', onDelete: 'RESTRICT' });
+db.users.belongsTo(db.address, { foreignKey: 'addressId' });
+
+// User to Conversation Association
+db.users.hasMany(db.conversation, { foreignKey: 'userToId' });
+db.users.hasMany(db.conversation, { foreignKey: 'userFromId' });
+db.conversation.belongsTo(db.users, { foreignKey: 'userToId' });
+db.conversation.belongsTo(db.users, { foreignKey: 'userFromId' });
+
+// User to Friend Association
+db.users.hasMany(db.friend, { foreignKey: 'friendOneId' });
+db.users.hasMany(db.friend, { foreignKey: 'friendTwoId' });
+db.friend.belongsTo(db.users, { foreignKey: 'friendOneId' });
+db.friend.belongsTo(db.users, { foreignKey: 'friendTwoId' });
+
+// User to Review Association
+db.users.hasMany(db.review, { foreignKey: 'userId' });
+db.review.belongsTo(db.users, { foreignKey: 'userId' });
+
+// Exporting the database
 module.exports = db;

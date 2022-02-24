@@ -20,9 +20,9 @@ exports.create = (req, res) => {
     }
     // Build parameters for user table insert
     const user = {
-        addressId: req.body.addressId,
-        fName: req.body.fName,
-        lName: req.body.lName,
+        addressId: null, // FK constraint with Address
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         userEmail: req.body.userEmail,
     };
 
@@ -43,80 +43,112 @@ exports.create = (req, res) => {
 // Alters the user, address, and authentication tables (and eventually history)
 exports.addUser = async (req, res) => {
     // Validate request
-    if ((!req.body.userEmail) || (!req.body.address)) {
+    if ((!req.body.userEmail) || (!req.body.address) || (!req.body.userName)) {
         res.status(400).send({
-            message: "Required fields are userEmail and address"
+            message: "Required fields are userEmail, address, and userName"
         });
         return;
     }
 
-    // Build parameters for address table insert
-    const address = {
-        address: req.body.address,
-        city: req.body.city,
-        state: req.body.state,
-        zip: req.body.zip,
-    };
+    // Check username does not already exist
+    const userName = req.body.userName;
+    const userNameAvaialble = await Authentication.findOne({
+        where: {
+            userName: userName
+        }
+    })
+        .then(data => {
+            // Debug code
+            // console.log("data: " + data);
+            // console.log(data instanceof Authentication);
 
-    // Wait for the address to be created, then copy to a const
-    const newAddress = await Address.create(address)
-        .then(newAddress => {
-            return newAddress;
+            // If where condition has a match the username already exists
+            if (data instanceof Authentication) {
+                return "Username not available";
+            } else {
+                return "Available";
+            }
         })
         .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while creating the Address."
+            return "Error checking username";
+        });
+    // Debug code
+    console.log("user name is: " + userNameAvaialble);
+
+    // If the userName is available, procede with creating a new account
+    if (userNameAvaialble === "Available") {
+
+        // Build parameters for address table insert
+        const address = {
+            address: req.body.address,
+            city: req.body.city,
+            state: req.body.state,
+            zip: req.body.zip,
+        };
+
+        // Wait for the address to be created, then copy to a const
+        const newAddress = await Address.create(address)
+            .then(newAddress => {
+                return newAddress;
+            })
+            .catch(err => {
+                return "Some error occurred while creating the Address.";
             });
+
+        // Debug code
+        // console.log("new address: " + newAddress);
+
+        // Build parameters for user table insert
+        const user = {
+            addressId: newAddress.addressId,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            userEmail: req.body.userEmail,
+        };
+
+        // Wait for a user to be created, then copy to a const
+        const newUser = await User.create(user)
+            .then(newUser => {
+                return newUser;
+            })
+            .catch(err => {
+                return "Some error occurred while creating the User.";
+            });
+
+        // Debug code
+        // console.log("new user: " + JSON.stringify(newUser));
+
+        // Build parameters for authentication table insert
+        const authentication = {
+            userId: newUser.userId,
+            // Default permissionId level is 1 for members
+            permissionId: 1, // FK constraint with Permission table
+            userName: req.body.userName,
+            userPassword: req.body.userPassword,
+            historyId: null, // FK constraing with History table
+        }
+
+        // Save Authentication in the database
+        Authentication.create(authentication)
+            .then(newAuth => {
+                // Send the response JSON with both objects
+                res.json({ newUser, newAddress, newAuth });
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while creating the User."
+                });
+            });
+    } else {
+
+        // Else the userName already exists, do nothing
+        res.status(400).send({
+            message: "Username not available"
         });
 
-    // Debug code
-    console.log("new address: " + newAddress);
-
-    // Build parameters for user table insert
-    const user = {
-        addressId: newAddress.addressId,
-        fName: req.body.fName,
-        lName: req.body.lName,
-        userEmail: req.body.userEmail,
-    };
-
-    // Wait for a user to be created, then copy to a const
-    const newUser = await User.create(user)
-        .then(newUser => {
-            return newUser;
-        })
-        .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while creating the User."
-            });
-        });
-
-    // Debug code
-    // console.log("new user: " + JSON.stringify(newUser));
-
-    // Build parameters for authentication table insert
-    const authentication = {
-        userId: newUser.userId,
-        permissionId: 1,
-        userName: req.body.userName,
-        userPassword: req.body.userPassword,
-        historyId: req.body.historyId,
     }
 
-    // Save Authentication in the database
-    Authentication.create(authentication)
-        .then(newAuth => {
-            // Send the response JSON with both objects
-            res.json({ newUser, newAddress, newAuth });
-        })
-        .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while creating the User."
-            });
-        });
 };
 
 // Retrieve all Users from the database.

@@ -1,11 +1,11 @@
 // Initially Created by: Devin Brueberg
 // CSC450 Capstone
-// Restaurant Club - review.controller.js
+// Restaurant Club - image.controller.js
 // February 20, 2022
 // Last Edited (Initials, Date, Edits):
 
 const db = require("../models");
-const Review = db.review;
+const Image = db.image;
 
 // Create and Save a new Restaurant
 exports.create = (req, res) => {
