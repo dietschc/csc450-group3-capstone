@@ -6,21 +6,22 @@
 
 module.exports = (sequelize, Sequelize) => {
 	const Rating = sequelize.define("rating", {
-		revId: {
+		ratingId: {
 			type: Sequelize.INTEGER,
 			primaryKey: true,
+			autoIncrement: true
 		},
 		tasteRating: {
-			type: Sequelize.FLOAT(1,1)
+			type: Sequelize.INTEGER
 		},
 		serviceRating: {
-			type: Sequelize.FLOAT(1,1)
+			type: Sequelize.INTEGER
 		},
 		cleanlinessRating: {
-			type: Sequelize.FLOAT(1,1)
+			type: Sequelize.INTEGER
 		},
 		overallRating: {
-			type: Sequelize.FLOAT(1,1)
+			type: Sequelize.INTEGER
 		}
 	}, {
 		freezeTableName: true,

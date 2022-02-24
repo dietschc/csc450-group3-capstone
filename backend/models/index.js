@@ -19,14 +19,19 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
 });
 
 const db = {};
-db.Sequelize = Sequelize;
-db.sequelize = sequelize;
-db.users = require("./user.model.js")(sequelize, Sequelize);
-db.restaurants = require("./restaurant.model.js")(sequelize, Sequelize);
-db.authentication = require("./authentication.model.js")(sequelize, Sequelize);
-db.address = require("./address.model.js")(sequelize, Sequelize);
-db.review = require("./review.model.js")(sequelize, Sequelize);
+db.users = require("./user.model")(sequelize, Sequelize);
+db.restaurants = require("./restaurant.model")(sequelize, Sequelize);
+db.authentication = require("./authentication.model")(sequelize, Sequelize);
+db.address = require("./address.model")(sequelize, Sequelize);
+db.image = require("./image.model")(sequelize, Sequelize);
+db.reviewImage = require("./reviewImage.model")(sequelize, Sequelize);
 db.rating = require("./rating.model.js")(sequelize, Sequelize);
+db.review = require("./review.model.js")(sequelize, Sequelize);
+db.friend = require("./friend.model")(sequelize, Sequelize);
+db.history = require("./history.model")(sequelize, Sequelize);
+db.conversation = require("./conversation.model")(sequelize, Sequelize);
+db.message = require("./message.model")(sequelize, Sequelize);
+db.permission = require("./permission.model")(sequelize, Sequelize);
 
 // User 1-1 Authentication Associations
 db.users.hasOne(db.authentication, { foreignKey: 'userId' });

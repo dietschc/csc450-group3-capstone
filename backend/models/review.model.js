@@ -6,7 +6,7 @@
 
 module.exports = (sequelize, Sequelize) => {
 	const Review = sequelize.define("review", {
-		revId: {
+		reviewId: {
 			type: Sequelize.INTEGER,
 			primaryKey: true,
 			autoIncrement: true
@@ -17,13 +17,16 @@ module.exports = (sequelize, Sequelize) => {
 		restaurantId: {
 			type: Sequelize.INTEGER
 		},
-		revTitle: {
+		ratingId: {
+			type: Sequelize.INTEGER
+		},
+		reviewTitle: {
 			type: Sequelize.STRING
 		},
-		revText: {
+		reviewText: {
 			type: Sequelize.STRING
 		},
-		imageId: {
+		historyId: {
 			type: Sequelize.INTEGER
 		}
 	}, {
