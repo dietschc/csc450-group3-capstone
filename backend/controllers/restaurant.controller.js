@@ -21,8 +21,8 @@ exports.create = async (req, res) => {
         return;
     }
 
-     // Creating an array to hold the needed table ideas as the adjoining 
-     // restaurant tables are created
+    // Creating an array to hold the needed table ideas as the adjoining 
+    // restaurant tables are created
     const restaurantData = {
         userCreatorId: req.body.userCreatorId,
         userOwnerId: null,

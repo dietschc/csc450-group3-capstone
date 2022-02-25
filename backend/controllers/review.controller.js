@@ -6,34 +6,119 @@
 
 const db = require("../models");
 const Review = db.review;
+const History = db.history;
+const ReviewImage = db.reviewImage;
+const Image = db.image;
+const Rating = db.rating;
+const Restaurant = db.restaurants;
 
 // Create and Save a new Restaurant
-exports.create = (req, res) => {
-    // // Validate request
-    // if (!req.body.restaurantEmail) {
-    //     res.status(400).send({
-    //         message: "Content can not be empty!"
-    //     });
-    //     return;
-    // }
-    // // Create a Restaurant
-    // const restaurant = {
-    //     addressId: req.body.addressId,
-    //     fName: req.body.fName,
-    //     lName: req.body.lName,
-    //     restaurantEmail: req.body.restaurantEmail,
-    // };
-    // // Save Restaurant in the database
-    // Review.create(restaurant)
-    //     .then(data => {
-    //         res.send(data);
-    //     })
-    //     .catch(err => {
-    //         res.status(500).send({
-    //             message:
-    //                 err.message || "Some error occurred while creating the Restaurant."
-    //         });
-    //     });
+exports.create = async (req, res) => {
+    // Validate request
+    if (!req.body.restaurantId) {
+        res.status(400).send({
+            message: "Content can not be empty!"
+        });
+        return;
+    }
+
+    const { restaurantId } = req.body;
+
+    // Creating an array to hold the needed table ideas as the adjoining 
+    // restaurant tables are created
+    const reviewData = {
+        userId: req.body.userId,
+        restaurantId: req.body.restaurantId,
+        ratingId: null,
+        reviewTitle: req.body.reviewTitle,
+        reviewText: req.body.reviewText,
+        historyId: null
+    };
+
+    await Restaurant.findByPk(1)
+    .then(async(restaurant) => {
+        if (restaurant) {
+            // Code for creating a review
+            const newHistory = await History.create(req.body)
+            .then(history => {
+                reviewData.historyId = history.historyId;
+
+                return history;
+            })
+            .catch(err => {
+                // If there is an error, a response is sent to notify the requester
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while creating the History."
+                });
+            });
+
+            const newRating = await Rating.create(req.body)
+            .then(rating => {
+                reviewData.ratingId = rating.ratingId;
+
+                return rating;
+            })
+            .catch(err => {
+                // If there is an error, a response is sent to notify the requester
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while creating the Rating."
+                });
+            });
+
+            const newImage = await Image.create(req.body)
+            .then(image => {
+                return image;
+            })
+            .catch(err => {
+                // If there is an error, a response is sent to notify the requester
+                res.status(500).send({
+                    message: err.message || "Some error occurred while creating the Image."
+                });
+            });
+
+            
+
+            const newReview = await Review.create(reviewData)
+            .then(newReview => {
+                return newReview;
+                // res.json({ ...newReview.dataValues, newHistory, newRating, newImage})
+            })
+            .catch(err => {
+                // If there is an error, a response is sent to notify the requester
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while creating the Review."
+                });
+            });
+
+            await ReviewImage.create({
+                imageId: newImage.imageId,
+                reviewId: newReview.reviewId
+            })
+            .then(() => res.json({ ...newReview.dataValues, newHistory, newRating, newImage}))
+            .catch(err => {
+                // If there is an error, a response is sent to notify the requester
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while creating the ReviewImage."
+                });
+            });
+
+        }
+        else {
+            res.status(500).send({
+                message: `Cannot create a review. No restaurant with id=${restaurantId}.`
+            });
+        }
+    })
+    .catch(err => {
+        // If there is an error, a response is sent to notify the requester
+        res.status(500).send({
+            message: err.message || "Error creating the review."
+        });
+    });
 };
 
 // Retrieve all Restaurants from the database.
