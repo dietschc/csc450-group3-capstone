@@ -23,7 +23,7 @@ exports.create = async (req, res) => {
 
      // Creating an array to hold the needed table ideas as the adjoining 
      // restaurant tables are created
-    const restaurant = {
+    const restaurantData = {
         userCreatorId: req.body.userCreatorId,
         userOwnerId: null,
         ratingId: null,
@@ -36,11 +36,20 @@ exports.create = async (req, res) => {
         reviewCount: 0
     };
 
+    // Ratings start off with a default of 0 so they will show 
+    // no stars
+    const ratingData = {
+        tasteRating: 0,
+		serviceRating: 0,
+		cleanlinessRating: 0,
+		overallRating: 0
+    }
+
     // Wait for the address to be created, then copy to a const
     const address = await Address.create(req.body)
     .then(newAddress => {
         // Assigning the id of the newly created table to the restaurant array
-        restaurant.addressId = newAddress.addressId;
+        restaurantData.addressId = newAddress.addressId;
         // Returning the instance
         return newAddress;
     })
@@ -56,7 +65,7 @@ exports.create = async (req, res) => {
     const image = await Image.create(req.body)
     .then(newImage => {
         // Assigning the id of the newly created table to the restaurant array
-        restaurant.imageId = newImage.imageId;
+        restaurantData.imageId = newImage.imageId;
         // Returning the instance
         return newImage;
     })
@@ -69,9 +78,9 @@ exports.create = async (req, res) => {
     });
 
     // Wait for the rating to be created, then copy to a const
-    const rating = await Rating.create()
+    const rating = await Rating.create(ratingData)
     .then(newRating => {
-        restaurant.ratingId = newRating.ratingId;
+        restaurantData.ratingId = newRating.ratingId;
         return newRating;
     })
     .catch(err => {
@@ -83,7 +92,7 @@ exports.create = async (req, res) => {
     });
 
     // Save Restaurant in the database
-    await Restaurant.create(restaurant)
+    await Restaurant.create(restaurantData)
     .then(newRestaurant => {
         
         // Send the response JSON with all created table objects
