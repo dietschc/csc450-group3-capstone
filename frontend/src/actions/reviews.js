@@ -11,6 +11,7 @@
 // for the app and importing needed components
 import C from '../constants';
 import { v4 } from 'uuid';
+import ReviewDataService from "../services/review.service";
 
 /**
  * React-Redux action to add a review to redux state.

@@ -15,6 +15,7 @@ import { useParams } from "react-router-dom";
 import { printStarTotal, printReviewTotal } from '../../helperFunction/StringGenerator';
 import { connect } from 'react-redux';
 import { addReview, deleteAllReviews, deleteReview, updateReview } from '../../actions/reviews';
+//import C from '../constants';
 
 
 function Review(props) {
@@ -67,11 +68,14 @@ function Review(props) {
         setReviewText(reviewText);
     }
 
-    const saveReview = () => {
+    const saveReview = async () => {
         // Review redux actions can be tested here*****
         // const reviewId = 1;
         // console.log(props.users)
-        // console.log(props.reviews)
+         console.log(props.reviews);
+         console.log("Break");
+         //console.log(tasteRating);
+   //      console.log(C.userId);
         // console.log(props.users[0].auth.userName)
         // addReview(props.users[0].auth.userName, props.users[0].id, restaurantId, restaurantName, 
         //     tasteRating, serviceRating, cleanRating, overallRating, reviewTitle, 

@@ -12,19 +12,26 @@ module.exports = (sequelize, Sequelize) => {
 			autoIncrement: true
 		},
 		userId: {
-			type: Sequelize.INTEGER
+			type: Sequelize.INTEGER,
+			allowNull: false
 		},
 		restaurantId: {
-			type: Sequelize.INTEGER
+			type: Sequelize.INTEGER,
+			allowNull: false
 		},
 		ratingId: {
 			type: Sequelize.INTEGER
 		},
 		reviewTitle: {
-			type: Sequelize.STRING
+			type: Sequelize.STRING,
+			allowNull: false
 		},
 		reviewText: {
-			type: Sequelize.STRING
+			type: Sequelize.STRING,
+			allowNull: false
+		},
+		imageId: {
+			type: Sequelize.INTEGER
 		},
 		historyId: {
 			type: Sequelize.INTEGER
