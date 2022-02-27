@@ -24,15 +24,53 @@ function EditAccount(props) {
     // keeps track of if the form was submitted
     const [submitted, setSubmitted] = useState(false)
 
-    const [userName, setUserName] = useState(users.length > 0 ? users[0].auth.userName : "");
-    const [firstName, setFirstName] = useState(users.length > 0 ? users[0].firstName : "");
-    const [lastName, setLastName] = useState(users.length > 0 ? users[0].lastName : "");
-    const [address, setAddress] = useState(users.length > 0 ? users[0].address.address : "");
-    const [city, setCity] = useState(users.length > 0 ? users[0].address.city : "");
-    const [zip, setZip] = useState(users.length > 0 ? users[0].address.zip : "");
-    const [state, setState] = useState(users.length > 0 ? users[0].address.state : "");
-    const [email, setEmail] = useState(users.length > 0 ? users[0].email : "");
-    const [password, setPassword] = useState(users.length > 0 ? users[0].auth.password : "");
+    // Maps expressions to user object return values
+    const currentUser = (expr) => {
+        // If the users array is empty, everything in here will be undefined
+        if (users.length > 0) {
+
+            // Put the first user from the users array into current user
+            const [currentUser] = users;
+
+            // Switch statement for argument expression
+            switch (expr) {
+                case "userName":
+                    return currentUser.auth.userName;
+                case "firstName":
+                    return currentUser.firstName;
+                case "lastName":
+                    return currentUser.lastName;
+                case "address":
+                    return currentUser.address.address;
+                case "city":
+                    return currentUser.address.city;
+                case "zip":
+                    return currentUser.address.zip;
+                case "state":
+                    return currentUser.address.state;
+                case "email":
+                    return currentUser.email;
+                case "password":
+                    return currentUser.auth.password;
+                default:
+                    return "";
+            }
+
+            // If the users list is empty return empty string
+        } else {
+            return "";
+        }
+    }
+
+    const [userName, setUserName] = useState(currentUser("userName"));
+    const [firstName, setFirstName] = useState(currentUser("firstName"));
+    const [lastName, setLastName] = useState(currentUser("lastName"));
+    const [address, setAddress] = useState(currentUser("address"));
+    const [city, setCity] = useState(currentUser("city"));
+    const [zip, setZip] = useState(currentUser("zip"));
+    const [state, setState] = useState(currentUser("state"));
+    const [email, setEmail] = useState(currentUser("email"));
+    const [password, setPassword] = useState(currentUser("password"));
 
     const onChangeUserName = e => {
         const userName = e.target.value
