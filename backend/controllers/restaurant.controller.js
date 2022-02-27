@@ -4,8 +4,11 @@
 // February 21, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/22/2022, Finished the basic req/res for the restaurant controller)
+//  (DAB, 2/27/2022, Added in some offset/limit findAll as well as search 
+//  by name and author Id)
 
 const db = require("../models");
+const { Op } = db.Sequelize;
 const Restaurant = db.restaurants;
 const Image = db.image;
 const Address = db.address;
@@ -107,7 +110,7 @@ exports.create = async (req, res) => {
     });
 };
 
-// Retrieve all Restaurants from the database.
+// Retrieve all Restaurants from the database
 exports.findAll = async (req, res) => {
     // Using an async function to search the database for all existing restaurants
     await Restaurant.findAll({ include: [Address, Rating, Image] })
@@ -294,3 +297,137 @@ exports.delete = async (req, res) => {
         });
     }); 
 };
+
+// Retrieve all Restaurants from the database that have the same author id
+exports.findByAuthorId = async (req, res) => {
+    // Checking for to be searched for, if null is passed null becomes the id
+    const userCreatorId  = req.params.id === "null" ? null : req.params.id;
+
+    // Using an async function to search the database for all existing restaurants
+    await Restaurant.findAll({ 
+        include: [Address, Rating, Image],
+        where: { userCreatorId: userCreatorId },
+        order: [['restaurantName', 'ASC']]
+    })
+    .then(restaurant => {
+        // If restaurants are found the data is returned
+        res.send(restaurant);
+    })
+    .catch(err => {
+        // Else a message indicating the restaurant was not found is sent
+        res.status(500).send({
+            message:
+                err.message || "Some error occurred while retrieving restaurants."
+        });
+    });
+}
+
+// Retrieve all Restaurants from the database that have the same author id. Results 
+// have set offset and limit values
+exports.findByAuthorIdLimitOffset = async (req, res) => {
+    // Checking that offset and limit are numbers, if not a default value will be used
+    const searchOffset = isNaN(req.params.offset) ? 0 : parseInt(req.params.offset);
+    const searchLimit = isNaN(req.params.limit) ? 999999999999 : parseInt(req.params.limit);
+    // Checking for to be searched for, if null is passed null becomes the id
+    const userCreatorId  = req.params.id === "null" ? null : req.params.id;
+
+    // Using an async function to search the database for all existing restaurants
+    await Restaurant.findAll({ 
+        include: [Address, Rating, Image],
+        where: { userCreatorId: userCreatorId },
+        order: [['restaurantName', 'ASC']],
+        offset: searchOffset, 
+        limit: searchLimit 
+    })
+    .then(restaurant => {
+        // If restaurants are found the data is returned
+        res.send(restaurant);
+    })
+    .catch(err => {
+        // Else a message indicating the restaurant was not found is sent
+        res.status(500).send({
+            message:
+                err.message || "Some error occurred while retrieving restaurants."
+        });
+    });
+}
+
+// Retrieve all Restaurants from the database in the amount of the limit value
+exports.findAllLimit = async (req, res) => {
+    // If the req limit param is a number it is used, otherwise all results are returned
+    const searchLimit = isNaN(req.params.limit) ? 999999999999 : parseInt(req.params.limit);
+
+    // Using an async function to search the database for all existing restaurants
+    await Restaurant.findAll({  
+        include: [Address, Rating, Image],
+        order: [['restaurantName', 'ASC']],
+        limit: searchLimit, 
+    })
+    .then(restaurant => {
+        // If restaurants are found the data is returned
+        res.send(restaurant);
+    })
+    .catch(err => {
+        // Else a message indicating the restaurant was not found is sent
+        res.status(500).send({
+            message:
+                err.message || "Some error occurred while retrieving restaurants."
+        });
+    });
+}
+
+// Retrieve all Restaurants from the database. Results have a set offset and limit values
+exports.findAllLimitOffset = async (req, res) => {
+    // Checking that offset and limit are numbers, if not a default value will be used
+    const searchOffset = isNaN(req.params.offset) ? 0 : parseInt(req.params.offset);
+    const searchLimit = isNaN(req.params.limit) ? 999999999999 : parseInt(req.params.limit);
+
+    // Using an async function to search the database for all existing restaurants
+    await Restaurant.findAll({ 
+        include: [Address, Rating, Image],
+        order: [['restaurantName', 'ASC']],
+        offset: searchOffset, 
+        limit: searchLimit 
+    })
+    .then(restaurant => {
+        // If restaurants are found the data is returned
+        res.send(restaurant);
+    })
+    .catch(err => {
+        // Else a message indicating the restaurant was not found is sent
+        res.status(500).send({
+            message:
+                err.message || "Some error occurred while retrieving restaurants."
+        });
+    });
+}
+
+// Retrieve all Restaurants from the database whose name is like the search param. Returns 
+// results up to the set offset and limit values
+exports.findByNameLimitOffset = async (req, res) => {
+    // Checking that offset and limit are numbers, if not a default value will be used
+    const searchOffset = isNaN(req.params.offset) ? 0 : parseInt(req.params.offset);
+    const searchLimit = isNaN(req.params.limit) ? 999999999999 : parseInt(req.params.limit);
+    // The restaurant name is pulled from params to be used in the query
+    const searchName = req.params.name;
+
+    // Using an async function to search the database for all existing restaurants
+    await Restaurant.findAll({ 
+        include: [Address, Rating, Image],
+        where: { restaurantName: { [Op.like]: `${searchName}%` }},
+        order: [['restaurantName', 'ASC']],
+        offset: searchOffset, 
+        limit: searchLimit 
+    })
+    .then(restaurant => {
+        // If restaurants are found the data is returned
+        res.send(restaurant);
+    })
+    .catch(err => {
+        // Else a message indicating the restaurant was not found is sent
+        res.status(500).send({
+            message:
+                err.message || "Some error occurred while retrieving restaurants."
+        });
+    });
+}
