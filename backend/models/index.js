@@ -53,10 +53,6 @@ db.authentication.belongsTo(db.history, { foreignKey: 'historyId' })
 db.history.hasOne(db.review, { foreignKey: 'historyId', onDelete: 'RESTRICT' })
 db.review.belongsTo(db.history, { foreignKey: 'historyId' })
 
-// Image to ReviewImage Association
-db.image.hasOne(db.reviewImage, { foreignKey: 'imageId' });
-db.reviewImage.belongsTo(db.image, { foreignKey: 'imageId' })
-
 // Restaurant to Address Association
 db.address.hasOne(db.restaurants, { foreignKey: 'addressId', onDelete: 'RESTRICT' });
 db.restaurants.belongsTo(db.address, { foreignKey: 'addressId' });
@@ -83,9 +79,9 @@ db.restaurants.belongsTo(db.users, { foreignKey: { name: 'userOwnerId' } });
 db.rating.hasOne(db.review, { foreignKey: 'ratingId', onDelete: 'RESTRICT' });
 db.review.belongsTo(db.rating, { foreignKey: 'ratingId' });
 
-// Review to ReviewImage Association
-db.review.hasMany(db.reviewImage, { foreignKey: 'reviewId' });
-db.reviewImage.belongsTo(db.review, { foreignKey: 'reviewId' });
+// Review to Image
+db.review.belongsToMany(db.image, { through: db.reviewImage, foreignKey: 'reviewId', otherKey: 'imageId' })
+db.image.belongsToMany(db.review, { through: db.reviewImage, foreignKey: 'imageId', otherKey: 'reviewId' })
 
 // User to Authentication Association
 db.users.hasOne(db.authentication, { foreignKey: 'userId' });
