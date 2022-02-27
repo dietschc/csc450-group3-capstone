@@ -11,9 +11,6 @@ module.exports = app => {
     // Create a new User
     router.post("/", users.create);
 
-    // Add a new User to several tables
-    router.post("/adduser", users.addUser);
-
     // Retrieve all Users
     router.get("/", users.findAll);
 

@@ -20,7 +20,7 @@ class UserDataService {
 
   // Creates a new user by calling the adduser method on the users controller
   create(data) {
-    return http.post("/users/adduser", data);
+    return http.post("/users/", data);
   }
 
   // Attempt to authenticate using the authentication.controller

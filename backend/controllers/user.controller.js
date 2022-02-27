@@ -10,38 +10,9 @@ const Authentication = db.authentication;
 const Address = db.address;
 
 // Create and Save a new User
-exports.create = (req, res) => {
-    // Validate request
-    if (!req.body.userEmail) {
-        res.status(400).send({
-            message: "Content can not be empty!"
-        });
-        return;
-    }
-    // Build parameters for user table insert
-    const user = {
-        addressId: null, // FK constraint with Address
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        userEmail: req.body.userEmail,
-    };
-
-    // Save User in the database
-    User.create(user)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while creating the User."
-            });
-        });
-};
-
 // Asynchronous method to create a user with the parameters passed from the frontend.
 // Alters the user, address, and authentication tables (and eventually history)
-exports.addUser = async (req, res) => {
+exports.create = async (req, res) => {
     // Validate request
     if ((!req.body.userEmail) || (!req.body.address) || (!req.body.userName)) {
         res.status(400).send({
@@ -146,14 +117,12 @@ exports.addUser = async (req, res) => {
         res.status(400).send({
             message: "Username not available"
         });
-
     }
-
 };
 
 // Retrieve all Users from the database.
 exports.findAll = (req, res) => {
-    User.findAll()
+    User.findAll({ include: [Address, Authentication] })
         .then(data => {
             res.send(data);
         })
@@ -168,7 +137,7 @@ exports.findAll = (req, res) => {
 // Find a single User with an id
 exports.findOne = (req, res) => {
     const id = req.params.id;
-    User.findByPk(id)
+    User.findByPk((id), { include: [Address, Authentication] })
         .then(data => {
             if (data) {
                 res.send(data);
@@ -180,55 +149,125 @@ exports.findOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving User with id=" + id
+                message:
+                    err.message || "Error retrieving User with id=" + id
             });
         });
 };
 
 // Update a User by the id in the request
 exports.update = (req, res) => {
+    // Validate request
+    if (!req.body) {
+        res.status(400).send({
+            message: "Content body can not be empty!"
+        });
+        return;
+    }
     const id = req.params.id;
-    User.update(req.body, {
-        where: { userId: id }
-    })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: "User was updated successfully."
-                });
+
+    // We find the associated addressId from the user table
+    User.findByPk(id)
+        .then(user => {
+            // If the user exists the data is updated
+            if (user) {
+                // Destructure address from the user
+                const { addressId } = user;
+
+                // Update the address first
+                Address.update(req.body, {
+                    where: { addressId: addressId }
+                })
+                    // Update user table next
+                    .then(User.update(req.body, {
+                        where: { userId: id }
+                    }))
+                    // Update authentication table last
+                    .then(Authentication.update(req.body, {
+                        where: { userId: id }
+                    }))
+                    // Finally check for success
+                    .then(num => {
+                        // Check that our operation affected 1 row (implying success)
+                        if (num == 1) {
+                            res.send({
+                                message: "User was updated successfully!"
+                            });
+                        } else {
+                            res.status(500).send({
+                                message: `Cannot update User with id=${id}. Maybe User was not found!`
+                            });
+                        }
+                    })
             } else {
                 res.status(500).send({
-                    message: `Cannot update User with id=${id}. Maybe User was not found or req.body is empty!`
+                    message: "Could not update User because of an error "
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error updating User with id=" + id
+                message: "Could not update User because " + err
             });
         });
 };
 
 // Delete a User with the specified id in the request
-exports.delete = (req, res) => {
+exports.delete = async (req, res) => {
     const id = req.params.id;
-    User.destroy({
-        where: { userId: id }
-    })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: "User was deleted successfully!"
-                });
+
+    // We find the associated addressId from the user table
+    const addressId = await User.findByPk(id)
+        .then(user => {
+            // If the user exists the data is updated
+            if (user) {
+                // Destructure address from the user
+                const { addressId } = user;
+                return addressId
             } else {
-                res.status(500).send({
-                    message: `Cannot delete User with id=${id}. Maybe User was not found!`
-                });
+                return "User not found"
             }
         })
-        .catch(err => {
-            res.status(500).send({
-                message: "Could not delete User with id=" + id
+
+    // console.log("address id: ", addressId);
+
+    const deletedUserStatus = await User.destroy({
+        where: { userId: id }
+    })
+        .then(deletedStatus => {
+            return deletedStatus;
+        })
+
+    // console.log("deleted user: ", deletedUserStatus);
+
+    // If a user was deleted without errors, also delete the address
+    if (deletedUserStatus == 1) {
+        Address.destroy({
+            where: { addressId: addressId }
+        })
+            .then(num => {
+                // If there was no error in the deleting the success response is sent back
+                if (num == 1) {
+                    res.send({
+                        message: "User was deleted successfully!"
+                    });
+                }
+                // If there was an error, a response is sent to notify the requester
+                else {
+                    res.status(500).send({
+                        message: `Cannot delete user. Maybe user was not found!`
+                    });
+                }
+            })
+            .catch(err => {
+                // If there is an error, a response is sent to notify the requester
+                res.status(500).send({
+                    message: err.message || `Could not delete user with id=${id}.`
+                });
             });
+    } else {
+        res.status(500).send({
+            message: `Cannot delete user. Maybe user was not found!`
         });
+    }
 };
