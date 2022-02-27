@@ -43,8 +43,8 @@ module.exports = (sequelize, Sequelize) => {
 			type: Sequelize.INTEGER
 		},
 	}, {
-		freezeTableName: false,
-		timestamps: true
+		freezeTableName: true,
+		timestamps: false
 	});
 	return Restaurant;
 };
