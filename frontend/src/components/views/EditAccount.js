@@ -5,6 +5,8 @@
 // Last Edited (Initials, Date, Edits):
 //  (CPD, 1/29/22, GitHub-#29-EditAccount View Layout)
 //  (DAB, 2/13/2022, Added in react redux connect)
+//  (CPD, 2/22/22, Connected frontend to backend with addUserThunk)
+//  (CPD, 2/27/22, Got states working with redux so we can update values now)
 
 // Using React library in order to build components 
 // for the app and importing needed components

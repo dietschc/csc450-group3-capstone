@@ -3,6 +3,8 @@
 // Restaurant Club - user.controller.js
 // February 14, 2022
 // Last Edited (Initials, Date, Edits):
+// (CPD, 2/26, #154 Completed multi table updates to user controller)
+// (CPD, 2/27, re-wrote the update handler to hopefully give correct response now)
 
 const db = require("../models");
 const User = db.users;

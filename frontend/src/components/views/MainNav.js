@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 01/28/2022, Upgraded the color scheme)
 //  (DAB, 01/28/2022, Added state to nav)
+//  (CPD, 2/26/22, Added checkLogin method and state constants)
 
 // Using React library in order to build components 
 // for the app and importing needed components

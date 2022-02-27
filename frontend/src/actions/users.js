@@ -4,6 +4,8 @@
 // February 15, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/16/2022, Added comments for actions)
+//  (CPD, 2/22/2022, Added loginThunk)
+//  (CPD, 2/26/2022, Added updateUserThunk and edited updateUser to destructure parameters)
 
 // Using React library in order to build components 
 // for the app and importing needed components

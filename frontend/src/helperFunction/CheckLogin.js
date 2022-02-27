@@ -5,7 +5,9 @@
 // Last Edited (Initials, Date, Edits):
 
 /**
- * Simple method to check if a user is logged in
+ * Simple method to check if a user is logged in, works by importing
+ * the module into a view with the users.state loaded from redux. Then
+ * you just pass the copy of the users array here to check for a login.
  * 
  * @returns 
  */
