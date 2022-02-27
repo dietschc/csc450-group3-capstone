@@ -14,11 +14,11 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { connect } from 'react-redux';
 import { loginThunk, deleteUser } from '../../actions/users';
 import { Link } from 'react-router-dom';
+import { checkLogin } from '../../helperFunction/CheckLogin'
 
 function Login(props) {
     const [submitted, setSubmitted] = useState(false)
     const [showError, setShowError] = useState(false)
-    // const [isLoggedIn, setIsloggedIn] = useState(false)
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
 
@@ -36,15 +36,8 @@ function Login(props) {
         setPassword(password);
     }
 
-    const checkLogin = () => {
-        if (users.length > 0 && typeof (users[0].isLoggedIn) !== 'undefined' && users[0].isLoggedIn != null) {
-            // console.log("Not Undefined and Not Null " + users[0].isLoggedIn);
-            return true;
-        } else {
-            // console.log('Undefined or Null')
-            return false;
-        }
-    }
+    // Check if user is logged in
+    const editing = checkLogin(users);
 
     const navigate = useNavigate();
 
@@ -138,7 +131,7 @@ function Login(props) {
                         </Form.Floating>
 
                         <div className="text-center">
-                            {checkLogin() ? (
+                            {editing ? (
                                 <Button variant="outline-primary" onClick={logoutAccount}>
                                     Logout
                                 </Button>

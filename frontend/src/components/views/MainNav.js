@@ -15,6 +15,7 @@ import { LinkContainer } from 'react-router-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { useSelector, connect } from 'react-redux';
 import { deleteUser } from '../../actions/users';
+import { checkLogin } from '../../helperFunction/CheckLogin'
 
 function MainNav(props) {
     const [basicActive, setBasicActive] = useState();
@@ -22,16 +23,6 @@ function MainNav(props) {
 
     // Get user state from props
     const { deleteUser, users } = props;
-
-    const checkLogin = () => {
-        if (users.length > 0 && typeof (users[0].isLoggedIn) !== 'undefined' && users[0].isLoggedIn != null) {
-            // console.log("Not Undefined and Not Null " + users[0].isLoggedIn);
-            return true;
-        } else {
-            // console.log('Undefined or Null')
-            return false;
-        }
-    }
 
     const setActive = (value) => {
         if (value === basicActive) return;
@@ -43,6 +34,9 @@ function MainNav(props) {
         navigate("search");
         setActive("none")
     }
+
+    // Check if user is logged in
+    const editing = checkLogin(users);
 
     const logoutAccount = () => {
         // This will remove the user from state
@@ -95,7 +89,7 @@ function MainNav(props) {
 
                             <LinkContainer to="/login">
                                 <Nav.Link>
-                                    {checkLogin() ? <div onClick={logoutAccount}>Logout</div> : "Login"}
+                                    {editing ? <div onClick={logoutAccount}>Logout</div> : "Login"}
                                 </Nav.Link>
                             </LinkContainer>
 

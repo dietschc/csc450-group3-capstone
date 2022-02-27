@@ -8,30 +8,29 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 import FormContainer from '../template/FormContainer';
-import { addUserThunk } from '../../actions/users';
+import { addUserThunk, updateUserThunk } from '../../actions/users';
+import { checkLogin } from '../../helperFunction/CheckLogin'
 
 function EditAccount(props) {
-    let editing = false
+    const { addUserThunk, updateUserThunk, users } = props;
 
     // keeps track of if the form was submitted
     const [submitted, setSubmitted] = useState(false)
 
-    const [userName, setUserName] = useState("");
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [address, setAddress] = useState("");
-    const [city, setCity] = useState("");
-    const [zip, setZip] = useState("");
-    const [state, setState] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-
-    const { addUserThunk } = props;
+    const [userName, setUserName] = useState(users.length > 0 ? users[0].auth.userName : "");
+    const [firstName, setFirstName] = useState(users.length > 0 ? users[0].firstName : "");
+    const [lastName, setLastName] = useState(users.length > 0 ? users[0].lastName : "");
+    const [address, setAddress] = useState(users.length > 0 ? users[0].address.address : "");
+    const [city, setCity] = useState(users.length > 0 ? users[0].address.city : "");
+    const [zip, setZip] = useState(users.length > 0 ? users[0].address.zip : "");
+    const [state, setState] = useState(users.length > 0 ? users[0].address.state : "");
+    const [email, setEmail] = useState(users.length > 0 ? users[0].email : "");
+    const [password, setPassword] = useState(users.length > 0 ? users[0].auth.password : "");
 
     const onChangeUserName = e => {
         const userName = e.target.value
@@ -77,6 +76,9 @@ function EditAccount(props) {
         const password = e.target.value
         setPassword(password);
     }
+
+    // Check if user is logged in
+    const editing = checkLogin(users);
 
     const saveAccount = () => {
 
@@ -134,6 +136,27 @@ function EditAccount(props) {
 
         console.log(data)
         setSubmitted(true)
+    }
+
+    const updateAccount = () => {
+        const id = users.length > 0 ? users[0].id : "";
+
+        let data = {
+            userName: userName,
+            firstName: firstName,
+            lastName: lastName,
+            address: address,
+            city: city,
+            zip: zip,
+            state: state,
+            email: email,
+            password: password
+        }
+
+        // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
+        updateUserThunk(id, data)
+        // console.log("id: ", id);
+        // console.log("updating with data: ", data);
     }
 
     const clearForm = () => {
@@ -299,9 +322,15 @@ function EditAccount(props) {
                         </Form.Floating>
 
                         <div className="d-flex justify-content-around pt-2 pb-5">
-                            <Button variant="outline-primary" onClick={saveAccount}>
-                                {editing ? "Update" : "Submit"}
-                            </Button>
+                            {editing ? (
+                                <Button variant="outline-primary" onClick={updateAccount}>
+                                    Update
+                                </Button>
+                            ) : (
+                                <Button variant="outline-primary" onClick={saveAccount}>
+                                    Submit
+                                </Button>
+                            )}
 
                             <Button variant="outline-primary" onClick={clearForm}>
                                 Clear
@@ -363,5 +392,4 @@ const mapStateToProps = state =>
 
 
 // Exporting the connect Wrapped EditAccount Component
-// export default connect(mapStateToProps, mapDispatchToProps)(EditAccount);
-export default connect(mapStateToProps, { addUserThunk })(EditAccount);
+export default connect(mapStateToProps, { addUserThunk, updateUserThunk })(EditAccount);
