@@ -3,6 +3,8 @@
 // Restaurant Club - restaurant.routes.js
 // February 14, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 2/27/2022, Added in some offset/limit findAll as well as search 
+//  by name and author Id)
 
 module.exports = app => {
     const restaurants = require("../controllers/restaurant.controller.js");
@@ -22,6 +24,21 @@ module.exports = app => {
 
     // Delete a Restaurant with ids
     router.delete("/:id", restaurants.delete);
+
+    // Retrieve Restaurants matching the author id ordered asc by restaurant name
+    router.get("/author/:id", restaurants.findByAuthorId);
+
+    // Retrieve Restaurants  matching the author id ordered asc by restaurant name and result limit
+    router.get("/author/:offset/:limit/:id", restaurants.findByAuthorIdOffsetLimit);
+
+    // Retrieve Restaurants ordered asc by restaurant name and result limit
+    router.get("/limit/:limit", restaurants.findAllLimit);
+
+    // Retrieve Restaurants ordered asc by restaurant name with result limit and offset
+    router.get("/limit/:offset/:limit", restaurants.findAllOffsetLimit);
+
+    // Retrieve Restaurants searched by restaurant name with offset and limit
+    router.get("/search/:offset/:limit/:name", restaurants.findByNameOffsetLimit);
 
     // URL to restaurant for route
     app.use('/restaurants', router);
