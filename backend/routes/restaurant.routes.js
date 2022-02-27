@@ -29,16 +29,16 @@ module.exports = app => {
     router.get("/author/:id", restaurants.findByAuthorId);
 
     // Retrieve Restaurants  matching the author id ordered asc by restaurant name and result limit
-    router.get("/author/:offset/:limit/:id", restaurants.findByAuthorIdLimitOffset);
+    router.get("/author/:offset/:limit/:id", restaurants.findByAuthorIdOffsetLimit);
 
     // Retrieve Restaurants ordered asc by restaurant name and result limit
     router.get("/limit/:limit", restaurants.findAllLimit);
 
     // Retrieve Restaurants ordered asc by restaurant name with result limit and offset
-    router.get("/limit/:offset/:limit", restaurants.findAllLimitOffset);
+    router.get("/limit/:offset/:limit", restaurants.findAllOffsetLimit);
 
     // Retrieve Restaurants searched by restaurant name with offset and limit
-    router.get("/search/:offset/:limit/:name", restaurants.findByNameLimitOffset);
+    router.get("/search/:offset/:limit/:name", restaurants.findByNameOffsetLimit);
 
     // URL to restaurant for route
     app.use('/restaurants', router);

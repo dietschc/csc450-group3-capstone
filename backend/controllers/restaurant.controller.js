@@ -324,7 +324,7 @@ exports.findByAuthorId = async (req, res) => {
 
 // Retrieve all Restaurants from the database that have the same author id. Results 
 // have set offset and limit values
-exports.findByAuthorIdLimitOffset = async (req, res) => {
+exports.findByAuthorIdOffsetLimit = async (req, res) => {
     // Checking that offset and limit are numbers, if not a default value will be used
     const searchOffset = isNaN(req.params.offset) ? 0 : parseInt(req.params.offset);
     const searchLimit = isNaN(req.params.limit) ? 999999999999 : parseInt(req.params.limit);
@@ -377,7 +377,7 @@ exports.findAllLimit = async (req, res) => {
 }
 
 // Retrieve all Restaurants from the database. Results have a set offset and limit values
-exports.findAllLimitOffset = async (req, res) => {
+exports.findAllOffsetLimit = async (req, res) => {
     // Checking that offset and limit are numbers, if not a default value will be used
     const searchOffset = isNaN(req.params.offset) ? 0 : parseInt(req.params.offset);
     const searchLimit = isNaN(req.params.limit) ? 999999999999 : parseInt(req.params.limit);
@@ -404,7 +404,7 @@ exports.findAllLimitOffset = async (req, res) => {
 
 // Retrieve all Restaurants from the database whose name is like the search param. Returns 
 // results up to the set offset and limit values
-exports.findByNameLimitOffset = async (req, res) => {
+exports.findByNameOffsetLimit = async (req, res) => {
     // Checking that offset and limit are numbers, if not a default value will be used
     const searchOffset = isNaN(req.params.offset) ? 0 : parseInt(req.params.offset);
     const searchLimit = isNaN(req.params.limit) ? 999999999999 : parseInt(req.params.limit);
