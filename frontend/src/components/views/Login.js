@@ -4,6 +4,7 @@
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/01/2022, Added in Login View Structure)
+//  (CPD, 2/22/22, Connected frontend to backend with loginThunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -14,13 +15,15 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { connect } from 'react-redux';
 import { loginThunk, deleteUser } from '../../actions/users';
 import { Link } from 'react-router-dom';
+import { checkLogin } from '../../helperFunction/CheckLogin'
 
 function Login(props) {
     const [submitted, setSubmitted] = useState(false)
     const [showError, setShowError] = useState(false)
-    // const [isLoggedIn, setIsloggedIn] = useState(false)
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
+
+    const navigate = useNavigate();
 
     const { loginThunk, deleteUser, users } = props;
 
@@ -36,17 +39,37 @@ function Login(props) {
         setPassword(password);
     }
 
-    const checkLogin = () => {
-        if (users.length > 0 && typeof (users[0].isLoggedIn) !== 'undefined' && users[0].isLoggedIn != null) {
-            // console.log("Not Undefined and Not Null " + users[0].isLoggedIn);
-            return true;
-        } else {
-            // console.log('Undefined or Null')
-            return false;
-        }
-    }
+    // Check if user is logged in
+    const showLoginButtons = () => (
+        <div className="text-center">
+            {checkLogin(users) ? (
+                <Button variant="outline-primary" onClick={logoutAccount}>
+                    Logout
+                </Button>
 
-    const navigate = useNavigate();
+            ) : (
+                <div>
+                    <div className="d-flex justify-content-around pt-2 pb-5">
+                        <Button variant="outline-primary" onClick={loginAccount}>
+                            Login
+                        </Button>
+
+                        <Button variant="outline-primary" onClick={() => createAccountHandler()}>
+                            Create Account
+                        </Button>
+                    </div>
+
+                    <div>
+                        {showError &&
+                            <Alert variant="danger" className="text-center">
+                                Incorrect user name or password!
+                            </Alert>
+                        }
+                    </div>
+                </div>
+            )}
+        </div>
+    )
 
     const loginAccount = async () => {
         // login(1);
@@ -88,7 +111,6 @@ function Login(props) {
     const createAccountHandler = () => {
         navigate("../editAccount", { itemId: 42, });
     }
-
 
     return (
         <Container fluid className="text-muted login" style={{ maxWidth: "500px" }}>
@@ -137,34 +159,8 @@ function Login(props) {
                             </FloatingLabel>
                         </Form.Floating>
 
-                        <div className="text-center">
-                            {checkLogin() ? (
-                                <Button variant="outline-primary" onClick={logoutAccount}>
-                                    Logout
-                                </Button>
+                        {showLoginButtons()}
 
-                            ) : (
-                                <div>
-                                    <div className="d-flex justify-content-around pt-2 pb-5">
-                                        <Button variant="outline-primary" onClick={loginAccount}>
-                                            Login
-                                        </Button>
-
-                                        <Button variant="outline-primary" onClick={() => createAccountHandler()}>
-                                            Create Account
-                                        </Button>
-                                    </div>
-
-                                    <div>
-                                        {showError &&
-                                            <Alert variant="danger" className="text-center">
-                                                Incorrect user name or password!
-                                            </Alert>
-                                        }
-                                    </div>
-                                </div>
-                            )}
-                        </div>
                     </Form>
                 )}
             </Container>

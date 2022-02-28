@@ -3,6 +3,8 @@
 // Restaurant Club - user.controller.js
 // February 14, 2022
 // Last Edited (Initials, Date, Edits):
+// (CPD, 2/26, #154 Completed multi table updates to user controller)
+// (CPD, 2/27, re-wrote the update handler to hopefully give correct response now)
 
 const db = require("../models");
 const User = db.users;
@@ -156,7 +158,7 @@ exports.findOne = (req, res) => {
 };
 
 // Update a User by the id in the request
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
     // Validate request
     if (!req.body) {
         res.status(400).send({
@@ -167,49 +169,57 @@ exports.update = (req, res) => {
     const id = req.params.id;
 
     // We find the associated addressId from the user table
-    User.findByPk(id)
+    const addressId = await User.findByPk(id)
         .then(user => {
             // If the user exists the data is updated
             if (user) {
                 // Destructure address from the user
                 const { addressId } = user;
-
-                // Update the address first
-                Address.update(req.body, {
-                    where: { addressId: addressId }
-                })
-                    // Update user table next
-                    .then(User.update(req.body, {
-                        where: { userId: id }
-                    }))
-                    // Update authentication table last
-                    .then(Authentication.update(req.body, {
-                        where: { userId: id }
-                    }))
-                    // Finally check for success
-                    .then(num => {
-                        // Check that our operation affected 1 row (implying success)
-                        if (num == 1) {
-                            res.send({
-                                message: "User was updated successfully!"
-                            });
-                        } else {
-                            res.status(500).send({
-                                message: `Cannot update User with id=${id}. Maybe User was not found!`
-                            });
-                        }
-                    })
+                return addressId
             } else {
-                res.status(500).send({
-                    message: "Could not update User because of an error "
-                });
+                // This negative value indicates there has been an error
+                return -1
             }
         })
-        .catch(err => {
-            res.status(500).send({
-                message: "Could not update User because " + err
-            });
+
+    // Try to update users table
+    const userUpdateStatus = await User.update(req.body, {
+        where: { userId: id }
+    })
+        .then(status => {
+            return status;
+        })
+
+    // Try to update auth table
+    const authUpdateStatus = await Authentication.update(req.body, {
+        where: { userId: id }
+    })
+        .then(status => {
+            return status;
+        })
+
+    // Try to update address table
+    const addressUpdateStatus = await Address.update(req.body, {
+        where: { addressId: addressId }
+    })
+        .then(status => {
+            return status;
+        })
+
+    // Any one of these values being equal to 1 indicates success updating a row
+    if (userUpdateStatus == 1 || 
+        authUpdateStatus == 1 ||
+        addressUpdateStatus == 1) {
+        res.send({
+            message: "User was updated successfully!"
         });
+    } else {
+        res.status(500).send({
+            message: `Cannot update user. Maybe user was not found!`
+        });
+    }
+
+
 };
 
 // Delete a User with the specified id in the request

@@ -4,6 +4,8 @@
 // February 15, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/16/2022, Added comments for actions)
+//  (CPD, 2/22/2022, Added loginThunk)
+//  (CPD, 2/26/2022, Added updateUserThunk and edited updateUser to destructure parameters)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -76,23 +78,9 @@ export const addUserThunk = (
 //     };
 
 /**
- * * React Redux action will add a new user to state.
+ * React Redux action will add a new user to state.
  * 
- * @param {
- * userId, 
- * userName,
- * firstName, 
- * lastName, 
- * address,
- * addressId, 
- * authId,
- * city, 
- * state, 
- * zip, 
- * userEmail, 
- * permissionId, 
- * userPassword
- * } param0 
+ * @param {*} param0 
  * @returns 
  */
 export const addUser = ({ userId, userName,
@@ -148,6 +136,21 @@ export const deleteAllUsers = () => ({
     type: C.DELETE_ALL_USERS
 })
 
+export const updateUserThunk = (id, data) => async dispatch => {
+    /**
+     * Call and await the user data service update method, passing the id and data
+     */
+    await UserDataService.update(id, data)
+        .then(res => {
+            const result = { id, ...data }
+            console.log("result: ", result);
+            dispatch(updateUser(result))
+        })
+        .catch(err => {
+            console.log(err)
+        })
+}
+
 /**
  * React Redux action that will update a user in state with 
  * the matching userId.
@@ -164,26 +167,27 @@ export const deleteAllUsers = () => ({
  * @param {*} password 
  * @returns 
  */
-export const updateUser = (userId, userName, firstName, lastName, address, city, state, zip, email, password) => ({
-    type: C.UPDATE_USER,
-    id: userId,
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-    address: {
-        address: address,
-        city: city,
-        state: state,
-        zip: zip
-    },
-    auth: {
-        userName: userName,
-        password: password,
-        history: {
-            modified: new Date()
+export const updateUser = ({id, userName, firstName, lastName,
+    address, city, state, zip, email, password}) => ({
+        type: C.UPDATE_USER,
+        id: id,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        address: {
+            address: address,
+            city: city,
+            state: state,
+            zip: zip
+        },
+        auth: {
+            userName: userName,
+            password: password,
+            history: {
+                modified: new Date()
+            }
         }
-    }
-})
+    })
 
 /**
  * React Redux action that add a friend for a user with 

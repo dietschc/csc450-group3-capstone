@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 01/28/2022, Upgraded the color scheme)
 //  (DAB, 01/28/2022, Added state to nav)
+//  (CPD, 2/26/22, Added checkLogin method and state constants)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -15,6 +16,7 @@ import { LinkContainer } from 'react-router-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { useSelector, connect } from 'react-redux';
 import { deleteUser } from '../../actions/users';
+import { checkLogin } from '../../helperFunction/CheckLogin'
 
 function MainNav(props) {
     const [basicActive, setBasicActive] = useState();
@@ -22,16 +24,6 @@ function MainNav(props) {
 
     // Get user state from props
     const { deleteUser, users } = props;
-
-    const checkLogin = () => {
-        if (users.length > 0 && typeof (users[0].isLoggedIn) !== 'undefined' && users[0].isLoggedIn != null) {
-            // console.log("Not Undefined and Not Null " + users[0].isLoggedIn);
-            return true;
-        } else {
-            // console.log('Undefined or Null')
-            return false;
-        }
-    }
 
     const setActive = (value) => {
         if (value === basicActive) return;
@@ -44,11 +36,16 @@ function MainNav(props) {
         setActive("none")
     }
 
+    // Remove user from state
     const logoutAccount = () => {
-        // This will remove the user from state
+        // This is disabled for now but will likely be implemented with a modal confirmation
         // deleteUser(users[0].id);
     }
 
+    // Check if user is logged in
+    const showLogout = checkLogin(users) ? <div onClick={logoutAccount}>Logout</div> : "Login";
+
+    // Theme variables
     const buttonTheme = "outline-primary";
     const backgroundTheme = "light";
     const variantTheme = "light";
@@ -95,7 +92,7 @@ function MainNav(props) {
 
                             <LinkContainer to="/login">
                                 <Nav.Link>
-                                    {checkLogin() ? <div onClick={logoutAccount}>Logout</div> : "Login"}
+                                    {showLogout}
                                 </Nav.Link>
                             </LinkContainer>
 
