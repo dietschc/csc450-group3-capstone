@@ -36,14 +36,16 @@ function MainNav(props) {
         setActive("none")
     }
 
-    // Check if user is logged in
-    const editing = checkLogin(users);
-
+    // Remove user from state
     const logoutAccount = () => {
-        // This will remove the user from state
+        // This is disabled for now but will likely be implemented with a modal confirmation
         // deleteUser(users[0].id);
     }
 
+    // Check if user is logged in
+    const isEditing = checkLogin(users) ? <div onClick={logoutAccount}>Logout</div> : "Login";
+
+    // Theme variables
     const buttonTheme = "outline-primary";
     const backgroundTheme = "light";
     const variantTheme = "light";
@@ -90,7 +92,7 @@ function MainNav(props) {
 
                             <LinkContainer to="/login">
                                 <Nav.Link>
-                                    {editing ? <div onClick={logoutAccount}>Logout</div> : "Login"}
+                                    {isEditing}
                                 </Nav.Link>
                             </LinkContainer>
 

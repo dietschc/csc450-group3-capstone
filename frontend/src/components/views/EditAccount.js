@@ -80,7 +80,7 @@ function EditAccount(props) {
     }
 
     // Check if user is logged in
-    const editing = checkLogin(users);
+    const isEditing = checkLogin(users);
 
     const saveAccount = () => {
 
@@ -161,6 +161,28 @@ function EditAccount(props) {
         // console.log("updating with data: ", data);
     }
 
+    /**
+     * Depening on whether you are logged in or not will determine the type of submit button
+     * and calls the relevant save/update function.
+     */
+    const displaySubmitButton = () => (
+        <div className="d-flex justify-content-around pt-2 pb-5">
+            {isEditing ? (
+                <Button variant="outline-primary" onClick={updateAccount}>
+                    Update
+                </Button>
+            ) : (
+                <Button variant="outline-primary" onClick={saveAccount}>
+                    Submit
+                </Button>
+            )}
+
+            <Button variant="outline-primary" onClick={clearForm}>
+                Clear
+            </Button>
+        </div>
+    )
+
     const clearForm = () => {
         setUserName("");
         setFirstName("");
@@ -178,7 +200,7 @@ function EditAccount(props) {
         <FormContainer>
             <Container as="header">
                 <div className="text-center p-1">
-                    <h1>{editing ? "Edit" : "Create"} Account</h1>
+                    <h1>{isEditing ? "Edit" : "Create"} Account</h1>
                 </div>
             </Container>
             <Container fluid as="main" className="p-4 justify-content-center">
@@ -323,21 +345,8 @@ function EditAccount(props) {
                             </FloatingLabel>
                         </Form.Floating>
 
-                        <div className="d-flex justify-content-around pt-2 pb-5">
-                            {editing ? (
-                                <Button variant="outline-primary" onClick={updateAccount}>
-                                    Update
-                                </Button>
-                            ) : (
-                                <Button variant="outline-primary" onClick={saveAccount}>
-                                    Submit
-                                </Button>
-                            )}
+                        {displaySubmitButton()}
 
-                            <Button variant="outline-primary" onClick={clearForm}>
-                                Clear
-                            </Button>
-                        </div>
                     </Form>
                 )}
             </Container>

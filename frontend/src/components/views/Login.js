@@ -38,7 +38,39 @@ function Login(props) {
     }
 
     // Check if user is logged in
-    const editing = checkLogin(users);
+    const isEditing = () => (
+        <div className="text-center">
+            {checkLogin(users) ? (
+                <Button variant="outline-primary" onClick={logoutAccount}>
+                    Logout
+                </Button>
+
+            ) : (
+                <div>
+                    <div className="d-flex justify-content-around pt-2 pb-5">
+                        <Button variant="outline-primary" onClick={loginAccount}>
+                            Login
+                        </Button>
+
+                        <Button variant="outline-primary" onClick={() => createAccountHandler()}>
+                            Create Account
+                        </Button>
+                    </div>
+
+                    <div>
+                        {showError &&
+                            <Alert variant="danger" className="text-center">
+                                Incorrect user name or password!
+                            </Alert>
+                        }
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+
+
+
 
     const navigate = useNavigate();
 
@@ -131,34 +163,8 @@ function Login(props) {
                             </FloatingLabel>
                         </Form.Floating>
 
-                        <div className="text-center">
-                            {editing ? (
-                                <Button variant="outline-primary" onClick={logoutAccount}>
-                                    Logout
-                                </Button>
+                        {isEditing()}
 
-                            ) : (
-                                <div>
-                                    <div className="d-flex justify-content-around pt-2 pb-5">
-                                        <Button variant="outline-primary" onClick={loginAccount}>
-                                            Login
-                                        </Button>
-
-                                        <Button variant="outline-primary" onClick={() => createAccountHandler()}>
-                                            Create Account
-                                        </Button>
-                                    </div>
-
-                                    <div>
-                                        {showError &&
-                                            <Alert variant="danger" className="text-center">
-                                                Incorrect user name or password!
-                                            </Alert>
-                                        }
-                                    </div>
-                                </div>
-                            )}
-                        </div>
                     </Form>
                 )}
             </Container>
