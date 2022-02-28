@@ -40,13 +40,19 @@ exports.create = async (req, res) => {
         historyId: null
     };
 
+    // Creating new timestamps for the the review creation
+    const historyData = {
+        modified: new Date(),
+        created: new Date()
+    }
+
     // Searching the database to verify a restaurant exists to write the review for
     await Restaurant.findByPk(reviewData.restaurantId)
     .then(async (restaurant) => {
         // If a restaurant was found the rating will be created
         if (restaurant) {
             // A new history entry is added for the rating
-            const newHistory = await History.create(req.body)
+            const newHistory = await History.create(historyData)
             .then(history => {
                 // The reviewData array is updated with the historyId
                 reviewData.historyId = history.historyId;
@@ -246,6 +252,11 @@ exports.update = async (req, res) => {
             const { imageId: reviewImageId } = review.images[0];
             const { historyId: reviewHistoryId } = review;
 
+            // Creating the new modified date for history
+            const historyData = {
+                modified: new Date()
+            }
+
             // Updating the review table
             await review.update(req.body);
 
@@ -268,7 +279,7 @@ exports.update = async (req, res) => {
             await Image.update(req.body, {where: { imageId: reviewImageId }});
 
             // Adding the new modified date to the review's history table
-            await History.update(req.body, { where: {historyId: reviewHistoryId }})
+            await History.update(historyData, { where: {historyId: reviewHistoryId }})
             .then(num => {
                 // If the review was updated a success response is sent
                 if (num == 1) {
@@ -534,7 +545,6 @@ exports.findAllOffsetLimit = async (req, res) => {
                 include: { 
                     model: Authentication, attributes: [ 'userName' ]}, attributes: [ 'userId' ] }
         ],
-        where: { userId: userCreatorId },
         order: [[ Restaurant, 'restaurantName', 'ASC' ], [ User, Authentication, 'userName', 'ASC' ] ],
         offset: searchOffset, 
         limit: searchLimit 

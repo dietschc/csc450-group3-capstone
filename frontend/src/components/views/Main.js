@@ -17,6 +17,9 @@ import DevelopersNav from '../DevelopersNav';
 import RestaurantReviewDetail from '../subComponent/RestaurantReviewDetail';
 import MainRRDetailButtonGroup from '../form/button/MainRRDetailButtonGroup';
 import XLContainer from '../template/XLContainer';
+import { connect } from 'react-redux';
+import { loginThunk, deleteUser } from '../../actions/users';
+import Service from '../../services/review.service'
 
 /**
  * The Main Component will be the starting point of the application. 
@@ -26,8 +29,12 @@ import XLContainer from '../template/XLContainer';
  * @returns 
  */
 function Main(props) {
-    // The mock state will be held as data
-    const [data, setData]=useState(mockStateData);
+    // ToDo
+    // Pull review out of state
+    // Create Thunk to grab review state from database, start with 25 limit
+    // Get buttons to be functional
+
+
 
     // navigate will allow navigation between the Views
     const navigate = useNavigate();
@@ -52,14 +59,14 @@ function Main(props) {
     }
 
     // Destructuring the needed data from the intitialState.json file
-    const { users, restaurants, reviews, messages } = data; 
+    const { users, restaurants, reviews } = props; 
     const [user, ...otherUser] = users;
     const { address: currentAddress }  = user;
     const { friend: currentFriendList } = user;
 
     // The RRDButtonGroup will accept the review array and 
     // construct a MainRRDetailButtonGroup Component
-    const RRDButtonGroup = (review) => (
+    const RRDButtonGroup = (review = []) => (
         <div>
             <MainRRDetailButtonGroup review={review}
             moreHandler={moreHandler}
@@ -67,7 +74,17 @@ function Main(props) {
             friendHandler={friendHandler}/>
         </div>
     );
-
+    const createData = {
+        userId: 1, 
+        restaurantId: 1,
+        reviewTitle: "Title",
+        reviewText: "Review Body Text",
+        tasteRating: 3,
+        serviceRating: 3,
+        cleanlinessRating: 3,
+        overallRating: 3,
+        imageLocation: "FakeLocation.gif"
+    }
     return (
         <XLContainer>
             <h1 className="mb-2">
@@ -87,5 +104,14 @@ function Main(props) {
     )
 }
 
+// Mapping the redux store states to props
+const mapStateToProps = state =>
+({
+    users: [...state.users],
+    restaurants: [...state.restaurants],
+    reviews: [...state.reviews]
+});
+
+
 // Exporting the component
-export default Main;
+export default connect(mapStateToProps, null)(Main);
