@@ -26,7 +26,7 @@ class RestaurantDataService {
     /**
      * Get all restaurants from the database
      * 
-     * @returns 
+     * @returns - an array of all restaurants found
      */
     getAll() {
         return http.get("/restaurants");
@@ -76,7 +76,7 @@ class RestaurantDataService {
     findByAuthorId(id) {
         return http.get(`/restaurants/author/${id}`);
     }
-    
+
     /**
      * Retrieve restaurant  matching the author id ordered asc by restaurant name and result limit
      * 
@@ -88,7 +88,7 @@ class RestaurantDataService {
     findByAuthorIdOffsetLimit(offset, limit, id) {
         return http.get(`/restaurants/author/${offset}/${limit}/${id}`);
     }
-    
+
     /**
      * Retrieve restaurant ordered asc by restaurant name and result limit
      * 
@@ -98,7 +98,7 @@ class RestaurantDataService {
     findAllLimit(limit) {
         return http.get(`/restaurants/limit/${limit}`);
     }
-    
+
     /**
      * Retrieve restaurant ordered asc by restaurant name with result limit and offset
      * 
@@ -109,7 +109,7 @@ class RestaurantDataService {
     findAllOffsetLimit(offset, limit) {
         return http.get(`/restaurants/limit/${offset}/${limit}`);
     }
-    
+
     /**
      * Retrieve restaurant searched by a string restaurant author user name with offset and limit
      * 
@@ -123,5 +123,5 @@ class RestaurantDataService {
     }
 }
 
-// Exporting ReviewDataService
+// Exporting DataService
 export default new RestaurantDataService();
