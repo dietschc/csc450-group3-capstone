@@ -3,6 +3,7 @@
 // Restaurant Club - message.controller.js
 // February 27, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 2/28/2022, Added in comments)
 
 const db = require("../models");
 const { Op } = db.Sequelize;

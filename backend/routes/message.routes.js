@@ -3,29 +3,30 @@
 // Restaurant Club - message.routes.js
 // February 27, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 2/28/2022, Added in comments)
 
 module.exports = app => {
   const message = require("../controllers/message.controller.js");
   var router = require("express").Router();
 
-  // Create a new Restaurant
+  // Create a new message
   router.post("/", message.create);
 
-  // Retrieve all Restaurants
+  // Retrieve all messages
   router.get("/", message.findAll);
 
-  // Retrieve a single Restaurant with id
+  // Retrieve a single message with id
   router.get("/:id", message.findOne);
 
-  // Update a Restaurant with id
+  // Update a message with id
   router.put("/:id", message.update);
 
-  // Delete a Restaurant with id
+  // Delete a message with id
   router.delete("/:id", message.delete);
 
-  // Retrieve all Reviews sorted newest to oldest
+  // Retrieve all messages using the userFrom and To ids. Sorted newest to oldest with offset and limit
   router.get("/sorted/date/:userToId/:userFromId/:offset/:limit", message.findByConversationIdOffsetLimit);
 
-  // URL to restaurant for route
+  // URL to message for route
   app.use('/message', router);
 };
