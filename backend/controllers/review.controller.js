@@ -121,6 +121,7 @@ exports.create = async (req, res) => {
     });
 };
 
+
 // Retrieve all reviews from the database.
 exports.findAll = async (req, res) => {
     // Async searching the database and returning all reviews. The 
@@ -150,6 +151,7 @@ exports.findAll = async (req, res) => {
         });
     });
 };
+
 
 // Find a single review with an id
 exports.findOne = async (req, res) => {
@@ -183,6 +185,7 @@ exports.findOne = async (req, res) => {
         });
     });
 };
+
 
 // Update a review by the id in the request
 exports.update = async (req, res) => {
@@ -296,6 +299,7 @@ exports.update = async (req, res) => {
     });
 };
 
+
 // Delete a Restaurant with the specified id in the request
 exports.delete = async (req, res) => {
     // Id's needed to update the address, image, and restaurant tables
@@ -395,6 +399,7 @@ exports.delete = async (req, res) => {
     });
 };
 
+
 // Retrieve all Reviews from the database that have the same author id
 exports.findByAuthorId = async (req, res) => {
     // Checking for to be searched for, if null is passed null becomes the id
@@ -429,6 +434,7 @@ exports.findByAuthorId = async (req, res) => {
         });
     });
 }
+
 
 // Retrieve all Reviews from the database that have the same author id. Results 
 // have set offset and limit values
@@ -471,6 +477,7 @@ exports.findByAuthorIdOffsetLimit = async (req, res) => {
     });
 }
 
+
 // Retrieve all Reviews from the database in the amount of the limit value
 exports.findAllLimit = async (req, res) => {
     // If the req limit param is a number it is used, otherwise all results are returned
@@ -505,6 +512,7 @@ exports.findAllLimit = async (req, res) => {
         });
     });
 }
+
 
 // Retrieve all Reviews from the database. Results have a set offset and limit values
 exports.findAllOffsetLimit = async (req, res) => {
@@ -543,6 +551,7 @@ exports.findAllOffsetLimit = async (req, res) => {
         });
     });
 }
+
 
 // Retrieve all Reviews from the database whose name is like the search param. Returns 
 // results up to the set offset and limit values
@@ -588,6 +597,7 @@ exports.findByNameOffsetLimit = async (req, res) => {
     });
 }
 
+
 // Retrieve all Reviews from the database. Results have a set offset and limit values and 
 // are returned newest to oldest
 exports.findAllSortedByDate = async (req, res) => {
@@ -623,6 +633,7 @@ exports.findAllSortedByDate = async (req, res) => {
         });
     });
 }
+
 
 // Retrieve all Reviews from the database. Results have a set offset and limit values and 
 // are returned newest to oldest

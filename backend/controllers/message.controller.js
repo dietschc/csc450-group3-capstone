@@ -10,7 +10,7 @@ const Message = db.message;
 const Conversation = db.conversation;
 const User = db.user;
 
-// Create and Save a new Restaurant
+// Create and Save a new message
 exports.create = async (req, res) => {
     // Validate request
     if (!req.body.userToId ||
@@ -22,56 +22,78 @@ exports.create = async (req, res) => {
         return;
     }
 
+    // Creating a message data object to hold the message data as 
+    // it is created
     const messageData = {
         conversationId: null,
         message: req.body.message,
     }
 
+    // Searching if the conversation between the two users exists or not
     await Conversation.findOne({ 
         where: {[Op.and]: [ 
             { userToId: req.body.userToId }, 
             { userFromId: req.body.userFromId } 
         ]}
     }).then(async conversation => {
+        // If the conversation exists, a mew message is added to the database
         if (conversation) {
+            // Assigning the correct conversation id to the message data
             messageData.conversationId = conversation.conversationId;
+
+            // Creating the new message and returning the values created
             await Message.create(messageData)
             .then(message => {
-                res.json({ ...message.dataValues, conversation });
+                // Returning the message data to the caller
+                res.send({ ...message.dataValues, conversation });
             });
         }
+        // Else there is not a conversation entry in the database so a new 
+        // one is created before the message is added
         else {
+            // Creating a new conversation with the message details
             conversation = await Conversation.create(req.body)
             .then(newConversation => {
-                messageData.conversationId = newConversation.conversationId
+                // Assigning the correct conversationId to the message data
+                messageData.conversationId = newConversation.conversationId;
+
+                // Returning that conversation data
                 return newConversation;
             })
             .catch(err => {
+                // If there is an error it is logged
                 console.log(err);
             });
 
+            // Creating the message in the database with the message data
             await Message.create(messageData)
             .then(message => {
-                res.json({ ...message.dataValues, conversation });
+                // Returning the message data to the caller
+                res.send({ ...message.dataValues, conversation });
             })
         }
     }).catch(err => {
+        // If there is an error, it is send back to the requester
         res.status(500).send({
             message:
-                err.message || "Some error occurred while creating the Restaurant."
+                err.message || "Some error occurred while creating the message."
         });
     });
 };
 
-// Retrieve all Restaurants from the database.
+
+// Retrieve all messages from the database.
 exports.findAll = async (req, res) => {
+    // Searching for all messages and their attached conversation entires
     await Message.findAll({
         include: [ Conversation ]
     })
-        .then(data => {
-            res.send(data);
+        .then(message => {
+            // If found, sending them back to the requester
+            res.send(message);
         })
         .catch(err => {
+            // If there was an error the requester is notified
             res.status(500).send({
                 message:
                     err.message || "Some error occurred while retrieving messages."
@@ -79,23 +101,30 @@ exports.findAll = async (req, res) => {
         });
 };
 
-// Find a single Restaurant with an id
+
+// Find a single message with an id
 exports.findOne = async (req, res) => {
+    // Pulling the message id out of the req param
     const { id: messageId } = req.params;
+
+    // Searching for a message and its attached conversation entry by message Id
     await Message.findByPk(messageId, {
         include: [ Conversation ]
     })
     .then(message => {
+        // If a message was found the result is sent back
         if (message) {
             res.send(message);
         }
+        // If a message was not found the user is notified
         else {
-            res.status(404).send({
+            res.send({
                 message: `No messages found with message id ${messageId}!`
             });
         }
     })
     .catch(err => {
+        // If there was an error the requester is notified
         res.status(500).send({
             message:
                 err.message || "Some error occurred while retrieving messages."
@@ -103,28 +132,37 @@ exports.findOne = async (req, res) => {
     });
 };
 
-// Update a Restaurant by the id in the request
+
+// Update a message by the id in the request. Updating messages is currently not 
+// needed
 exports.update = (req, res) => {
-    res.send({
+    res.status(404).send({
         message: "Update a message will not be functional until milestone 4"
     })
 };
 
-// Delete a Restaurant with the specified id in the request
+
+// Delete a message with the specified id in the request. Deleting messages is currently 
+// not needed
 exports.delete = (req, res) => {
-    res.send({
+    res.status(404).send({
         message: "Delete a message will not be functional until milestone 4"
     })
 };
 
+
+// 
 exports.findByConversationIdOffsetLimit = async (req, res) => {
     // Checking that offset and limit are numbers, if not a default value will be used
     const searchOffset = isNaN(req.params.offset) ? 0 : parseInt(req.params.offset);
     const searchLimit = isNaN(req.params.limit) ? 999999999999 : parseInt(req.params.limit);
+    // Grabbing the userFrom and userTo ids out of params to find the conversation
     const { userToId, userFromId } = req.params;
 
-    // Async searching the database and returning all reviews. The 
-    // search includes all joined tables and attributes
+    // Async searching the database and returning all messages. The 
+    // search includes all joined tables and attributes. Data will 
+    // be sorted by updatedAt time and in ASC order so that offset and 
+    // limit will retrieve the correct message order
     await Message.findAll({
         subQuery: false,
         include: [ Conversation ],
