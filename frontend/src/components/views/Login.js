@@ -23,6 +23,8 @@ function Login(props) {
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
 
+    const navigate = useNavigate();
+
     const { loginThunk, deleteUser, users } = props;
 
     const onChangeUserName = e => {
@@ -38,7 +40,7 @@ function Login(props) {
     }
 
     // Check if user is logged in
-    const isEditing = () => (
+    const showLoginButtons = () => (
         <div className="text-center">
             {checkLogin(users) ? (
                 <Button variant="outline-primary" onClick={logoutAccount}>
@@ -68,11 +70,6 @@ function Login(props) {
             )}
         </div>
     )
-
-
-
-
-    const navigate = useNavigate();
 
     const loginAccount = async () => {
         // login(1);
@@ -114,7 +111,6 @@ function Login(props) {
     const createAccountHandler = () => {
         navigate("../editAccount", { itemId: 42, });
     }
-
 
     return (
         <Container fluid className="text-muted login" style={{ maxWidth: "500px" }}>
@@ -163,7 +159,7 @@ function Login(props) {
                             </FloatingLabel>
                         </Form.Floating>
 
-                        {isEditing()}
+                        {showLoginButtons()}
 
                     </Form>
                 )}

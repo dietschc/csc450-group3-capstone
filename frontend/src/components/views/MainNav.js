@@ -43,7 +43,7 @@ function MainNav(props) {
     }
 
     // Check if user is logged in
-    const isEditing = checkLogin(users) ? <div onClick={logoutAccount}>Logout</div> : "Login";
+    const showLogout = checkLogin(users) ? <div onClick={logoutAccount}>Logout</div> : "Login";
 
     // Theme variables
     const buttonTheme = "outline-primary";
@@ -92,7 +92,7 @@ function MainNav(props) {
 
                             <LinkContainer to="/login">
                                 <Nav.Link>
-                                    {isEditing}
+                                    {showLogout}
                                 </Nav.Link>
                             </LinkContainer>
 
