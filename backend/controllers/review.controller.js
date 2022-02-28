@@ -102,7 +102,7 @@ exports.create = async (req, res) => {
             })
             .then(() => {
                 // Sending the newly created review data values back to the requester
-                res.json({ ...newReview.dataValues, newHistory, newRating, newImage})
+                res.json({ ...newReview.dataValues, newHistory, newRating, newImage })
             });
         }
         // Else the restaurant does not exist so a review cannot be created for it
