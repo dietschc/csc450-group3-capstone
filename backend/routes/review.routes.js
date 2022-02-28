@@ -3,6 +3,8 @@
 // review Club - review.routes.js
 // February 20, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 2/27/2022, Added in some offset/limit findAll as well as search 
+//  by name and author Id)
 
 module.exports = app => {
   const review = require("../controllers/review.controller.js");

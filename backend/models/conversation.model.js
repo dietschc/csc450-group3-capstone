@@ -9,7 +9,8 @@ module.exports = (sequelize, Sequelize) => {
 		conversationId: {
 			type: Sequelize.INTEGER,
 			primaryKey: true,
-			autoIncrement: true
+			autoIncrement: true,
+			allowNull: false
 		},
 		userToId: {
 			type: Sequelize.INTEGER

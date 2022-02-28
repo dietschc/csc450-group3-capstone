@@ -4,6 +4,7 @@
 // February 14, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/20/2022, Added routes for image, rating, review, and reviewImage)
+//  (DAB, 2/27/2022, Added message route)
 
 const express = require("express");
 const cors = require("cors");
@@ -50,6 +51,7 @@ require("./routes/image.routes")(app);
 require("./routes/rating.routes")(app);
 require("./routes/review.routes")(app);
 require("./routes/reviewImage.routes")(app);
+require("./routes/message.routes")(app);
 
 // set port, listen for requests
 const PORT = 5000;

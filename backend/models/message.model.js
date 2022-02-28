@@ -12,17 +12,15 @@ module.exports = (sequelize, Sequelize) => {
 			autoIncrement: true
 		},
 		conversationId: {
-			type: Sequelize.INTEGER
+			type: Sequelize.INTEGER,
+			allowNull: false
 		},
 		message: {
-			type: Sequelize.STRING
-		},
-		timeStamp: {
 			type: Sequelize.STRING
 		}
 	}, {
 		freezeTableName: true,
-		timestamps: false
+		timestamps: true
 	});
 	return Message;
 };
