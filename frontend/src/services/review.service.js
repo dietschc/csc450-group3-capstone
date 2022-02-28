@@ -74,7 +74,7 @@ class ReviewDataService {
      * @returns  - Review data for that author
      */
     findByAuthorId(id) {
-        return http.get(`/author/${id}`);
+        return http.get(`/review/author/${id}`);
     }
     
     /**
@@ -86,7 +86,7 @@ class ReviewDataService {
      * @returns - Review data if found
      */
     findByAuthorIdOffsetLimit(offset, limit, id) {
-        return http.get(`/author/${offset}/${limit}/${id}`);
+        return http.get(`/review/author/${offset}/${limit}/${id}`);
     }
     
     /**
@@ -96,7 +96,7 @@ class ReviewDataService {
      * @returns - Review data if found
      */
     findAllLimit(limit) {
-        return http.get(`/limit/${limit}`);
+        return http.get(`/review/limit/${limit}`);
     }
     
     /**
@@ -107,7 +107,7 @@ class ReviewDataService {
      * @returns - Review data if found
      */
     findAllOffsetLimit(offset, limit) {
-        return http.get(`/limit/${offset}/${limit}`);
+        return http.get(`/review/limit/${offset}/${limit}`);
     }
     
     /**
@@ -119,7 +119,7 @@ class ReviewDataService {
      * @returns - Review data if found
      */
     findByNameOffsetLimit(offset, limit, name) {
-        return http.get(`/search/${offset}/${limit}/${name}`);
+        return http.get(`/review/search/${offset}/${limit}/${name}`);
     }
     
     /**
@@ -128,7 +128,7 @@ class ReviewDataService {
      * @returns - Review data if found
      */
     findAllSortedByDate() {
-        return http.get(`/sorted/date`);
+        return http.get(`/review/sorted/date`);
     }
     
     /**
@@ -139,7 +139,7 @@ class ReviewDataService {
      * @returns - Review data if found
      */
     findAllSortedByDateOffsetLimit(offset, limit) {
-        return http.get(`/sorted/date/${offset}/${limit}`);
+        return http.get(`/review/sorted/date/${offset}/${limit}`);
     }
 }
 
