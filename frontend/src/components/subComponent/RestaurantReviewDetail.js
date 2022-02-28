@@ -33,8 +33,8 @@ function RestaurantReviewDetail(props) {
     return (
         <Container fluid>
                 <Row>
-                    {reviews.map((review) => (
-                        <Card className="mb-2" key={review.reviewId} style={{}}>
+                    {reviews.map((review, index) => (
+                        <Card className="mb-2" key={index} style={{}}>
                             <ReviewHeadingCardBody review={review} restaurants={restaurants}/>
                             {/** DEBUG MAKE SURE TO REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
                             {console.log("REVIEW IN RRD IS ", review)}
@@ -44,8 +44,8 @@ function RestaurantReviewDetail(props) {
                             <Card.Text className="text-center pt-1">
                                 {review.author.userName}
                             </Card.Text>
-                            <FullStarRatingRow review={review}/>
-                            <ReviewTextCardBody review={review}/>
+                            <FullStarRatingRow key={review.reviewId} review={review}/>
+                            <ReviewTextCardBody key={review.reviewId} review={review}/>
                             <Container  fluid className="d-flex px-0 mb-2 justify-content-center justify-content-sm-center justify-content-md-end ">
                                 {/**Buttons to add function for this Container will generate here, add the 
                                  * buttons to the container by passing them as functional props*/}
