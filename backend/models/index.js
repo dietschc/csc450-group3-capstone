@@ -3,7 +3,8 @@
 // Restaurant Club - index.js
 // February 14, 2022
 // Last Edited (Initials, Date, Edits):
-//  (DAB, 2/20/2022, Added in image, reviewImage, review and rating models)
+// (DAB, 2/20/2022, Added in image, reviewImage, review and rating models)
+// (CPD, 2/28/2022, Commented out History and Authentication association)
 
 const dbConfig = require("../config/db.config.js");
 const Sequelize = require("sequelize");
@@ -45,9 +46,10 @@ db.authentication.belongsTo(db.permission, { foreignKey: 'permissionId' });
 db.conversation.hasMany(db.message, { foreignKey: 'conversationId' });
 db.message.belongsTo(db.conversation, { foreignKey: 'conversationId' });
 
+// History table soon to be removed
 // History to Authentication Association
-db.history.hasOne(db.authentication, { foreignKey: 'historyId', onDelete: 'RESTRICT' })
-db.authentication.belongsTo(db.history, { foreignKey: 'historyId' })
+// db.history.hasOne(db.authentication, { foreignKey: 'historyId', onDelete: 'RESTRICT' })
+// db.authentication.belongsTo(db.history, { foreignKey: 'historyId' })
 
 // History to Review Association
 db.history.hasOne(db.review, { foreignKey: 'historyId', onDelete: 'RESTRICT' })
