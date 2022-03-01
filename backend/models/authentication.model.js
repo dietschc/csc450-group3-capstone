@@ -3,6 +3,7 @@
 // Restaurant Club - authentication.model.js
 // February 15, 2022
 // Last Edited (Initials, Date, Edits):
+// (CPD, 2/28/2022, Removed historyId column and enabled timestamps)
 
 module.exports = (sequelize, Sequelize) => {
 	const Authentication = sequelize.define("authentication", {
@@ -23,12 +24,9 @@ module.exports = (sequelize, Sequelize) => {
 		userPassword: {
 			type: Sequelize.STRING
 		},
-		historyId: {
-			type: Sequelize.INTEGER
-		},
 	}, {
 		freezeTableName: true,
-		timestamps: false
+		timestamps: true
 	});
 
 	return Authentication;

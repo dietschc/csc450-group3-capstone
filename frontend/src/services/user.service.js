@@ -28,6 +28,18 @@ class UserDataService {
     return http.post("/authentication/login", data);
   }
 
+  /**
+   * Retrieve authentication searched by a userName string with offset and limit
+   * 
+   * @param {*} offset 
+   * @param {*} limit 
+   * @param {*} userName - string to query for user name
+   * @returns - authentication data if found
+   */
+  findByNameOffsetLimit(offset, limit, userName) {
+    return http.get(`/authentication/search/${offset}/${limit}/${userName}`);
+  }
+
   // Updates a specific user
   update(id, data) {
     return http.put(`/users/${id}`, data);
@@ -39,6 +51,4 @@ class UserDataService {
   }
 
 }
-
-// Exporting DataService
 export default new UserDataService();

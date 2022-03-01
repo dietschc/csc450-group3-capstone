@@ -8,6 +8,7 @@
 // (CPD, 2/28, Removed historyId in create because history table is going away)
 // (CPD, 2/28, Added friend methods to users controller)
 
+
 const db = require("../models");
 const User = db.users;
 const Authentication = db.authentication;

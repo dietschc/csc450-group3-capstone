@@ -3,9 +3,11 @@
 // Restaurant Club - authentication.controller.js
 // February 15, 2022
 // Last Edited (Initials, Date, Edits):
+// (CPD, 2/27/2022, Added findByNameOffsetLimit function)
 
-const { address } = require("../models");
 const db = require("../models");
+const Sequelize = require("sequelize");
+const { Op } = db.Sequelize;
 const Authentication = db.authentication;
 const User = db.users;
 const Address = db.address;
@@ -26,7 +28,7 @@ exports.create = (req, res) => {
         permissionId: req.body.permissionId,
         userName: req.body.userName,
         userPassword: req.body.userPassword,
-        historyId: req.body.historyId,
+        // historyId: req.body.historyId,
     };
 
     // Save Authentication in the database
@@ -74,14 +76,14 @@ exports.login = async (req, res) => {
             return err;
         });
 
-        // Setup out userId parameter (if it exists)
-        let id = 0;
-        if (getAuth) {
-            id = getAuth.userId;
-        }
+    // Setup out userId parameter (if it exists)
+    let id = 0;
+    if (getAuth) {
+        id = getAuth.userId;
+    }
 
-        // Get user info
-        const getUser = await User.findByPk(id)
+    // Get user info
+    const getUser = await User.findByPk(id)
         .then(data => {
             if (data) {
                 return data;
@@ -94,14 +96,14 @@ exports.login = async (req, res) => {
             return err;
         });
 
-        // Setup out addressId parameter (if it exists)
-        let addressId = 0;
-        if (getUser) {
-            addressId = getUser.addressId;
-        }
+    // Setup out addressId parameter (if it exists)
+    let addressId = 0;
+    if (getUser) {
+        addressId = getUser.addressId;
+    }
 
-        // Get address info
-        Address.findByPk(addressId)
+    // Get address info
+    Address.findByPk(addressId)
         .then(getAddress => {
             if (getAddress) {
                 // Return all 3 JSON objects in an array in the response
@@ -243,3 +245,40 @@ exports.delete = (req, res) => {
             });
         });
 };
+
+// Retrieve all Authentications entries from the database whose name is like the search param. Returns 
+// results up to the set offset and limit values
+exports.findByNameOffsetLimit = async (req, res) => {
+    // Checking that offset and limit are numbers, if not a default value will be used
+    const searchOffset = isNaN(req.params.offset) ? 0 : parseInt(req.params.offset);
+    const searchLimit = isNaN(req.params.limit) ? 999999999999 : parseInt(req.params.limit);
+    // The authentication userName is pulled from params to be used in the query
+    const searchName = req.params.userName;
+
+    // Using an async function to search the database for all existing authentications
+    await Authentication.findAll({
+        include: [
+            {
+                model: User,
+                include: {
+                    model: Address
+                }
+            }
+        ],
+        where: { userName: { [Op.like]: `%${searchName}%` } },
+        order: [['userName', 'ASC']],
+        offset: searchOffset,
+        limit: searchLimit
+    })
+        .then(authentication => {
+            // If authentications are found the data is returned
+            res.send(authentication);
+        })
+        .catch(err => {
+            // Else a message indicating the authentication was not found is sent
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving authentications."
+            });
+        });
+}
