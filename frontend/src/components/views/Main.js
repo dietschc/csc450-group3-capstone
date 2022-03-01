@@ -42,7 +42,7 @@ function Main(props) {
     // ,[])
     useEffect(() => {
         console.log(Service.getAll);
-        findAllReviewsOrdered(0, 1)
+        findAllReviewsOrdered(0, 25)
     }, []);
 
 
