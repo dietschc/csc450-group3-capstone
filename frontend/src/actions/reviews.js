@@ -27,8 +27,9 @@ export const findAllReviewsOrdered = (offset, limit) => async dispatch => {
                 
                 await res.data.map(review => {
                     console.log("Mapped data: ", review);
-                    const reviewData = { ...review.rating, 
-                        ...review.restaurant, ...review.history, ...review.images, ...review.user, ...review }
+                    const reviewData = { ...review.user, ...review.rating, 
+                        ...review.restaurant, ...review.history, ...review.images[0], 
+                        ...review.user, ...review, ...review.user.authentication }
                     console.log(reviewData)
                     dispatch(addReview(reviewData));
                 

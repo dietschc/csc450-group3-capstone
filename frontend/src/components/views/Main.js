@@ -36,10 +36,14 @@ function Main(props) {
 
     const { addReviewThunk, findAllReviewsOrdered } = props;
 
+    // useEffect(
+    //     findAllReviewsOrdered(0, 2)
+    //     // console.log(Service.findAllOffsetLimit(0, 2))
+    // ,[])
     useEffect(() => {
-        findAllReviewsOrdered(0, 2)
-        // console.log(Service.findAllOffsetLimit(0, 2))
-    })
+        console.log(Service.getAll);
+        findAllReviewsOrdered(0, 1)
+    }, []);
 
 
     // navigate will allow navigation between the Views

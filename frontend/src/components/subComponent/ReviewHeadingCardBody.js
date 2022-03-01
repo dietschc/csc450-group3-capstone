@@ -33,10 +33,10 @@ function ReviewHeadingCardBody(props) {
             </Card.Title>
             <Card.Text as="h4" className="text-center">
                 <div>
-                    {printStarTotal(restaurants.filter((restaurant) => (restaurant.id === review.restaurant.id))[0].rating.overallRating)}
+                    {/* {printStarTotal(restaurants.filter((restaurant) => (restaurant.id === review.restaurant.id))[0].rating.overallRating)} */}
                 </div>
                 <div className="h6 mb-0">
-                    {printReviewTotal(restaurants.filter((restaurant) => (restaurant.id === review.restaurant.id))[0].reviewCount)}
+                    {/* {printReviewTotal(restaurants.filter((restaurant) => (restaurant.id === review.restaurant.id))[0].reviewCount)} */}
                 </div>
             </Card.Text>
         </Card.Body>
