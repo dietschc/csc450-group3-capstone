@@ -23,6 +23,9 @@ module.exports = app => {
   // Retrieve a single Authentication with id
   router.get("/:id", authentication.findOne);
 
+  // Retrieve authentication searched by user userName with offset and limit
+  router.get("/search/:offset/:limit/:userName", authentication.findByNameOffsetLimit);
+
   // Update a Authentication with id
   router.put("/:id", authentication.update);
 

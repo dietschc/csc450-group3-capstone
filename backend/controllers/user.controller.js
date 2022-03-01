@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 // (CPD, 2/26, #154 Completed multi table updates to user controller)
 // (CPD, 2/27, re-wrote the update handler to hopefully give correct response now)
+// (CPD, 2/28, Removed historyId in create because history table is going away)
 
 const db = require("../models");
 const User = db.users;
@@ -98,7 +99,7 @@ exports.create = async (req, res) => {
             permissionId: 1, // FK constraint with Permission table
             userName: req.body.userName,
             userPassword: req.body.userPassword,
-            historyId: null, // FK constraing with History table
+            // historyId: null, // FK constraing with History table
         }
 
         // Save Authentication in the database
@@ -207,7 +208,7 @@ exports.update = async (req, res) => {
         })
 
     // Any one of these values being equal to 1 indicates success updating a row
-    if (userUpdateStatus == 1 || 
+    if (userUpdateStatus == 1 ||
         authUpdateStatus == 1 ||
         addressUpdateStatus == 1) {
         res.send({
