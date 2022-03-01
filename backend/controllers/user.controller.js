@@ -6,11 +6,14 @@
 // (CPD, 2/26, #154 Completed multi table updates to user controller)
 // (CPD, 2/27, re-wrote the update handler to hopefully give correct response now)
 // (CPD, 2/28, Removed historyId in create because history table is going away)
+// (CPD, 2/28, Added friend methods to users controller)
+
 
 const db = require("../models");
 const User = db.users;
 const Authentication = db.authentication;
 const Address = db.address;
+const Friend = db.friend;
 
 // Create and Save a new User
 // Asynchronous method to create a user with the parameters passed from the frontend.
@@ -281,4 +284,124 @@ exports.delete = async (req, res) => {
             message: `Cannot delete user. Maybe user was not found!`
         });
     }
+};
+
+// Create and Save a new Friend in the req.body for the user specified in the req.params.id
+exports.addFriend = async (req, res) => {
+    // Validate request
+    if (!req.body.friendTwoId) {
+        res.status(400).send({
+            message: "You must supply a userId paramater and userId for friend in the body!"
+        });
+        return;
+    }
+
+    // Collect userId from parameter
+    const id = req.params.id;
+    const friendTwoId = req.body.friendTwoId;
+
+    // Create a Friend
+    const friend = {
+        friendOneId: id,
+        friendTwoId: friendTwoId
+    };
+
+    // Check that you are not already friends
+    const alreadyFriends = await Friend.findOne({
+        where: {
+            friendOneId: id,
+            friendTwoId: friendTwoId
+        }
+    })
+
+    // console.log("already friend!", alreadyFriends);
+
+    if (alreadyFriends) {
+        res.status(500).send({
+            message: "Already friends with user " + id
+        });
+    } else {
+
+    // Save Friend in the database
+    Friend.create(friend)
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while creating the Friend."
+            });
+        });
+    }
+
+
+};
+
+// Returns a list of friends for the user specified in the req.params.id
+exports.getAllFriends = async (req, res) => {
+    const id = req.params.id;
+
+    Friend.findAll({
+        where: {
+            friendOneId: id
+        },
+        attributes: ['friendTwoId']
+    })
+        .then(data => {
+            if (data) {
+                res.send(data);
+            } else {
+                res.status(404).send({
+                    message: `Cannot find Friend with id=${id}.`
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error retrieving Friend with id=" + id
+            });
+        });
+};
+
+// Deltes a friend from the req.body for the user specified in the req.params.id
+exports.deleteFriend = async (req, res) => {
+    // Validate request
+    if (!req.body.friendTwoId) {
+        res.status(400).send({
+            message: "You must supply a friend to delete!"
+        });
+        return;
+    }
+
+    // The id of the user who will be removing the friend
+    const id = req.params.id;
+
+    // The id of the friend to be deleted
+    const friendTwoId = req.body.friendTwoId;
+
+    // Destroy the Friend record where the friend exists to delete friend
+    await Friend.destroy({
+        where: {
+            friendOneId: id,
+            friendTwoId: friendTwoId
+        }
+    })
+        .then(num => {
+            // No errors implies success
+            if (num == 1) {
+                res.send({
+                    message: "Friend was deleted successfully!"
+                });
+            } else {
+                res.status(500).send({
+                    message: `Cannot delete Friend with id=${id}. Maybe Friend was not found!`
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Could not delete Friend with id=" + id
+            });
+        });
 };
