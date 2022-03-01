@@ -8,7 +8,7 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import mockStateData from "../../redux/initialState.json";
 import { useNavigate } from 'react-router-dom';
@@ -18,7 +18,7 @@ import RestaurantReviewDetail from '../subComponent/RestaurantReviewDetail';
 import MainRRDetailButtonGroup from '../form/button/MainRRDetailButtonGroup';
 import XLContainer from '../template/XLContainer';
 import { connect } from 'react-redux';
-import { loginThunk, deleteUser } from '../../actions/users';
+import { addReviewThunk, findAllReviewsOrdered } from '../../actions/reviews';
 import Service from '../../services/review.service'
 
 /**
@@ -34,6 +34,12 @@ function Main(props) {
     // Create Thunk to grab review state from database, start with 25 limit
     // Get buttons to be functional
 
+    const { addReviewThunk, findAllReviewsOrdered } = props;
+
+    useEffect(() => {
+        findAllReviewsOrdered(0, 2)
+        // console.log(Service.findAllOffsetLimit(0, 2))
+    })
 
 
     // navigate will allow navigation between the Views
@@ -60,7 +66,7 @@ function Main(props) {
 
     // Destructuring the needed data from the intitialState.json file
     const { users, restaurants, reviews } = props; 
-    const [user, ...otherUser] = users;
+    const [user=[], ...otherUser] = users;
     const { address: currentAddress }  = user;
     const { friend: currentFriendList } = user;
 
@@ -84,6 +90,10 @@ function Main(props) {
         cleanlinessRating: 3,
         overallRating: 3,
         imageLocation: "FakeLocation.gif"
+    }
+
+    const loadData = () => {
+        findAllReviewsOrdered(0, 2)
     }
     return (
         <XLContainer>
@@ -114,4 +124,4 @@ const mapStateToProps = state =>
 
 
 // Exporting the component
-export default connect(mapStateToProps, null)(Main);
+export default connect(mapStateToProps, { addReviewThunk, findAllReviewsOrdered })(Main);

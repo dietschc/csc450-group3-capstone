@@ -11,6 +11,60 @@
 // for the app and importing needed components
 import C from '../constants';
 import { v4 } from 'uuid';
+import ReviewDataService from "../services/review.service";
+
+
+export const findAllReviewsOrdered = (offset, limit) => async dispatch => {
+    /**
+     * Call and await the user data service create method, passing the parameters and storing the 
+     * results in a constant.
+     */
+    await ReviewDataService.findAllOffsetLimit(offset, limit)
+        .then(async res => {
+            console.log("data: ", res.data);
+
+            if (res) {
+                
+                await res.data.map(review => {
+                    console.log("Mapped data: ", review);
+                    const reviewData = { ...review.rating, 
+                        ...review.restaurant, ...review.history, ...review.images, ...review.user, ...review }
+                    console.log(reviewData)
+                    dispatch(addReview(reviewData));
+                
+                })
+            }
+            // This combines the 3 JSON objects into a single object
+            // const result = { ...res.data.newUser, ...res.data.newAddress, ...res.data.newAuth }
+            // dispatch(addReview(result))
+        })
+        .catch(err => {
+            console.log(err)
+        })
+}
+
+export const addReviewThunk = (
+    userId, restaurantId, reviewTitle, reviewText, tasteRating, serviceRating, 
+    cleanlinessRating, overallRating, imageLocation ) => async dispatch => {
+    /**
+     * Call and await the user data service create method, passing the parameters and storing the 
+     * results in a constant.
+     */
+    await ReviewDataService.create({
+        userId, restaurantId, reviewTitle, reviewText, tasteRating, serviceRating, 
+        cleanlinessRating, overallRating, imageLocation
+    })
+        .then(res => {
+            console.log("data: ", res.data);
+
+            // This combines the 3 JSON objects into a single object
+            // const result = { ...res.data.newUser, ...res.data.newAddress, ...res.data.newAuth }
+            // dispatch(addReview(result))
+        })
+        .catch(err => {
+            console.log(err)
+        })
+}
 
 /**
  * React-Redux action to add a review to redux state.
@@ -28,11 +82,11 @@ import { v4 } from 'uuid';
  * @param {*} imageLocation - File location the image will be stored at.
  * @returns 
  */
- export const addReview = (userName, userId, restaurantId, restaurantName, tasteRating, 
+ export const addReview = ({userName, reviewId, userId, imageId, historyId, restaurantId, ratingId, restaurantName, tasteRating, 
     serviceRating, cleanlinessRating, overallRating, reviewTitle, 
-    reviewText, imageLocation) => ({
+    reviewText, created, modified, imageLocation}) => ({
         type: C.ADD_REVIEW,
-        id: v4(),
+        id: reviewId,
         author: {
             id: userId,
             userName: userName
@@ -42,7 +96,7 @@ import { v4 } from 'uuid';
             name: restaurantName
         },
         rating: {
-            id: v4(),
+            id: ratingId,
             tasteRating: tasteRating,
             serviceRating: serviceRating,
             cleanlinessRating: cleanlinessRating,
@@ -51,13 +105,13 @@ import { v4 } from 'uuid';
         reviewTitle: reviewTitle,
         reviewText: reviewText,
         images: {
-            id: v4(),
+            id: imageId,
             imageLocation: imageLocation
         },
         history: {
-            id: v4(),
-            created: new Date(),
-            modified: null
+            id: historyId,
+            created: created,
+            modified: modified
         }
     })
 
