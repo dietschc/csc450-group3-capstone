@@ -35,7 +35,7 @@ export const findAllReviewsOrdered = (offset, limit) => async dispatch => {
                     // DEBUG
                     // console.log(reviewData)
                     dispatch(addReview(reviewData));
-                
+                    return review;
                 })
             }
             // This combines the 3 JSON objects into a single object
@@ -70,23 +70,30 @@ export const addReviewThunk = (
         })
 }
 
+
 /**
  * React-Redux action to add a review to redux state.
  * 
- * @param {*} userName - User name of the user who wrote this review.
- * @param {*} userId - User Id of the user who wrote this review.
- * @param {*} restaurantId - Restaurant Id of the restaurant being reviewed.
- * @param {*} restaurantName - Name of the restaurant being reviewed.
- * @param {*} tasteRating - Taste rating for the review.
- * @param {*} serviceRating - Service rating for the review.
- * @param {*} cleanlinessRating - Cleanliness rating for the review.
- * @param {*} overallRating - Overall rating for the review.
- * @param {*} reviewTitle - Title of the review.
- * @param {*} reviewText - Body review text.
- * @param {*} imageLocation - File location the image will be stored at.
+ * @param {
+ * userName - User name of the user who wrote this review.
+ * reviewId - Id of the review.
+ * userId - User Id of the user who wrote this review.
+ * restaurantId - Restaurant Id of the restaurant being reviewed.
+ * restaurantName - Name of the restaurant being reviewed.
+ * tasteRating - Taste rating for the review.
+ * serviceRating - Service rating for the review.
+ * cleanlinessRating - Cleanliness rating for the review.
+ * overallRating - Overall rating for the review.
+ * reviewTitle - Title of the review.
+ * reviewText - Body review text.
+ * created - DateTime of review creation
+ * modified - DateTime of review modification.
+ * imageLocation - File location the image will be stored at.
+ * } param0 
  * @returns 
  */
- export const addReview = ({userName, reviewId, userId, imageId, historyId, restaurantId, ratingId, restaurantName, tasteRating, 
+ export const addReview = ({userName, reviewId, userId, imageId, 
+    historyId, restaurantId, ratingId, restaurantName, tasteRating, 
     serviceRating, cleanlinessRating, overallRating, reviewTitle, 
     reviewText, created, modified, imageLocation}) => ({
         type: C.ADD_REVIEW,
@@ -120,9 +127,9 @@ export const addReviewThunk = (
     })
 
     // React-Redux action to delete a review based off id from redux state
-    export const deleteReview = (id) => ({
+    export const deleteReview = ({reviewId}) => ({
         type: C.DELETE_REVIEW,
-        id: id
+        id: reviewId
     })
 
     /**
@@ -134,22 +141,25 @@ export const addReviewThunk = (
         type: C.DELETE_ALL_REVIEWS
     })
 
+    
     /**
      * React-Redux action to update redux state.
      * 
-     * @param {*} reviewId 
-     * @param {*} tasteRating - Taste rating for the review.
-     * @param {*} serviceRating - Service rating for the review.
-     * @param {*} cleanlinessRating - Cleanliness rating for the review.
-     * @param {*} overallRating - Overall rating for the review.
-     * @param {*} reviewTitle - Title of the review.
-     * @param {*} reviewText - Body review text.
-     * @param {*} imageLocation - File location the image will be stored at. 
+     * @param {
+     * reviewId - Id of review to update.
+     * tasteRating - Taste rating for the review.
+     * serviceRating - Service rating for the review.
+     * cleanlinessRating - Cleanliness rating for the review.
+     * overallRating - Overall rating for the review.
+     * reviewTitle - Title of the review.
+     * reviewText - Body review text.
+     * imageLocation - File location the image will be stored at. 
+     * } param0 
      * @returns 
      */
-    export const updateReview = (reviewId, tasteRating, 
+    export const updateReview = ({reviewId, tasteRating, 
         serviceRating, cleanlinessRating, overallRating, reviewTitle, 
-        reviewText, imageLocation) => ({
+        reviewText, imageLocation, modified}) => ({
             type: C.UPDATE_REVIEW,
             id: reviewId,
             rating: {
@@ -164,6 +174,6 @@ export const addReviewThunk = (
                 imageLocation: imageLocation
             },
             history: {
-                modified: new Date()
+                modified: modified
             }
         })

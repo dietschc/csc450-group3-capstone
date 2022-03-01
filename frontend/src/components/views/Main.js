@@ -18,7 +18,8 @@ import RestaurantReviewDetail from '../subComponent/RestaurantReviewDetail';
 import MainRRDetailButtonGroup from '../form/button/MainRRDetailButtonGroup';
 import XLContainer from '../template/XLContainer';
 import { connect } from 'react-redux';
-import { addReviewThunk, findAllReviewsOrdered } from '../../actions/reviews';
+import { addReviewThunk, deleteAllReviews, findAllReviewsOrdered } from '../../actions/reviews';
+import { addRestaurantThunk, deleteAllRestaurants, findAllRestaurantsOrdered } from '../../actions/restaurants';
 import Service from '../../services/review.service'
 
 /**
@@ -34,7 +35,16 @@ function Main(props) {
     // Create Thunk to grab review state from database, start with 25 limit
     // Get buttons to be functional
 
-    const { addReviewThunk, findAllReviewsOrdered } = props;
+    const { addReviewThunk, 
+        findAllReviewsOrdered, 
+        findAllRestaurantsOrdered, deleteAllReviews, deleteAllRestaurants } = props;
+
+    const loadData = async () => {
+        await deleteAllReviews();
+        await deleteAllRestaurants();
+        await findAllReviewsOrdered(0, 25)
+        await findAllRestaurantsOrdered(0, 25);
+    }
 
     // useEffect(
     //     findAllReviewsOrdered(0, 2)
@@ -42,7 +52,7 @@ function Main(props) {
     // ,[])
     useEffect(() => {
         console.log(Service.getAll);
-        findAllReviewsOrdered(0, 25)
+        loadData();
     }, []);
 
 
@@ -95,10 +105,6 @@ function Main(props) {
         overallRating: 3,
         imageLocation: "FakeLocation.gif"
     }
-
-    const loadData = () => {
-        findAllReviewsOrdered(0, 2)
-    }
     return (
         <XLContainer>
             <h1 className="mb-2">
@@ -128,4 +134,4 @@ const mapStateToProps = state =>
 
 
 // Exporting the component
-export default connect(mapStateToProps, { addReviewThunk, findAllReviewsOrdered })(Main);
+export default connect(mapStateToProps, { addReviewThunk, findAllReviewsOrdered, findAllRestaurantsOrdered, deleteAllRestaurants, deleteAllReviews })(Main);
