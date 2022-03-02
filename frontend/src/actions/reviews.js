@@ -12,34 +12,43 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import C from '../constants';
-import { v4 } from 'uuid';
 import ReviewDataService from "../services/review.service";
 import { formatDBReviewFind } from '../helperFunction/actionHelpers';
 
-
-export const findAllReviewsOrdered = (offset, limit) => async dispatch => {
-    /**
-     * Call and await the user data service create method, passing the parameters and storing the 
-     * results in a constant.
-     */
+/**
+ * Searches the database for all reviews with up to the offset/limit. It will then 
+ * add the results to state.
+ * @param {*} offset 
+ * @param {*} limit 
+ * @returns 
+ */
+export const findAllReviewsOrderedThunk = (offset, limit) => async dispatch => {
+    // Making a call to the database to request the reviews
     await ReviewDataService.findAllOffsetLimit(offset, limit)
         .then(async res => {
-
+            // If data was found in the database query it is formatted 
+        // for redux and added to state
             if (res) {
-                
+                // Iterating through the review data
                 await res.data.map(review => {
+                    // Formatting the database data so it matches redux
                     const reviewData = formatDBReviewFind(review);
 
+                    // Adding the current review to state
                     dispatch(addReview(reviewData));
+
+                    // Returning the current review
                     return review;
                 })
             }
         })
         .catch(err => {
+            // If there was an error it is logged in the console
             console.log(err)
         })
 }
 
+// UNDER CONSTRUCTION********
 export const addReviewThunk = (
     userId, restaurantId, reviewTitle, reviewText, tasteRating, serviceRating, 
     cleanlinessRating, overallRating, imageLocation ) => async dispatch => {
@@ -68,20 +77,20 @@ export const addReviewThunk = (
  * React-Redux action to add a review to redux state.
  * 
  * @param {
- * userName - User name of the user who wrote this review.
- * reviewId - Id of the review.
- * userId - User Id of the user who wrote this review.
- * restaurantId - Restaurant Id of the restaurant being reviewed.
- * restaurantName - Name of the restaurant being reviewed.
- * tasteRating - Taste rating for the review.
- * serviceRating - Service rating for the review.
- * cleanlinessRating - Cleanliness rating for the review.
- * overallRating - Overall rating for the review.
- * reviewTitle - Title of the review.
- * reviewText - Body review text.
- * created - DateTime of review creation
- * modified - DateTime of review modification.
- * imageLocation - File location the image will be stored at.
+ * @param {*} userName - User name of the user who wrote this review.
+ * @param {*} reviewId - Id of the review.
+ * @param {*} userId - User Id of the user who wrote this review.
+ * @param {*} restaurantId - Restaurant Id of the restaurant being reviewed.
+ * @param {*} restaurantName - Name of the restaurant being reviewed.
+ * @param {*} tasteRating - Taste rating for the review.
+ * @param {*} serviceRating - Service rating for the review.
+ * @param {*} cleanlinessRating - Cleanliness rating for the review.
+ * @param {*} overallRating - Overall rating for the review.
+ * @param {*} reviewTitle - Title of the review.
+ * @param {*} reviewText - Body review text.
+ * @param {*} created - DateTime of review creation
+ * @param {*} modified - DateTime of review modification.
+ * @param {*} imageLocation - File location the image will be stored at.
  * } param0 
  * @returns 
  */

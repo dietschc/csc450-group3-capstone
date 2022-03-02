@@ -18,9 +18,9 @@ import RestaurantReviewDetail from '../subComponent/RestaurantReviewDetail';
 import MainRRDetailButtonGroup from '../form/button/MainRRDetailButtonGroup';
 import XLContainer from '../template/XLContainer';
 import { connect } from 'react-redux';
-import { addReviewThunk, deleteAllReviews, findAllReviewsOrdered } from '../../actions/reviews';
-import { addRestaurantThunk, deleteAllRestaurants, findAllRestaurantsOrdered } from '../../actions/restaurants';
-import { findAllReviewsRestaurantsOrdered } from '../../actions/reviewsRestaurants';
+import { addReviewThunk, deleteAllReviews, findAllReviewsOrderedThunk } from '../../actions/reviews';
+import { addRestaurantThunk, deleteAllRestaurants, findAllRestaurantsOrderedThunk } from '../../actions/restaurants';
+import { findAllReviewsRestaurantsOrderedThunk } from '../../actions/reviewsRestaurants';
 import Service from '../../services/review.service'
 
 /**
@@ -35,17 +35,17 @@ function Main(props) {
     // Get buttons to be functional
 
     const { addReviewThunk, 
-        findAllReviewsOrdered, 
-        findAllRestaurantsOrdered,
+        findAllReviewsOrderedThunk, 
+        findAllRestaurantsOrderedThunk,
          deleteAllReviews, 
          deleteAllRestaurants, 
-         findAllReviewsRestaurantsOrdered } = props;
+         findAllReviewsRestaurantsOrderedThunk } = props;
 
     const loadData = () => {
         deleteAllReviews();
         deleteAllRestaurants();
 
-        findAllReviewsRestaurantsOrdered(0, 25);
+        findAllReviewsRestaurantsOrderedThunk(0, 25);
     }
 
     useEffect(() => {
@@ -133,5 +133,5 @@ const mapStateToProps = state =>
 
 // Exporting the component
 export default connect(mapStateToProps, { 
-    addReviewThunk, findAllReviewsOrdered, findAllRestaurantsOrdered, 
-    findAllReviewsRestaurantsOrdered, deleteAllRestaurants, deleteAllReviews })(Main);
+    addReviewThunk, findAllReviewsOrderedThunk, findAllRestaurantsOrderedThunk, 
+    findAllReviewsRestaurantsOrderedThunk, deleteAllRestaurants, deleteAllReviews })(Main);

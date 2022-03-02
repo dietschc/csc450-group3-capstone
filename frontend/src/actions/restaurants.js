@@ -5,82 +5,83 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/18/2022, Added in actions for restaurants)
 //  (DAB, 2/19/2022, Added in comments, altered code for images update)
+//  (DAB, 3/01/2022, Added in thunk methods )
+//  (DAB, 3/02/20222, Added in comments)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import C from '../constants';
 import RestaurantDataService from "../services/restaurant.service";
-import { v4 } from 'uuid';
+import { formatDBRestaurantFind } from '../helperFunction/actionHelpers';
 
-export const findAllRestaurantsOrdered = (offset, limit) => async dispatch => {
-    /**
-     * Call and await the user data service create method, passing the parameters and storing the 
-     * results in a constant.
-     */
+/**
+ * Searches the database for all restaurants with up to the offset/limit. It will then 
+ * add the results to state.
+ * 
+ * @param {*} offset 
+ * @param {*} limit 
+ * @returns 
+ */
+export const findAllRestaurantsOrderedThunk = (offset, limit) => async dispatch => {
+    // The restaurant database will be queried for all restaurants within the 
+    // parameter offset/limit
     await RestaurantDataService.findAllOffsetLimit(offset, limit)
         .then(async res => {
-            // DEBUG
-            // console.log("data: ", res.data);
-
+            // If there is data in the query it is added to redux state
             if (res) {
-                
+                // Iterating through the restaurant data
                 await res.data.map(restaurant => {
-                    // DEBUG
-                    restaurant = {
-                        ...restaurant,
-                        ...restaurant.userCreator.authentication,
-                        rating: {
-                            tasteRating: restaurant.rating.tasteRating/restaurant.reviewCount,
-                            serviceRating: restaurant.rating.serviceRating/restaurant.reviewCount,
-                            cleanlinessRating: restaurant.rating.cleanlinessRating/restaurant.reviewCount,
-                            overallRating: restaurant.rating.overallRating/restaurant.reviewCount
-                        },
-                        
-                    }
-                    console.log("Mapped data: ", restaurant);
-                    const restaurantData = { ...restaurant.images, ...restaurant.address,
-                    ...restaurant.rating, ...restaurant }
-                    // DEBUG
-                    console.log("RESTAURANT DATA AFTER DESTRUCTURE:", restaurantData)
+                    // The restaurant data is formatted to be added to redux state
+                    const restaurantData = formatDBRestaurantFind(restaurant);
+                    
+                    // Adding the restaurant to redux state
                     dispatch(addRestaurant(restaurantData));
+
+                    // Returning the restaurant data
                     return restaurant;
                 })
             }
-            // This combines the 3 JSON objects into a single object
-            // const result = { ...res.data.newUser, ...res.data.newAddress, ...res.data.newAuth }
-            // dispatch(addReview(result))
         })
         .catch(err => {
+            // If there is an error it will be logged
             console.log(err)
         })
 }
 
+/**
+ * UNDER CONSTRUCTION
+ * Adds the restaurant to the database and updates state.
+ * @returns 
+ */
 export const addRestaurantThunk= () => async dispatch => {}
 
 /**
  * React Redux reducer that will add a new restaurant to state.
  * 
- * @param {*} restaurantId 
- * @param {*} authorId 
- * @param {*} authorUserName 
- * @param {*} userOwnerId 
- * @param {*} restaurantName 
- * @param {*} digitalContact 
- * @param {*} website 
- * @param {*} phone 
- * @param {*} addressId 
- * @param {*} address 
- * @param {*} city 
- * @param {*} state 
- * @param {*} zip 
- * @param {*} ratingId 
- * @param {*} tasteRating 
- * @param {*} serviceRating 
- * @param {*} cleanlinessRating 
- * @param {*} overallRating 
- * @param {*} reviewCount 
- * @param {*} imageId 
- * @param {*} imageLocation 
+ * @param {
+ * @param {*} restaurantId - Id of the restaurant.
+ * @param {*} userCreatorId - Id of the user who created/updated the restaurant.
+ * @param {*} userName - User name of the user who created/updated the restaurant.
+ * @param {*} userOwnerId - Id of the user who owns the restaurant.
+ * @param {*} restaurantName - Name of the restaurant.
+ * @param {*} restaurantDigiContact - Digital contact link of the restaurant, typically 
+ * a URL to the contact page of their website.
+ * @param {*} restaurantWebsite - Main website URL of the restaurant.
+ * @param {*} restaurantPhone - Restaurant phone number.
+ * @param {*} addressId - Database address Id of the restaurant.
+ * @param {*} address - Physical address of the restaurant.
+ * @param {*} city - City of the restaurant.
+ * @param {*} state - State of the restaurant.
+ * @param {*} zip - Zip of the restaurant.
+ * @param {*} ratingId - Database ratingId.
+ * @param {*} tasteRating - int taste rating.
+ * @param {*} serviceRating - int service rating.
+ * @param {*} cleanlinessRating - int cleanliness rating.
+ * @param {*} overallRating - int overall rating.
+ * @param {*} reviewCount - int total number of reviews for this restaurant.
+ * @param {*} imageId - Database image id.
+ * @param {*} imageLocation - File location of the image.
+ * } param0 
  * @returns 
  */
 export const addRestaurant = ({restaurantId, userCreatorId, 
