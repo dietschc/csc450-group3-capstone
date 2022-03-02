@@ -33,14 +33,20 @@ function Restaurant(props) {
     // *** Temporary test data, this will be replaced with Redux in the future ***
     const [data, setData]=useState(mockStateData);
     const { id } = useParams();
+    const { users, restaurants, reviews } = props;
     const navigate = useNavigate();
+
+
+    // TO DO
+    // *Search database for restaurant reviews and add them to state
+    // by restaurant Id
 
     const newReviewHandler = (id) => {
         navigate("../review/" + id);
     }
 
     // Destructuring the needed data from the intitialState.json file
-    const { users, restaurants, reviews, messages } = data; 
+    
     const [user, ...otherUser] = users;
     const { address: currentAddress }  = user;
     const { friend: currentFriendList } = user;
@@ -58,7 +64,7 @@ function Restaurant(props) {
                     Sorry, no restaurants found!
                 </h2> 
                 ) : 
-                restaurants.filter((restaurant) => (id === restaurant.id.toString())).map((restaurant) => (
+                restaurants.length > 0 && restaurants.filter((restaurant) => (id === restaurant.id.toString())).map((restaurant) => (
                     <Card className="mb-2 p-2" key={restaurant.id}>
                         <RestaurantHeadingCardBody restaurant={restaurant}/>
                         <Card.Img className="mx-auto" 
@@ -125,7 +131,7 @@ function Restaurant(props) {
 
                         <Container fluid>
                             <Row>
-                            {reviews.map((review) => ( (review.restaurant.id === restaurant.id) ? (
+                            {reviews.length > 0 && reviews.map((review) => ( (review.restaurant.id === restaurant.id) ? (
                                 <Card className="mb-2" key={review.reviewId} style={{}}>
                                     <RestaurantHeadingCardBody restaurant={restaurant}/>
                                     {/** MAKE SURE TO REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
@@ -153,6 +159,7 @@ function Restaurant(props) {
 const mapStateToProps = state => 
     ({
         reviews: [...state.reviews],
+        restaurants: [...state.restaurants],
         users: [...state.users],
         messages: [...state.messages]
     });

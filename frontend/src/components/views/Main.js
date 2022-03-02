@@ -33,6 +33,20 @@ import Service from '../../services/review.service'
 function Main(props) {
     // ToDo
     // Get buttons to be functional
+    // * More button - "more from user." Uses the review author 
+    // id and restaurant id to search for more reviews from 
+    // this author and restaurant
+    // * Restaurant button - takes the user to the restaurant page for 
+    // the review restaurant
+    //     FOR RESTAURANT PAGE SEARCH CURRENT STATE FOR RESTAURANT, IF 
+    //     NOT IN STATE THEN GET IT FROM DATABASE, ADD TO STATE, 
+    //     AND MAYBE SORT STATE?
+    // * Friend button - adds the review author to the users 
+    // friend list (Possibly add one side of the relation then, 
+    // request the other side if it does not exist when the other 
+    // user logs in. Accepting will add that friend and complete 
+    // the two way database entry) (or just one entry and order 
+    // does not matter?** CURRENT IMPLEMENTATION)
 
     const { addReviewThunk, 
         findAllReviewsOrderedThunk, 
@@ -44,12 +58,13 @@ function Main(props) {
     const loadData = () => {
         deleteAllReviews();
         deleteAllRestaurants();
+        // await findAllReviewsOrderedThunk(0, 25);
+        // await findAllRestaurantsOrderedThunk(0, 25);
 
         findAllReviewsRestaurantsOrderedThunk(0, 25);
     }
 
     useEffect(() => {
-        console.log(Service.getAll);
         loadData();
     }, []);
 
