@@ -25,6 +25,9 @@ module.exports = app => {
   // Delete a Restaurant with ids
   router.delete("/:id", restaurants.delete);
 
+  // Retrieve all Restaurants
+  router.post("/array/", restaurants.findAllByArray);
+
   // Retrieve Restaurants matching the author id ordered asc by restaurant name
   router.get("/author/:id", restaurants.findByAuthorId);
 

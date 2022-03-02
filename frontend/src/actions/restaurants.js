@@ -28,12 +28,14 @@ export const findAllRestaurantsOrdered = (offset, limit) => async dispatch => {
                     // DEBUG
                     restaurant = {
                         ...restaurant,
+                        ...restaurant.userCreator.authentication,
                         rating: {
                             tasteRating: restaurant.rating.tasteRating/restaurant.reviewCount,
                             serviceRating: restaurant.rating.serviceRating/restaurant.reviewCount,
                             cleanlinessRating: restaurant.rating.cleanlinessRating/restaurant.reviewCount,
                             overallRating: restaurant.rating.overallRating/restaurant.reviewCount
-                        }
+                        },
+                        
                     }
                     console.log("Mapped data: ", restaurant);
                     const restaurantData = { ...restaurant.images, ...restaurant.address,
@@ -82,7 +84,7 @@ export const addRestaurantThunk= () => async dispatch => {}
  * @returns 
  */
 export const addRestaurant = ({restaurantId, userCreatorId, 
-    authorUserName, userOwnerId, restaurantName, 
+    userName, userOwnerId, restaurantName, 
     restaurantDigiContact, restaurantWebsite, 
     restaurantPhone, addressId, address, 
     city, state, zip, ratingId, tasteRating, 
@@ -92,7 +94,7 @@ export const addRestaurant = ({restaurantId, userCreatorId,
         id: restaurantId,
         author: {
             id: userCreatorId,
-            userName: authorUserName
+            userName: userName
         }, 
         ownerId: userOwnerId,
         name: restaurantName,

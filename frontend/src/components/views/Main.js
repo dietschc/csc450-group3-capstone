@@ -20,6 +20,7 @@ import XLContainer from '../template/XLContainer';
 import { connect } from 'react-redux';
 import { addReviewThunk, deleteAllReviews, findAllReviewsOrdered } from '../../actions/reviews';
 import { addRestaurantThunk, deleteAllRestaurants, findAllRestaurantsOrdered } from '../../actions/restaurants';
+import { findAllReviewsRestaurantsOrdered } from '../../actions/reviewsRestaurants';
 import Service from '../../services/review.service'
 
 /**
@@ -31,25 +32,22 @@ import Service from '../../services/review.service'
  */
 function Main(props) {
     // ToDo
-    // Pull review out of state
-    // Create Thunk to grab review state from database, start with 25 limit
     // Get buttons to be functional
 
     const { addReviewThunk, 
         findAllReviewsOrdered, 
-        findAllRestaurantsOrdered, deleteAllReviews, deleteAllRestaurants } = props;
+        findAllRestaurantsOrdered,
+         deleteAllReviews, 
+         deleteAllRestaurants, 
+         findAllReviewsRestaurantsOrdered } = props;
 
-    const loadData = async () => {
-        await deleteAllReviews();
-        await deleteAllRestaurants();
-        await findAllReviewsOrdered(0, 25)
-        await findAllRestaurantsOrdered(0, 25);
+    const loadData = () => {
+        deleteAllReviews();
+        deleteAllRestaurants();
+
+        findAllReviewsRestaurantsOrdered(0, 25);
     }
 
-    // useEffect(
-    //     findAllReviewsOrdered(0, 2)
-    //     // console.log(Service.findAllOffsetLimit(0, 2))
-    // ,[])
     useEffect(() => {
         console.log(Service.getAll);
         loadData();
@@ -134,4 +132,6 @@ const mapStateToProps = state =>
 
 
 // Exporting the component
-export default connect(mapStateToProps, { addReviewThunk, findAllReviewsOrdered, findAllRestaurantsOrdered, deleteAllRestaurants, deleteAllReviews })(Main);
+export default connect(mapStateToProps, { 
+    addReviewThunk, findAllReviewsOrdered, findAllRestaurantsOrdered, 
+    findAllReviewsRestaurantsOrdered, deleteAllRestaurants, deleteAllReviews })(Main);

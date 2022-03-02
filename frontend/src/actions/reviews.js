@@ -6,12 +6,15 @@
 //  (DAB, 2/14/2022, Started writing redux actions for reviews/users)
 //  (DAB, 2/15/2022, Finished basic redux actions for reviews)
 //  (DAB, 2/15/2022, Moved reviews, users into their own files into their own files)
+//  (DAB, 3/01/2022, Added in redux thunks to retrieve reviews from the database and 
+//  load then into state (findAllReviewsOrdered))
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import C from '../constants';
 import { v4 } from 'uuid';
 import ReviewDataService from "../services/review.service";
+import { formatDBReviewFind } from '../helperFunction/actionHelpers';
 
 
 export const findAllReviewsOrdered = (offset, limit) => async dispatch => {
@@ -21,26 +24,16 @@ export const findAllReviewsOrdered = (offset, limit) => async dispatch => {
      */
     await ReviewDataService.findAllOffsetLimit(offset, limit)
         .then(async res => {
-            // DEBUG
-            // console.log("data: ", res.data);
 
             if (res) {
                 
                 await res.data.map(review => {
-                    // DEBUG
-                    // console.log("Mapped data: ", review);
-                    const reviewData = { ...review.user, ...review.rating, 
-                        ...review.restaurant, ...review.history, ...review.images[0], 
-                        ...review.user, ...review, ...review.user.authentication }
-                    // DEBUG
-                    // console.log(reviewData)
+                    const reviewData = formatDBReviewFind(review);
+
                     dispatch(addReview(reviewData));
                     return review;
                 })
             }
-            // This combines the 3 JSON objects into a single object
-            // const result = { ...res.data.newUser, ...res.data.newAddress, ...res.data.newAuth }
-            // dispatch(addReview(result))
         })
         .catch(err => {
             console.log(err)
