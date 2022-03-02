@@ -6,6 +6,7 @@
 //  (DAB, 2/16/2022, Added comments for actions)
 //  (CPD, 2/22/2022, Added loginThunk)
 //  (CPD, 2/26/2022, Added updateUserThunk and edited updateUser to destructure parameters)
+//  (CPD, 3/1/2022, Fixed bug where state and zip are swapped when creating a new user)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -31,13 +32,13 @@ import UserDataService from "../services/user.service";
  */
 export const addUserThunk = (
     userName, firstName, lastName, address,
-    city, zip, state, userEmail, userPassword) => async dispatch => {
+    city, state, zip, userEmail, userPassword) => async dispatch => {
         /**
          * Call and await the user data service create method, passing the parameters and storing the 
          * results in a constant.
          */
         await UserDataService.create({
-            userName, firstName, lastName, address, city, zip, state, userEmail, userPassword
+            userName, firstName, lastName, address, city, state, zip, userEmail, userPassword
         })
             .then(res => {
                 // console.log("data: ", res.data);
@@ -112,7 +113,7 @@ export const addUser = ({ userId, userName,
             }
         },
         email: userEmail,
-        isLoggedIn: false
+        isLoggedIn: true
     })
 
 /**
