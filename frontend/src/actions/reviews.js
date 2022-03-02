@@ -48,6 +48,32 @@ export const findAllReviewsOrderedThunk = (offset, limit) => async dispatch => {
         })
 }
 
+export const findByRestaurantThunk = (offset, limit, id) => async dispatch => {
+    // Making a call to the database to request the reviews
+    await ReviewDataService.findByRestaurantIdOffsetLimit(offset, limit, id)
+        .then(async res => {
+            // If data was found in the database query it is formatted 
+        // for redux and added to state
+            if (res) {
+                // Iterating through the review data
+                await res.data.map(review => {
+                    // Formatting the database data so it matches redux
+                    const reviewData = formatDBReviewFind(review);
+
+                    // Adding the current review to state
+                    dispatch(addReview(reviewData));
+
+                    // Returning the current review
+                    return review;
+                })
+            }
+        })
+        .catch(err => {
+            // If there was an error it is logged in the console
+            console.log(err)
+        })
+}
+
 // UNDER CONSTRUCTION********
 export const addReviewThunk = (
     userId, restaurantId, reviewTitle, reviewText, tasteRating, serviceRating, 

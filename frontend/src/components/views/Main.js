@@ -55,7 +55,7 @@ function Main(props) {
          deleteAllRestaurants, 
          findAllReviewsRestaurantsOrderedThunk } = props;
 
-    const loadData = () => {
+    const loadState = () => {
         deleteAllReviews();
         deleteAllRestaurants();
         // await findAllReviewsOrderedThunk(0, 25);
@@ -65,7 +65,7 @@ function Main(props) {
     }
 
     useEffect(() => {
-        loadData();
+        loadState();
     }, []);
 
 
@@ -92,10 +92,7 @@ function Main(props) {
     }
 
     // Destructuring the needed data from the intitialState.json file
-    const { users, restaurants, reviews } = props; 
-    const [user=[], ...otherUser] = users;
-    const { address: currentAddress }  = user;
-    const { friend: currentFriendList } = user;
+    const { restaurants, reviews } = props; 
 
     // The RRDButtonGroup will accept the review array and 
     // construct a MainRRDetailButtonGroup Component
@@ -140,7 +137,6 @@ function Main(props) {
 // Mapping the redux store states to props
 const mapStateToProps = state =>
 ({
-    users: [...state.users],
     restaurants: [...state.restaurants],
     reviews: [...state.reviews]
 });

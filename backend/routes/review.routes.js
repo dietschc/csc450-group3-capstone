@@ -31,6 +31,9 @@ module.exports = app => {
   // Retrieve review  matching the author id ordered asc by review name and result limit
   router.get("/author/:offset/:limit/:id", review.findByAuthorIdOffsetLimit);
 
+  // Retrieve review  matching the author id ordered asc by review name and result limit
+  router.get("/restaurant/:offset/:limit/:id", review.findByRestaurantIdOffsetLimit);
+
   // Retrieve review ordered asc by review name and result limit
   router.get("/limit/:limit", review.findAllLimit);
 

@@ -77,6 +77,7 @@ class ReviewDataService {
         return http.get(`/review/author/${id}`);
     }
     
+    
     /**
      * Retrieve review  matching the author id ordered asc by review name and result limit
      * 
@@ -87,6 +88,18 @@ class ReviewDataService {
      */
     findByAuthorIdOffsetLimit(offset, limit, id) {
         return http.get(`/review/author/${offset}/${limit}/${id}`);
+    }
+
+    /**
+     * Retrieve review  matching the author id ordered asc by review name and result limit
+     * 
+     * @param {*} offset 
+     * @param {*} limit 
+     * @param { reviewId } id 
+     * @returns - Review data if found
+     */
+     findByRestaurantIdOffsetLimit(offset, limit, id) {
+        return http.get(`/review/restaurant/${offset}/${limit}/${id}`);
     }
     
     /**
