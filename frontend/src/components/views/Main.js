@@ -8,7 +8,7 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import mockStateData from "../../redux/initialState.json";
 import { useNavigate } from 'react-router-dom';
@@ -18,7 +18,9 @@ import RestaurantReviewDetail from '../subComponent/RestaurantReviewDetail';
 import MainRRDetailButtonGroup from '../form/button/MainRRDetailButtonGroup';
 import XLContainer from '../template/XLContainer';
 import { connect } from 'react-redux';
-import { loginThunk, deleteUser } from '../../actions/users';
+import { addReviewThunk, deleteAllReviews, findAllReviewsOrdered } from '../../actions/reviews';
+import { addRestaurantThunk, deleteAllRestaurants, findAllRestaurantsOrdered } from '../../actions/restaurants';
+import { findAllReviewsRestaurantsOrdered } from '../../actions/reviewsRestaurants';
 import Service from '../../services/review.service'
 
 /**
@@ -30,10 +32,26 @@ import Service from '../../services/review.service'
  */
 function Main(props) {
     // ToDo
-    // Pull review out of state
-    // Create Thunk to grab review state from database, start with 25 limit
     // Get buttons to be functional
 
+    const { addReviewThunk, 
+        findAllReviewsOrdered, 
+        findAllRestaurantsOrdered,
+         deleteAllReviews, 
+         deleteAllRestaurants, 
+         findAllReviewsRestaurantsOrdered } = props;
+
+    const loadData = () => {
+        deleteAllReviews();
+        deleteAllRestaurants();
+
+        findAllReviewsRestaurantsOrdered(0, 25);
+    }
+
+    useEffect(() => {
+        console.log(Service.getAll);
+        loadData();
+    }, []);
 
 
     // navigate will allow navigation between the Views
@@ -60,7 +78,7 @@ function Main(props) {
 
     // Destructuring the needed data from the intitialState.json file
     const { users, restaurants, reviews } = props; 
-    const [user, ...otherUser] = users;
+    const [user=[], ...otherUser] = users;
     const { address: currentAddress }  = user;
     const { friend: currentFriendList } = user;
 
@@ -114,4 +132,6 @@ const mapStateToProps = state =>
 
 
 // Exporting the component
-export default connect(mapStateToProps, null)(Main);
+export default connect(mapStateToProps, { 
+    addReviewThunk, findAllReviewsOrdered, findAllRestaurantsOrdered, 
+    findAllReviewsRestaurantsOrdered, deleteAllRestaurants, deleteAllReviews })(Main);

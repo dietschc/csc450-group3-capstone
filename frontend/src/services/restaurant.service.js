@@ -68,6 +68,15 @@ class RestaurantDataService {
     }
 
     /**
+     * Get all restaurants from the database by an array of restaurant id's
+     * 
+     * @returns - an array of all restaurants found
+     */
+     findAllByArray(data) {
+        return http.post("/restaurants/array/", data);
+    }
+
+    /**
      * Retrieve restaurant matching the author id ordered asc by restaurant name
      * 
      * @param { userCreatorId } id 

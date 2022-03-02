@@ -9,7 +9,53 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import C from '../constants';
+import RestaurantDataService from "../services/restaurant.service";
 import { v4 } from 'uuid';
+
+export const findAllRestaurantsOrdered = (offset, limit) => async dispatch => {
+    /**
+     * Call and await the user data service create method, passing the parameters and storing the 
+     * results in a constant.
+     */
+    await RestaurantDataService.findAllOffsetLimit(offset, limit)
+        .then(async res => {
+            // DEBUG
+            // console.log("data: ", res.data);
+
+            if (res) {
+                
+                await res.data.map(restaurant => {
+                    // DEBUG
+                    restaurant = {
+                        ...restaurant,
+                        ...restaurant.userCreator.authentication,
+                        rating: {
+                            tasteRating: restaurant.rating.tasteRating/restaurant.reviewCount,
+                            serviceRating: restaurant.rating.serviceRating/restaurant.reviewCount,
+                            cleanlinessRating: restaurant.rating.cleanlinessRating/restaurant.reviewCount,
+                            overallRating: restaurant.rating.overallRating/restaurant.reviewCount
+                        },
+                        
+                    }
+                    console.log("Mapped data: ", restaurant);
+                    const restaurantData = { ...restaurant.images, ...restaurant.address,
+                    ...restaurant.rating, ...restaurant }
+                    // DEBUG
+                    console.log("RESTAURANT DATA AFTER DESTRUCTURE:", restaurantData)
+                    dispatch(addRestaurant(restaurantData));
+                    return restaurant;
+                })
+            }
+            // This combines the 3 JSON objects into a single object
+            // const result = { ...res.data.newUser, ...res.data.newAddress, ...res.data.newAuth }
+            // dispatch(addReview(result))
+        })
+        .catch(err => {
+            console.log(err)
+        })
+}
+
+export const addRestaurantThunk= () => async dispatch => {}
 
 /**
  * React Redux reducer that will add a new restaurant to state.
@@ -17,7 +63,7 @@ import { v4 } from 'uuid';
  * @param {*} restaurantId 
  * @param {*} authorId 
  * @param {*} authorUserName 
- * @param {*} ownerId 
+ * @param {*} userOwnerId 
  * @param {*} restaurantName 
  * @param {*} digitalContact 
  * @param {*} website 
@@ -37,20 +83,24 @@ import { v4 } from 'uuid';
  * @param {*} imageLocation 
  * @returns 
  */
-export const addRestaurant = (restaurantId, authorId, authorUserName, ownerId, restaurantName, digitalContact, website, 
-    phone, addressId, address, city, state, zip, ratingId, tasteRating, serviceRating, cleanlinessRating, overallRating, 
-    reviewCount, imageId, imageLocation) => ({
+export const addRestaurant = ({restaurantId, userCreatorId, 
+    userName, userOwnerId, restaurantName, 
+    restaurantDigiContact, restaurantWebsite, 
+    restaurantPhone, addressId, address, 
+    city, state, zip, ratingId, tasteRating, 
+    serviceRating, cleanlinessRating, overallRating, 
+    reviewCount, imageId, imageLocation}) => ({
         type: C.ADD_RESTAURANT,
         id: restaurantId,
         author: {
-            id: authorId,
-            userName: authorUserName
+            id: userCreatorId,
+            userName: userName
         }, 
-        ownerId: ownerId,
+        ownerId: userOwnerId,
         name: restaurantName,
-        digitalContact: digitalContact,
-        website: website,
-        phone: phone,
+        digitalContact: restaurantDigiContact,
+        website: restaurantWebsite,
+        phone: restaurantPhone,
         address: {
             id: addressId,
             address: address,

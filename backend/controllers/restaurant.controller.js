@@ -7,12 +7,14 @@
 //  (DAB, 2/27/2022, Added in some offset/limit findAll as well as search 
 //  by name and author Id)
 
+const { authentication } = require("../models");
 const db = require("../models");
 const { Op } = db.Sequelize;
 const Restaurant = db.restaurants;
 const Image = db.image;
 const Address = db.address;
 const Rating = db.rating;
+const User = db.users;
 
 // Create and Save a new Restaurant
 exports.create = async (req, res) => {
@@ -113,7 +115,40 @@ exports.create = async (req, res) => {
 // Retrieve all Restaurants from the database
 exports.findAll = async (req, res) => {
     // Using an async function to search the database for all existing restaurants
-    await Restaurant.findAll({ include: [Address, Rating, Image] })
+    await Restaurant.findAll({ include: [Address, Rating, Image, 
+        {model: User, as: 'userCreator', attributes: ['userId'],
+            include: {
+                model: authentication, attributes: ['userName']
+            }}
+    ] })
+    .then(restaurant => {
+        // If restaurants are found the data is returned
+        res.send(restaurant);
+    })
+    .catch(err => {
+        // Else a message indicating the restaurant was not found is sent
+        res.status(500).send({
+            message:
+                err.message || "Some error occurred while retrieving restaurants."
+        });
+    });
+};
+
+// Retrieve all Restaurants from the database
+exports.findAllByArray = async (req, res) => {
+    // const { idArray: restaurantIdArray } = req.body;
+    // res.json(req.body);
+    // Using an async function to search the database for all existing restaurants
+    await Restaurant.findAll({ 
+        include: [Address, Rating, Image, 
+            {model: User, as: 'userCreator', attributes: ['userId'],
+                include: {
+                    model: authentication, attributes: ['userName']
+                }}
+        ],
+        where: { restaurantId: req.body },
+        order: [['restaurantName', 'ASC']] 
+    })
     .then(restaurant => {
         // If restaurants are found the data is returned
         res.send(restaurant);
@@ -135,7 +170,12 @@ exports.findOne = async (req, res) => {
     // Using an async function to search the database for an existing restaurant
     // based on an id and joining needed tables for response
     await Restaurant.findByPk(restaurantId, {
-        include: [Address, Rating, Image]
+        include: [Address, Rating, Image, 
+            {model: User, as: 'userCreator', attributes: ['userId'],
+                include: {
+                    model: authentication, attributes: ['userName']
+                }}
+        ]
     })
     .then((restaurant) => {
         // If restaurant was found the data is returned
@@ -305,7 +345,12 @@ exports.findByAuthorId = async (req, res) => {
 
     // Using an async function to search the database for all existing restaurants
     await Restaurant.findAll({ 
-        include: [Address, Rating, Image],
+        include: [Address, Rating, Image, 
+            {model: User, as: 'userCreator', attributes: ['userId'],
+                include: {
+                    model: authentication, attributes: ['userName']
+                }}
+        ],
         where: { userCreatorId: userCreatorId },
         order: [['restaurantName', 'ASC']]
     })
@@ -333,7 +378,12 @@ exports.findByAuthorIdOffsetLimit = async (req, res) => {
 
     // Using an async function to search the database for all existing restaurants
     await Restaurant.findAll({ 
-        include: [Address, Rating, Image],
+        include: [Address, Rating, Image, 
+            {model: User, as: 'userCreator', attributes: ['userId'],
+                include: {
+                    model: authentication, attributes: ['userName']
+                }}
+        ],
         where: { userCreatorId: userCreatorId },
         order: [['restaurantName', 'ASC']],
         offset: searchOffset, 
@@ -359,7 +409,12 @@ exports.findAllLimit = async (req, res) => {
 
     // Using an async function to search the database for all existing restaurants
     await Restaurant.findAll({  
-        include: [Address, Rating, Image],
+        include: [Address, Rating, Image, 
+            {model: User, as: 'userCreator', attributes: ['userId'],
+                include: {
+                    model: authentication, attributes: ['userName']
+                }}
+        ],
         order: [['restaurantName', 'ASC']],
         limit: searchLimit, 
     })
@@ -384,7 +439,12 @@ exports.findAllOffsetLimit = async (req, res) => {
 
     // Using an async function to search the database for all existing restaurants
     await Restaurant.findAll({ 
-        include: [Address, Rating, Image],
+        include: [Address, Rating, Image, 
+            {model: User, as: 'userCreator', attributes: ['userId'],
+                include: {
+                    model: authentication, attributes: ['userName']
+                }}
+        ],
         order: [['restaurantName', 'ASC']],
         offset: searchOffset, 
         limit: searchLimit 
@@ -413,7 +473,12 @@ exports.findByNameOffsetLimit = async (req, res) => {
 
     // Using an async function to search the database for all existing restaurants
     await Restaurant.findAll({ 
-        include: [Address, Rating, Image],
+        include: [Address, Rating, Image, 
+            {model: User, as: 'userCreator', attributes: ['userId'],
+                include: {
+                    model: authentication, attributes: ['userName']
+                }}
+        ],
         where: { restaurantName: { [Op.like]: `${searchName}%` }},
         order: [['restaurantName', 'ASC']],
         offset: searchOffset, 

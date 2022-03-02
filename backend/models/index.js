@@ -72,10 +72,10 @@ db.restaurants.hasMany(db.review, { foreignKey: 'restaurantId' });
 db.review.belongsTo(db.restaurants, { foreignKey: 'restaurantId' });
 
 // Restaurant to User Association
-db.users.hasOne(db.restaurants, { foreignKey: { name: 'userCreatorId', onDelete: 'SET NULL' } });
-db.users.hasOne(db.restaurants, { foreignKey: { name: 'userOwnerId', onDelete: 'SET NULL' } });
-db.restaurants.belongsTo(db.users, { foreignKey: { name: 'userCreatorId' } });
-db.restaurants.belongsTo(db.users, { foreignKey: { name: 'userOwnerId' } });
+db.users.hasOne(db.restaurants, { as: 'userCreator', foreignKey: { name: 'userCreatorId', onDelete: 'SET NULL' } });
+db.users.hasOne(db.restaurants, { as: 'userOwner', foreignKey: { name: 'userOwnerId', onDelete: 'SET NULL' } });
+db.restaurants.belongsTo(db.users, { as: 'userCreator', foreignKey: { name: 'userCreatorId' } });
+db.restaurants.belongsTo(db.users, { as: 'userOwner', foreignKey: { name: 'userOwnerId' } });
 
 // Review to Rating Association
 db.rating.hasOne(db.review, { foreignKey: 'ratingId', onDelete: 'RESTRICT' });
@@ -94,16 +94,16 @@ db.address.hasOne(db.users, { foreignKey: 'addressId', onDelete: 'RESTRICT' });
 db.users.belongsTo(db.address, { foreignKey: 'addressId' });
 
 // User to Conversation Association
-db.users.hasMany(db.conversation, { foreignKey: 'userToId' });
-db.users.hasMany(db.conversation, { foreignKey: 'userFromId' });
-db.conversation.belongsTo(db.users, { foreignKey: 'userToId' });
-db.conversation.belongsTo(db.users, { foreignKey: 'userFromId' });
+db.users.hasMany(db.conversation, { as: 'userTo', foreignKey: 'userToId' });
+db.users.hasMany(db.conversation, { as: 'userFrom', foreignKey: 'userFromId' });
+db.conversation.belongsTo(db.users, { as: 'userTo', foreignKey: 'userToId' });
+db.conversation.belongsTo(db.users, { as: 'userFrom', foreignKey: 'userFromId' });
 
 // User to Friend Association
-db.users.hasMany(db.friend, { foreignKey: 'friendOneId' });
-db.users.hasMany(db.friend, { foreignKey: 'friendTwoId' });
-db.friend.belongsTo(db.users, { foreignKey: 'friendOneId' });
-db.friend.belongsTo(db.users, { foreignKey: 'friendTwoId' });
+db.users.hasMany(db.friend, { as: 'friendOne', foreignKey: 'friendOneId' });
+db.users.hasMany(db.friend, { as: 'friendTwo', foreignKey: 'friendTwoId' });
+db.friend.belongsTo(db.users, { as: 'friendOne', foreignKey: 'friendOneId' });
+db.friend.belongsTo(db.users, { as: 'friendTwo', foreignKey: 'friendTwoId' });
 
 // User to Review Association
 db.users.hasMany(db.review, { foreignKey: 'userId' });
