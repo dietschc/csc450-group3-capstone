@@ -134,7 +134,25 @@ function Restaurant(props) {
                             </ListGroup.Item>
                         </ListGroup>
 
-                        
+                        <Container fluid>
+                            <Row>
+                            {reviews.map((review) => ( (review.restaurant.id === restaurant.id) ? (
+                                <Card className="mb-2" key={review.reviewId} style={{}}>
+                                    <RestaurantHeadingCardBody restaurant={restaurant}/>
+                                    {/** MAKE SURE TO REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
+                                    {console.log("REVIEW IN RRD IS ", review)}
+                                    <Card.Img className="mx-auto" 
+                                    style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }} 
+                                    src={review.images[0].imageLocation} />
+                                    <Card.Text className="text-center pt-1">
+                                        {review.author.userName}
+                                    </Card.Text>
+                                    <FullStarRatingRow review={review}/>
+                                    <ReviewTextCardBody review={review}/>
+                                </Card>
+                            ) : (console.log("nothing"))))}
+                            </Row>
+                        </Container>
                     </Card>
                     ))
             }
