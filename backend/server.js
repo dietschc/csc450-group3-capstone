@@ -52,6 +52,7 @@ require("./routes/rating.routes")(app);
 require("./routes/review.routes")(app);
 require("./routes/reviewImage.routes")(app);
 require("./routes/message.routes")(app);
+require("./routes/friend.routes")(app);
 
 // set port, listen for requests
 const PORT = 5000;
