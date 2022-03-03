@@ -18,9 +18,9 @@ import RestaurantReviewDetail from '../subComponent/RestaurantReviewDetail';
 import MainRRDetailButtonGroup from '../form/button/MainRRDetailButtonGroup';
 import XLContainer from '../template/XLContainer';
 import { connect } from 'react-redux';
-import { addReviewThunk, deleteAllReviews, findAllReviewsOrdered } from '../../actions/reviews';
-import { addRestaurantThunk, deleteAllRestaurants, findAllRestaurantsOrdered } from '../../actions/restaurants';
-import { findAllReviewsRestaurantsOrdered } from '../../actions/reviewsRestaurants';
+import { addReviewThunk, deleteAllReviews, findAllReviewsOrderedThunk } from '../../actions/reviews';
+import { addRestaurantThunk, deleteAllRestaurants, findAllRestaurantsOrderedThunk } from '../../actions/restaurants';
+import { findAllReviewsRestaurantsOrderedThunk } from '../../actions/reviewsRestaurants';
 import Service from '../../services/review.service'
 
 /**
@@ -33,24 +33,39 @@ import Service from '../../services/review.service'
 function Main(props) {
     // ToDo
     // Get buttons to be functional
+    // * More button - "more from user." Uses the review author 
+    // id and restaurant id to search for more reviews from 
+    // this author and restaurant
+    // * Restaurant button - takes the user to the restaurant page for 
+    // the review restaurant
+    //     FOR RESTAURANT PAGE SEARCH CURRENT STATE FOR RESTAURANT, IF 
+    //     NOT IN STATE THEN GET IT FROM DATABASE, ADD TO STATE, 
+    //     AND MAYBE SORT STATE?
+    // * Friend button - adds the review author to the users 
+    // friend list (Possibly add one side of the relation then, 
+    // request the other side if it does not exist when the other 
+    // user logs in. Accepting will add that friend and complete 
+    // the two way database entry) (or just one entry and order 
+    // does not matter?** CURRENT IMPLEMENTATION)
 
     const { addReviewThunk, 
-        findAllReviewsOrdered, 
-        findAllRestaurantsOrdered,
+        findAllReviewsOrderedThunk, 
+        findAllRestaurantsOrderedThunk,
          deleteAllReviews, 
          deleteAllRestaurants, 
-         findAllReviewsRestaurantsOrdered } = props;
+         findAllReviewsRestaurantsOrderedThunk } = props;
 
-    const loadData = () => {
+    const loadState = () => {
         deleteAllReviews();
         deleteAllRestaurants();
+        // await findAllReviewsOrderedThunk(0, 25);
+        // await findAllRestaurantsOrderedThunk(0, 25);
 
-        findAllReviewsRestaurantsOrdered(0, 25);
+        findAllReviewsRestaurantsOrderedThunk(0, 25);
     }
 
     useEffect(() => {
-        console.log(Service.getAll);
-        loadData();
+        loadState();
     }, []);
 
 
@@ -77,10 +92,7 @@ function Main(props) {
     }
 
     // Destructuring the needed data from the intitialState.json file
-    const { users, restaurants, reviews } = props; 
-    const [user=[], ...otherUser] = users;
-    const { address: currentAddress }  = user;
-    const { friend: currentFriendList } = user;
+    const { restaurants, reviews } = props; 
 
     // The RRDButtonGroup will accept the review array and 
     // construct a MainRRDetailButtonGroup Component
@@ -125,7 +137,6 @@ function Main(props) {
 // Mapping the redux store states to props
 const mapStateToProps = state =>
 ({
-    users: [...state.users],
     restaurants: [...state.restaurants],
     reviews: [...state.reviews]
 });
@@ -133,5 +144,5 @@ const mapStateToProps = state =>
 
 // Exporting the component
 export default connect(mapStateToProps, { 
-    addReviewThunk, findAllReviewsOrdered, findAllRestaurantsOrdered, 
-    findAllReviewsRestaurantsOrdered, deleteAllRestaurants, deleteAllReviews })(Main);
+    addReviewThunk, findAllReviewsOrderedThunk, findAllRestaurantsOrderedThunk, 
+    findAllReviewsRestaurantsOrderedThunk, deleteAllRestaurants, deleteAllReviews })(Main);

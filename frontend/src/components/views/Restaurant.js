@@ -9,7 +9,7 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useHistory, useNavigate } from 'react-router-dom';
 import XLContainer from '../template/XLContainer';
 import mockStateData from "../../redux/initialState.json";
@@ -20,7 +20,7 @@ import FullStarRatingCol from '../subComponent/FullStarRatingCol';
 import FullStarRatingRow from '../subComponent/FullStarRatingRow';
 import ReviewTextCardBody from '../subComponent/ReviewTextCardBody';
 import { connect } from 'react-redux';
-import {  } from '../../actions/restaurants';
+import { deleteAllReviews, findByRestaurantThunk } from '../../actions/reviews';
 
 /**
  * The Restaurant Component will display the Restaurant details and 
@@ -31,19 +31,30 @@ import {  } from '../../actions/restaurants';
  */
 function Restaurant(props) {
     // *** Temporary test data, this will be replaced with Redux in the future ***
-    const [data, setData]=useState(mockStateData);
+    // const [data, setData]=useState(mockStateData);
     const { id } = useParams();
+    const { restaurants, reviews, deleteAllReviews, findByRestaurantThunk } = props;
     const navigate = useNavigate();
+
+    // Loading in the initial data from the database
+    const loadData = () => {
+        deleteAllReviews();
+        findByRestaurantThunk(0, 25, id);
+    }
+
+    useEffect(() => {
+        loadData();
+    }, []);
+
+
+    // TO DO
+    // *Search database for restaurant reviews and add them to state
+    // by restaurant Id
+    // *Check why random restaurant loads in when navigating to the /2 url
 
     const newReviewHandler = (id) => {
         navigate("../review/" + id);
     }
-
-    // Destructuring the needed data from the intitialState.json file
-    const { users, restaurants, reviews, messages } = data; 
-    const [user, ...otherUser] = users;
-    const { address: currentAddress }  = user;
-    const { friend: currentFriendList } = user;
     
     return (
         <XLContainer>
@@ -58,8 +69,8 @@ function Restaurant(props) {
                     Sorry, no restaurants found!
                 </h2> 
                 ) : 
-                restaurants.filter((restaurant) => (id === restaurant.id.toString())).map((restaurant) => (
-                    <Card className="mb-2 p-2" key={restaurant.id}>
+                restaurants.length > 0 && restaurants.filter((restaurant) => (id === restaurant.id.toString())).map((restaurant, index) => (
+                    <Card className="mb-2 p-2" key={index}>
                         <RestaurantHeadingCardBody restaurant={restaurant}/>
                         <Card.Img className="mx-auto" 
                         style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }} 
@@ -153,27 +164,8 @@ function Restaurant(props) {
 const mapStateToProps = state => 
     ({
         reviews: [...state.reviews],
-        users: [...state.users],
-        messages: [...state.messages]
+        restaurants: [...state.restaurants]
     });
 
-// Mapping the state actions to props
-const mapDispatchToProps = dispatch => 
-    ({
-        // This method will add a new review
-        // addRestaurant(toUserId, fromUserId, message) {
-        //     dispatch(addRestaurant(toUserId, fromUserId, message)
-        //         )
-        // },
-        // deleteAllRestaurants() {
-        //     dispatch(deleteAllRestaurants()
-        //     )
-        // },
-        // deleteRestaurant(id) {
-        //     dispatch(deleteRestaurant(id))
-        // }
-    })
-
-
 // Exporting the connect Wrapped Restaurant Component
-export default connect(mapStateToProps, mapDispatchToProps)(Restaurant);
+export default connect(mapStateToProps, {deleteAllReviews, findByRestaurantThunk})(Restaurant);

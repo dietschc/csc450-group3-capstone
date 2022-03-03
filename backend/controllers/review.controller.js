@@ -489,6 +489,48 @@ exports.findByAuthorIdOffsetLimit = async (req, res) => {
 }
 
 
+// Retrieve all Reviews from the database that have the same restaurant id. Results 
+// have set offset and limit values
+exports.findByRestaurantIdOffsetLimit = async (req, res) => {
+    // Checking that offset and limit are numbers, if not a default value will be used
+    const searchOffset = isNaN(req.params.offset) ? 0 : parseInt(req.params.offset);
+    const searchLimit = isNaN(req.params.limit) ? 999999999999 : parseInt(req.params.limit);
+    // Checking for to be searched for, if null is passed null becomes the id
+    const restaurantId  = req.params.id === "null" ? null : req.params.id;
+
+    // Async searching the database and returning all reviews. The 
+    // search includes all joined tables and attributes
+    await Review.findAll({
+        attributes: {
+            exclude: [ 'userId', 'restaurantId', 'ratingId', 'historyId' ]
+        },
+        include: [
+            Rating, History,
+            { model: Image, attributes: [ 'imageId', 'imageLocation' ]}, 
+            { model: Restaurant, attributes: [ 'restaurantId', 'restaurantName' ]}, 
+            { model: User, 
+                include: { 
+                    model: Authentication, attributes: [ 'userName' ]}, attributes: [ 'userId' ] }
+        ],
+        where: { restaurantId: restaurantId },
+        order: [[ Restaurant, 'restaurantName', 'ASC' ], [ User, Authentication, 'userName', 'ASC' ] ],
+        offset: searchOffset, 
+        limit: searchLimit 
+    })
+    .then(review => {
+        // If reviews are found they are sent back to the requester
+        res.send(review);
+    })
+    .catch(err => {
+        // If there is an error the requester will be notified
+        res.status(500).send({
+            message:
+                err.message || "Some error occurred while retrieving reviews."
+        });
+    });
+}
+
+
 // Retrieve all Reviews from the database in the amount of the limit value
 exports.findAllLimit = async (req, res) => {
     // If the req limit param is a number it is used, otherwise all results are returned
