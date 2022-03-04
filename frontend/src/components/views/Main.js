@@ -23,6 +23,7 @@ import { addRestaurantThunk, deleteAllRestaurants, findAllRestaurantsOrderedThun
 import { findAllReviewsRestaurantsOrderedThunk } from '../../actions/reviewsRestaurants';
 import { addFriendThunk } from '../../actions/friend';
 import Service from '../../services/review.service'
+import FriendDataService from '../../services/friend.service'
 
 /**
  * The Main Component will be the starting point of the application. 
@@ -48,6 +49,9 @@ function Main(props) {
     // user logs in. Accepting will add that friend and complete 
     // the two way database entry) (or just one entry and order 
     // does not matter?** CURRENT IMPLEMENTATION)
+
+    // Destructuring the needed data from the initialState.json file
+    const { restaurants, reviews, users } = props; 
 
     const { addReviewThunk, 
         findAllReviewsOrderedThunk, 
@@ -88,18 +92,26 @@ function Main(props) {
 
     // FriendHandler will add the review author id to the users 
     // friend list
-    const friendHandler = (friendId) => {
-        addFriendThunk(0, friendId)
+    const friendHandler = (friendTwoId) => {
+        // addFriendThunk(1, 2)
         if (users.length > 0 && users[0].isLoggedIn === true) {
-            // addFriendThunk(0, friendId)
+            
+             const [ currentUser ] = users;
+             console.log("CURRENT USER", currentUser)
+
+             const friendOneId = currentUser.id;
+             console.log("CURRENT USER ID", friendOneId)
+             console.log("FRIENDTwoID", friendTwoId)
+
+            
+            addFriendThunk(1, friendTwoId)
         }
         
         // Add review author id to friend list
-        console.log("UserId " + friendId + " was added to friend list.")
+        console.log("UserId " + friendTwoId + " was added to friend list.")
     }
 
-    // Destructuring the needed data from the initialState.json file
-    const { restaurants, reviews, users } = props; 
+    
 
     // The RRDButtonGroup will accept the review array and 
     // construct a MainRRDetailButtonGroup Component
@@ -124,6 +136,7 @@ function Main(props) {
     }
     return (
         <XLContainer>
+            <button onClick={() => addFriendThunk(1, 2)}>Add Friend</button>
             <h1 className="mb-2">
                 Restaurant Club
             </h1>

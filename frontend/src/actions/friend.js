@@ -24,17 +24,15 @@ export const addFriendThunk = (friendOneId, friendTwoId) => async dispatch => {
          * Call and await the user data service create method, passing the parameters and storing the 
          * results in a constant.
          */
-        await FriendDataService.create(
-            friendOneId, friendTwoId
-        )
+        await FriendDataService.create({friendOneId, friendTwoId})
             .then(friend => {
-                console.log("data: ", friend.data);
-
-                // This combines the 3 JSON objects into a single object
-                const friendData = formatDBFriendFind(friend)
-
-                console.log("FORMATTED DATA", friendData)
-                dispatch(addFriend(friendData))
+                const isFriendAdded = !friend.data.message ? true : false;
+                if (isFriendAdded) {
+                    dispatch(addFriend(friend.data))
+                }
+                else {
+                    console.log("Friend was not added to state")
+                } 
             })
             .catch(err => {
                 console.log(err)

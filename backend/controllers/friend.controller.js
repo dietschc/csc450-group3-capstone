@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 
 const db = require("../models");
+const { Op } = db.Sequelize;
 const Friend = db.friend;
 const Authentication = db.authentication;
 const User = db.users;
@@ -17,38 +18,68 @@ exports.create = async (req, res) => {
         res.status(400).send({
             message: "Friend Id's can not be empty!"
         });
+        // res.send(req.body);
         return;
     }
 
-    // Save Friend to the database
-    const newFriend = await Friend.create(req.body)
-    .then(friend => {
-        // If a friend is created the data is returned as the response
-        return friend;
-    })
-    .catch(err => {
-        // If there is an error it will be returned
-        return err;
-    }); 
-
-    // Looking up the authentication for the friendTwoId
-    await Authentication.findOne({ 
-        attributes: ['userName'],
+    const isFriend = await Friend.findOne({ 
         where: {
-            userId: newFriend.friendTwoId
-        }
-    })
-    .then(authentication => {
-        // The formatted result is sent as a result
-        res.send({...newFriend.dataValues, ...authentication.dataValues})
-    })
-    .catch(err => {
-        // If there is an error the requester will be notified
-        res.status(500).send({
-            message:
-                err.message || "Some error occurred while adding friend."
-        });
-    }); 
+            [Op.and]: [
+                { friendOneId: req.body.friendOneId }, 
+                { friendTwoId: req.body.friendTwoId } 
+            ]}
+        }).then(res =>{
+            if (res !== null) {
+                return true
+            }
+            else {
+                return false
+            }
+        })
+        .catch(err => {
+            res.send({
+                message: err.message || "BROKEN"
+            })
+            return false;
+        })
+
+    if (!isFriend) {
+        // Save Friend to the database
+        const newFriend = await Friend.create(req.body)
+        .then(friend => {
+            // If a friend is created the data is returned as the response
+            return friend;
+        })
+        .catch(err => {
+            // If there is an error it will be returned
+            return err;
+        }); 
+
+        // Looking up the authentication for the friendTwoId
+        await Authentication.findOne({ 
+            attributes: ['userName'],
+            where: {
+                userId: newFriend.friendTwoId
+            }
+        })
+        .then(authentication => {
+            // The formatted result is sent as a result
+            res.send({...newFriend.dataValues, ...authentication.dataValues})
+        })
+        .catch(err => {
+            // If there is an error the requester will be notified
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while adding friend."
+            });
+        }); 
+    }
+    else {
+        res.send({
+            message: "Friend already is in the database"
+        })
+    }
+    
 };
 
 // Retrieve all Friends from the database.

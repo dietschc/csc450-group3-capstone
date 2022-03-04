@@ -36,7 +36,7 @@
                     "userName": "Member2"
                 }
             ],
-            "isLoggedIn": false
+            "isLoggedIn": true
         },
         {
             "id": 1,
