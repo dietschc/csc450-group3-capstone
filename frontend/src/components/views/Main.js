@@ -91,7 +91,7 @@ function Main(props) {
         console.log("UserId " + friendId + " was added to friend list.")
     }
 
-    // Destructuring the needed data from the intitialState.json file
+    // Destructuring the needed data from the initialState.json file
     const { restaurants, reviews } = props; 
 
     // The RRDButtonGroup will accept the review array and 

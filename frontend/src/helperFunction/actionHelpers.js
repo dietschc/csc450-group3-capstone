@@ -3,6 +3,32 @@
 // Restaurant Club - actionHelpers.js
 // March 1, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 3/03/2022, Added in formatDBFriendFind)
+
+/**
+ * The helper function will nicely format the data retrieved from a find 
+ * friend request from the database and format it so it can be used 
+ * by redux reducers to load into state.
+ * 
+ * @param {*} restaurant 
+ * @returns 
+ */
+export const formatDBFriendFind = (friend) => {
+    // If data was found it will format and return the result
+    if (friend) {
+        return {
+            friendId: friend.friendId,
+            friendOneId: friend.friendOneId,
+            friendTwoId: friend.friendTwoId,
+            ...friend.friendTwo.authentication
+        }
+    }
+    // Else it will just return the parameter
+    else {
+        return friend
+    }
+}
+
 
 /**
  * The helper function will nicely format the data retrieved from a find 
