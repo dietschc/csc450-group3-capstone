@@ -199,11 +199,11 @@ export const updateUser = ({ id, userName, firstName, lastName,
  * @param {*} friendUserName 
  * @returns 
  */
-export const addFriend = (userId, friendId, friendUserName) => ({
+export const addFriend = ({friendOneId, friendTwoId, userName}) => ({
     type: C.ADD_FRIEND,
-    userId: userId,
-    id: friendId,
-    userName: friendUserName
+    userId: friendOneId,
+    id: friendTwoId,
+    userName: userName
 })
 
 /**
