@@ -261,7 +261,13 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
             // Add each friend to state
             res[1].forEach(e => {
                 // console.log(e);
-                dispatch(addFriend(res[0].id, e.userId, e.userName));
+                
+                const newFriend = { 
+                    friendOneId: res[0].id, 
+                    friendTwoId: e.userId, 
+                    userName: e.userName
+                }
+                dispatch(addFriend(newFriend));
             });
             
             // Dispatch userId (now stored in id) to login state action
