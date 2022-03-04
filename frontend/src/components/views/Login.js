@@ -119,7 +119,7 @@ function Login(props) {
         // setIsloggedIn(false);
         deleteUser(users[0].id);
         clearForm();
-        // addUser("");
+        addUser("");
     }
 
     const clearForm = () => {
