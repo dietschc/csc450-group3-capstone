@@ -352,7 +352,7 @@ exports.getAllFriends = async (req, res) => {
         attributes: [],
         include: [
             {
-                model: User,
+                model: User, as: 'friendTwo',
                 include: {
                     model: Authentication, attributes: ['userName']
                 },
@@ -362,6 +362,8 @@ exports.getAllFriends = async (req, res) => {
         ]
     })
         .then(data => {
+            // console.log("friend data: ", data);
+
             if (data) {
                 res.send(data);
             } else {
@@ -371,9 +373,7 @@ exports.getAllFriends = async (req, res) => {
             }
         })
         .catch(err => {
-            res.status(500).send({
-                message: "Error retrieving Friend with id=" + id
-            });
+            res.status(500).send({ err });
         });
 };
 

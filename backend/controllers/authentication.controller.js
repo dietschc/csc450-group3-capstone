@@ -111,7 +111,7 @@ exports.login = async (req, res) => {
         attributes: [],
         include: [
             {
-                model: User,
+                model: User, as: 'friendTwo',
                 include: {
                     model: Authentication, attributes: ['userName']
                 },
@@ -134,8 +134,8 @@ exports.login = async (req, res) => {
     let friends = [];
     if (getFriends) {
         const simplifyFriend = (friend) => {
-            const userId = friend.user.userId;
-            const userName = friend.user.authentication.userName;
+            const userId = friend.friendTwo.userId;
+            const userName = friend.friendTwo.authentication.userName;
             return { userId, userName };
         }
         // map friends
