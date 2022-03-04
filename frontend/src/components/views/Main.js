@@ -21,6 +21,7 @@ import { connect } from 'react-redux';
 import { addReviewThunk, deleteAllReviews, findAllReviewsOrderedThunk } from '../../actions/reviews';
 import { addRestaurantThunk, deleteAllRestaurants, findAllRestaurantsOrderedThunk } from '../../actions/restaurants';
 import { findAllReviewsRestaurantsOrderedThunk } from '../../actions/reviewsRestaurants';
+import { addFriendThunk } from '../../actions/friend';
 import Service from '../../services/review.service'
 
 /**
@@ -53,7 +54,8 @@ function Main(props) {
         findAllRestaurantsOrderedThunk,
          deleteAllReviews, 
          deleteAllRestaurants, 
-         findAllReviewsRestaurantsOrderedThunk } = props;
+         findAllReviewsRestaurantsOrderedThunk,
+        addFriendThunk } = props;
 
     const loadState = () => {
         deleteAllReviews();
@@ -87,12 +89,17 @@ function Main(props) {
     // FriendHandler will add the review author id to the users 
     // friend list
     const friendHandler = (friendId) => {
+        addFriendThunk(0, friendId)
+        if (users.length > 0 && users[0].isLoggedIn === true) {
+            // addFriendThunk(0, friendId)
+        }
+        
         // Add review author id to friend list
         console.log("UserId " + friendId + " was added to friend list.")
     }
 
     // Destructuring the needed data from the initialState.json file
-    const { restaurants, reviews } = props; 
+    const { restaurants, reviews, users } = props; 
 
     // The RRDButtonGroup will accept the review array and 
     // construct a MainRRDetailButtonGroup Component
@@ -138,11 +145,12 @@ function Main(props) {
 const mapStateToProps = state =>
 ({
     restaurants: [...state.restaurants],
-    reviews: [...state.reviews]
+    reviews: [...state.reviews],
+    users: [...state.users]
 });
 
 
 // Exporting the component
 export default connect(mapStateToProps, { 
     addReviewThunk, findAllReviewsOrderedThunk, findAllRestaurantsOrderedThunk, 
-    findAllReviewsRestaurantsOrderedThunk, deleteAllRestaurants, deleteAllReviews })(Main);
+    findAllReviewsRestaurantsOrderedThunk, deleteAllRestaurants, deleteAllReviews, addFriendThunk })(Main);

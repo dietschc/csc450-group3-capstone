@@ -37,7 +37,7 @@ function RestaurantReviewDetail(props) {
                         <Card className="mb-2" key={index} style={{}}>
                             <ReviewHeadingCardBody review={review} restaurants={restaurants}/>
                             {/** DEBUG MAKE SURE TO REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
-                            {/* {console.log("REVIEW IN RRD IS ", review)} */}
+                            {console.log("REVIEW IN RRD IS ", review)}
                             <Card.Img className="mx-auto" 
                             style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }} 
                             src={review.images[0].imageLocation} />

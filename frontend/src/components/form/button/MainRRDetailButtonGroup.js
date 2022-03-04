@@ -31,14 +31,14 @@ function MainRRDetailButtonGroup(props) {
             onClick={() => {moreHandler(review.author.userId, review.restaurant.id)}}>
                 More 
                 {/* DEBUG **/}
-                {/* {console.log("Review in BUTTON IS ", review)} */}
+                {console.log("Review in BUTTON IS ", review)}
             </Button>
             <Button className="mx-1" style={{ width: "8rem" }} 
             onClick={() => {restaurantHandler(review.restaurant.id)}}>
                 Restaurant
             </Button>
             <Button className="mx-1" style={{ width: "8rem" }} 
-            onClick={() => {friendHandler(review.author.userId)}}>
+            onClick={() => {friendHandler(review.author.id)}}>
                 Friend
             </Button>
         </div>
