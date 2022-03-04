@@ -21,8 +21,9 @@ import { checkLogin } from '../../helperFunction/CheckLogin'
 function EditAccount(props) {
     const { addUserThunk, updateUserThunk, users } = props;
 
-    // keeps track of if the form was submitted
-    const [submitted, setSubmitted] = useState(false)
+    // Keep track of validated and submitted
+    const [validated, setValidated] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
 
     const [userName, setUserName] = useState(users.length > 0 ? users[0].auth.userName : "");
     const [firstName, setFirstName] = useState(users.length > 0 ? users[0].firstName : "");
@@ -35,52 +36,69 @@ function EditAccount(props) {
     const [password, setPassword] = useState(users.length > 0 ? users[0].auth.password : "");
 
     const onChangeUserName = e => {
-        const userName = e.target.value
+        const userName = e.target.value;
         setUserName(userName);
-    }
+    };
 
     const onChangeFirstName = e => {
-        const firstName = e.target.value
+        const firstName = e.target.value;
         setFirstName(firstName);
-    }
+    };
 
     const onChangeLastName = e => {
-        const lastName = e.target.value
+        const lastName = e.target.value;
         setLastName(lastName);
-    }
+    };
 
     const onChangeAddress = e => {
-        const address = e.target.value
+        const address = e.target.value;
         setAddress(address);
-    }
+    };
 
     const onChangeCity = e => {
-        const city = e.target.value
+        const city = e.target.value;
         setCity(city);
-    }
+    };
 
     const onChangeZip = e => {
-        const zip = e.target.value
+        const zip = e.target.value;
         setZip(zip);
-    }
+    };
 
     const onChangeState = e => {
-        const state = e.target.value
+        const state = e.target.value;
         setState(state);
-    }
+    };
 
     const onChangeEmail = e => {
-        const email = e.target.value
+        const email = e.target.value;
         setEmail(email);
-    }
+    };
 
     const onChangePassword = e => {
-        const password = e.target.value
+        const password = e.target.value;
         setPassword(password);
-    }
+    };
 
     // Check if user is logged in
     const isEditing = checkLogin(users);
+
+    const handleSubmit = (event) => {
+        console.log("handle submit pressed");
+        const form = event.currentTarget;
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        setValidated(true);
+
+        if (isEditing) {
+            updateAccount();
+        } else {
+            saveAccount();
+        }
+    };
 
     const saveAccount = () => {
 
@@ -137,7 +155,7 @@ function EditAccount(props) {
         // updatePermission(testData.userId, testData.permissionId, testData.permissionName)
 
         console.log(data)
-        setSubmitted(true)
+        // setSubmitted(true)
     }
 
     const updateAccount = () => {
@@ -168,11 +186,11 @@ function EditAccount(props) {
     const displaySubmitButton = () => (
         <div className="d-flex justify-content-around pt-2 pb-5">
             {isEditing ? (
-                <Button variant="outline-primary" onClick={updateAccount}>
+                <Button variant="outline-primary" onClick={handleSubmit}>
                     Update
                 </Button>
             ) : (
-                <Button variant="outline-primary" onClick={saveAccount}>
+                <Button variant="outline-primary" onClick={handleSubmit}>
                     Submit
                 </Button>
             )}
@@ -213,7 +231,7 @@ function EditAccount(props) {
                     </div>
 
                 ) : (
-                    <Form>
+                    <Form noValidate validated={validated} onSubmit={handleSubmit}>
                         <Form.Floating className="mb-3 justify-content-center">
                             <FloatingLabel
                                 controlId="floatingUserId"
@@ -235,7 +253,6 @@ function EditAccount(props) {
                                 <Form.Control
                                     type="text"
                                     placeholder="User Name"
-                                    required
                                     value={firstName}
                                     onChange={onChangeFirstName}
                                 />
@@ -249,7 +266,6 @@ function EditAccount(props) {
                                 <Form.Control
                                     type="text"
                                     placeholder="Last Name"
-                                    required
                                     value={lastName}
                                     onChange={onChangeLastName}
                                 />
@@ -263,7 +279,6 @@ function EditAccount(props) {
                                 <Form.Control
                                     type="text"
                                     placeholder="Address"
-                                    required
                                     value={address}
                                     onChange={onChangeAddress}
                                 />
@@ -277,13 +292,11 @@ function EditAccount(props) {
                                 <Form.Control
                                     type="text"
                                     placeholder="City"
-                                    required
                                     value={city}
                                     onChange={onChangeCity}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
-
 
                         <Row className="justify-content-center">
                             <Form.Floating as={Col} sm={6} className="mb-3 justify-content-center">
@@ -294,7 +307,7 @@ function EditAccount(props) {
                                         aria-label="select state options"
                                         value={state}
                                         onChange={onChangeState}>
-                                        <option>Select</option>
+                                        <option disabled value="">Choose</option>
                                         <option value="MN">MN</option>
                                         <option value="WI">WI</option>
                                         <option value="XX">XX</option>
@@ -309,7 +322,6 @@ function EditAccount(props) {
                                     <Form.Control
                                         type="text"
                                         placeholder="Zip"
-                                        required
                                         value={zip}
                                         onChange={onChangeZip}
                                     />

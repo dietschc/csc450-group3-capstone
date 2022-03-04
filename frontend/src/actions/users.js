@@ -168,8 +168,8 @@ export const updateUserThunk = (id, data) => async dispatch => {
  * @param {*} password 
  * @returns 
  */
-export const updateUser = ({id, userName, firstName, lastName,
-    address, city, state, zip, email, password}) => ({
+export const updateUser = ({ id, userName, firstName, lastName,
+    address, city, state, zip, email, password }) => ({
         type: C.UPDATE_USER,
         id: id,
         firstName: firstName,
@@ -249,15 +249,23 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
             // Delete the current users in the Users state array
             dispatch(deleteAllUsers());
             const result = { ...res.data.getUser, ...res.data.getAddress, ...res.data.getAuth }
-            // Dispatch userId to add user state action
-            return dispatch(addUser(result));
+            const friends = [ ...res.data.friends ];
+
+            // Return an array that contains the response from addUser in res[0]
+            // and a copy of the friends array in res[1]
+            return [dispatch(addUser(result)), friends];
         })
-
         .then(res => {
-            // console.log("res data: ", res);
+            // console.log("addfriend data: ", res[1]);
 
+            // Add each friend to state
+            res[1].forEach(e => {
+                // console.log(e);
+                dispatch(addFriend(res[0].id, e.userId, e.userName));
+            });
+            
             // Dispatch userId (now stored in id) to login state action
-            return dispatch(login(res.id));
+            return dispatch(login(res[0].id));
         })
         .catch(err => {
             console.log(err)

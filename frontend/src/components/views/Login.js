@@ -18,23 +18,27 @@ import { Link } from 'react-router-dom';
 import { checkLogin } from '../../helperFunction/CheckLogin'
 
 function Login(props) {
-    const [submitted, setSubmitted] = useState(false)
-    const [showError, setShowError] = useState(false)
-    const [userName, setUserName] = useState("");
-    const [password, setPassword] = useState("");
-
-    const navigate = useNavigate();
 
     const { loginThunk, deleteUser, users } = props;
 
+    const [isSubmitted, setSubmitted] = useState(false)
+    const [isError, setShowError] = useState(false)
+    const [isSuccess, setShowSuccess] = useState(false)
+    const [userName, setUserName] = useState(users.length > 0 ? users[0].auth.userName : "");
+    const [password, setPassword] = useState(users.length > 0 ? users[0].auth.password : "");
+
+    const navigate = useNavigate();
+
     const onChangeUserName = e => {
         setShowError(false);
+        setShowSuccess(false);
         const userName = e.target.value
         setUserName(userName);
     }
 
     const onChangePassword = e => {
         setShowError(false);
+        setShowSuccess(false);
         const password = e.target.value
         setPassword(password);
     }
@@ -43,10 +47,11 @@ function Login(props) {
     const showLoginButtons = () => (
         <div className="text-center">
             {checkLogin(users) ? (
-                <Button variant="outline-primary" onClick={logoutAccount}>
-                    Logout
-                </Button>
-
+                <div className="d-flex justify-content-around pt-2 pb-5">
+                    <Button variant="outline-primary" onClick={logoutAccount}>
+                        Logout
+                    </Button>
+                </div>
             ) : (
                 <div>
                     <div className="d-flex justify-content-around pt-2 pb-5">
@@ -54,13 +59,13 @@ function Login(props) {
                             Login
                         </Button>
 
-                        <Button variant="outline-primary" onClick={() => createAccountHandler()}>
+                        <Button variant="outline-primary" onClick={createAccountHandler}>
                             Create Account
                         </Button>
                     </div>
 
                     <div>
-                        {showError &&
+                        {isError &&
                             <Alert variant="danger" className="text-center">
                                 Incorrect user name or password!
                             </Alert>
@@ -68,6 +73,13 @@ function Login(props) {
                     </div>
                 </div>
             )}
+            <div>
+                {isSuccess &&
+                    <Alert variant="success" className="text-center">
+                        Account logged in successfully!
+                    </Alert>
+                }
+            </div>
         </div>
     )
 
@@ -78,14 +90,19 @@ function Login(props) {
         // console.log("Users: ", users);
         // console.log("Users: " + users[1].isLoggedIn);
 
+        // Call login thunk function which tries to authenticate against the backend
         await loginThunk(userName, password)
             .then(res => {
                 console.log("Results: ", res);
 
                 if (res.isLoggedIn === true) {
                     console.log("SUCCESS");
-                    // setIsloggedIn(true);
+
                     // setSubmitted(true);
+                    setShowSuccess(true);
+
+                    // Navigate to dashboard after 1.5 seconds
+                    setTimeout(() => { navigate("../userDashboard") }, 1500)
                 } else {
                     clearForm();
                     setShowError(true);
@@ -101,6 +118,7 @@ function Login(props) {
         // This will remove the user from state
         // setIsloggedIn(false);
         deleteUser(users[0].id);
+        clearForm();
     }
 
     const clearForm = () => {
@@ -109,7 +127,7 @@ function Login(props) {
     }
 
     const createAccountHandler = () => {
-        navigate("../editAccount", { itemId: 42, });
+        navigate("../editAccount");
     }
 
     return (
@@ -119,7 +137,7 @@ function Login(props) {
                 <h1>Login</h1>
             </Container>
             <Container fluid as="main" className="mt-5 justify-content-center align-center">
-                {submitted ? (
+                {isSubmitted ? (
                     <div className="text-center">
                         <h4>Account logged in successfully!</h4>
                         <Link to={"/"}>

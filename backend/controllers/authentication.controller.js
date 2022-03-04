@@ -11,6 +11,7 @@ const { Op } = db.Sequelize;
 const Authentication = db.authentication;
 const User = db.users;
 const Address = db.address;
+const Friend = db.friend;
 
 // Create and Save a new Authentication
 exports.create = (req, res) => {
@@ -89,7 +90,6 @@ exports.login = async (req, res) => {
                 return data;
             } else {
                 return `Cannot find User with id=${id}.`;
-
             }
         })
         .catch(err => {
@@ -102,12 +102,52 @@ exports.login = async (req, res) => {
         addressId = getUser.addressId;
     }
 
+    // Get friend data
+    const getFriends = await Friend.findAll({
+        where: {
+            friendOneId: id
+        },
+        // This should match the userId below
+        attributes: [],
+        include: [
+            {
+                model: User,
+                include: {
+                    model: Authentication, attributes: ['userName']
+                },
+                // Should match teh friendTwo Id from above
+                attributes: ['userId']
+            }
+        ]
+    })
+        .then(data => {
+            if (data) {
+                return data;
+            } else {
+                return `Cannot find friends`;
+            }
+        })
+        .catch(err => {
+            return err;
+        });
+
+    let friends = [];
+    if (getFriends) {
+        const simplifyFriend = (friend) => {
+            const userId = friend.user.userId;
+            const userName = friend.user.authentication.userName;
+            return { userId, userName };
+        }
+        // map friends
+        friends = getFriends.map(simplifyFriend);
+    }
+
     // Get address info
     Address.findByPk(addressId)
         .then(getAddress => {
             if (getAddress) {
                 // Return all 3 JSON objects in an array in the response
-                res.json({ getAuth, getUser, getAddress });
+                res.json({ getAuth, getUser, friends, getAddress });
             } else {
                 res.status(404).send({
                     message: `Cannot find User`

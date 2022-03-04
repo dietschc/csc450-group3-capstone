@@ -20,7 +20,7 @@ const Friend = db.friend;
 // Alters the user, address, and authentication tables (and eventually history)
 exports.create = async (req, res) => {
     // Validate request
-    if ((!req.body.userEmail) || (!req.body.address) || (!req.body.userName)) {
+    if ((!req.body.userEmail) || (!req.body.userName)) {
         res.status(400).send({
             message: "Required fields are userEmail, address, and userName"
         });
@@ -322,17 +322,17 @@ exports.addFriend = async (req, res) => {
         });
     } else {
 
-    // Save Friend in the database
-    Friend.create(friend)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while creating the Friend."
+        // Save Friend in the database
+        Friend.create(friend)
+            .then(data => {
+                res.send(data);
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while creating the Friend."
+                });
             });
-        });
     }
 
 
@@ -346,7 +346,20 @@ exports.getAllFriends = async (req, res) => {
         where: {
             friendOneId: id
         },
-        attributes: ['friendTwoId']
+        // We include only attributes that we need, which are none from the Friends table
+        // except for friendTwoId which we use for debugging
+        // attributes: ['friendTwoId'],
+        attributes: [],
+        include: [
+            {
+                model: User,
+                include: {
+                    model: Authentication, attributes: ['userName']
+                },
+                // Should match the friendTwoId from above
+                attributes: ['userId']
+            }
+        ]
     })
         .then(data => {
             if (data) {

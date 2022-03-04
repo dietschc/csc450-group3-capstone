@@ -10,12 +10,14 @@
 //  (DAB, 02/06/2022, breaking up components/functionality into their own .js files)
 //  (DAB, 02/07/2022, changed buttons to buttonGroup function)
 //  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
+//  (CPD, 03/02/2022, Wiring up frontend to use parameters from backend)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import mockStateData from "../../redux/initialState.json";
+import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import FriendList from '../subComponent/FriendList';
 import UserInfo from '../subComponent/UserInfo';
@@ -24,6 +26,9 @@ import UDRestaurantReviewDetail from '../form/button/UDRestaurantReviewDetail';
 import DeleteReviewConfirm from '../modal/DeleteReviewConfirm';
 
 function UserDashboard(props) {
+    const { users } = props;
+
+
     // *** Temporary test data, this will be replaced with Redux in the future ***
     const [data, setData]=useState(mockStateData);
     const [showFriendConfirm, setShowFriendConfirm] = useState(false);
@@ -32,8 +37,8 @@ function UserDashboard(props) {
     const [currentReview, setCurrentReview] = useState([]);
 
     // Destructuring the needed data from the intitialState.json file
-    const { users, restaurants, reviews, messages } = data; 
-    const [user, ...otherUser] = users;
+    const { restaurants, reviews, messages } = data; 
+    const [user] = users;
     const { address: currentAddress }  = user;
     const { friends } = user;
 
@@ -117,10 +122,10 @@ function UserDashboard(props) {
 
     return (
         <Container className="justify-content-center" style={{maxWidth: "1000px"}}>
-            {console.log("Test is ", users)}
+            {/* {console.log("Test is ", users)}
             {console.log("Current User is ", user)}
             {console.log("Current Address is ", currentAddress)}
-            {console.log("Test Data .user is ", mockStateData.users)}
+            {console.log("Test Data .user is ", mockStateData.users)} */}
             <h1>
                 User Dashboard
             </h1>
@@ -145,5 +150,12 @@ function UserDashboard(props) {
     )
 }
 
+// Mapping the redux store states to props
+const mapStateToProps = state =>
+({
+    users: [...state.users]
+});
+
 // Exporting the component
-export default UserDashboard;
+// export default UserDashboard;
+export default connect(mapStateToProps, {})(UserDashboard);
