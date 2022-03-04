@@ -9,16 +9,13 @@ module.exports = (sequelize, Sequelize) => {
 		friendId: {
 			type: Sequelize.INTEGER,
 			primaryKey: true,
-			autoIncrement: true,
-			unique: true
+			autoIncrement: true
 		},
 		friendOneId: {
-			type: Sequelize.INTEGER,
-			unique: true
+			type: Sequelize.INTEGER
 		},
 		friendTwoId: {
-			type: Sequelize.INTEGER,
-			unique: true
+			type: Sequelize.INTEGER
 		}
 	}, {
 		freezeTableName: true,
