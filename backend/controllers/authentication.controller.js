@@ -4,6 +4,7 @@
 // February 15, 2022
 // Last Edited (Initials, Date, Edits):
 // (CPD, 2/27/2022, Added findByNameOffsetLimit function)
+// (CPD, 3/3/2022, Updating login function to return friends)
 
 const db = require("../models");
 const Sequelize = require("sequelize");
@@ -11,6 +12,7 @@ const { Op } = db.Sequelize;
 const Authentication = db.authentication;
 const User = db.users;
 const Address = db.address;
+const Friend = db.friend;
 
 // Create and Save a new Authentication
 exports.create = (req, res) => {
@@ -89,17 +91,56 @@ exports.login = async (req, res) => {
                 return data;
             } else {
                 return `Cannot find User with id=${id}.`;
-
             }
         })
         .catch(err => {
             return err;
         });
 
-    // Setup out addressId parameter (if it exists)
+    // Setup our addressId parameter (if it exists)
     let addressId = 0;
     if (getUser) {
         addressId = getUser.addressId;
+    }
+
+    // Get friend data
+    const getFriends = await Friend.findAll({
+        where: {
+            friendOneId: id
+        },
+        // This should match the userId below
+        attributes: [],
+        include: [
+            {
+                model: User, as: 'friendTwo',
+                include: {
+                    model: Authentication, attributes: ['userName']
+                },
+                // Should match the friendTwo Id from above
+                attributes: ['userId']
+            }
+        ]
+    })
+        .then(data => {
+            if (data) {
+                return data;
+            } else {
+                return `Cannot find friends`;
+            }
+        })
+        .catch(err => {
+            return err;
+        });
+
+    let friends = [];
+    if (getFriends.length > 0) {
+        const formatFriends = (getFriends) => getFriends.map(friend => {
+            const userId = friend.friendTwo.userId;
+            const userName = friend.friendTwo.authentication.userName;
+            return { userId, userName };
+        });
+        // map friends
+        friends = formatFriends(getFriends);
     }
 
     // Get address info
@@ -107,7 +148,7 @@ exports.login = async (req, res) => {
         .then(getAddress => {
             if (getAddress) {
                 // Return all 3 JSON objects in an array in the response
-                res.json({ getAuth, getUser, getAddress });
+                res.json({ getAuth, getUser, friends, getAddress });
             } else {
                 res.status(404).send({
                     message: `Cannot find User`
