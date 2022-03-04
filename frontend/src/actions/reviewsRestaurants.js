@@ -79,11 +79,9 @@ export const findAllReviewsRestaurantsOrderedThunk = (offset, limit) => async di
 }
 
 /**
- * Adds the specified offset and limit of reviews with their id referenced restaurants to 
- * their respective Redux states. 
+ * Finds all reviews from specific userId and returns them
  * 
- * @param {*} offset 
- * @param {*} limit 
+ * @param {*} userId 
  * @returns 
  */
  export const findByAuthorIdThunk = (userId) => async dispatch => {
