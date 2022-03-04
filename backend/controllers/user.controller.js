@@ -377,7 +377,7 @@ exports.getAllFriends = async (req, res) => {
         });
 };
 
-// Deltes a friend from the req.body for the user specified in the req.params.id
+// Deletes a friend from the req.body for the user specified in the req.params.id
 exports.deleteFriend = async (req, res) => {
     // Validate request
     if (!req.body.friendTwoId) {

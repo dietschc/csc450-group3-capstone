@@ -113,7 +113,7 @@ export const addUser = ({ userId, userName,
             }
         },
         email: userEmail,
-        isLoggedIn: true
+        isLoggedIn: false
     })
 
 /**

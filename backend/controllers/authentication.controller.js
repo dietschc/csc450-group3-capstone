@@ -4,6 +4,7 @@
 // February 15, 2022
 // Last Edited (Initials, Date, Edits):
 // (CPD, 2/27/2022, Added findByNameOffsetLimit function)
+// (CPD, 3/3/2022, Updating login function to return friends)
 
 const db = require("../models");
 const Sequelize = require("sequelize");
@@ -96,7 +97,7 @@ exports.login = async (req, res) => {
             return err;
         });
 
-    // Setup out addressId parameter (if it exists)
+    // Setup our addressId parameter (if it exists)
     let addressId = 0;
     if (getUser) {
         addressId = getUser.addressId;
@@ -132,14 +133,14 @@ exports.login = async (req, res) => {
         });
 
     let friends = [];
-    if (getFriends) {
-        const simplifyFriend = (friend) => {
+    if (getFriends.length > 0) {
+        const formatFriends = (getFriends) => getFriends.map(friend => {
             const userId = friend.friendTwo.userId;
             const userName = friend.friendTwo.authentication.userName;
             return { userId, userName };
-        }
+        });
         // map friends
-        friends = getFriends.map(simplifyFriend);
+        friends = formatFriends(getFriends);
     }
 
     // Get address info

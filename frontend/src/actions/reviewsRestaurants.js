@@ -91,7 +91,7 @@ export const findAllReviewsRestaurantsOrderedThunk = (offset, limit) => async di
     // Making a call to the database to request the reviews
     await ReviewDataService.findByAuthorId(userId)
     .then(async res => {
-        console.log("returned values: ", res);
+        // console.log("returned values: ", res);
 
         // If data was found in the database query it is formatted 
         // for redux and added to state
