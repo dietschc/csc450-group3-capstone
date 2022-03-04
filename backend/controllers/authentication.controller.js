@@ -115,7 +115,7 @@ exports.login = async (req, res) => {
                 include: {
                     model: Authentication, attributes: ['userName']
                 },
-                // Should match teh friendTwo Id from above
+                // Should match the friendTwo Id from above
                 attributes: ['userId']
             }
         ]
