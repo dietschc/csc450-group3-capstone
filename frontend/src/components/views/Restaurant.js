@@ -8,6 +8,8 @@
 //  (DAB, 2/17/2022, Added redux connect and restaurants actions)
 //  (DAB, 3/04/2022, Added in database functionality, comments, 
 //  and cleaned up the code)
+//  (DAB, 3/05/2022, Added in functionality for author based restaurant 
+//  display and cleaned up the code more)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -19,7 +21,11 @@ import { useParams } from "react-router-dom";
 import RestaurantHeadingCardBody from '../subComponent/RestaurantHeadingCardBody';
 import FullStarRatingCol from '../subComponent/FullStarRatingCol';
 import { connect } from 'react-redux';
-import { deleteAllReviews, findByRestaurantThunk } from '../../actions/reviews';
+import { 
+    deleteAllReviews, 
+    findReviewByAuthorRestaurantThunk, 
+    findReviewByRestaurantThunk 
+} from '../../actions/reviews';
 import RestaurantDetail from '../subComponent/RestaurantDetail';
 import ReviewCard from '../subComponent/ReviewCard';
 
@@ -31,59 +37,112 @@ import ReviewCard from '../subComponent/ReviewCard';
  * @returns 
  */
 function Restaurant(props) {
-    // *** Temporary test data, this will be replaced with Redux in the future ***
-    // const [data, setData]=useState(mockStateData);
-    const { id } = useParams();
-    const { restaurants, reviews, deleteAllReviews, findByRestaurantThunk } = props;
+    // Pulling all needed data/methods from params and props
+    const { authorId, restaurantId } = useParams();
+    const {
+        restaurants,
+        reviews,
+        deleteAllReviews,
+        findReviewByAuthorRestaurantThunk,
+        findReviewByRestaurantThunk
+    } = props;
     const navigate = useNavigate();
+
+    // Saving the deconstructed current restaurant as an object to be used for 
+    // component construction
+    const [currentRestaurant] = restaurants.length > 0 && restaurants.filter(
+        (restaurant) => (restaurantId === restaurant.id.toString()))
 
     // Loading in the initial data from the database
     const loadData = () => {
+        // On load in current reviews in state are deleted
         deleteAllReviews();
-        findByRestaurantThunk(0, 25, id);
+
+        // If the authorId and restaurantId have values the page 
+        // will display all reviews from the author for the 
+        // selected restaurant
+        if (authorId && restaurantId) {
+            findReviewByAuthorRestaurantThunk(0, 25, authorId, restaurantId)
+        }
+        // Else the page will display all reviews for a selected restaurant
+        else if (restaurantId) {
+            findReviewByRestaurantThunk(0, 25, restaurantId);
+        }
     }
 
     // Loading in the initial restaurant data and restaurant 
-    // specific reviews
+    // specific reviews once on page load
     useEffect(() => {
         loadData();
     }, []);
 
     // The reviewHandler will take the restaurantId as a param and pass it 
     // to the review page so the restaurant can be reviewed
-    const newReviewHandler = (id) => {
-        navigate("../review/" + id);
+    const newReviewHandler = (restaurantId) => {
+        navigate(`../review/${restaurantId}`);
     }
 
-    return (
-        <XLContainer>
-            <h1>
+    // This function will dynamically display the h1
+    const displayHeader = (
+        // If there is not an author Id 
+        authorId === undefined ?
+            (<h1>
                 Welcome to the Restaurant Page
-            </h1>
+            </h1>)
+            :
+            // If there is an authorId and there were reviews found
+            // the header will be personalized
+            reviews.length > 0 ?
+                (<h1>
+                    More Reviews from {reviews[0].author.userName}
+                </h1>)
+                :
+                // If there are no reviews found
+                (<h1>
+                    Welcome to the Restaurant Page
+                </h1>)
+    )
 
-            {id === undefined ? (
+    // The logic for the body of Restaurant is done here
+    const displayBody = (
+        // If neither critical variable is undefined the page displays 
+        // that no restaurants were found
+        restaurantId === undefined || currentRestaurant === undefined ?
+            (
                 <h2 className="text-center">
                     Sorry, no restaurants found!
                 </h2>
-            ) :
-                restaurants.length > 0 && restaurants.filter((restaurant) => (id === restaurant.id.toString())).map((restaurant, index) => (
-                    <Card className="mb-2 p-2" key={index}>
-                        <RestaurantHeadingCardBody restaurant={restaurant} />
-                        <Card.Img className="mx-auto"
-                            style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }}
-                            src={restaurant.images[0].imageLocation} />
-                        <FullStarRatingCol rating={restaurant.rating} />
-                        <RestaurantDetail restaurant={restaurant} newReviewHandler={newReviewHandler} />
-                        <Container fluid>
-                            <Row>
-                                {reviews.length > 0 && reviews.map((review, index) => ((review.restaurant.id === restaurant.id) ? (
-                                    <ReviewCard review={review} restaurant={restaurant} key={index} />
-                                ) : (console.log("nothing"))))}
-                            </Row>
-                        </Container>
-                    </Card>
-                ))
-            }
+            ) : 
+            // If a restaurant was found it will be displayed on the screen. 
+            // The data is protected from crashing via a check that there is 
+            // a current restaurant 
+            (
+                currentRestaurant !== undefined &&
+                <Card className="mb-2 p-2">
+                    <RestaurantHeadingCardBody restaurant={currentRestaurant} />
+                    <Card.Img className="mx-auto"
+                        style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }}
+                        src={currentRestaurant.images[0].imageLocation} />
+                    <FullStarRatingCol rating={currentRestaurant.rating} />
+                    <RestaurantDetail restaurant={currentRestaurant} newReviewHandler={newReviewHandler} />
+                    <Container fluid>
+                        <Row>
+                            {reviews.length > 0 && reviews.map((review, index) => ((review.restaurant.id === currentRestaurant.id) &&
+                            // If reviews were found for the restaurant they will be displayed here
+                                (
+                                    <ReviewCard review={review} restaurant={currentRestaurant} key={index} />
+                                )
+                            ))}
+                        </Row>
+                    </Container>
+                </Card>
+            )
+    );
+    
+    return (
+        <XLContainer>
+            {displayHeader}
+            {displayBody}
         </XLContainer>
     )
 }
@@ -96,4 +155,4 @@ const mapStateToProps = state =>
 });
 
 // Exporting the connect Wrapped Restaurant Component
-export default connect(mapStateToProps, { deleteAllReviews, findByRestaurantThunk })(Restaurant);
+export default connect(mapStateToProps, { deleteAllReviews, findReviewByAuthorRestaurantThunk, findReviewByRestaurantThunk })(Restaurant);

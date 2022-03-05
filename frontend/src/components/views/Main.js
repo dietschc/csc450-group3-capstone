@@ -90,13 +90,13 @@ function Main(props) {
     // The moreHandler will load in the Search View with the
     // needed URL parameters for the desired search
     const moreHandler = (authorId, restaurantId) => {
-        navigate("search/" + authorId + "/" + restaurantId);
+        navigate(`restaurant/${restaurantId}/${authorId}`);
     };
 
     // The restaurantHandler will load in the restaurant page
     // with the restaurant id as a URL parameter
     const restaurantHandler = (restaurantId) => {
-        navigate("restaurant/" + restaurantId);
+        navigate(`restaurant/${restaurantId}`);
     };
 
     // FriendHandler will add the review author id to the users
@@ -110,9 +110,9 @@ function Main(props) {
             // grabbing the userId(friendOneId)
             const friendOneId = currentUser.id;
 
-            /***********************************CHANGE THE FIRST PARAM HERE TO (friendOneId) TO ADD FRIENDS. initialState user Id is invalid */
-            // Attempting to add the new friend to the database and then to state
-            addFriendThunk(1, friendTwoId);
+            // Attempting to add the new friend to the database and then to state. Only 
+            // friends not in the database/state will be added
+            addFriendThunk(friendOneId, friendTwoId);
         }
     };
 
@@ -128,6 +128,7 @@ function Main(props) {
             />
         </div>
     );
+
     return (
         <XLContainer>
             <h1 className="mb-2">Restaurant Club</h1>
