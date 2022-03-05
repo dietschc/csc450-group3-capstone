@@ -8,7 +8,7 @@
 
 // Using React library in order to build components
 // for the app and importing needed components
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import { Container } from "react-bootstrap";
@@ -18,10 +18,10 @@ import MainRRDetailButtonGroup from "../form/button/MainRRDetailButtonGroup";
 import XLContainer from "../template/XLContainer";
 import { connect } from "react-redux";
 import {
-  addReviewThunk,
-  deleteAllReviews,
-  findAllReviewsOrderedThunk,
-} from "../../actions/reviews";
+    addReviewThunk,
+    deleteAllReviews,
+    findAllReviewsOrderedThunk,
+  } from "../../actions/reviews";
 import {
   addRestaurantThunk,
   deleteAllRestaurants,
