@@ -6,21 +6,22 @@
 //  (DAB, 02/07/2022, Constructed the layout view for this component)
 //  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
 //  (DAB, 2/17/2022, Added redux connect and restaurants actions)
+//  (DAB, 3/04/2022, Added in database functionality, comments, 
+//  and cleaned up the code)
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState, useEffect } from 'react';
-import { Link, useHistory, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import XLContainer from '../template/XLContainer';
-import mockStateData from "../../redux/initialState.json";
-import { Card, ListGroup, Row, Button, Container } from 'react-bootstrap';
+import { Card, Row, Container } from 'react-bootstrap';
 import { useParams } from "react-router-dom";
 import RestaurantHeadingCardBody from '../subComponent/RestaurantHeadingCardBody';
 import FullStarRatingCol from '../subComponent/FullStarRatingCol';
-import FullStarRatingRow from '../subComponent/FullStarRatingRow';
-import ReviewTextCardBody from '../subComponent/ReviewTextCardBody';
 import { connect } from 'react-redux';
 import { deleteAllReviews, findByRestaurantThunk } from '../../actions/reviews';
+import RestaurantDetail from '../subComponent/RestaurantDetail';
+import ReviewCard from '../subComponent/ReviewCard';
 
 /**
  * The Restaurant Component will display the Restaurant details and 
@@ -42,130 +43,57 @@ function Restaurant(props) {
         findByRestaurantThunk(0, 25, id);
     }
 
+    // Loading in the initial restaurant data and restaurant 
+    // specific reviews
     useEffect(() => {
         loadData();
     }, []);
 
-
-    // TO DO
-    // *Search database for restaurant reviews and add them to state
-    // by restaurant Id
-    // *Check why random restaurant loads in when navigating to the /2 url
-
+    // The reviewHandler will take the restaurantId as a param and pass it 
+    // to the review page so the restaurant can be reviewed
     const newReviewHandler = (id) => {
         navigate("../review/" + id);
     }
-    
+
     return (
         <XLContainer>
             <h1>
                 Welcome to the Restaurant Page
             </h1>
-            {console.log("PARAMS IS ", id)}
-            {console.log(restaurants.filter((restaurant) => (1 === restaurant.id)))}
-            
+
             {id === undefined ? (
                 <h2 className="text-center">
                     Sorry, no restaurants found!
-                </h2> 
-                ) : 
+                </h2>
+            ) :
                 restaurants.length > 0 && restaurants.filter((restaurant) => (id === restaurant.id.toString())).map((restaurant, index) => (
                     <Card className="mb-2 p-2" key={index}>
-                        <RestaurantHeadingCardBody restaurant={restaurant}/>
-                        <Card.Img className="mx-auto" 
-                        style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }} 
-                        src={restaurant.images[0].imageLocation} />
-                        <FullStarRatingCol rating={restaurant.rating}/>
-                        
-                        <ListGroup className="mx-auto mx-sm-0 border-0 border-right mt-2">
-                            <ListGroup.Item as="li" 
-                            className="d-flex justify-content-start align-items-start pt-1 pb-0 mb-0 border-bottom-0" 
-                            >
-                                <div className="pe-2" style={{ minWidth: "7.5rem"}}>
-                                    Address:
-                                </div>
-                                <div>
-                                    {restaurant.address.address}
-                                </div>
-                            </ListGroup.Item>
-                            <ListGroup.Item as="li" 
-                            className="d-flex justify-content-start align-items-start pt-1 pb-0 mb-0 border-bottom-0" 
-                            >
-                                <div className="pe-2" style={{ minWidth: "7.5rem"}}>
-                                    City
-                                </div>
-                                <div style={{ maxWidth: "7.5rem"}}>
-                                    {restaurant.address.city}
-                                </div>
-                            </ListGroup.Item>
-                            <ListGroup.Item as="li" 
-                            className="d-flex justify-content-start align-items-start pt-1 pb-0 mb-0 border-bottom-0" 
-                            >
-                                <div className="pe-2" style={{ minWidth: "7.5rem"}}>
-                                    State:
-                                </div>
-                                <div style={{ maxWidth: "7.5rem"}}>
-                                    {restaurant.address.state}
-                                </div>
-                            </ListGroup.Item>
-                            <ListGroup.Item as="li" 
-                            className="d-flex justify-content-start align-items-start pt-1 pb-0 mb-0 border-bottom-0" 
-                            >
-                                <div className="pe-2" style={{ minWidth: "7.5rem"}}>
-                                    Zip:
-                                </div>
-                                <div className="mr-auto">
-                                    {restaurant.address.zip}
-                                </div>
-                            </ListGroup.Item>
-                            
-                            <ListGroup.Item as="li" 
-                            className="d-flex justify-content-start align-items-start pt-1 pb-1 mb-0" 
-                            >
-                                <div className="pe-2" style={{ minWidth: "7.5rem"}}>
-                                    <a href={restaurant.digitalContact} target="_blank">Digital Contact</a>
-                                </div>
-                                <div >
-                                    <a href={restaurant.website} target="_blank">Website</a>
-                                </div>
-                            </ListGroup.Item>
-                            <ListGroup.Item className="d-flex justify-content-center border-0">
-                                <Button onClick={() => newReviewHandler(restaurant.id)}>New Review</Button>
-                            </ListGroup.Item>
-                        </ListGroup>
-
+                        <RestaurantHeadingCardBody restaurant={restaurant} />
+                        <Card.Img className="mx-auto"
+                            style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }}
+                            src={restaurant.images[0].imageLocation} />
+                        <FullStarRatingCol rating={restaurant.rating} />
+                        <RestaurantDetail restaurant={restaurant} newReviewHandler={newReviewHandler} />
                         <Container fluid>
                             <Row>
-                            {reviews.map((review) => ( (review.restaurant.id === restaurant.id) ? (
-                                <Card className="mb-2" key={review.reviewId} style={{}}>
-                                    <RestaurantHeadingCardBody restaurant={restaurant}/>
-                                    {/** MAKE SURE TO REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
-                                    {console.log("REVIEW IN RRD IS ", review)}
-                                    <Card.Img className="mx-auto" 
-                                    style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }} 
-                                    src={review.images[0].imageLocation} />
-                                    <Card.Text className="text-center pt-1">
-                                        {review.author.userName}
-                                    </Card.Text>
-                                    <FullStarRatingRow review={review}/>
-                                    <ReviewTextCardBody review={review}/>
-                                </Card>
-                            ) : (console.log("nothing"))))}
+                                {reviews.length > 0 && reviews.map((review, index) => ((review.restaurant.id === restaurant.id) ? (
+                                    <ReviewCard review={review} restaurant={restaurant} key={index} />
+                                ) : (console.log("nothing"))))}
                             </Row>
                         </Container>
                     </Card>
-                    ))
+                ))
             }
         </XLContainer>
     )
 }
 
 // Mapping the redux store states to props
-const mapStateToProps = state => 
-    ({
-        reviews: [...state.reviews],
-        restaurants: [...state.restaurants]
-    });
+const mapStateToProps = state =>
+({
+    reviews: [...state.reviews],
+    restaurants: [...state.restaurants]
+});
 
 // Exporting the connect Wrapped Restaurant Component
-export default connect(mapStateToProps, {deleteAllReviews, findByRestaurantThunk})(Restaurant);
+export default connect(mapStateToProps, { deleteAllReviews, findByRestaurantThunk })(Restaurant);
