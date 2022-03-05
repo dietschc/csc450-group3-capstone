@@ -8,6 +8,7 @@
 
 const express = require("express");
 const cors = require("cors");
+const testData = require('./data/TestData');
 const app = express();
 
 // CORS related settings
@@ -30,11 +31,8 @@ db.sequelize.sync({ force: true })
   console.log(`Server is running on port ${PORT}.`);
 })
 .then(() => {
-  console.log("Adding Permission table data");
-  db.permission.create({ permissionName: "Logged-in user (member)" });
-  db.permission.create({ permissionName: "Restaurant owner (owner)" });
-  db.permission.create({ permissionName: "Banned" });
-  db.permission.create({ permissionName: "Admin" });
+  // Loading test data into database
+  testData.loadTestData();
 });
 
 // Set welcome message for application
