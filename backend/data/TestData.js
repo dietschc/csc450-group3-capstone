@@ -73,7 +73,7 @@ const restaurant1Data = {
 	city: "Sunshine",
 	state: "MN",
 	zip: "11111",
-	imageLocation: "TestImage.gif",
+	imageLocation: "/reviewImages/0/olive-garden-restaurants-italian-style-g2-rdv.jpg",
 	restaurantName: "Uncle Bens",
 	restaurantDigiContact: "uncleBen@yahoo.com",
 	restaurantPhone: "1112223333",
@@ -164,7 +164,7 @@ const review4Data = {
 	serviceRating: 1,
 	cleanlinessRating: 1,
 	overallRating: 1,
-	imageLocation: "FakeLocation.gif"
+	imageLocation: "/reviewImages/0/olive-garden-restaurants-italian-style-g2-rdv.jpg"
 }
 
 
