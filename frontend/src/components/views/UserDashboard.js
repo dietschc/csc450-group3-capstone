@@ -26,6 +26,7 @@ import RestaurantReviewDetail from '../subComponent/RestaurantReviewDetail';
 import UDRestaurantReviewDetail from '../form/button/UDRestaurantReviewDetail';
 import DeleteReviewConfirm from '../modal/DeleteReviewConfirm';
 import { findByAuthorIdThunk } from '../../actions/reviewsRestaurants';
+import { deleteFriendThunk } from '../../actions/friend';
 import { deleteAllReviews } from '../../actions/reviews';
 import { deleteAllRestaurants } from '../../actions/restaurants';
 
@@ -35,6 +36,7 @@ function UserDashboard(props) {
         restaurants,
         reviews,
         findByAuthorIdThunk,
+        deleteFriendThunk,
         deleteAllReviews,
         deleteAllRestaurants,
     } = props;
@@ -80,8 +82,14 @@ function UserDashboard(props) {
 
     // Deletes the friend with the returned friend.userId
     const deleteFriend = () => {
-        // Delete Friend Code Here, use friend.userId to 
-        // grab the correct friend
+        // Define our id paramaeter
+        const id = users.length > 0 ? users[0].id : "";
+
+        // Define our friend id parameter
+        const friendId = friend.id;
+
+        // Call thunk method and pass parameters to backend
+        deleteFriendThunk(id, friendId);
         console.log(friend.userName + " was deleted!");
     }
 
@@ -182,5 +190,8 @@ const mapStateToProps = state =>
 // Exporting the component
 // export default UserDashboard;
 export default connect(mapStateToProps, {
-    findByAuthorIdThunk, deleteAllRestaurants, deleteAllReviews
+    findByAuthorIdThunk, 
+    deleteFriendThunk, 
+    deleteAllRestaurants, 
+    deleteAllReviews
 })(UserDashboard);

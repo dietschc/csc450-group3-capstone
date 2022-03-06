@@ -184,33 +184,36 @@ exports.update = (req, res) => {
   //     });
 };
 
-// Delete a Restaurant with the specified id in the request
+// Deletes a friend from the req.body for the user specified in the req.params.id
 exports.delete = (req, res) => {
-  // Pulling the friend to delete from params
-  const { id: friendId } = req.params;
+  // The id of the user who will be removing the friend
+  const id = req.params.id;
 
-  // Deleting the friend from the database based off teh id
+  // The id of the friend to be deleted
+  const friendTwoId = req.params.friendId;
+
+  // Destroy the Friend record where the friend exists to delete friend
   Friend.destroy({
-    where: { friendId: friendId },
+    where: {
+      friendOneId: id,
+      friendTwoId: friendTwoId
+    }
   })
-    .then((num) => {
-      // If the friend was deleted a success message is sent
+    .then(num => {
+      // No errors implies success
       if (num == 1) {
         res.send({
-          message: "Friend was deleted successfully!",
+          message: "Friend was deleted successfully!"
         });
-      }
-      // Else the user is notified the friend was not deleted
-      else {
-        res.status(500).send({
-          message: `Cannot delete Friend with id=${friendId}. Maybe Friend was not found!`,
+      } else {
+        res.status(404).send({
+          message: `Cannot delete Friend with id=${id}. Maybe Friend was not found!`
         });
       }
     })
-    .catch((err) => {
-      // If there is an error the message is sent or the user is notified by message
+    .catch(err => {
       res.status(500).send({
-        message: err.message || "Could not delete Friend with id=" + friendId,
+        message: "Could not delete Friend with id=" + id
       });
     });
 };
