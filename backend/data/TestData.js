@@ -68,6 +68,17 @@ const user4Data = {
     userPassword: "apples"
 }
 
+const user5Data = {
+    address: "12754 Happy St NW", 
+    city: "Tampico", 
+    state: "FL",
+    zip: "66123", 
+    firstName: "Admi", 
+    lastName: "Nistrator",  
+    userEmail: "boss@admin.com", 
+    userName: "admin", 
+    userPassword: "admin"
+}
 const restaurant1Data = {
     userCreatorId: 1,
     address: "Happy Day St",
@@ -196,10 +207,18 @@ loadTestData = async () => {
     db.permission.create({ permissionName: "Admin" });
 
     console.log("Loading in Users")
-    await addUser(user1Data)
-    await addUser(user2Data)
-    await addUser(user3Data)
-    await addUser(user4Data)
+    await addUser(user1Data) 
+    await addUser(user2Data) 
+    await addUser(user3Data) 
+    await addUser(user4Data) 
+    await addUser(user5Data) 
+
+    const data = {
+        userId: 5,
+        permissionId: 4
+    }
+
+    await updatePermission(data);
 
     console.log("Loading in Restaurants")
     await addRestaurant(restaurant1Data)
@@ -451,6 +470,10 @@ const addFriend = async ({ friendOneId, friendTwoId }) => {
             });
         });
 
+}
+
+updatePermission = async (data) => {
+    await Authentication.update(data, { where: { userId: data.userId }})
 }
 
 module.exports = { loadTestData }
