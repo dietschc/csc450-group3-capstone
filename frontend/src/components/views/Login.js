@@ -55,7 +55,7 @@ function Login(props) {
             ) : (
                 <div>
                     <div className="d-flex justify-content-around pt-2 pb-5">
-                        <Button variant="outline-primary" onClick={loginAccount}>
+                        <Button type="submit" variant="outline-primary">
                             Login
                         </Button>
 
@@ -83,7 +83,8 @@ function Login(props) {
         </div>
     )
 
-    const loginAccount = async () => {
+    const loginAccount = async (e) => {
+        e.preventDefault();
         // login(1);
         // logout(1);
 
@@ -131,18 +132,6 @@ function Login(props) {
         navigate("../editAccount");
     }
 
-    const handleSubmit = e => {
-        // alert("submit handler called");
-        loginAccount();
-    };
-
-    const handleKeypress = e => {
-        //it triggers by pressing the enter key    
-        if (e.key === "Enter") {
-            handleSubmit();
-        }
-    };
-
     return (
         <Container fluid className="text-muted login" style={{ maxWidth: "500px" }}>
 
@@ -158,7 +147,7 @@ function Login(props) {
                         </Link>
                     </div>
                 ) : (
-                    <Form>
+                    <Form onSubmit={loginAccount}>
 
                         <Form.Floating className="mb-3 justify-content-center">
                             <FloatingLabel
@@ -186,7 +175,6 @@ function Login(props) {
                                     name="password"
                                     value={password}
                                     onChange={onChangePassword}
-                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
