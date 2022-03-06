@@ -39,8 +39,8 @@ function FriendList(props) {
             </Card.Title>
             <Card.Body style={{ overflow: "auto"}}>
                 <ListGroup className="mb-3">
-                    {friends.map((friend) => (
-                        <ListGroup.Item key={friend.userId} id={friend.userId}>
+                    {friends.map((friend, index) => (
+                        <ListGroup.Item key={index} id={friend.userId}>
                             <Row>
                                 <Col className="d-flex align-items-center my-1 me-0 pe-0 flex-shrink-1">
                                     {friend.userName}

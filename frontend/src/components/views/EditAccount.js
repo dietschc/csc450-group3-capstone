@@ -24,7 +24,7 @@ function EditAccount(props) {
 
     // keeps track of if the form was submitted
     const [submitted, setSubmitted] = useState(false)
-    const [validated, setValidated] = useState(false);
+    // const [validated, setValidated] = useState(false);
     // Check if user is logged in
     const isEditing = checkLogin(users);
 
@@ -85,7 +85,9 @@ function EditAccount(props) {
         setPassword(password);
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
         // console.log("handle submit pressed");
         // const form = event.currentTarget;
         // if (form.checkValidity() === false) {
@@ -99,13 +101,6 @@ function EditAccount(props) {
             updateAccount();
         } else {
             saveAccount();
-        }
-    };
-
-    const handleKeypress = e => {
-        //it triggers by pressing the enter key    
-        if (e.key === "Enter") {
-            handleSubmit();
         }
     };
 
@@ -150,11 +145,11 @@ function EditAccount(props) {
     const displaySubmitButton = () => (
         <div className="d-flex justify-content-around pt-2 pb-5">
             {isEditing ? (
-                <Button variant="outline-primary" onClick={handleSubmit}>
+                <Button type="submit" variant="outline-primary">
                     Update
                 </Button>
             ) : (
-                <Button variant="outline-primary" onClick={handleSubmit}>
+                <Button type="submit" variant="outline-primary">
                     Submit
                 </Button>
             )}
@@ -195,7 +190,7 @@ function EditAccount(props) {
                     </div>
 
                 ) : (
-                    <Form>
+                    <Form onSubmit={handleSubmit}>
                         <Form.Floating className="mb-3 justify-content-center">
                             <FloatingLabel
                                 controlId="floatingUserId"
@@ -206,7 +201,6 @@ function EditAccount(props) {
                                     required
                                     value={userName}
                                     onChange={onChangeUserName}
-                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -220,7 +214,6 @@ function EditAccount(props) {
                                     placeholder="User Name"
                                     value={firstName}
                                     onChange={onChangeFirstName}
-                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -234,7 +227,6 @@ function EditAccount(props) {
                                     placeholder="Last Name"
                                     value={lastName}
                                     onChange={onChangeLastName}
-                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -248,7 +240,6 @@ function EditAccount(props) {
                                     placeholder="Address"
                                     value={address}
                                     onChange={onChangeAddress}
-                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -262,7 +253,6 @@ function EditAccount(props) {
                                     placeholder="City"
                                     value={city}
                                     onChange={onChangeCity}
-                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -281,7 +271,6 @@ function EditAccount(props) {
                                         placeholder="Zip"
                                         value={zip}
                                         onChange={onChangeZip}
-                                        onKeyPress={handleKeypress}
                                     />
                                 </FloatingLabel>
                             </Form.Floating>
@@ -311,7 +300,6 @@ function EditAccount(props) {
                                     required
                                     value={password}
                                     onChange={onChangePassword}
-                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>

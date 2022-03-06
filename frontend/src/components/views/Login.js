@@ -13,13 +13,13 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Form, Container, FloatingLabel, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { connect } from 'react-redux';
-import { loginThunk, deleteAllUsers, addUser } from '../../actions/users';
+import { loginThunk, deleteAllUsers } from '../../actions/users';
 import { Link } from 'react-router-dom';
 import { checkLogin } from '../../helperFunction/CheckLogin'
 
 function Login(props) {
 
-    const { loginThunk, deleteAllUsers, users, addUser } = props;
+    const { loginThunk, deleteAllUsers, users } = props;
 
     const [isSubmitted, setSubmitted] = useState(false)
     const [isError, setShowError] = useState(false)
@@ -55,7 +55,7 @@ function Login(props) {
             ) : (
                 <div>
                     <div className="d-flex justify-content-around pt-2 pb-5">
-                        <Button variant="outline-primary" onClick={loginAccount}>
+                        <Button type="submit" variant="outline-primary">
                             Login
                         </Button>
 
@@ -83,7 +83,8 @@ function Login(props) {
         </div>
     )
 
-    const loginAccount = async () => {
+    const loginAccount = async (e) => {
+        e.preventDefault();
         // login(1);
         // logout(1);
 
@@ -131,18 +132,6 @@ function Login(props) {
         navigate("../editAccount");
     }
 
-    const handleSubmit = e => {
-        // alert("submit handler called");
-        loginAccount();
-    };
-
-    const handleKeypress = e => {
-        //it triggers by pressing the enter key    
-        if (e.key === "Enter") {
-            handleSubmit();
-        }
-    };
-
     return (
         <Container fluid className="text-muted login" style={{ maxWidth: "500px" }}>
 
@@ -158,7 +147,7 @@ function Login(props) {
                         </Link>
                     </div>
                 ) : (
-                    <Form>
+                    <Form onSubmit={loginAccount}>
 
                         <Form.Floating className="mb-3 justify-content-center">
                             <FloatingLabel
@@ -186,7 +175,6 @@ function Login(props) {
                                     name="password"
                                     value={password}
                                     onChange={onChangePassword}
-                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -208,4 +196,4 @@ const mapStateToProps = state =>
 
 // Exporting the component
 // export default Login;
-export default connect(mapStateToProps, { loginThunk, deleteAllUsers, addUser })(Login);
+export default connect(mapStateToProps, { loginThunk, deleteAllUsers })(Login);

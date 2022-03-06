@@ -15,17 +15,28 @@ import { Navbar, Button, Nav, Form, Container, FormControl } from 'react-bootstr
 import { LinkContainer } from 'react-router-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
-import { deleteUser } from '../../actions/users';
+import { deleteAllUsers } from '../../actions/users';
+import { deleteAllMessages} from '../../actions/messages';
+import { deleteAllReviews } from '../../actions/reviews';
+import { deleteAllRestaurants } from '../../actions/restaurants';
 import { checkLogin } from '../../helperFunction/CheckLogin';
+import ModalLogoutConfirm from '../modal/LogoutConfirm';
 
 function MainNav(props) {
     // Setting up the basic state needed to run MainNav
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const [basicActive, setBasicActive] = useState();
     const [searchInput, setSearchInput] = useState("");
     const navigate = useNavigate();
 
     // Get user state from props
-    const { users } = props;
+    const { 
+        users, 
+        deleteAllUsers, 
+        deleteAllMessages, 
+        deleteAllReviews, 
+        deleteAllRestaurants 
+    } = props;
 
     // Setting the active nav element
     const setActive = (value) => {
@@ -46,22 +57,68 @@ function MainNav(props) {
 
         // Clearing the search input 
         setSearchInput("")
-        
+
         // Clearing the active button
         setActive("none")
     }
 
-    // Remove everything from state on logout
-    const logoutAccount = () => {
-        // Workong on getting a modal confirmation created for this
-        // deleteAllUsers();
-        // deleteAllMessages();
-        // deleteAllReviews();
-        // deleteAllRestaurants();
+    // Handlers for the LogoutConfirm modal
+    const showLogoutHandler = () => setShowLogoutConfirm(true);
+    const closeLogoutHandler = () => setShowLogoutConfirm(false);
+
+    // Handles the click to show the modal windows when the logout button is pressed
+    const logoutHandler = () => {
+        // console.log("logout button pressed");
+        showLogoutHandler();
     }
 
-    // Check if user is logged in
-    const showLogout = checkLogin(users) ? <div onClick={logoutAccount}>Logout</div> : "Login";
+    // Remove everything from state on logout
+    const logoutAccount = () => {
+        console.log("loggout account");
+        deleteAllUsers();
+        deleteAllMessages();
+        deleteAllReviews();
+        deleteAllRestaurants();
+
+        // Navigate to home after logout
+        navigate("/");
+    }
+
+    const showLoginControls = () => (
+        <>
+            {checkLogin(users) ? (
+                <>
+                    <Nav.Item className="mx-3">
+                        <LinkContainer to="/userDashboard">
+                            <Nav.Link>
+                                Dashboard
+                            </Nav.Link>
+                        </LinkContainer>
+                    </Nav.Item>
+                    <Nav.Item className="mx-3" onClick={logoutHandler}>
+                        <Nav.Link>
+                            Logout
+                        </Nav.Link>
+                    </Nav.Item>
+                </>
+            ) : (
+                <>
+                    <Nav.Item className="mx-3">
+                        <LinkContainer to="/login">
+                            <Nav.Link>
+                                Login
+                            </Nav.Link>
+                        </LinkContainer>
+                    </Nav.Item>
+                </>
+            )}
+
+            <ModalLogoutConfirm
+                show={showLogoutConfirm}
+                logout={logoutAccount}
+                closeHandler={closeLogoutHandler} />
+        </>
+    )
 
     // Theme variables
     const buttonTheme = "outline-primary";
@@ -96,25 +153,10 @@ function MainNav(props) {
                                     Home
                                 </Nav.Link>
                             </LinkContainer>
-
                         </Nav.Item>
-                        <Nav.Item className="mx-3">
-                            <LinkContainer to="/userDashboard">
-                                <Nav.Link>
-                                    Dashboard
-                                </Nav.Link>
-                            </LinkContainer>
 
-                        </Nav.Item>
-                        <Nav.Item className="mx-3">
+                        {showLoginControls()}
 
-                            <LinkContainer to="/login">
-                                <Nav.Link>
-                                    {showLogout}
-                                </Nav.Link>
-                            </LinkContainer>
-
-                        </Nav.Item>
                     </Nav>
                     <Form onSubmit={searchHandler} className="d-flex">
                         <FormControl
@@ -144,4 +186,9 @@ const mapStateToProps = state =>
 
 // Exporting the component
 // export default MainNav;
-export default connect(mapStateToProps, {})(MainNav);
+export default connect(mapStateToProps, { 
+    deleteAllUsers, 
+    deleteAllMessages, 
+    deleteAllReviews, 
+    deleteAllRestaurants  
+})(MainNav);

@@ -248,7 +248,7 @@ function Review(props) {
                             Submit
                         </Button>
 
-                        <ModalCancelConfirm></ModalCancelConfirm>
+                        <ModalCancelConfirm />
                     </div>
                 </Form>
             </Container>
