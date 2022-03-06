@@ -86,14 +86,14 @@ function EditAccount(props) {
     }
 
     const handleSubmit = (event) => {
-        console.log("handle submit pressed");
-        const form = event.currentTarget;
-        if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
+        // console.log("handle submit pressed");
+        // const form = event.currentTarget;
+        // if (form.checkValidity() === false) {
+        //     event.preventDefault();
+        //     event.stopPropagation();
+        // }
 
-        setValidated(true);
+        // setValidated(true);
 
         if (isEditing) {
             updateAccount();
@@ -102,61 +102,17 @@ function EditAccount(props) {
         }
     };
 
-    const saveAccount = () => {
+    const handleKeypress = e => {
+        //it triggers by pressing the enter key    
+        if (e.key === "Enter") {
+            handleSubmit();
+        }
+    };
 
+    const saveAccount = () => {
         // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
         addUserThunk(userName, firstName, lastName, address, city, state, zip, email, password)
 
-        let data = {
-            userName: userName,
-            firstName: firstName,
-            lastName: lastName,
-            address: address,
-            city: city,
-            zip: zip,
-            state: state,
-            email: email,
-            password: password
-        }
-
-        // This variable is used for testing the following 
-        // reducers/actions
-        let testData = {
-            userId: 0,
-            userName: "uName",
-            firstName: "fName",
-            lastName: "lName",
-            address: "address",
-            city: "city",
-            zip: "zip",
-            state: "state",
-            email: "email",
-            password: "password",
-            friendId: 2,
-            friendUserName: "testFriend",
-            permissionId: 1,
-            permissionName: "testPermission"
-        }
-
-        // addUser(testData.userName, testData.firstName, 
-        //     testData.lastName, testData.address, 
-        //     testData.city, testData.zip, testData.state, 
-        //     testData.email, testData.password);
-
-        // deleteUser(testData.userId)
-        // deleteAllUsers()
-        // updateUser(testData.userId, testData.userName, testData.firstName, 
-        //     testData.lastName, testData.address, 
-        //     testData.city, testData.zip, testData.state, 
-        //     testData.email, testData.password)
-        // addFriend(testData.userId, testData.friendId, testData.friendUserName)
-        // deleteFriend(testData.userId, testData.friendId)
-        // deleteAllFriends(testData.userId)
-        // login(testData.userId)
-        // logout(testData.userId)
-        // updatePermission(testData.userId, testData.permissionId, testData.permissionName)
-
-        console.log(data)
         setSubmitted(true)
 
         // Bring back to user dashboard after
@@ -194,11 +150,11 @@ function EditAccount(props) {
     const displaySubmitButton = () => (
         <div className="d-flex justify-content-around pt-2 pb-5">
             {isEditing ? (
-                <Button type="submit" variant="outline-primary">
+                <Button variant="outline-primary" onClick={handleSubmit}>
                     Update
                 </Button>
             ) : (
-                <Button type="submit" variant="outline-primary">
+                <Button variant="outline-primary" onClick={handleSubmit}>
                     Submit
                 </Button>
             )}
@@ -239,7 +195,7 @@ function EditAccount(props) {
                     </div>
 
                 ) : (
-                    <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                    <Form>
                         <Form.Floating className="mb-3 justify-content-center">
                             <FloatingLabel
                                 controlId="floatingUserId"
@@ -250,6 +206,7 @@ function EditAccount(props) {
                                     required
                                     value={userName}
                                     onChange={onChangeUserName}
+                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -263,6 +220,7 @@ function EditAccount(props) {
                                     placeholder="User Name"
                                     value={firstName}
                                     onChange={onChangeFirstName}
+                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -276,6 +234,7 @@ function EditAccount(props) {
                                     placeholder="Last Name"
                                     value={lastName}
                                     onChange={onChangeLastName}
+                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -289,6 +248,7 @@ function EditAccount(props) {
                                     placeholder="Address"
                                     value={address}
                                     onChange={onChangeAddress}
+                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -302,6 +262,7 @@ function EditAccount(props) {
                                     placeholder="City"
                                     value={city}
                                     onChange={onChangeCity}
+                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -320,6 +281,7 @@ function EditAccount(props) {
                                         placeholder="Zip"
                                         value={zip}
                                         onChange={onChangeZip}
+                                        onKeyPress={handleKeypress}
                                     />
                                 </FloatingLabel>
                             </Form.Floating>
@@ -349,6 +311,7 @@ function EditAccount(props) {
                                     required
                                     value={password}
                                     onChange={onChangePassword}
+                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
