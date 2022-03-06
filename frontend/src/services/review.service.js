@@ -3,6 +3,7 @@
 // Restaurant Club - review.service.js
 // February 28, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 3/05/2022, Added in route for findByRestaurantAuthorIdOffsetLimit)
 
 import http from "../http-common";
 
@@ -100,6 +101,19 @@ class ReviewDataService {
      */
      findByRestaurantIdOffsetLimit(offset, limit, id) {
         return http.get(`/review/restaurant/${offset}/${limit}/${id}`);
+    }
+
+    /**
+     * Retrieve review  matching the author id ordered asc by review name and result limit
+     * 
+     * @param {*} offset 
+     * @param {*} limit 
+     * @param {*} authorId 
+     * @param {*} restaurantId
+     * @returns - Review data if found
+     */
+     findByRestaurantAuthorIdOffsetLimit(offset, limit, authorId, restaurantId) {
+        return http.get(`/review/${offset}/${limit}/${authorId}/${restaurantId}`);
     }
     
     /**

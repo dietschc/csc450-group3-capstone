@@ -28,7 +28,7 @@ function RestaurantHeadingCardBody(props) {
         <Card.Body>
             <Card.Title as="h2" className="text-center">
                 <div>
-                    { restaurant.name }
+                    {restaurant.name}
                 </div>
             </Card.Title>
             <Card.Text as="h3" className="text-center">
@@ -40,7 +40,7 @@ function RestaurantHeadingCardBody(props) {
                 </div>
             </Card.Text>
         </Card.Body>
-    )  
+    )
 }
 
 // Exporting the component

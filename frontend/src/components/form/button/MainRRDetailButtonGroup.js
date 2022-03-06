@@ -3,6 +3,7 @@
 // Restaurant Club - MainRRDetailButtonGroup.js
 // February 7, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 3/05/2022, Fixed moreHandler to return author.id)
 
 // Using React library in order to build components
 // for the app and importing needed components
@@ -31,7 +32,7 @@ function MainRRDetailButtonGroup(props) {
         className="mx-1"
         style={{ width: "8rem" }}
         onClick={() => {
-          moreHandler(review.author.userId, review.restaurant.id);
+          moreHandler(review.author.id, review.restaurant.id);
         }}
       >
         More

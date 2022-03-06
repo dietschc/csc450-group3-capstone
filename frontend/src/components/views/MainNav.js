@@ -12,30 +12,42 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar, Button, Nav, Form, Container, FormControl } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap'
-import 'bootstrap/dist/css/bootstrap.min.css'
+import { LinkContainer } from 'react-router-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
-// import { deleteAllUsers } from '../../actions/users';
-// import { deleteAllMessages } from '../../actions/messages';
-// import { deleteAllReviews } from '../../actions/reviews';
-// import { deleteAllRestaurants } from '../../actions/restaurants';
-import { checkLogin } from '../../helperFunction/CheckLogin'
+import { deleteUser } from '../../actions/users';
+import { checkLogin } from '../../helperFunction/CheckLogin';
 
 function MainNav(props) {
+    // Setting up the basic state needed to run MainNav
     const [basicActive, setBasicActive] = useState();
+    const [searchInput, setSearchInput] = useState("");
     const navigate = useNavigate();
 
     // Get user state from props
     const { users } = props;
 
+    // Setting the active nav element
     const setActive = (value) => {
         if (value === basicActive) return;
         console.log("Navigating to " + value)
         setBasicActive(value);
     }
 
-    const searchHandler = () => {
-        navigate("search");
+    // The searchHandler method will navigate the user 
+    // to the search page so a search can be performed
+    const searchHandler = (e) => {
+        // Preventing default form submission actions
+        e.preventDefault();
+
+        // Navigating the user to the search page and passing 
+        // the needed search parameters
+        navigate(`search/${searchInput}`);
+
+        // Clearing the search input 
+        setSearchInput("")
+        
+        // Clearing the active button
         setActive("none")
     }
 
@@ -70,7 +82,7 @@ function MainNav(props) {
                         width="90"
                         height="90"
                         className="flex-begin"
-                        alt="Restaurant Club Logo"
+                        alt="Logo"
                     />
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -104,14 +116,17 @@ function MainNav(props) {
 
                         </Nav.Item>
                     </Nav>
-                    <Form className="d-flex">
+                    <Form onSubmit={searchHandler} className="d-flex">
                         <FormControl
                             type="search"
+                            name="searchInput"
+                            value={searchInput}
+                            onInput={e => setSearchInput(e.target.value)}
                             placeholder="Search"
                             className="me-2"
                             aria-label="Search"
                         />
-                        <Button variant={buttonTheme} onClick={() => searchHandler()}>
+                        <Button type="submit" variant={buttonTheme}>
                             Search
                         </Button>
                     </Form>
