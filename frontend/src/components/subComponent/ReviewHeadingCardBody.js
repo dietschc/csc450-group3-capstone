@@ -57,7 +57,7 @@ function ReviewHeadingCardBody(props) {
                     {review.restaurant.name}
                 </div>
             </Card.Title>
-            <Card.Text as="h4" className="text-center">
+            <Card.Text as="h3" className="text-center">
                 <div>
                     {/* {printStarTotal(restaurants.filter((restaurant) => (restaurant.id === review.restaurant.id))[0].rating.overallRating)} */}
                     {printStarTotal(starTotal)}

@@ -103,7 +103,7 @@ export const addUser = ({ userId, userName,
             userName: userName,
             permission: {
                 id: permissionId,
-                permissionName: "general"
+                permissionName: "member"
             },
             password: userPassword,
             history: {
@@ -113,7 +113,7 @@ export const addUser = ({ userId, userName,
             }
         },
         email: userEmail,
-        isLoggedIn: false
+        isLoggedIn: true
     })
 
 /**

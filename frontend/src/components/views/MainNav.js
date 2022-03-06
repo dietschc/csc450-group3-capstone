@@ -25,7 +25,7 @@ function MainNav(props) {
     const navigate = useNavigate();
 
     // Get user state from props
-    const { deleteUser, users } = props;
+    const { users } = props;
 
     // Setting the active nav element
     const setActive = (value) => {
@@ -51,10 +51,13 @@ function MainNav(props) {
         setActive("none")
     }
 
-    // Remove user from state
+    // Remove everything from state on logout
     const logoutAccount = () => {
-        // This is disabled for now but will likely be implemented with a modal confirmation
-        // deleteUser(users[0].id);
+        // Workong on getting a modal confirmation created for this
+        // deleteAllUsers();
+        // deleteAllMessages();
+        // deleteAllReviews();
+        // deleteAllRestaurants();
     }
 
     // Check if user is logged in
@@ -141,4 +144,4 @@ const mapStateToProps = state =>
 
 // Exporting the component
 // export default MainNav;
-export default connect(mapStateToProps, { deleteUser })(MainNav);
+export default connect(mapStateToProps, {})(MainNav);

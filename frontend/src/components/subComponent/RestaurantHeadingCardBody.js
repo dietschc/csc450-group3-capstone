@@ -31,7 +31,7 @@ function RestaurantHeadingCardBody(props) {
                     {restaurant.name}
                 </div>
             </Card.Title>
-            <Card.Text as="h4" className="text-center">
+            <Card.Text as="h3" className="text-center">
                 <div>
                     {printStarTotal(restaurant.rating.overallRating)}
                 </div>
