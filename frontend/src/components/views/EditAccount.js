@@ -10,19 +10,23 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 import FormContainer from '../template/FormContainer';
 import { addUserThunk, updateUserThunk } from '../../actions/users';
 import { checkLogin } from '../../helperFunction/CheckLogin'
+import FloatingStateOptionList from '../form/floatingComponents/FloatingStateOptionList';
 
 function EditAccount(props) {
     const { addUserThunk, updateUserThunk, users } = props;
 
     // keeps track of if the form was submitted
     const [submitted, setSubmitted] = useState(false)
+    const [validated, setValidated] = useState(false);
+    // Check if user is logged in
+    const isEditing = checkLogin(users);
 
     const [userName, setUserName] = useState(users.length > 0 ? users[0].auth.userName : "");
     const [firstName, setFirstName] = useState(users.length > 0 ? users[0].firstName : "");
@@ -33,6 +37,8 @@ function EditAccount(props) {
     const [state, setState] = useState(users.length > 0 ? users[0].address.state : "");
     const [email, setEmail] = useState(users.length > 0 ? users[0].email : "");
     const [password, setPassword] = useState(users.length > 0 ? users[0].auth.password : "");
+
+    const navigate = useNavigate();
 
     const onChangeUserName = e => {
         const userName = e.target.value
@@ -79,8 +85,22 @@ function EditAccount(props) {
         setPassword(password);
     }
 
-    // Check if user is logged in
-    const isEditing = checkLogin(users);
+    const handleSubmit = (event) => {
+        console.log("handle submit pressed");
+        const form = event.currentTarget;
+        if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        setValidated(true);
+
+        if (isEditing) {
+            updateAccount();
+        } else {
+            saveAccount();
+        }
+    };
 
     const saveAccount = () => {
 
@@ -138,6 +158,9 @@ function EditAccount(props) {
 
         console.log(data)
         setSubmitted(true)
+
+        // Bring back to user dashboard after
+        setTimeout(() => { navigate("../userDashboard") }, 500);
     }
 
     const updateAccount = () => {
@@ -159,6 +182,9 @@ function EditAccount(props) {
         updateUserThunk(id, data)
         // console.log("id: ", id);
         // console.log("updating with data: ", data);
+
+        // Bring back to user dashboard after
+        setTimeout(() => { navigate("../userDashboard") }, 500);
     }
 
     /**
@@ -168,11 +194,11 @@ function EditAccount(props) {
     const displaySubmitButton = () => (
         <div className="d-flex justify-content-around pt-2 pb-5">
             {isEditing ? (
-                <Button variant="outline-primary" onClick={updateAccount}>
+                <Button type="submit" variant="outline-primary">
                     Update
                 </Button>
             ) : (
-                <Button variant="outline-primary" onClick={saveAccount}>
+                <Button type="submit" variant="outline-primary">
                     Submit
                 </Button>
             )}
@@ -213,7 +239,7 @@ function EditAccount(props) {
                     </div>
 
                 ) : (
-                    <Form>
+                    <Form noValidate validated={validated} onSubmit={handleSubmit}>
                         <Form.Floating className="mb-3 justify-content-center">
                             <FloatingLabel
                                 controlId="floatingUserId"
@@ -235,7 +261,6 @@ function EditAccount(props) {
                                 <Form.Control
                                     type="text"
                                     placeholder="User Name"
-                                    required
                                     value={firstName}
                                     onChange={onChangeFirstName}
                                 />
@@ -249,7 +274,6 @@ function EditAccount(props) {
                                 <Form.Control
                                     type="text"
                                     placeholder="Last Name"
-                                    required
                                     value={lastName}
                                     onChange={onChangeLastName}
                                 />
@@ -263,7 +287,6 @@ function EditAccount(props) {
                                 <Form.Control
                                     type="text"
                                     placeholder="Address"
-                                    required
                                     value={address}
                                     onChange={onChangeAddress}
                                 />
@@ -277,7 +300,6 @@ function EditAccount(props) {
                                 <Form.Control
                                     type="text"
                                     placeholder="City"
-                                    required
                                     value={city}
                                     onChange={onChangeCity}
                                 />
@@ -286,21 +308,8 @@ function EditAccount(props) {
 
 
                         <Row className="justify-content-center">
-                            <Form.Floating as={Col} sm={6} className="mb-3 justify-content-center">
-                                <FloatingLabel
-                                    controlId="floatingState"
-                                    label="State">
-                                    <Form.Select
-                                        aria-label="select state options"
-                                        value={state}
-                                        onChange={onChangeState}>
-                                        <option>Select</option>
-                                        <option value="MN">MN</option>
-                                        <option value="WI">WI</option>
-                                        <option value="XX">XX</option>
-                                    </Form.Select>
-                                </FloatingLabel>
-                            </Form.Floating>
+
+                            <FloatingStateOptionList state={state} onChangeState={onChangeState} />
 
                             <Form.Floating as={Col} sm={6} className="mb-3 justify-content-center">
                                 <FloatingLabel
@@ -309,7 +318,6 @@ function EditAccount(props) {
                                     <Form.Control
                                         type="text"
                                         placeholder="Zip"
-                                        required
                                         value={zip}
                                         onChange={onChangeZip}
                                     />

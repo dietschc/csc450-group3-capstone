@@ -14,8 +14,11 @@ import { useNavigate } from 'react-router-dom';
 import { Navbar, Button, Nav, Form, Container, FormControl } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { useSelector, connect } from 'react-redux';
-import { deleteUser } from '../../actions/users';
+import { connect } from 'react-redux';
+// import { deleteAllUsers } from '../../actions/users';
+// import { deleteAllMessages } from '../../actions/messages';
+// import { deleteAllReviews } from '../../actions/reviews';
+// import { deleteAllRestaurants } from '../../actions/restaurants';
 import { checkLogin } from '../../helperFunction/CheckLogin'
 
 function MainNav(props) {
@@ -23,7 +26,7 @@ function MainNav(props) {
     const navigate = useNavigate();
 
     // Get user state from props
-    const { deleteUser, users } = props;
+    const { users } = props;
 
     const setActive = (value) => {
         if (value === basicActive) return;
@@ -36,10 +39,13 @@ function MainNav(props) {
         setActive("none")
     }
 
-    // Remove user from state
+    // Remove everything from state on logout
     const logoutAccount = () => {
-        // This is disabled for now but will likely be implemented with a modal confirmation
-        // deleteUser(users[0].id);
+        // Workong on getting a modal confirmation created for this
+        // deleteAllUsers();
+        // deleteAllMessages();
+        // deleteAllReviews();
+        // deleteAllRestaurants();
     }
 
     // Check if user is logged in
@@ -123,4 +129,4 @@ const mapStateToProps = state =>
 
 // Exporting the component
 // export default MainNav;
-export default connect(mapStateToProps, { deleteUser })(MainNav);
+export default connect(mapStateToProps, {})(MainNav);

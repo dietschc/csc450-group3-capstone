@@ -9,19 +9,28 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link  } from 'react-router-dom';
 import { Button, Form, Container, FloatingLabel, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { connect } from 'react-redux';
-import { loginThunk, deleteUser, addUser } from '../../actions/users';
-import { Link } from 'react-router-dom';
 import { checkLogin } from '../../helperFunction/CheckLogin'
+import { loginThunk, deleteAllUsers } from '../../actions/users';
+import { deleteAllMessages } from '../../actions/messages';
+import { deleteAllReviews } from '../../actions/reviews';
+import { deleteAllRestaurants } from '../../actions/restaurants';
 
 function Login(props) {
 
-    const { loginThunk, deleteUser, users, addUser } = props;
+    const { 
+        loginThunk,
+        deleteAllUsers,
+        deleteAllMessages,
+        deleteAllReviews,
+        deleteAllRestaurants,
+        users
+    } = props;
 
-    const [isSubmitted, setSubmitted] = useState(false)
+    const [submitted, setSubmitted] = useState(false)
     const [isError, setShowError] = useState(false)
     const [isSuccess, setShowSuccess] = useState(false)
     const [userName, setUserName] = useState(users.length > 0 ? users[0].auth.userName : "");
@@ -55,7 +64,7 @@ function Login(props) {
             ) : (
                 <div>
                     <div className="d-flex justify-content-around pt-2 pb-5">
-                        <Button variant="outline-primary" onClick={loginAccount}>
+                        <Button type="submit" variant="outline-primary">
                             Login
                         </Button>
 
@@ -87,7 +96,7 @@ function Login(props) {
         // login(1);
         // logout(1);
 
-        // console.log("Users: ", users);
+        console.log("Users: ", users);
         // console.log("Users: " + users[1].isLoggedIn);
 
         // Call login thunk function which tries to authenticate against the backend
@@ -98,11 +107,11 @@ function Login(props) {
                 if (res.isLoggedIn === true) {
                     console.log("SUCCESS");
 
-                    // setSubmitted(true);
                     setShowSuccess(true);
+                    setSubmitted(true);
 
-                    // Navigate to dashboard after 1.5 seconds
-                    setTimeout(() => { navigate("../userDashboard") }, 1500)
+                    // Navigate to dashboard after 0.5 seconds
+                    setTimeout(() => { navigate("../userDashboard") }, 2500)
                 } else {
                     clearForm();
                     setShowError(true);
@@ -114,12 +123,15 @@ function Login(props) {
             })
     }
 
+    // Remove everything from state
     const logoutAccount = () => {
-        // This will remove the user from state
-        // setIsloggedIn(false);
-        deleteUser(users[0].id);
+        // Remove data from the 4 state arrays
+        deleteAllUsers();
+        deleteAllMessages();
+        deleteAllReviews();
+        deleteAllRestaurants();
+
         clearForm();
-        // addUser("");
     }
 
     const clearForm = () => {
@@ -138,7 +150,7 @@ function Login(props) {
                 <h1>Login</h1>
             </Container>
             <Container fluid as="main" className="mt-5 justify-content-center align-center">
-                {isSubmitted ? (
+                {submitted ? (
                     <div className="text-center">
                         <h4>Account logged in successfully!</h4>
                         <Link to={"/"}>
@@ -146,7 +158,7 @@ function Login(props) {
                         </Link>
                     </div>
                 ) : (
-                    <Form>
+                    <Form onSubmit={loginAccount}>
 
                         <Form.Floating className="mb-3 justify-content-center">
                             <FloatingLabel
@@ -195,4 +207,10 @@ const mapStateToProps = state =>
 
 // Exporting the component
 // export default Login;
-export default connect(mapStateToProps, { loginThunk, deleteUser, addUser })(Login);
+export default connect(mapStateToProps, { 
+    loginThunk,
+    deleteAllUsers, 
+    deleteAllMessages,
+    deleteAllReviews,
+    deleteAllRestaurants
+})(Login);
