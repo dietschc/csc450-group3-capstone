@@ -7,12 +7,49 @@
 //  (DAB, 2/19/2022, Added in comments, altered code for images update)
 //  (DAB, 3/01/2022, Added in thunk methods )
 //  (DAB, 3/02/20222, Added in comments)
+//  (DAB, 3/05/2022, Added in findByRestaurantNameThunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import C from '../constants';
 import RestaurantDataService from "../services/restaurant.service";
 import { formatDBRestaurantFind } from '../helperFunction/actionHelpers';
+
+/**
+ * Searches the database by restaurant name for all matching restaurants up to the 
+ * offset/limit. It will then add the results to state.
+ * 
+ * @param {*} offset 
+ * @param {*} limit 
+ * @param {*} restaurantName
+ * @returns 
+ */
+export const findByRestaurantNameThunk = (offset, limit, restaurantName) => async dispatch => {
+    // The restaurant database will be queried for all restaurants within the 
+    // parameter offset/limit that are like the restaurantName
+    await RestaurantDataService.findByNameOffsetLimit(offset, limit, restaurantName)
+        .then(async res => {
+            console.log(res);
+            // If there is data in the query it is added to redux state
+            if (res) {
+                // Iterating through the restaurant data
+                await res.data.map(restaurant => {
+                    // The restaurant data is formatted to be added to redux state
+                    const restaurantData = formatDBRestaurantFind(restaurant);
+
+                    // Adding the restaurant to redux state
+                    dispatch(addRestaurant(restaurantData));
+
+                    // Returning the restaurant data
+                    return restaurant;
+                })
+            }
+        })
+        .catch(err => {
+            // If there is an error it will be logged
+            console.log(err)
+        })
+}
 
 /**
  * Searches the database for all restaurants with up to the offset/limit. It will then 
@@ -33,7 +70,7 @@ export const findAllRestaurantsOrderedThunk = (offset, limit) => async dispatch 
                 await res.data.map(restaurant => {
                     // The restaurant data is formatted to be added to redux state
                     const restaurantData = formatDBRestaurantFind(restaurant);
-                    
+
                     // Adding the restaurant to redux state
                     dispatch(addRestaurant(restaurantData));
 
@@ -53,7 +90,7 @@ export const findAllRestaurantsOrderedThunk = (offset, limit) => async dispatch 
  * Adds the restaurant to the database and updates state.
  * @returns 
  */
-export const addRestaurantThunk= () => async dispatch => {}
+export const addRestaurantThunk = () => async dispatch => { }
 
 /**
  * React Redux reducer that will add a new restaurant to state.
@@ -84,19 +121,19 @@ export const addRestaurantThunk= () => async dispatch => {}
  * } param0 
  * @returns 
  */
-export const addRestaurant = ({restaurantId, userCreatorId, 
-    userName, userOwnerId, restaurantName, 
-    restaurantDigiContact, restaurantWebsite, 
-    restaurantPhone, addressId, address, 
-    city, state, zip, ratingId, tasteRating, 
-    serviceRating, cleanlinessRating, overallRating, 
-    reviewCount, imageId, imageLocation}) => ({
+export const addRestaurant = ({ restaurantId, userCreatorId,
+    userName, userOwnerId, restaurantName,
+    restaurantDigiContact, restaurantWebsite,
+    restaurantPhone, addressId, address,
+    city, state, zip, ratingId, tasteRating,
+    serviceRating, cleanlinessRating, overallRating,
+    reviewCount, imageId, imageLocation }) => ({
         type: C.ADD_RESTAURANT,
         id: restaurantId,
         author: {
             id: userCreatorId,
             userName: userName
-        }, 
+        },
         ownerId: userOwnerId,
         name: restaurantName,
         digitalContact: restaurantDigiContact,
@@ -196,28 +233,28 @@ export const updateRestaurantOwner = (restaurantId, ownerId) => ({
  * @param {*} imageLocation 
  * @returns 
  */
-export const updateRestaurant = (restaurantId, restaurantName, authorId, authorUserName, address, 
+export const updateRestaurant = (restaurantId, restaurantName, authorId, authorUserName, address,
     city, state, zip, phone, digitalContact, website, imageArray) => ({
-    type: C.UPDATE_RESTAURANT,
-    id: restaurantId,
-    author: {
-        id: authorId,
-        userName: authorUserName
-    },
-    name: restaurantName,
-    digitalContact: digitalContact,
-    website: website,
-    phone: phone,
-    address: {
-        address: address,
-        city: city,
-        state: state,
-        zip: zip
-    },
-    images: imageArray
-        
-    
-})
+        type: C.UPDATE_RESTAURANT,
+        id: restaurantId,
+        author: {
+            id: authorId,
+            userName: authorUserName
+        },
+        name: restaurantName,
+        digitalContact: digitalContact,
+        website: website,
+        phone: phone,
+        address: {
+            address: address,
+            city: city,
+            state: state,
+            zip: zip
+        },
+        images: imageArray
+
+
+    })
 
 /**
  * React Redux reducer that will update the restaurant rating in state for the 
@@ -230,17 +267,17 @@ export const updateRestaurant = (restaurantId, restaurantName, authorId, authorU
  * @param {*} overallRating 
  * @returns 
  */
-export const updateRestaurantRating = (restaurantId, tasteRating, serviceRating, 
+export const updateRestaurantRating = (restaurantId, tasteRating, serviceRating,
     cleanlinessRating, overallRating) => ({
-    type: C.UPDATE_RESTAURANT_RATING,
-    id: restaurantId,
-    rating: {
-        tasteRating: tasteRating,
-        serviceRating: serviceRating,
-        cleanlinessRating: cleanlinessRating,
-        overallRating: overallRating
-    }
-})
+        type: C.UPDATE_RESTAURANT_RATING,
+        id: restaurantId,
+        rating: {
+            tasteRating: tasteRating,
+            serviceRating: serviceRating,
+            cleanlinessRating: cleanlinessRating,
+            overallRating: overallRating
+        }
+    })
 
 /**
  * React Redux update the restaurant review count with a new number.

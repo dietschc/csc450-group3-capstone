@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/27/2022, Added in some offset/limit findAll as well as search 
 //  by name and author Id)
+//  (DAB, 3/5/2022, Added in route for findByRestaurantAuthorIdOffsetLimit)
 
 module.exports = app => {
   const review = require("../controllers/review.controller.js");
@@ -33,6 +34,9 @@ module.exports = app => {
 
   // Retrieve review  matching the author id ordered asc by review name and result limit
   router.get("/restaurant/:offset/:limit/:id", review.findByRestaurantIdOffsetLimit);
+
+  // Retrieve review  matching the author id ordered asc by review name and result limit
+  router.get("/:offset/:limit/:authorId/:restaurantId", review.findByRestaurantAuthorIdOffsetLimit);
 
   // Retrieve review ordered asc by review name and result limit
   router.get("/limit/:limit", review.findAllLimit);

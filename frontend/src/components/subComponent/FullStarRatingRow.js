@@ -6,10 +6,11 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React from 'react'
+import React from 'react';
 import { Col, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import FullStarRatingCol from './FullStarRatingCol';
+import { formatTimeMMddYYYY } from '../../helperFunction/FormatString';
 
 /**
  * The FullStarRatingRow will accept a review for a prop and 
@@ -27,14 +28,14 @@ function FullStarRatingRow(props) {
 
     return (
         <Row>
-            <FullStarRatingCol rating={review.rating}/>
+            <FullStarRatingCol rating={review.rating} />
             <Col className="d-flex justify-content-center justify-content-sm-end align-items-end">
-                <span className="text-center" style={{minWidth: "12rem"}}>
-                    Date Of Visit: {review.history.created}
+                <span className="text-center" style={{ minWidth: "12rem" }}>
+                    Date Of Visit: {formatTimeMMddYYYY(review.history.created)}
                 </span>
             </Col>
         </Row>
-    )  
+    )
 }
 
 // Exporting the component

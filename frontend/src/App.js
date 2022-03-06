@@ -4,6 +4,7 @@
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
 // TJI, 13 Feb 2022, Added pb-5 to stop sticky footer covering low content
+//  (DAB, 3/05/2022, Added in search for restaurantName param)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -29,7 +30,8 @@ function App() {
       <Routes>
         <Route exact path='/' element={<Main/>} />
         <Route path='/restaurant' element={<Restaurant/>} />
-        <Route path='/restaurant/:id' element={<Restaurant/>} />
+        <Route path='/restaurant/:restaurantId' element={<Restaurant/>} />
+        <Route path='/restaurant/:restaurantId/:authorId' element={<Restaurant/>} />
         <Route path='/chat' element={<Chat/>} />
         <Route path='/chat/:id' element={<Chat/>} />
         <Route path='/editAccount' element={<EditAccount/>} />
@@ -38,7 +40,8 @@ function App() {
         <Route path='/review' element={<Review/>} />
         <Route path='/review/:id' element={<Review/>} />
         <Route path='/search' element={<Search/>} />
-        <Route path='/search/:userId/:restId' element={<Search/>} />
+        <Route path='/search/:restaurantName' element={<Search/>} />
+        <Route path='/search/:restaurantId/:authorId' element={<Search/>} />
         <Route path='/userDashboard' element={<UserDashboard/>} />
         <Route path='/admin' element={<Admin/>} />
         <Route path="*" element={<Whoops404/>} />
