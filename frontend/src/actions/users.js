@@ -103,7 +103,7 @@ export const addUser = ({ userId, userName,
             userName: userName,
             permission: {
                 id: permissionId,
-                permissionName: "Member"
+                permissionName: "member"
             },
             password: userPassword,
             history: {
