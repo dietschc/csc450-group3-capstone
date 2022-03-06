@@ -52,11 +52,10 @@ class FriendDataService {
     /**
      * Deletes the friend with the specified friendId
      * 
-     * @param { friendId } id 
      * @returns
      */
-    delete(id) {
-        return http.delete(`/friend/${id}`);
+    delete(id, friendId) {
+        return http.delete(`/friend/${id}/${friendId}`);
     }
 }
 
