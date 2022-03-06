@@ -3,6 +3,9 @@
 // Restaurant Club - user.service.js
 // February 14, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 3/06/2022, Added in a findByUserNameOffsetLimit that is User specific 
+//  and returns all the needed attributes to create additional users for Admin
+//  operations)
 
 import http from "../http-common";
 
@@ -40,6 +43,18 @@ class UserDataService {
     return http.get(`/authentication/search/${offset}/${limit}/${userName}`);
   }
 
+  /**
+   * Retrieve user searched by a userName string with offset and limit
+   * 
+   * @param {*} offset 
+   * @param {*} limit 
+   * @param {*} userName - string to query for user name
+   * @returns - user data if found
+   */
+   findByUserNameOffsetLimit(offset, limit, userName) {
+    return http.get(`/users/search/${offset}/${limit}/${userName}`);
+  }
+
   // Updates a specific user
   update(id, data) {
     return http.put(`/users/${id}`, data);
@@ -51,4 +66,6 @@ class UserDataService {
   }
 
 }
+
+// Exporting the data service
 export default new UserDataService();

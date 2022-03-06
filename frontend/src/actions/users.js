@@ -7,12 +7,15 @@
 //  (CPD, 2/22/2022, Added loginThunk)
 //  (CPD, 2/26/2022, Added updateUserThunk and edited updateUser to destructure parameters)
 //  (CPD, 3/1/2022, Fixed bug where state and zip are swapped when creating a new user)
+//  (DAB, 3/06/2022, Added in findByUserNameThunk and updated addUser to not have a history 
+//  table)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import C from '../constants';
 import { v4 } from 'uuid';
 import UserDataService from "../services/user.service";
+import { formatDBUserFind } from '../helperFunction/actionHelpers';
 
 /**
  * The addUser action is called from components/views/EditAccount.js in saveAccount. It passes
@@ -52,6 +55,42 @@ export const addUserThunk = (
             })
     }
 
+/**
+ * Searches the database by user name for all matching users up to the 
+ * offset/limit. It will then add the results to state.
+ * 
+ * @param {*} offset 
+ * @param {*} limit 
+ * @param {*} userName
+ * @returns 
+ */
+ export const findByUserNameThunk = (offset, limit, userName) => async dispatch => {
+    // The user database will be queried for all users within the 
+    // parameter offset/limit that are like the userName
+    await UserDataService.findByUserNameOffsetLimit(offset, limit, userName)
+        .then(async res => {
+            console.log(res);
+            // If there is data in the query it is added to redux state
+            if (res) {
+                // Iterating through the restaurant data
+                await res.data.map(user => {
+                    // The user data is formatted to be added to redux state
+                    const userData = formatDBUserFind(user);
+
+                    // // Adding the user to redux state
+                    dispatch(addUser(userData));
+
+                    // Returning the user data
+                    return userData;
+                })
+            }
+        })
+        .catch(err => {
+            // If there is an error it will be logged
+            console.log(err)
+        })
+}
+
 // export const addUserThunk = (
 //     userName, firstName, lastName, address,
 //     city, zip, state, userEmail, userPassword) => async dispatch => {
@@ -86,7 +125,8 @@ export const addUserThunk = (
  */
 export const addUser = ({ userId, userName,
     firstName, lastName, address, addressId, authId,
-    city, state, zip, userEmail, permissionId, userPassword }) => ({
+    city, state, zip, userEmail, permissionId, permissionName, 
+    isLoggedIn, userPassword, createdAt, modifiedAt }) => ({
         type: C.ADD_USER,
         id: userId,
         firstName: firstName,
@@ -102,18 +142,15 @@ export const addUser = ({ userId, userName,
             id: authId,
             userName: userName,
             permission: {
-                id: permissionId,
-                permissionName: "member"
+                id: permissionId || 1,
+                permissionName: permissionName || "member"
             },
             password: userPassword,
-            history: {
-                id: v4(),
-                created: new Date(),
-                modified: ""
-            }
+            createdAt: createdAt || new Date(),
+            modifiedAt: modifiedAt || new Date()
         },
         email: userEmail,
-        isLoggedIn: true
+        isLoggedIn: isLoggedIn || false
     })
 
 /**
@@ -135,6 +172,16 @@ export const deleteUser = (userId) => ({
  */
 export const deleteAllUsers = () => ({
     type: C.DELETE_ALL_USERS
+})
+
+/**
+ * React Redux action that will delete all users but the main user 
+ * at index 0
+ * 
+ * @returns 
+ */
+export const deleteAdditionalUsers = () => ({
+    type: C.DELETE_ADDITIONAL_USERS
 })
 
 export const updateUserThunk = (id, data) => async dispatch => {
@@ -184,9 +231,8 @@ export const updateUser = ({ id, userName, firstName, lastName,
         auth: {
             userName: userName,
             password: password,
-            history: {
-                modified: new Date()
-            }
+            modifiedAt: new Date()
+            
         }
     })
 

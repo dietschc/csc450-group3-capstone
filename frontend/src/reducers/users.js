@@ -6,6 +6,7 @@
 //  (DAB, 2/14/2022, Wrote reducer to add a user to users)
 //  (DAB, 2/15/2022, Wrote redux reducers/actions for login, logout, friends, and remaining users)
 //  (DAB, 2/16/2022, Wrote redux reducers/actions for permissions and tested)
+//  (DAB, 3/06/2022, Added in DELETE_ADDITIONAL_USERS, took out the history state for user)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -23,6 +24,8 @@ export const users = (state = [], action) => {
             ]
         case C.DELETE_ALL_USERS:
             return []
+        case C.DELETE_ADDITIONAL_USERS:
+            return state.filter((user, index) => index === 0)
         case C.DELETE_USER:
             return state.filter((user) => user.id !== action.id)
         case C.UPDATE_USER:
@@ -162,14 +165,15 @@ export const auth = (state = {}, action) => {
                 userName: action.auth.userName,
                 permission: permission({}, action),
                 password: action.auth.password,
-                history: history({}, action)
+                createdAt: action.auth.createdAt,
+                modifiedAt: action.auth.modifiedAt
             }
         case C.UPDATE_USER:
             return {
                 ...state,
                 userName: action.auth.userName,
                 password: action.auth.password,
-                history: history(state.history, action)
+                modifiedAt: action.auth.modifiedAt
             }
         case C.UPDATE_PERMISSION:
             return {

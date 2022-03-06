@@ -19,11 +19,8 @@
                     "permissionName": "general"
                 },
                 "password": "password",
-                "history": {
-                    "id": 1,
-                    "created": "",
-                    "modified": ""
-                }
+                "createdAt": "",
+                "modifiedAt": ""
             },
             "email": "roger@bobby.com",
             "friends": [
@@ -57,11 +54,8 @@
                     "permissionName": "member"
                 },
                 "password": "",
-                "history": {
-                    "id": null,
-                    "created": "",
-                    "modified": ""
-                }
+                "createdAt": "",
+                "modifiedAt": ""
             },
             "email": "",
             "friends": [

@@ -3,15 +3,20 @@
 // Restaurant Club - user.controller.js
 // February 14, 2022
 // Last Edited (Initials, Date, Edits):
-// (CPD, 2/26, #154 Completed multi table updates to user controller)
-// (CPD, 2/27, re-wrote the update handler to hopefully give correct response now)
-// (CPD, 2/28, Removed historyId in create because history table is going away)
-// (CPD, 2/28, Added friend methods to users controller)
+//  (CPD, 2/26, #154 Completed multi table updates to user controller)
+//  (CPD, 2/27, re-wrote the update handler to hopefully give correct response now)
+//  (CPD, 2/28, Removed historyId in create because history table is going away)
+//  (CPD, 2/28, Added friend methods to users controller)
+//  (DAB, 3/06/2022, Added in findByNameOffsetLimit that returns the needed user attributes
+//  to load a state into redux. Safe data with no passwords)
 
 
+const { authentication } = require("../models");
 const db = require("../models");
+const { Op } = db.Sequelize;
 const User = db.users;
 const Authentication = db.authentication;
+const Permission = db.permission;
 const Address = db.address;
 const Friend = db.friend;
 
@@ -418,3 +423,48 @@ exports.deleteFriend = async (req, res) => {
             });
         });
 };
+
+// Retrieve all User entries from the database whose userName is like the search param. Returns 
+// results up to the set offset and limit values
+exports.findByNameOffsetLimit = async (req, res) => {
+    // Checking that offset and limit are numbers, if not a default value will be used
+    const searchOffset = isNaN(req.params.offset) ? 0 : parseInt(req.params.offset);
+    const searchLimit = isNaN(req.params.limit) ? 999999999999 : parseInt(req.params.limit);
+    // The userName is pulled from params to be used in the query
+    const searchName = req.params.userName;
+
+    // Searching for all User data that matches the name and returning the results with 
+    // the offset/limit
+    await User.findAll({
+        subQuery: false,
+        include: [Address,
+            {
+                model: Friend, as: 'friendOne'
+            },
+            {
+                model: Authentication, attributes: [ 
+                    'authId', 'userName', 'createdAt', 'updatedAt' 
+                ],
+                include: {
+                    model: Permission
+                }
+            }
+        ],
+        where: { '$Authentication.userName$': { [Op.like]: `%${searchName}%` } },
+        order: [[Authentication, 'userName', 'ASC']],
+        offset: searchOffset,
+        limit: searchLimit
+    })
+        .then(user => {
+
+            // If users are found the data is returned
+            res.send(user);
+        })
+        .catch(err => {
+            // Else a message indicating the user was not found is sent
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving users."
+            });
+        });
+}

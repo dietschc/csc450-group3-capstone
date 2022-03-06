@@ -16,27 +16,18 @@ import XLContainer from '../template/XLContainer';
 import RestaurantEditItem from '../subComponent/RestaurantEditItem';
 import UserEditItem from '../subComponent/UserEditItem';
 import { findByRestaurantNameThunk, deleteAllRestaurants } from '../../actions/restaurants';
+import { deleteAdditionalUsers, findByUserNameThunk } from '../../actions/users';
 
 function Admin(props) {
     // Destructuring the data to be used in the search
     const { users, restaurants } = props;
-    const { findByRestaurantNameThunk, deleteAllRestaurants } = props;
-    
+    const { 
+        findByRestaurantNameThunk, deleteAllRestaurants,
+        findByUserNameThunk, deleteAdditionalUsers
+    } = props;
     const [searchInput, setSearchInput] = useState("");
-    const [searchType, setSearchType] = useState("");
+    const [searchType, setSearchType] = useState("user");
     const [isShowResults, setIsShowResults] = useState(false);
-
-    // ADMIN needs all user data anyway so we will load search results into state to be used in other areas, same with 
-    // restaurants
-
-    // Need a user search thunk that returns all users with a name LIKE userName
-    // Need a restaurant search thunk that returns all restaurants with a name LIKE restaurantName
-
-    // Loading the database data into state on page load
-    // useEffect(() => {
-    //     setSearchType("user")
-    // }, []);
-    
 
     // This submit handler will handle the search form when submitted and assign the 
     // search input and search type to their respective state variables
@@ -49,53 +40,36 @@ function Admin(props) {
         console.log("USER TYPE IS", searchType);
 
         if (searchType === "user") {
-            // await userSearch(searchInput);
-            // NEED USER THUNK, then clear
+            userSearch(searchInput)
         }
         else {
+            console.log("in restaurant search")
             restaurantSearch(searchInput)
-            // await deleteAllRestaurants();
-            // await findByRestaurantNameThunk(0, 25, searchInput);
         }
 
         setSearchInput("");
-
-
-        //DEBUG
-        console.log("FORM SUBMITTED")
     }
-    
+
 
     // The userSearch method will filter user and return the filtered array with the results
-    const userSearch = (userName) => {
-        // Code for userName search
-        let [mainUser, ...searchResults] = users;
+    const userSearch = async () => {
+        await deleteAdditionalUsers();
 
-        // Code for first name last name search
-        // let searchResults = user.filter((user) => ((user.firstName).toLowerCase() + " " + (user.lastName).toLowerCase()).match(userName.toLowerCase() + ".*"));
+        if (searchInput !== "") {
+            await findByUserNameThunk(0, 25, searchInput);
+        }
 
-        //DEBUG
-        console.log("Search Results are ", searchResults)
-
-        return searchResults;
     }
 
     // The restaurantSearch method will filter restaurant and return only the items that match the search input
     const restaurantSearch = async () => {
         console.log(searchInput)
         await deleteAllRestaurants();
+
         if (searchInput !== "") {
             await findByRestaurantNameThunk(0, 25, searchInput);
         }
-        
-        // Searching based off restaurant name
-        // let searchResults = restaurants.filter((restaurant) => (restaurant.name).toLowerCase().match((restaurantName.toLowerCase()) + ".*"));
-        let searchResults = restaurants;
-        
-        // DEBUG
-        console.log("Search Results are ", searchResults)
 
-        return restaurants;
     }
 
     const onChangeHandler = (e) => {
@@ -107,60 +81,15 @@ function Admin(props) {
     // based off the search input and search criteria. If there are no matches the user 
     // is notified
     const searchList = () => {
-      
-        // if (searchType === "user") {
-        //     //DEBUG
-        //     console.log("Searching User")
-        //     console.log(userSearch(searchInput));
 
-        //     // The results of the userSearch
-        //     const results = userSearch(searchInput);
-        //     if (results.length < 1) {
-        //         return (
-        //             <h4 className="text-center">
-        //                 Sorry  no results found for {searchInput}.
-        //             </h4>
-        //         )
-        //     }
-        //     else {
-        //         // return (
-        //         //     results.map((user) => <UserEditItem key={user.id} user={user} />)
-        //         // )
-        //     }
-        // }
-        // else {
-        //     //DEBUG
-        //     console.log("Restaurant Search");
-        //     // console.log(restaurantSearch(searchInput))
-
-        //     // The results of the restaurantSearch
-        //     // restaurantSearch(searchInput);
-
-        //     if (restaurants.length < 0) {
-        //         return (
-        //             <h4 className="text-center">
-        //                 Sorry no results found for {searchInput}.
-        //             </h4>
-        //         )
-        //     }
-        //     else {
-        //         return (
-        //             restaurants.map((restaurant) => <RestaurantEditItem key={restaurant.id} restaurant={restaurant} />)
-        //         )
-        //     }
-        // }
-        
         if (!isShowResults) {
             return
         }
         else {
             if (searchType === "user") {
-                //DEBUG
-                console.log("Searching User")
-                console.log(userSearch(searchInput));
 
                 // The results of the userSearch
-                const results = userSearch(searchInput);
+                const [mainUser, ...results] = users;
                 if (results.length < 1) {
                     return (
                         <h4 className="text-center">
@@ -175,12 +104,6 @@ function Admin(props) {
                 }
             }
             else {
-                //DEBUG
-                console.log("Restaurant Search");
-                // console.log(restaurantSearch(searchInput))
-
-                // The results of the restaurantSearch
-                // restaurantSearch(searchInput);
 
                 if (restaurants.length < 1) {
                     return (
@@ -242,7 +165,6 @@ function Admin(props) {
                     </ButtonGroup>
                 </Row>
             </Form>
-            {/* {restaurants && restaurants.map((restaurant) => <RestaurantEditItem key={restaurant.id} restaurant={restaurant} />)} */}
             {searchList()}
         </XLContainer>
     )
@@ -255,4 +177,7 @@ const mapStateToProps = (state) => ({
 });
 
 // Exporting the component
-export default connect(mapStateToProps, { findByRestaurantNameThunk, deleteAllRestaurants })(Admin);
+export default connect(mapStateToProps, {
+    findByRestaurantNameThunk, deleteAllRestaurants,
+    findByUserNameThunk, deleteAdditionalUsers
+})(Admin);
