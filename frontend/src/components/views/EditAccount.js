@@ -24,7 +24,7 @@ function EditAccount(props) {
 
     // keeps track of if the form was submitted
     const [submitted, setSubmitted] = useState(false)
-    const [validated, setValidated] = useState(false);
+    // const [validated, setValidated] = useState(false);
     // Check if user is logged in
     const isEditing = checkLogin(users);
 

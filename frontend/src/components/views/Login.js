@@ -13,13 +13,13 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Form, Container, FloatingLabel, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { connect } from 'react-redux';
-import { loginThunk, deleteAllUsers, addUser } from '../../actions/users';
+import { loginThunk, deleteAllUsers } from '../../actions/users';
 import { Link } from 'react-router-dom';
 import { checkLogin } from '../../helperFunction/CheckLogin'
 
 function Login(props) {
 
-    const { loginThunk, deleteAllUsers, users, addUser } = props;
+    const { loginThunk, deleteAllUsers, users } = props;
 
     const [isSubmitted, setSubmitted] = useState(false)
     const [isError, setShowError] = useState(false)
@@ -196,4 +196,4 @@ const mapStateToProps = state =>
 
 // Exporting the component
 // export default Login;
-export default connect(mapStateToProps, { loginThunk, deleteAllUsers, addUser })(Login);
+export default connect(mapStateToProps, { loginThunk, deleteAllUsers })(Login);

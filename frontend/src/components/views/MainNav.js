@@ -17,9 +17,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
 import { deleteUser } from '../../actions/users';
 import { checkLogin } from '../../helperFunction/CheckLogin';
+import ModalLogoutConfirm from '../modal/LogoutConfirm';
 
 function MainNav(props) {
     // Setting up the basic state needed to run MainNav
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const [basicActive, setBasicActive] = useState();
     const [searchInput, setSearchInput] = useState("");
     const navigate = useNavigate();
@@ -46,9 +48,19 @@ function MainNav(props) {
 
         // Clearing the search input 
         setSearchInput("")
-        
+
         // Clearing the active button
         setActive("none")
+    }
+
+    // Handlers for the DeleteFriendConfirm modal
+    const showLogoutHandler = () => setShowLogoutConfirm(true);
+    const closeLogoutHandler = () => setShowLogoutConfirm(false);
+
+    // Handles the click on the delete friend button and sets 
+    // the selected friend into state
+    const logoutHandler = () => {
+        console.log("logout button pressed");
     }
 
     // Remove everything from state on logout
@@ -58,6 +70,10 @@ function MainNav(props) {
         // deleteAllMessages();
         // deleteAllReviews();
         // deleteAllRestaurants();
+        <ModalLogoutConfirm
+        show={showLogoutConfirm}
+        logout={logoutAccount}
+        closeHandler={closeLogoutHandler} />
     }
 
     // Check if user is logged in
