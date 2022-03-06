@@ -70,14 +70,48 @@ function MainNav(props) {
         // deleteAllMessages();
         // deleteAllReviews();
         // deleteAllRestaurants();
+
         <ModalLogoutConfirm
-        show={showLogoutConfirm}
-        logout={logoutAccount}
-        closeHandler={closeLogoutHandler} />
+            show={showLogoutConfirm}
+            logout={logoutAccount}
+            closeHandler={closeLogoutHandler} />
     }
 
     // Check if user is logged in
     const showLogout = checkLogin(users) ? <div onClick={logoutAccount}>Logout</div> : "Login";
+
+    const showLoginControls = () => (
+        <>
+            {checkLogin(users) ? (
+                <>
+                    <Nav.Item className="mx-3">
+                        <LinkContainer to="/userDashboard">
+                            <Nav.Link>
+                                Dashboard
+                            </Nav.Link>
+                        </LinkContainer>
+                    </Nav.Item>
+                    <Nav.Item className="mx-3">
+                        <LinkContainer to="/login">
+                            <Nav.Link>
+                                Logout
+                            </Nav.Link>
+                        </LinkContainer>
+                    </Nav.Item>
+                </>
+            ) : (
+                <>
+                    <Nav.Item className="mx-3">
+                        <LinkContainer to="/login">
+                            <Nav.Link>
+                                Login
+                            </Nav.Link>
+                        </LinkContainer>
+                    </Nav.Item>
+                </>
+            )}
+        </>
+    )
 
     // Theme variables
     const buttonTheme = "outline-primary";
@@ -114,23 +148,9 @@ function MainNav(props) {
                             </LinkContainer>
 
                         </Nav.Item>
-                        <Nav.Item className="mx-3">
-                            <LinkContainer to="/userDashboard">
-                                <Nav.Link>
-                                    Dashboard
-                                </Nav.Link>
-                            </LinkContainer>
 
-                        </Nav.Item>
-                        <Nav.Item className="mx-3">
+                        {showLoginControls()}
 
-                            <LinkContainer to="/login">
-                                <Nav.Link>
-                                    {showLogout}
-                                </Nav.Link>
-                            </LinkContainer>
-
-                        </Nav.Item>
                     </Nav>
                     <Form onSubmit={searchHandler} className="d-flex">
                         <FormControl
