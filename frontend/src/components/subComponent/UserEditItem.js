@@ -3,6 +3,7 @@
 // Restaurant Club - UserEditItem.js
 // February 10, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 3/06/2022, Added functionality for the component buttons)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -21,11 +22,16 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 function UserEditItem(props) {
     // The form component specific props will be assigned and 
     // used to process the form element
-    const { user } = props;
+    const { 
+        user, dashboardHandler, banHandler, 
+        userDeleteHandler, banUserButtonModal, 
+        userDashboardButtonModal 
+    } = props;
+    const userId = user.id;
 
     return (
         <ListGroup as="ul" className="justify-content-center px-0 mb-2">
-            <ListGroup.Item  as="li" className="border-3" style={{minHeight:"3rem"}} action>
+            <ListGroup.Item as="li" className="border-3" style={{ minHeight: "3rem" }} action>
                 <Row className="d-flex justify-content-between align-items-center">
                     <Col sm={6} className="d-flex justify-content-center justify-content-sm-start align-content-center pe-0">
                         <div className="pb-1">
@@ -33,20 +39,28 @@ function UserEditItem(props) {
                         </div>
                     </Col>
                     <Col sm={6} className="d-flex justify-content-between">
-                        <Button className="mx-1" style={{width:"7rem"}}>
+                        <Button
+                            className="mx-1"
+                            style={{ width: "7rem" }}
+                            onClick={() => dashboardHandler(userId)}>
                             Dashboard
                         </Button>
-                        <Button className="mx-1" style={{width:"7rem"}}>
+                        <Button className="mx-1"
+                            style={{ width: "7rem" }}
+                            onClick={() => banHandler(userId)}>
                             Ban
                         </Button>
-                        <Button className="mx-1" style={{width:"7rem"}}>
+                        <Button className="mx-1"
+                            style={{ width: "7rem" }}
+                            onClick={() => userDeleteHandler(userId)}>
                             Delete
                         </Button>
                     </Col>
                 </Row>
             </ListGroup.Item>
+            
         </ListGroup>
-    )  
+    )
 }
 
 // Exporting the component

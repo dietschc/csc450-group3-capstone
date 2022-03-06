@@ -21,10 +21,12 @@ import Review from './components/views/Review';
 import Search from './components/views/Search';
 import UserDashboard from './components/views/UserDashboard';
 import Admin from './components/views/Admin';
-import MainNav from './components/views/MainNav';
-import MainTemplate from './components/template/MainTemplate';
+import { connect } from "react-redux";
 
-function App() {
+function App(props) {
+  // Authentication testing DEBUG*********
+  // const { users } = props;
+  // const [ user=[] ] = users
   return (
     <div className="App pb-5">
       <Routes>
@@ -43,6 +45,7 @@ function App() {
         <Route path='/search/:restaurantName' element={<Search/>} />
         <Route path='/search/:restaurantId/:authorId' element={<Search/>} />
         <Route path='/userDashboard' element={<UserDashboard/>} />
+        <Route path='/userDashboard/:userId' element={<UserDashboard/>} />
         <Route path='/admin' element={<Admin/>} />
         <Route path="*" element={<Whoops404/>} />
       </Routes>
@@ -50,5 +53,11 @@ function App() {
   );
 }
 
+
+// Mapping the redux store states to props
+const mapStateToProps = (state) => ({
+  // users: [...state.users]
+});
+
 // Exporting the component
-export default App;
+export default connect(mapStateToProps, null)(App);

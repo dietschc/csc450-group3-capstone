@@ -1,9 +1,8 @@
 // Initially Created by: Devin Brueberg
 // CSC450 Capstone
-// Restaurant Club - DeleteReviewConfirm.js
-// February 6, 2022
+// Restaurant Club - BanUserConfirm.js
+// March 6, 2022
 // Last Edited (Initials, Date, Edits):
-//  (DAB, 3/06/2022, updated comments)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -13,31 +12,31 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 /**
  * A React Bootstrap formatted confirmation modal that will ask 
- * a user if they wish to delete a review. If the confirmation 
- * is accepted the deleteReview function will handle the 
- * deletion of that review.
+ * a user if they wish to ban a user. If the confirmation 
+ * is accepted the banUser function will handle the 
+ * banning of that user.
  * 
- * @param { show, review, deleteFriend, closeHandler } props 
+ * @param { show, banUser, closeHandler } props 
  * @returns 
  */
-function DeleteReviewConfirm(props) {
+function BanUserConfirm(props) {
     // Destructuring the needed functions and variables from props
-    const { show, deleteReview, closeHandler } = props;
+    const { show, banUser, closeHandler } = props;
 
-    // The yesHandler will call both the deleteReview and closeHandler 
-    // functions in order to delete the review
+    // The yesHandler will call both the banUser and closeHandler 
+    // functions in order to ban the user
     const yesHandler = () => {
-        deleteReview();
+        banUser();
         closeHandler();
     }
     
     return (
         <Modal show={show} onHide={closeHandler}>
             <Modal.Header closeButton>
-                <Modal.Title>Delete review</Modal.Title>
+                <Modal.Title>Ban user</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                Are you sure you want to delete this review?
+                Are you sure you want to ban this user?
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={yesHandler}>
@@ -52,4 +51,4 @@ function DeleteReviewConfirm(props) {
 }
 
 // Exporting the component
-export default DeleteReviewConfirm;
+export default BanUserConfirm;
