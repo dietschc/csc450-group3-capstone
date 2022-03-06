@@ -15,7 +15,10 @@ import { Navbar, Button, Nav, Form, Container, FormControl } from 'react-bootstr
 import { LinkContainer } from 'react-router-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
-import { deleteUser } from '../../actions/users';
+import { deleteAllUsers } from '../../actions/users';
+import { deleteAllMessages} from '../../actions/messages';
+import { deleteAllReviews } from '../../actions/reviews';
+import { deleteAllRestaurants } from '../../actions/restaurants';
 import { checkLogin } from '../../helperFunction/CheckLogin';
 import ModalLogoutConfirm from '../modal/LogoutConfirm';
 
@@ -27,7 +30,13 @@ function MainNav(props) {
     const navigate = useNavigate();
 
     // Get user state from props
-    const { users } = props;
+    const { 
+        users, 
+        deleteAllUsers, 
+        deleteAllMessages, 
+        deleteAllReviews, 
+        deleteAllRestaurants 
+    } = props;
 
     // Setting the active nav element
     const setActive = (value) => {
@@ -53,32 +62,27 @@ function MainNav(props) {
         setActive("none")
     }
 
-    // Handlers for the DeleteFriendConfirm modal
+    // Handlers for the LogoutConfirm modal
     const showLogoutHandler = () => setShowLogoutConfirm(true);
     const closeLogoutHandler = () => setShowLogoutConfirm(false);
 
-    // Handles the click on the delete friend button and sets 
-    // the selected friend into state
+    // Handles the click to show the modal windows when the logout button is pressed
     const logoutHandler = () => {
-        console.log("logout button pressed");
+        // console.log("logout button pressed");
+        showLogoutHandler();
     }
 
     // Remove everything from state on logout
     const logoutAccount = () => {
-        // Workong on getting a modal confirmation created for this
-        // deleteAllUsers();
-        // deleteAllMessages();
-        // deleteAllReviews();
-        // deleteAllRestaurants();
+        console.log("loggout account");
+        deleteAllUsers();
+        deleteAllMessages();
+        deleteAllReviews();
+        deleteAllRestaurants();
 
-        <ModalLogoutConfirm
-            show={showLogoutConfirm}
-            logout={logoutAccount}
-            closeHandler={closeLogoutHandler} />
+        // Navigate to home after logout
+        navigate("/");
     }
-
-    // Check if user is logged in
-    const showLogout = checkLogin(users) ? <div onClick={logoutAccount}>Logout</div> : "Login";
 
     const showLoginControls = () => (
         <>
@@ -91,12 +95,10 @@ function MainNav(props) {
                             </Nav.Link>
                         </LinkContainer>
                     </Nav.Item>
-                    <Nav.Item className="mx-3">
-                        <LinkContainer to="/login">
-                            <Nav.Link>
-                                Logout
-                            </Nav.Link>
-                        </LinkContainer>
+                    <Nav.Item className="mx-3" onClick={logoutHandler}>
+                        <Nav.Link>
+                            Logout
+                        </Nav.Link>
                     </Nav.Item>
                 </>
             ) : (
@@ -110,6 +112,11 @@ function MainNav(props) {
                     </Nav.Item>
                 </>
             )}
+
+            <ModalLogoutConfirm
+                show={showLogoutConfirm}
+                logout={logoutAccount}
+                closeHandler={closeLogoutHandler} />
         </>
     )
 
@@ -146,7 +153,6 @@ function MainNav(props) {
                                     Home
                                 </Nav.Link>
                             </LinkContainer>
-
                         </Nav.Item>
 
                         {showLoginControls()}
@@ -180,4 +186,9 @@ const mapStateToProps = state =>
 
 // Exporting the component
 // export default MainNav;
-export default connect(mapStateToProps, {})(MainNav);
+export default connect(mapStateToProps, { 
+    deleteAllUsers, 
+    deleteAllMessages, 
+    deleteAllReviews, 
+    deleteAllRestaurants  
+})(MainNav);

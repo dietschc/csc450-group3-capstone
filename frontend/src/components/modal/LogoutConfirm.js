@@ -23,7 +23,7 @@ function LogoutConfirm(props) {
     return (
         <Modal show={show} onHide={closeHandler}>
             <Modal.Header closeButton>
-                <Modal.Title>Delete review</Modal.Title>
+                <Modal.Title>Logout Confirmation</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 Are you sure you want to logout?
