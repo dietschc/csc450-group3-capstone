@@ -10,20 +10,23 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 import FormContainer from '../template/FormContainer';
 import { addUserThunk, updateUserThunk } from '../../actions/users';
 import { checkLogin } from '../../helperFunction/CheckLogin'
+import FloatingStateOptionList from '../form/floatingComponents/FloatingStateOptionList';
 
 function EditAccount(props) {
     const { addUserThunk, updateUserThunk, users } = props;
 
-    // Keep track of validated and submitted
+    // keeps track of if the form was submitted
+    const [submitted, setSubmitted] = useState(false)
     const [validated, setValidated] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
+    // Check if user is logged in
+    const isEditing = checkLogin(users);
 
     const [userName, setUserName] = useState(users.length > 0 ? users[0].auth.userName : "");
     const [firstName, setFirstName] = useState(users.length > 0 ? users[0].firstName : "");
@@ -35,63 +38,62 @@ function EditAccount(props) {
     const [email, setEmail] = useState(users.length > 0 ? users[0].email : "");
     const [password, setPassword] = useState(users.length > 0 ? users[0].auth.password : "");
 
+    const navigate = useNavigate();
+
     const onChangeUserName = e => {
-        const userName = e.target.value;
+        const userName = e.target.value
         setUserName(userName);
-    };
+    }
 
     const onChangeFirstName = e => {
-        const firstName = e.target.value;
+        const firstName = e.target.value
         setFirstName(firstName);
-    };
+    }
 
     const onChangeLastName = e => {
-        const lastName = e.target.value;
+        const lastName = e.target.value
         setLastName(lastName);
-    };
+    }
 
     const onChangeAddress = e => {
-        const address = e.target.value;
+        const address = e.target.value
         setAddress(address);
-    };
+    }
 
     const onChangeCity = e => {
-        const city = e.target.value;
+        const city = e.target.value
         setCity(city);
-    };
+    }
 
     const onChangeZip = e => {
-        const zip = e.target.value;
+        const zip = e.target.value
         setZip(zip);
-    };
+    }
 
     const onChangeState = e => {
-        const state = e.target.value;
+        const state = e.target.value
         setState(state);
-    };
+    }
 
     const onChangeEmail = e => {
-        const email = e.target.value;
+        const email = e.target.value
         setEmail(email);
-    };
+    }
 
     const onChangePassword = e => {
-        const password = e.target.value;
+        const password = e.target.value
         setPassword(password);
-    };
-
-    // Check if user is logged in
-    const isEditing = checkLogin(users);
+    }
 
     const handleSubmit = (event) => {
-        console.log("handle submit pressed");
-        const form = event.currentTarget;
-        if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
+        // console.log("handle submit pressed");
+        // const form = event.currentTarget;
+        // if (form.checkValidity() === false) {
+        //     event.preventDefault();
+        //     event.stopPropagation();
+        // }
 
-        setValidated(true);
+        // setValidated(true);
 
         if (isEditing) {
             updateAccount();
@@ -100,62 +102,21 @@ function EditAccount(props) {
         }
     };
 
-    const saveAccount = () => {
+    const handleKeypress = e => {
+        //it triggers by pressing the enter key    
+        if (e.key === "Enter") {
+            handleSubmit();
+        }
+    };
 
+    const saveAccount = () => {
         // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
         addUserThunk(userName, firstName, lastName, address, city, state, zip, email, password)
 
-        let data = {
-            userName: userName,
-            firstName: firstName,
-            lastName: lastName,
-            address: address,
-            city: city,
-            zip: zip,
-            state: state,
-            email: email,
-            password: password
-        }
+        setSubmitted(true)
 
-        // This variable is used for testing the following 
-        // reducers/actions
-        let testData = {
-            userId: 0,
-            userName: "uName",
-            firstName: "fName",
-            lastName: "lName",
-            address: "address",
-            city: "city",
-            zip: "zip",
-            state: "state",
-            email: "email",
-            password: "password",
-            friendId: 2,
-            friendUserName: "testFriend",
-            permissionId: 1,
-            permissionName: "testPermission"
-        }
-
-        // addUser(testData.userName, testData.firstName, 
-        //     testData.lastName, testData.address, 
-        //     testData.city, testData.zip, testData.state, 
-        //     testData.email, testData.password);
-
-        // deleteUser(testData.userId)
-        // deleteAllUsers()
-        // updateUser(testData.userId, testData.userName, testData.firstName, 
-        //     testData.lastName, testData.address, 
-        //     testData.city, testData.zip, testData.state, 
-        //     testData.email, testData.password)
-        // addFriend(testData.userId, testData.friendId, testData.friendUserName)
-        // deleteFriend(testData.userId, testData.friendId)
-        // deleteAllFriends(testData.userId)
-        // login(testData.userId)
-        // logout(testData.userId)
-        // updatePermission(testData.userId, testData.permissionId, testData.permissionName)
-
-        console.log(data)
-        // setSubmitted(true)
+        // Bring back to user dashboard after
+        setTimeout(() => { navigate("../userDashboard") }, 500);
     }
 
     const updateAccount = () => {
@@ -177,6 +138,9 @@ function EditAccount(props) {
         updateUserThunk(id, data)
         // console.log("id: ", id);
         // console.log("updating with data: ", data);
+
+        // Bring back to user dashboard after
+        setTimeout(() => { navigate("../userDashboard") }, 500);
     }
 
     /**
@@ -231,7 +195,7 @@ function EditAccount(props) {
                     </div>
 
                 ) : (
-                    <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                    <Form>
                         <Form.Floating className="mb-3 justify-content-center">
                             <FloatingLabel
                                 controlId="floatingUserId"
@@ -242,6 +206,7 @@ function EditAccount(props) {
                                     required
                                     value={userName}
                                     onChange={onChangeUserName}
+                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -255,6 +220,7 @@ function EditAccount(props) {
                                     placeholder="User Name"
                                     value={firstName}
                                     onChange={onChangeFirstName}
+                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -268,6 +234,7 @@ function EditAccount(props) {
                                     placeholder="Last Name"
                                     value={lastName}
                                     onChange={onChangeLastName}
+                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -281,6 +248,7 @@ function EditAccount(props) {
                                     placeholder="Address"
                                     value={address}
                                     onChange={onChangeAddress}
+                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -294,26 +262,15 @@ function EditAccount(props) {
                                     placeholder="City"
                                     value={city}
                                     onChange={onChangeCity}
+                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
 
+
                         <Row className="justify-content-center">
-                            <Form.Floating as={Col} sm={6} className="mb-3 justify-content-center">
-                                <FloatingLabel
-                                    controlId="floatingState"
-                                    label="State">
-                                    <Form.Select
-                                        aria-label="select state options"
-                                        value={state}
-                                        onChange={onChangeState}>
-                                        <option disabled value="">Choose</option>
-                                        <option value="MN">MN</option>
-                                        <option value="WI">WI</option>
-                                        <option value="XX">XX</option>
-                                    </Form.Select>
-                                </FloatingLabel>
-                            </Form.Floating>
+
+                            <FloatingStateOptionList state={state} onChangeState={onChangeState} />
 
                             <Form.Floating as={Col} sm={6} className="mb-3 justify-content-center">
                                 <FloatingLabel
@@ -324,6 +281,7 @@ function EditAccount(props) {
                                         placeholder="Zip"
                                         value={zip}
                                         onChange={onChangeZip}
+                                        onKeyPress={handleKeypress}
                                     />
                                 </FloatingLabel>
                             </Form.Floating>
@@ -353,6 +311,7 @@ function EditAccount(props) {
                                     required
                                     value={password}
                                     onChange={onChangePassword}
+                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>

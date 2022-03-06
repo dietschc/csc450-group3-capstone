@@ -49,9 +49,9 @@ function UserDashboard(props) {
 
     // Destructuring the needed data from the intitialState.json file
     // const { messages } = data;
-    const [user] = users;
-    const { address: currentAddress } = user;
-    const { friends } = user;
+    const [user = []] = users;
+    const { address: currentAddress = []} = user;
+    const { friends = []} = user;
 
     const loadState = () => {
         deleteAllReviews();
@@ -181,5 +181,6 @@ const mapStateToProps = state =>
 
 // Exporting the component
 // export default UserDashboard;
-export default connect(mapStateToProps, { 
-    findByAuthorIdThunk, deleteAllRestaurants, deleteAllReviews })(UserDashboard);
+export default connect(mapStateToProps, {
+    findByAuthorIdThunk, deleteAllRestaurants, deleteAllReviews
+})(UserDashboard);

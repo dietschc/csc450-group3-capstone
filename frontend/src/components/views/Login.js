@@ -13,13 +13,13 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Form, Container, FloatingLabel, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { connect } from 'react-redux';
-import { loginThunk, deleteUser, addUser } from '../../actions/users';
+import { loginThunk, deleteAllUsers, addUser } from '../../actions/users';
 import { Link } from 'react-router-dom';
 import { checkLogin } from '../../helperFunction/CheckLogin'
 
 function Login(props) {
 
-    const { loginThunk, deleteUser, users, addUser } = props;
+    const { loginThunk, deleteAllUsers, users, addUser } = props;
 
     const [isSubmitted, setSubmitted] = useState(false)
     const [isError, setShowError] = useState(false)
@@ -101,8 +101,8 @@ function Login(props) {
                     // setSubmitted(true);
                     setShowSuccess(true);
 
-                    // Navigate to dashboard after 1.5 seconds
-                    setTimeout(() => { navigate("../userDashboard") }, 1500)
+                    // Navigate to dashboard after .5 seconds
+                    setTimeout(() => { navigate("../userDashboard") }, 500)
                 } else {
                     clearForm();
                     setShowError(true);
@@ -117,9 +117,9 @@ function Login(props) {
     const logoutAccount = () => {
         // This will remove the user from state
         // setIsloggedIn(false);
-        deleteUser(users[0].id);
+        deleteAllUsers();
         clearForm();
-        addUser("");
+        // addUser("");
     }
 
     const clearForm = () => {
@@ -130,6 +130,18 @@ function Login(props) {
     const createAccountHandler = () => {
         navigate("../editAccount");
     }
+
+    const handleSubmit = e => {
+        // alert("submit handler called");
+        loginAccount();
+    };
+
+    const handleKeypress = e => {
+        //it triggers by pressing the enter key    
+        if (e.key === "Enter") {
+            handleSubmit();
+        }
+    };
 
     return (
         <Container fluid className="text-muted login" style={{ maxWidth: "500px" }}>
@@ -174,6 +186,7 @@ function Login(props) {
                                     name="password"
                                     value={password}
                                     onChange={onChangePassword}
+                                    onKeyPress={handleKeypress}
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -195,4 +208,4 @@ const mapStateToProps = state =>
 
 // Exporting the component
 // export default Login;
-export default connect(mapStateToProps, { loginThunk, deleteUser, addUser })(Login);
+export default connect(mapStateToProps, { loginThunk, deleteAllUsers, addUser })(Login);
