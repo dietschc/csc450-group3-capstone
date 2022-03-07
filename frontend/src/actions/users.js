@@ -16,6 +16,7 @@ import C from '../constants';
 import { v4 } from 'uuid';
 import UserDataService from "../services/user.service";
 import { formatDBUserFind } from '../helperFunction/actionHelpers';
+import AuthenticationDataService from '../services/authentication.service';
 
 /**
  * The addUser action is called from components/views/EditAccount.js in saveAccount. It passes
@@ -53,7 +54,61 @@ export const addUserThunk = (
             .catch(err => {
                 console.log(err)
             })
-    }
+}
+
+/**
+ * The updatePermissionThunk will update a users permission to the specified 
+ * settings. It will update it both in state and the database.
+ * 
+ * @param {*} userId 
+ * @param {*} data 
+ * @returns 
+ */
+export const updatePermissionThunk = (userId, data) => async dispatch => {
+    // Making the call to the service to request an update to the database
+    await AuthenticationDataService.updateByUserId(userId, data)
+    .then(res => {
+        // If there is a response the state will be updated
+        if (res) {
+            // Destructuring out permissionId and permission name from the data
+            const { permissionId, permissionName } = data;
+
+            // Dispatching the action to update state permission
+            dispatch(updatePermission(userId, permissionId, permissionName))
+        }
+        else {
+            console.log("Permission was not updated")
+        }
+    })
+    .catch(err => {
+        // If there is an error it will be logged
+        console.log(err)
+    })
+}
+
+/**
+ * The deleteUserThunk will delete a user from both the database 
+ * and state by referencing the userId.
+ * 
+ * @param {*} userId 
+ * @returns 
+ */
+export const deleteUserThunk = (userId) => async dispatch => {
+    // Making the call to the service to request the deletion of the user
+    await UserDataService.delete(userId)
+    .then(res => {
+        // If there is a response the state will be updated
+        if (res) {
+
+            // Dispatching the action to delete the user from state
+            dispatch(deleteUser(userId));
+        }
+    })
+    .catch(err => {
+        // If there is an error it will be logged
+        console.log(err)
+    })
+}
 
 /**
  * Searches the database by user name for all matching users up to the 

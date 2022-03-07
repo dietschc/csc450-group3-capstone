@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 // TJI, 13 Feb 2022, Added pb-5 to stop sticky footer covering low content
 //  (DAB, 3/05/2022, Added in search for restaurantName param)
+//  (DAB, 3/06/2022, Added in routes for params with editRestaurant and userDashboard)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -38,6 +39,7 @@ function App(props) {
         <Route path='/chat/:id' element={<Chat/>} />
         <Route path='/editAccount' element={<EditAccount/>} />
         <Route path='/editRestaurant' element={<EditRestaurant/>} />
+        <Route path='/editRestaurant/:restaurantId' element={<EditRestaurant/>} />
         <Route path='/login' element={<Login/>} />
         <Route path='/review' element={<Review/>} />
         <Route path='/review/:id' element={<Review/>} />

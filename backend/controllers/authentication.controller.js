@@ -13,6 +13,7 @@ const Authentication = db.authentication;
 const User = db.users;
 const Address = db.address;
 const Friend = db.friend;
+const Permission = db.permission;
 
 // Create and Save a new Authentication
 exports.create = (req, res) => {
@@ -259,6 +260,30 @@ exports.update = (req, res) => {
         .catch(err => {
             res.status(500).send({
                 message: "Error updating Authentication with id=" + id
+            });
+        });
+};
+
+// Update a Authentication by the id in the request
+exports.updateByUserId = (req, res) => {
+    const userId = req.params.userId;
+    Authentication.update(req.body, {
+        where: { userId: userId }
+    })
+        .then(num => {
+            if (num == 1) {
+                res.send({
+                    message: "Authentication was updated successfully."
+                });
+            } else {
+                res.status(500).send({
+                    message: `Cannot update Authentication with id=${userId}. Maybe Authentication was not found or req.body is empty!`
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error updating Authentication with id=" + userId
             });
         });
 };

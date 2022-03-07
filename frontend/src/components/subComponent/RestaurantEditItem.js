@@ -3,6 +3,7 @@
 // Restaurant Club - RestaurantEditItem.js
 // February 10, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 3/06/2022, Added in button functionality)
 
 // Using React library in order to build components 
 // for the app and importing needed components
