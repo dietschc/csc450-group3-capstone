@@ -127,8 +127,9 @@ function UserDashboard(props) {
     // Navigates to the Chat page passing the requested friend to 
     // chat with's ID into the URL. Used with the FriendList.js 
     // Component
-    const chatHandler = (id) => {
-        navigate("../chat/" + id);
+    const chatHandler = (friend) => {
+        console.log("FRIEND ID FOR CHAT HANDLER IS ", friend.id);
+        navigate("../chat/" + friend.id);
     }
 
     // Navigates to the Review page passing the requested review to 
