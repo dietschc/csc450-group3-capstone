@@ -50,7 +50,7 @@ export const formatPhoneNumber = (rawNumber) => {
     // If the phone number length is less than seven it will return the first 3
     // numbers in parenthesis
     if (phoneNumberLength < 7) {
-        return `${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+        return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
     }
 
     // If the phone number is greater than 10 digits it is returned as a 10 digit number

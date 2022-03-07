@@ -7,7 +7,7 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import FloatingAddress from './floatingComponents/FloatingAddress';
 import FloatingStateZip from './floatingComponents/FloatingStateZip';
@@ -19,18 +19,22 @@ import FloatingWebsite from './floatingComponents/FloatingWebsite';
 import EditFormButtons from './button/EditFormButtons';
 import FloatingImageUpload from './floatingComponents/FloatingImageUpload';
 import { connect } from 'react-redux';
-import { addRestaurant, decrementRestaurantReviewCount, deleteAllRestaurants,
-deleteRestaurant, incrementRestaurantReviewCount, updateRestaurant, updateRestaurantRating,
-updateRestaurantReviewCount, updateRestaurantOwner } from '../../actions/restaurants';
+import {
+    addRestaurant, decrementRestaurantReviewCount, deleteAllRestaurants,
+    deleteRestaurant, incrementRestaurantReviewCount, updateRestaurant, updateRestaurantRating,
+    updateRestaurantReviewCount, updateRestaurantOwner, addRestaurantThunk
+} from '../../actions/restaurants';
+import { formatPhoneNumber, unformatPhoneNumber } from '../../helperFunction/FormatString';
 
 function EditRestaurantForm(props) {
     // Redux store functions
     const { addRestaurant, decrementRestaurantReviewCount, deleteAllRestaurants,
         deleteRestaurant, incrementRestaurantReviewCount, updateRestaurant, updateRestaurantRating,
-        updateRestaurantReviewCount, updateRestaurantOwner } = props;
+        updateRestaurantReviewCount, updateRestaurantOwner, addRestaurantThunk } = props;
 
     // Is this a restaurant add or update
-    const { isUpdate } = props;
+    const { isUpdate, restaurant, users } = props;
+    console.log("RESTAURANT IS", restaurant)
 
     // keeps track of if the form was submitted
     const [submitted, setSubmitted] = useState(false);
@@ -45,6 +49,24 @@ function EditRestaurantForm(props) {
     const [digitalContact, setDigitalContact] = useState("");
     const [website, setWebsite] = useState("");
     const [fileName, setFileName] = useState("");
+
+    // Loading the database data into state when params are updated on params
+    useEffect(() => {
+        if (restaurant.length > 0) {
+            const [currentRestaurant] = restaurant;
+            const [currentImage] = currentRestaurant.images;
+
+            setRestaurantName(currentRestaurant.name);
+            setAddress(currentRestaurant.address.address)
+            setCity(currentRestaurant.address.city)
+            setZip(currentRestaurant.address.zip)
+            setState(currentRestaurant.address.state)
+            setPhone(formatPhoneNumber(currentRestaurant.phone))
+            setDigitalContact(currentRestaurant.digitalContact)
+            setWebsite(currentRestaurant.website)
+            // setFileStringName(currentImage)
+        }
+    }, []);
 
     const onChangeRestaurantName = e => {
         const restaurantName = e.target.value;
@@ -72,7 +94,7 @@ function EditRestaurantForm(props) {
     }
 
     const onChangePhone = e => {
-        const phone = e.target.value;
+        const phone = formatPhoneNumber(e.target.value);
         setPhone(phone);
     }
 
@@ -92,6 +114,26 @@ function EditRestaurantForm(props) {
     }
 
     const saveAccount = () => {
+        if (isUpdate) {
+            // Update the restaurant
+
+        }
+        else {
+
+            if (users.length > 0) {
+                const userCreatorId = users[0].id;
+                const rawPhone = unformatPhoneNumber(phone);
+                console.log(rawPhone);
+
+                addRestaurantThunk(
+                    userCreatorId, restaurantName, address,
+                    city, state, zip, rawPhone, digitalContact,
+                    website, fileName);
+
+            }
+            // Create a new restaurant
+
+        }
         var data = {
             restaurantName: restaurantName,
             address: address,
@@ -138,7 +180,7 @@ function EditRestaurantForm(props) {
                     imageLocation: "Fake Image 2"
                 }
             ]
-            
+
         }
 
         // DEBUG REDUX METHODS
@@ -153,10 +195,10 @@ function EditRestaurantForm(props) {
         // deleteRestaurant(testData.restaurantId)
         // updateRestaurantOwner(testData.restaurantId, testData.ownerId)
 
-        updateRestaurant(testData.restaurantId, testData.restaurantName, testData.authorId, testData.authorUserName, 
-            testData.address, testData.city, testData.state, testData.zip, testData.phone, 
-            testData.digitalContact, testData.website, testData.imageArray)
-        
+        // updateRestaurant(testData.restaurantId, testData.restaurantName, testData.authorId, testData.authorUserName, 
+        //     testData.address, testData.city, testData.state, testData.zip, testData.phone, 
+        //     testData.digitalContact, testData.website, testData.imageArray)
+
         // updateRestaurantRating(testData.restaurantId, testData.tasteRating, testData.serviceRating, 
         //     testData.cleanlinessRating, testData.overallRating)
         // updateRestaurantReviewCount(testData.restaurantId, testData.reviewCount)
@@ -179,77 +221,32 @@ function EditRestaurantForm(props) {
     // The EditRestaurant form will be displayed using floating labels
     return (
         <Form>
-            <FloatingRestaurantName restaurantName={restaurantName} onChangeRestaurantName={onChangeRestaurantName}/>
-            <FloatingAddress address={address} onChangeAddress={onChangeAddress}/>
-            <FloatingCity city={city} onChangeCity={onChangeCity}/>
-            <FloatingStateZip state={state} zip={zip} onChangeState={onChangeState} onChangeZip={onChangeZip}/>
-            <FloatingPhone phone={phone} onChangePhone={onChangePhone}/>
-            <FloatingDigitalContact digitalContact={digitalContact} onChangeDigitalContact={onChangeDigitalContact}/>
-            <FloatingWebsite website={website} onChangeWebsite={onChangeWebsite}/>
-            <FloatingImageUpload fileName={fileName} onChangeFileName={onChangeFileName}/>
-            <EditFormButtons isUpdate={isUpdate} saveAccount={saveAccount} clearForm={clearForm}/>
-            
+            <FloatingRestaurantName restaurantName={restaurantName} onChangeRestaurantName={onChangeRestaurantName} />
+            <FloatingAddress address={address} onChangeAddress={onChangeAddress} />
+            <FloatingCity city={city} onChangeCity={onChangeCity} />
+            <FloatingStateZip state={state} zip={zip} onChangeState={onChangeState} onChangeZip={onChangeZip} />
+            <FloatingPhone phone={phone} onChangePhone={onChangePhone} />
+            <FloatingDigitalContact digitalContact={digitalContact} onChangeDigitalContact={onChangeDigitalContact} />
+            <FloatingWebsite website={website} onChangeWebsite={onChangeWebsite} />
+            <FloatingImageUpload fileName={fileName} onChangeFileName={onChangeFileName} />
+            <EditFormButtons isUpdate={isUpdate} saveAccount={saveAccount} clearForm={clearForm} />
+
         </Form>
     )
 }
 
 // Mapping the redux store states to props
-const mapStateToProps = state => 
-    ({
-        reviews: [...state.reviews],
-        users: [...state.users],
-        messages: [...state.messages]
-    });
+const mapStateToProps = state =>
+({
+    reviews: [...state.reviews],
+    users: [...state.users],
+    messages: [...state.messages]
+});
 
-// Mapping the state actions to props
-const mapDispatchToProps = dispatch => 
-    ({
-        // This method will add a new review
-        addRestaurant(restaurantId, authorId, authorUserName, ownerId, restaurantName, digitalContact, website, 
-            phone, addressId, address, city, state, zip, ratingId, tasteRating, serviceRating, cleanlinessRating, overallRating, 
-            reviewCount, imageId, imageLocation) {
-            dispatch(addRestaurant(restaurantId, authorId, authorUserName, ownerId, restaurantName, digitalContact, website, 
-                phone, addressId, address, city, state, zip, ratingId, tasteRating, serviceRating, cleanlinessRating, overallRating, 
-                reviewCount, imageId, imageLocation)
-                )
-        },
-        decrementRestaurantReviewCount(restaurantId) {
-            dispatch(decrementRestaurantReviewCount(restaurantId)
-            )
-        },
-        deleteAllRestaurants() {
-            dispatch(deleteAllRestaurants()
-            )
-        },
-        deleteRestaurant(id) {
-            dispatch(deleteRestaurant(id))
-        },
-        incrementRestaurantReviewCount(restaurantId) {
-            dispatch(incrementRestaurantReviewCount(restaurantId)
-            )
-        },
-        updateRestaurantOwner(restaurantId, ownerId) {
-            dispatch(updateRestaurantOwner(restaurantId, ownerId)
-            )
-        },
-        updateRestaurant(restaurantId, restaurantName, authorId, authorUserName, address, 
-            city, state, zip, phone, digitalContact, website, imageArray) {
-            dispatch(updateRestaurant(restaurantId, restaurantName, authorId, authorUserName, address, 
-                city, state, zip, phone, digitalContact, website, imageArray)
-                )
-        },
-        updateRestaurantRating(restaurantId, tasteRating, serviceRating, 
-            cleanlinessRating, overallRating) {
-            dispatch(updateRestaurantRating(restaurantId, tasteRating, serviceRating, 
-                cleanlinessRating, overallRating)
-                )
-        },
-        updateRestaurantReviewCount(restaurantId, reviewCount) {
-            dispatch(updateRestaurantReviewCount(restaurantId, reviewCount) 
-            )
-        }
-    })
+
 
 
 // Exporting the connect Wrapped EditRestaurantForm Component
-export default connect(mapStateToProps, mapDispatchToProps)(EditRestaurantForm);
+export default connect(mapStateToProps, {
+    addRestaurantThunk
+})(EditRestaurantForm);

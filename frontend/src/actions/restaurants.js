@@ -14,7 +14,43 @@
 // for the app and importing needed components
 import C from '../constants';
 import RestaurantDataService from "../services/restaurant.service";
-import { formatDBRestaurantFind } from '../helperFunction/actionHelpers';
+import { formatDBRestaurantFind, formatDBRestaurantCreate } from '../helperFunction/actionHelpers';
+
+
+export const addRestaurantThunk = (
+    userCreatorId, restaurantName, address, city, state, 
+    zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
+    imageLocation ) => async dispatch => {
+        /**
+         * Call and await the user data service create method, passing the parameters and storing the 
+         * results in a constant.
+         */
+        await RestaurantDataService.create({
+            userCreatorId, restaurantName, address, city, state, 
+            zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
+            imageLocation
+        })
+            .then(res => {
+                if (res) {
+                    console.log("data: ", res.data);
+
+                    const restaurantData = formatDBRestaurantCreate(res.data)
+
+                    dispatch(addRestaurant(restaurantData))
+
+                    return res;
+                }
+                
+
+                else {
+                    console.log("Restaurant was not added");
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+}
+
 
 /**
  * Searches the database by restaurant name for all matching restaurants up to the 
@@ -115,7 +151,7 @@ export const findAllRestaurantsOrderedThunk = (offset, limit) => async dispatch 
  * Adds the restaurant to the database and updates state.
  * @returns 
  */
-export const addRestaurantThunk = () => async dispatch => { }
+// export const addRestaurantThunk = () => async dispatch => { }
 
 /**
  * React Redux reducer that will add a new restaurant to state.

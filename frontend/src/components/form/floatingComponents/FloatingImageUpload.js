@@ -28,7 +28,7 @@ function FloatingImageUpload(props) {
         <Form.Floating className="mb-3 justify-content-center">
             <FloatingLabel 
             controlId="floatingImageInput" 
-            aria-label="Address"> 
+            aria-label="Image Upload"> 
                     <Form.Control
                     className="pt-3"
                     type="file"
