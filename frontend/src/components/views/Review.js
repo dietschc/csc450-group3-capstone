@@ -11,7 +11,7 @@ import React, { useState } from 'react'
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 import FloatingImageUpload from '../form/floatingComponents/FloatingImageUpload';
 import ModalCancelConfirm from '../form/modal/ModalCancelConfirm';
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { printStarTotal, printReviewTotal } from '../../helperFunction/StringGenerator';
 import { connect } from 'react-redux';
 import { addReviewThunk } from '../../actions/reviews';
@@ -33,6 +33,8 @@ function Review(props) {
     const [fileName, setFileName] = useState("");
     const [reviewTitle, setReviewTitle] = useState("");
     const [reviewText, setReviewText] = useState("");
+
+    const navigate = useNavigate();
 
     const onChangeTasteRating = e => {
         const tasteRating = e.target.value
@@ -72,15 +74,6 @@ function Review(props) {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // console.log("handle submit pressed");
-        // const form = event.currentTarget;
-        // if (form.checkValidity() === false) {
-        //     event.preventDefault();
-        //     event.stopPropagation();
-        // }
-
-        // setValidated(true);
-
         if (isEditing) {
             updateReview();
         } else {
@@ -103,25 +96,18 @@ function Review(props) {
         //     serviceRating, cleanRating, overallRating, reviewTitle, 
         //     reviewText, fileName)
 
-        const data = {
-            restaurantId: restaurantId,
-            userId: users[0].id,
-            reviewTitle: reviewTitle,
-            reviewText: reviewText,
-            tasteRating: tasteRating,
-            serviceRating: serviceRating,
-            cleanRating: cleanRating,
-            overallRating: overallRating,
-            imageLocation: fileName
-        }
-
         const userId = users[0].id;
         const imageLocation = fileName;
 
-        console.log("review data: ", data);
+        // console.log("review data: ", data);
 
+        // Pass parameters to add review thunk action
         addReviewThunk(userId, restaurantId, reviewTitle, reviewText,
-            tasteRating, serviceRating, cleanRating, overallRating, imageLocation);
+            Number(tasteRating), Number(serviceRating), Number(cleanRating), 
+            Number(overallRating), imageLocation);
+
+        // Bring back to user dashboard after
+        setTimeout(() => { navigate("../userDashboard") }, 500);
     }
 
     const updateReview = () => {
@@ -338,4 +324,4 @@ const mapStateToProps = state =>
 
 
 // Exporting the connect Wrapped EditAccount Component
-export default connect(mapStateToProps, {addReviewThunk})(Review);
+export default connect(mapStateToProps, { addReviewThunk })(Review);

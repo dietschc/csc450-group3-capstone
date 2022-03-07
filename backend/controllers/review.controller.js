@@ -26,14 +26,14 @@ const Authentication = db.authentication;
 // Create and save a new review
 exports.create = async (req, res) => {
     // Validate request
-    // if (!req.body.restaurantId) {
-    //     res.status(400).send({
-    //         message: "Content can not be empty!"
-    //     });
-    //     return;
-    // }
+    if (!req.body.restaurantId) {
+        res.status(400).send({
+            message: "Content can not be empty!"
+        });
+        return;
+    }
 
-    console.log("review details:", req.body);
+    // console.log("review details:", req.body);
 
     // Creating an array to hold the needed table ideas as the adjoining 
     // restaurant tables are created
