@@ -46,7 +46,7 @@ function FriendList(props) {
                                     {friend.userName}
                                 </Col>
                                 <Col className="d-flex justify-content-end my-1 px-0 flex-shrink-1">
-                                    <Button onClick={() => chatHandler(friend.userId)}>Chat</Button>
+                                    <Button onClick={() => chatHandler(friend)}>Chat</Button>
                                 </Col>
                                 <Col className="d-flex justify-content-center my-1 px-0 flex-shrink-1">
                                     <Button onClick={() => deleteFriendHandler(friend)}>

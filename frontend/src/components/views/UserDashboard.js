@@ -27,7 +27,7 @@ import UDRestaurantReviewDetail from '../form/button/UDRestaurantReviewDetail';
 import DeleteReviewConfirm from '../modal/DeleteReviewConfirm';
 import { findByAuthorIdThunk } from '../../actions/reviewsRestaurants';
 import { deleteFriendThunk } from '../../actions/friend';
-import { deleteAllReviews } from '../../actions/reviews';
+import { deleteAllReviews, deleteReviewThunk } from '../../actions/reviews';
 import { deleteAllRestaurants } from '../../actions/restaurants';
 
 function UserDashboard(props) {
@@ -39,6 +39,7 @@ function UserDashboard(props) {
         deleteFriendThunk,
         deleteAllReviews,
         deleteAllRestaurants,
+        deleteReviewThunk
     } = props;
 
 
@@ -52,8 +53,8 @@ function UserDashboard(props) {
     // Destructuring the needed data from the intitialState.json file
     // const { messages } = data;
     const [user = []] = users;
-    const { address: currentAddress = []} = user;
-    const { friends = []} = user;
+    const { address: currentAddress = [] } = user;
+    const { friends = [] } = user;
 
     const loadState = () => {
         deleteAllReviews();
@@ -99,15 +100,21 @@ function UserDashboard(props) {
 
     // Deletes the review with the returned reviewId
     const deleteReview = () => {
-        // Delete Review Code Here
-        console.log(currentReview.reviewId + " review was deleted!");
+        // Define our id paramaeter
+        const reviewId = currentReview.id;
+        // console.log("review id is: ", reviewId);
+
+        // Call thunk method and pass parameters to backend
+        deleteReviewThunk(reviewId);
+
+        console.log(currentReview.id + " review was deleted!");
     }
 
     // Handles the click on the delete review button and sets 
     // the selected review into state
     const deleteReviewHandler = (review) => {
         setCurrentReview(review);
-        console.log("REVIEW IN DELETE HANDLER IS ", currentReview);
+        console.log("REVIEW IN DELETE HANDLER IS ", review);
         showReviewHandler();
     }
 
@@ -120,15 +127,17 @@ function UserDashboard(props) {
     // Navigates to the Chat page passing the requested friend to 
     // chat with's ID into the URL. Used with the FriendList.js 
     // Component
-    const chatHandler = (id) => {
-        navigate("../chat/" + id);
+    const chatHandler = (friend) => {
+        console.log("FRIEND ID FOR CHAT HANDLER IS ", friend.id);
+        navigate("../chat/" + friend.id);
     }
 
     // Navigates to the Review page passing the requested review to 
     // Review with the review ID into the URL. Used with the 
     // RestaurantReviewDetail.js Component
-    const reviewEditHandler = (id) => {
-        navigate("../review/" + id);
+    const reviewEditHandler = (review) => {
+        console.log("REVIEW IN EDIT HANDLER IS ", review.id);
+        navigate("../review/" + review.id);
     }
 
     // These buttons will be passed into the RestaurantReviewDetail.js 
@@ -190,8 +199,9 @@ const mapStateToProps = state =>
 // Exporting the component
 // export default UserDashboard;
 export default connect(mapStateToProps, {
-    findByAuthorIdThunk, 
-    deleteFriendThunk, 
-    deleteAllRestaurants, 
-    deleteAllReviews
+    findByAuthorIdThunk,
+    deleteFriendThunk,
+    deleteAllRestaurants,
+    deleteAllReviews,
+    deleteReviewThunk
 })(UserDashboard);

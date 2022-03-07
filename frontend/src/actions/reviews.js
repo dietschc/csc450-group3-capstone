@@ -9,6 +9,7 @@
 //  (DAB, 3/01/2022, Added in redux thunks to retrieve reviews from the database and 
 //  load then into state (findAllReviewsOrdered))
 //  (DAB, 3/05/2022, Added in findReviewByAuthorThunk and findReviewByAuthorRestaurantThunk)
+//  (CPD, 3/06/2022, Added deleteReviewThunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -61,7 +62,7 @@ export const findReviewByAuthorThunk = (offset, limit, reviewAuthorId) => async 
  * @param {*} restaurantId
  * @returns 
  */
- export const findReviewByAuthorRestaurantThunk = (offset, limit, authorId, restaurantId) => async dispatch => {
+export const findReviewByAuthorRestaurantThunk = (offset, limit, authorId, restaurantId) => async dispatch => {
     // Making a call to the database to request the reviews
     await ReviewDataService.findByRestaurantAuthorIdOffsetLimit(offset, limit, authorId, restaurantId)
         .then(async res => {
@@ -177,6 +178,35 @@ export const addReviewThunk = (
                 console.log(err)
             })
     }
+/**
+ * This function takes a single parameter, which is the reviewId of the review to be deleted.
+ * 
+ * @param {*} reviewId 
+ * @returns 
+ */
+export const deleteReviewThunk = (reviewId) => async dispatch => {
+    /**
+     * Call and await the review data service delete method, passing the parameters and storing the 
+     * results in a constant.
+     */
+    await ReviewDataService.delete(reviewId)
+        .then(review => {
+
+            // Variable that will indicate if the review was deleted from the database
+            const isFriendDeleted = review.data.message.includes("success") ? true : false;
+
+            if (isFriendDeleted) {
+                // console.log("result: ", res);
+
+                // Delete review from state
+                dispatch(deleteReview(reviewId))
+            }
+        })
+
+        .catch(err => {
+            console.log(err)
+        })
+}
 
 
 /**
@@ -235,7 +265,7 @@ export const addReview = ({ userName, reviewId, userId, imageId,
     })
 
 // React-Redux action to delete a review based off id from redux state
-export const deleteReview = ({ reviewId }) => ({
+export const deleteReview = (reviewId) => ({
     type: C.DELETE_REVIEW,
     id: reviewId
 })
