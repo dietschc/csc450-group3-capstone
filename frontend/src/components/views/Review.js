@@ -14,15 +14,17 @@ import ModalCancelConfirm from '../form/modal/ModalCancelConfirm';
 import { useParams } from "react-router-dom";
 import { printStarTotal, printReviewTotal } from '../../helperFunction/StringGenerator';
 import { connect } from 'react-redux';
-import { addReview, deleteAllReviews, deleteReview, updateReview } from '../../actions/reviews';
+import { addReviewThunk } from '../../actions/reviews';
 
 
 function Review(props) {
 
-    const { id: restaurantId } = useParams();
-    const { addReview, deleteAllReviews, deleteReview, updateReview } = props;
+    const { users, reviews, addReviewThunk } = props;
 
+    const { id: restaurantId } = useParams();
     const restaurantName = "Joe's Burgers";
+
+    const isEditing = false;
 
     const [tasteRating, setTasteRating] = useState("3");
     const [serviceRating, setServiceRating] = useState("3");
@@ -67,6 +69,25 @@ function Review(props) {
         setReviewText(reviewText);
     }
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        // console.log("handle submit pressed");
+        // const form = event.currentTarget;
+        // if (form.checkValidity() === false) {
+        //     event.preventDefault();
+        //     event.stopPropagation();
+        // }
+
+        // setValidated(true);
+
+        if (isEditing) {
+            updateReview();
+        } else {
+            saveReview();
+        }
+    };
+
     const saveReview = () => {
         // Review redux actions can be tested here*****
         // const reviewId = 1;
@@ -81,6 +102,30 @@ function Review(props) {
         // updateReview(1,tasteRating, 
         //     serviceRating, cleanRating, overallRating, reviewTitle, 
         //     reviewText, fileName)
+
+        const data = {
+            restaurantId: restaurantId,
+            userId: users[0].id,
+            reviewTitle: reviewTitle,
+            reviewText: reviewText,
+            tasteRating: tasteRating,
+            serviceRating: serviceRating,
+            cleanRating: cleanRating,
+            overallRating: overallRating,
+            imageLocation: fileName
+        }
+
+        const userId = users[0].id;
+        const imageLocation = fileName;
+
+        console.log("review data: ", data);
+
+        addReviewThunk(userId, restaurantId, reviewTitle, reviewText,
+            tasteRating, serviceRating, cleanRating, overallRating, imageLocation);
+    }
+
+    const updateReview = () => {
+        console.log("Updating review!");
     }
 
     const starFont = { color: "gold" }
@@ -97,7 +142,7 @@ function Review(props) {
                     <strong>Please rate your visit!</strong>
                 </div>
 
-                <Form>
+                <Form onSubmit={handleSubmit}>
                     <Row className="justify-content-center">
                         <Col xs="6">
                             <Form.Group>
@@ -244,7 +289,7 @@ function Review(props) {
                     </Form.Floating>
 
                     <div className="d-flex justify-content-around pt-2 pb-5">
-                        <Button className="mr-1 w-25" variant="outline-primary" onClick={saveReview}>
+                        <Button type="submit" className="mr-1 w-25" variant="outline-primary">
                             Submit
                         </Button>
 
@@ -257,40 +302,40 @@ function Review(props) {
 }
 
 // Mapping the redux store states to props
-const mapStateToProps = state => 
-    ({
-        reviews: [...state.reviews],
-        users: [...state.users]
-    });
+const mapStateToProps = state =>
+({
+    reviews: [...state.reviews],
+    users: [...state.users]
+});
 
-// Mapping the state actions to props
-const mapDispatchToProps = dispatch => 
-    ({
-        // This method will add a new review
-        addReview(userName, userId, restaurantId, restaurantName, tasteRating, 
-            serviceRating, cleanlinessRating, overallRating, reviewTitle, 
-            reviewText, imageLocation) {
-            dispatch(addReview(userName, userId, restaurantId, restaurantName, tasteRating, 
-                serviceRating, cleanlinessRating, overallRating, reviewTitle, 
-                reviewText, imageLocation)
-                )
-        },
-        deleteAllReviews() {
-            dispatch(deleteAllReviews()
-            )
-        },
-        deleteReview(id) {
-            dispatch(deleteReview(id))
-        },
-        updateReview(reviewId, tasteRating, 
-            serviceRating, cleanlinessRating, overallRating, reviewTitle, 
-            reviewText, imageLocation) {
-                dispatch(updateReview(reviewId, tasteRating, 
-                    serviceRating, cleanlinessRating, overallRating, reviewTitle, 
-                    reviewText, imageLocation))    
-        }
-    })
+// // Mapping the state actions to props
+// const mapDispatchToProps = dispatch => 
+//     ({
+//         // This method will add a new review
+//         addReview(userName, userId, restaurantId, restaurantName, tasteRating, 
+//             serviceRating, cleanlinessRating, overallRating, reviewTitle, 
+//             reviewText, imageLocation) {
+//             dispatch(addReview(userName, userId, restaurantId, restaurantName, tasteRating, 
+//                 serviceRating, cleanlinessRating, overallRating, reviewTitle, 
+//                 reviewText, imageLocation)
+//                 )
+//         },
+//         deleteAllReviews() {
+//             dispatch(deleteAllReviews()
+//             )
+//         },
+//         deleteReview(id) {
+//             dispatch(deleteReview(id))
+//         },
+//         updateReview(reviewId, tasteRating, 
+//             serviceRating, cleanlinessRating, overallRating, reviewTitle, 
+//             reviewText, imageLocation) {
+//                 dispatch(updateReview(reviewId, tasteRating, 
+//                     serviceRating, cleanlinessRating, overallRating, reviewTitle, 
+//                     reviewText, imageLocation))    
+//         }
+//     })
 
 
 // Exporting the connect Wrapped EditAccount Component
-export default connect(mapStateToProps, mapDispatchToProps)(Review);
+export default connect(mapStateToProps, {addReviewThunk})(Review);

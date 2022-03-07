@@ -169,8 +169,8 @@ export const addReviewThunk = (
             .then(res => {
                 console.log("data: ", res.data);
 
-                // This combines the 3 JSON objects into a single object
-                // const result = { ...res.data.newUser, ...res.data.newAddress, ...res.data.newAuth }
+                // It is not necessary to add the review to state since visiting the homepage or dashboard
+                // will automatically refresh all the reviews in state
                 // dispatch(addReview(result))
             })
             .catch(err => {
