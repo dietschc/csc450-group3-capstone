@@ -12,7 +12,6 @@
 // for the app and importing needed components
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Form, FormControl, FormGroup, Row, Col, ButtonGroup } from 'react-bootstrap';
 import { connect } from "react-redux";
 import XLContainer from '../template/XLContainer';
 import RestaurantEditItem from '../subComponent/RestaurantEditItem';
