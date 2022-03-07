@@ -24,7 +24,7 @@ function EditFormButtons(props) {
 
     return (
         <div className="d-flex justify-content-around pt-2 pb-5">
-            <Button className="mr-1 w-25" variant="outline-primary" onClick={saveAccount}>
+            <Button className="mr-1 w-25" variant="outline-primary" type="submit">
                 {isUpdate ? "Update" : "Submit"}
             </Button>
 

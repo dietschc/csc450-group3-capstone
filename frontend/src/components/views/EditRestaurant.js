@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import {
     addRestaurant, decrementRestaurantReviewCount, deleteAllRestaurants,
     deleteRestaurant, incrementRestaurantReviewCount, updateRestaurant, updateRestaurantRating,
-    updateRestaurantReviewCount, updateRestaurantOwner
+    updateRestaurantReviewCount, updateRestaurantOwner, updateRestaurantThunk
 } from '../../actions/restaurants';
 
 function EditRestaurant(props) {
@@ -33,7 +33,7 @@ function EditRestaurant(props) {
 
     const { addRestaurant, decrementRestaurantReviewCount, deleteAllRestaurants,
         deleteRestaurant, incrementRestaurantReviewCount, updateRestaurant, updateRestaurantRating,
-        updateRestaurantReviewCount, updateRestaurantOwner, restaurants } = props;
+        updateRestaurantReviewCount, updateRestaurantOwner, restaurants, updateRestaurantThunk } = props;
     const { restaurantId } = useParams();
     // These variables will keep track if the form was submitted and whether the 
     // form should load as an update or add
@@ -44,7 +44,7 @@ function EditRestaurant(props) {
     console.log("RESTAURANT ID IS", restaurantId)
 
     const getRestaurant = () => {
-        if (restaurants.length > 0) {
+        if (restaurants && restaurants.length > 0) {
             return restaurants.filter((restaurant) => (restaurant.id) == restaurantId)
         }
     }

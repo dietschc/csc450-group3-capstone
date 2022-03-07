@@ -27,7 +27,7 @@ function FloatingStateZip(props) {
 
     return (
         <Row className="justify-content-center">
-            <FloatingStateOptionList state={state} onChangeState={onChangeState}/>
+            <FloatingStateOptionList state={state} onChangeState={onChangeState} />
             <FloatingZip zip={zip} onChangeZip={onChangeZip}/>
         </Row>
     )  

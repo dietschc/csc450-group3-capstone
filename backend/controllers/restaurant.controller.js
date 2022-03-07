@@ -7,6 +7,8 @@
 //  (DAB, 2/27/2022, Added in some offset/limit findAll as well as search 
 //  by name and author Id)
 //  (DAB, 3/05/2022, Beautified the code formatting)
+//  (DAB, 3/07/2022, Added in a user validation for create so there are no 
+//  foreign key errors when creating a restaurant)
 
 const { authentication } = require("../models");
 const db = require("../models");
@@ -21,26 +23,25 @@ const Authentication = db.authentication;
 // Create and Save a new Restaurant
 exports.create = async (req, res) => {
     // Validate request
-    if (!req.body.restaurantWebsite || 
-        !req.body.userCreatorId) {
+    if (!req.body.restaurantWebsite ||
+        !req.body.userCreatorId ||
+        !req.body.restaurantName ||
+        !req.body.restaurantDigiContact) {
         res.status(400).send({
             message: "Content can not be empty!"
         });
         return;
     }
 
-    
     // Checking if the creator is a user in the database
     const userAuthData = await Authentication.findOne({
         attributes: ['userName'],
-        where: { userId: req.body.userCreatorId}
+        where: { userId: req.body.userCreatorId }
     })
         .then(res => res);
-    
+
     // If there is a user in the database the query will run
     const isUser = userAuthData ? true : false;
-    
-   
 
     // If the user is a creator then the Restaurant is created
     if (isUser) {
@@ -120,7 +121,7 @@ exports.create = async (req, res) => {
 
                 // Send the response JSON with all created table objects
                 res.send({ ...newRestaurant.dataValues, address, rating, image, ...userAuthData.dataValues });
-                
+
             })
             .catch(err => {
                 // If there is an error, a response is sent to notify the requester
@@ -300,8 +301,8 @@ exports.update = async (req, res) => {
                         }
                         // If there was an error, a response is sent to notify the requester
                         else {
-                            res.status(500).send({
-                                message: `Cannot update Restaurant with id=${restaurantId}. Maybe Restaurant was not found or req.body is empty!`
+                            res.send({
+                                message: `Restaurant was updated successfully`
                             });
                         }
                     });

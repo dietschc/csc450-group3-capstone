@@ -4,6 +4,7 @@
 // March 1, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 3/03/2022, Added in formatDBFriendFind)
+//  (DAB, 3/07/2022, Added in formatDBRestaurantCreate)
 
 /**
  * The helper function will nicely format the data retrieved from a find 
@@ -29,6 +30,15 @@ export const formatDBFriendFind = (friend) => {
     }
 }
 
+
+/**
+ * The helper function will nicely format the data retrieved from a  
+ * restaurant update request from the database and format it so it can 
+ * be used by redux reducers to load into state. 
+ * 
+ * @param {*} restaurant 
+ * @returns 
+ */
 export const formatDBRestaurantCreate = (restaurant) => {
     // If data was found it will format and return the result
     if (restaurant) {
@@ -44,7 +54,6 @@ export const formatDBRestaurantCreate = (restaurant) => {
             reviewCount: restaurant.reviewCount,  
             userName: restaurant.userName,
             ...restaurant.rating
-
         }
     }
     // Else it will just return the parameter

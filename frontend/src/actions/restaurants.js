@@ -32,7 +32,6 @@ export const addRestaurantThunk = (
         })
             .then(res => {
                 if (res) {
-                    console.log("data: ", res.data);
 
                     const restaurantData = formatDBRestaurantCreate(res.data)
 
@@ -49,6 +48,28 @@ export const addRestaurantThunk = (
             .catch(err => {
                 console.log(err)
             })
+}
+
+export const updateRestaurantThunk = (restaurantId, data) => async dispatch => {
+    // Making the call to the service to request an update to the database
+    await RestaurantDataService.update(restaurantId, data)
+    .then(res => {
+        // If there is a response the state will be updated
+        if (res) {
+            // Destructuring out permissionId and permission name from the data
+            // const { permissionId, permissionName } = data;
+
+            // // Dispatching the action to update state permission
+            dispatch(updateRestaurant(data))
+        }
+        else {
+            console.log("Restaurant was not updated")
+        }
+    })
+    .catch(err => {
+        // If there is an error it will be logged
+        console.log(err)
+    })
 }
 
 
@@ -294,18 +315,18 @@ export const updateRestaurantOwner = (restaurantId, ownerId) => ({
  * @param {*} imageLocation 
  * @returns 
  */
-export const updateRestaurant = (restaurantId, restaurantName, authorId, authorUserName, address,
-    city, state, zip, phone, digitalContact, website, imageArray) => ({
+export const updateRestaurant = ({restaurantId, restaurantName, userCreatorId, userName, address,
+    city, state, zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, imageArray}) => ({
         type: C.UPDATE_RESTAURANT,
         id: restaurantId,
         author: {
-            id: authorId,
-            userName: authorUserName
+            id: userCreatorId,
+            userName: userName
         },
         name: restaurantName,
-        digitalContact: digitalContact,
-        website: website,
-        phone: phone,
+        digitalContact: restaurantDigiContact,
+        website: restaurantWebsite,
+        phone: restaurantPhone,
         address: {
             address: address,
             city: city,

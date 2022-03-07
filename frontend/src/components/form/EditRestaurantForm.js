@@ -4,6 +4,8 @@
 // February 3, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/18/2022, Added in redux connect for state)
+//  (DAB, 3/07/2022, Create and Update Restaurant is working but 
+//  no current authentication or undefined protections)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -22,15 +24,25 @@ import { connect } from 'react-redux';
 import {
     addRestaurant, decrementRestaurantReviewCount, deleteAllRestaurants,
     deleteRestaurant, incrementRestaurantReviewCount, updateRestaurant, updateRestaurantRating,
-    updateRestaurantReviewCount, updateRestaurantOwner, addRestaurantThunk
+    updateRestaurantReviewCount, updateRestaurantOwner, addRestaurantThunk, updateRestaurantThunk
 } from '../../actions/restaurants';
 import { formatPhoneNumber, unformatPhoneNumber } from '../../helperFunction/FormatString';
+
+
+// LAST WAS WORKING ON FORM VALIDATION
+//  STILL NEED TO GET IMAGE WORKING AND TEST OUT SOME CRASHES DUE TO 
+//  UNEXPECTED NAVIGATION (TEST WITH STATE CLEARED, maybe reroute to main or
+//  to search page if there is no matching restaurant id in state)
+// BIG IMPLEMENTATION NEEDED IS IMAGE UPLOAD, HOW TO SORT AND STORE THEM
+//  RENAME THEM AND STORE TO PUBLIC OR IS THERE A BETTER WAY?
+
 
 function EditRestaurantForm(props) {
     // Redux store functions
     const { addRestaurant, decrementRestaurantReviewCount, deleteAllRestaurants,
         deleteRestaurant, incrementRestaurantReviewCount, updateRestaurant, updateRestaurantRating,
-        updateRestaurantReviewCount, updateRestaurantOwner, addRestaurantThunk } = props;
+        updateRestaurantReviewCount, updateRestaurantOwner, addRestaurantThunk,
+        updateRestaurantThunk } = props;
 
     // Is this a restaurant add or update
     const { isUpdate, restaurant, users } = props;
@@ -47,14 +59,16 @@ function EditRestaurantForm(props) {
     const [state, setState] = useState("");
     const [phone, setPhone] = useState("");
     const [digitalContact, setDigitalContact] = useState("");
+    const [imageId, setImageId] = useState("")
     const [website, setWebsite] = useState("");
     const [fileName, setFileName] = useState("");
 
     // Loading the database data into state when params are updated on params
     useEffect(() => {
-        if (restaurant.length > 0) {
+        if (restaurant && restaurant.length > 0) {
             const [currentRestaurant] = restaurant;
             const [currentImage] = currentRestaurant.images;
+            console.log("CURRENT RESTAURANT IS", currentRestaurant)
 
             setRestaurantName(currentRestaurant.name);
             setAddress(currentRestaurant.address.address)
@@ -64,6 +78,7 @@ function EditRestaurantForm(props) {
             setPhone(formatPhoneNumber(currentRestaurant.phone))
             setDigitalContact(currentRestaurant.digitalContact)
             setWebsite(currentRestaurant.website)
+            // setImageId(currentRestaurant.images[0].id)
             // setFileStringName(currentImage)
         }
     }, []);
@@ -113,14 +128,45 @@ function EditRestaurantForm(props) {
         setFileName(fileName);
     }
 
-    const saveAccount = () => {
+    const saveAccount = (e) => {
+        e.preventDefault();
         if (isUpdate) {
             // Update the restaurant
+            if (users && users.length > 0) {
+                const [currentUser] = users;
+                const [currentRestaurant] = restaurant;
+                const userCreatorId = currentUser.id;
+                const userName = currentUser.auth.userName;
 
+                console.log("IMAGE ID IS READING", imageId);
+
+                const updateData = {
+                    restaurantId: currentRestaurant.id,
+                    restaurantName: restaurantName,
+                    restaurantDigiContact: digitalContact,
+                    restaurantPhone: unformatPhoneNumber(phone),
+                    userCreatorId: userCreatorId,
+                    restaurantWebsite: website,
+                    userName: userName,
+                    imageLocation: fileName,
+                    imageArray: [
+                        {
+                            imageId: imageId,
+                            imageLocation: fileName
+                        }
+                    ],
+                    address: address,
+                    city: city,
+                    state: state,
+                    zip: zip
+                }
+                updateRestaurantThunk(currentRestaurant.id, updateData)
+
+            }
         }
         else {
-
-            if (users.length > 0) {
+            // Create a new restaurant
+            if (users && users.length > 0) {
                 const userCreatorId = users[0].id;
                 const rawPhone = unformatPhoneNumber(phone);
                 console.log(rawPhone);
@@ -129,9 +175,9 @@ function EditRestaurantForm(props) {
                     userCreatorId, restaurantName, address,
                     city, state, zip, rawPhone, digitalContact,
                     website, fileName);
-
+                clearForm();
             }
-            // Create a new restaurant
+            
 
         }
         var data = {
@@ -220,7 +266,7 @@ function EditRestaurantForm(props) {
 
     // The EditRestaurant form will be displayed using floating labels
     return (
-        <Form>
+        <Form onSubmit={saveAccount}>
             <FloatingRestaurantName restaurantName={restaurantName} onChangeRestaurantName={onChangeRestaurantName} />
             <FloatingAddress address={address} onChangeAddress={onChangeAddress} />
             <FloatingCity city={city} onChangeCity={onChangeCity} />
@@ -248,5 +294,5 @@ const mapStateToProps = state =>
 
 // Exporting the connect Wrapped EditRestaurantForm Component
 export default connect(mapStateToProps, {
-    addRestaurantThunk
+    addRestaurantThunk, updateRestaurantThunk
 })(EditRestaurantForm);
