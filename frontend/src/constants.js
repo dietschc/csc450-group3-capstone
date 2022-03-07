@@ -3,6 +3,8 @@
 // Restaurant Club - constants.js
 // February 3, 2021
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 3/06/2022, Added in DELETE_ADDITIONAL_USERS and 
+//  BAN_USER_PERMISSION)
 
 // These constants ensure that there will be no 
 // spelling errors when working with static variables
@@ -19,6 +21,7 @@ const constants = {
     UPDATE_USER: "UPDATE_USER",
     DELETE_USER: "DELETE_USER",
     DELETE_ALL_USERS: "DELETE_ALL_USERS",
+    DELETE_ADDITIONAL_USERS: "DELETE_ADDITIONAL_USERS",
     ADD_FRIEND: "ADD_FRIEND",
     UPDATE_FRIEND: "UPDATE_FRIEND",
     DELETE_FRIEND: "DELETE_FRIEND",
@@ -44,7 +47,12 @@ const constants = {
 
     ADD_MESSAGE: "ADD_MESSAGE",
     DELETE_MESSAGE: "DELETE MESSAGE",
-    DELETE_ALL_MESSAGES: "DELETE_ALL_MESSAGES"
+    DELETE_ALL_MESSAGES: "DELETE_ALL_MESSAGES",
+
+    BAN_USER_PERMISSION: {
+        permissionId: 3,
+        permissionName: "banned"
+    }
 }
 
 // Exporting constants

@@ -8,6 +8,7 @@
 //  (DAB, 3/01/2022, Added in thunk methods )
 //  (DAB, 3/02/20222, Added in comments)
 //  (DAB, 3/05/2022, Added in findByRestaurantNameThunk)
+//  (DAB, 3/06/2022, Added in deleteRestaurantThunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -49,6 +50,30 @@ export const findByRestaurantNameThunk = (offset, limit, restaurantName) => asyn
             // If there is an error it will be logged
             console.log(err)
         })
+}
+
+/**
+ * The deleteRestaurantThunk will delete a restaurant from both the database 
+ * and state by referencing the userId.
+ * 
+ * @param {*} userId 
+ * @returns 
+ */
+ export const deleteRestaurantThunk = (restaurantId) => async dispatch => {
+    // Making the call to the service to request the deletion of the restaurant
+    await RestaurantDataService.delete(restaurantId)
+    .then(res => {
+        // If there is a response the state will be updated
+        if (res) {
+
+            // Dispatching the action to delete the restaurant from state
+            dispatch(deleteRestaurant(restaurantId));
+        }
+    })
+    .catch(err => {
+        // If there is an error it will be logged
+        console.log(err)
+    })
 }
 
 /**

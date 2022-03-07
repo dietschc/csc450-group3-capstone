@@ -34,9 +34,6 @@ ReactDOM.render(
       <MainTemplate />
     </BrowserRouter>
   </Provider>,
-  // <BrowserRouter>
-  //   <MainTemplate />
-  // </BrowserRouter>,
   document.getElementById('root')
 );
 

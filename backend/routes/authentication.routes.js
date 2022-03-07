@@ -3,6 +3,7 @@
 // Restaurant Club - authentication.routes.js
 // February 15, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 3/06/2022, Added in updateByUserId)
 
 module.exports = app => {
   const authentication = require("../controllers/authentication.controller.js");
@@ -28,6 +29,9 @@ module.exports = app => {
 
   // Update a Authentication with id
   router.put("/:id", authentication.update);
+
+  // Update a Authentication with id
+  router.put("/userId/:userId", authentication.updateByUserId);
 
   // Delete a Authentication with id
   router.delete("/:id", authentication.delete);

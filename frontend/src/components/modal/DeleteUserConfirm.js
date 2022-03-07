@@ -1,9 +1,8 @@
 // Initially Created by: Devin Brueberg
 // CSC450 Capstone
-// Restaurant Club - DeleteReviewConfirm.js
-// February 6, 2022
+// Restaurant Club - DeleteUserConfirm.js
+// March 6, 2022
 // Last Edited (Initials, Date, Edits):
-//  (DAB, 3/06/2022, updated comments)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -13,31 +12,31 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 /**
  * A React Bootstrap formatted confirmation modal that will ask 
- * a user if they wish to delete a review. If the confirmation 
- * is accepted the deleteReview function will handle the 
- * deletion of that review.
+ * a user if they wish to delete a user. If the confirmation 
+ * is accepted the deleteUser function will handle the 
+ * deletion of that user.
  * 
- * @param { show, review, deleteFriend, closeHandler } props 
+ * @param { show, user, deleteUser, closeHandler } props 
  * @returns 
  */
-function DeleteReviewConfirm(props) {
+function DeleteUserConfirm(props) {
     // Destructuring the needed functions and variables from props
-    const { show, deleteReview, closeHandler } = props;
+    const { show, deleteUser, closeHandler } = props;
 
-    // The yesHandler will call both the deleteReview and closeHandler 
-    // functions in order to delete the review
+    // The yesHandler will call both the deleteUser and closeHandler 
+    // functions in order to delete the user
     const yesHandler = () => {
-        deleteReview();
+        deleteUser();
         closeHandler();
     }
     
     return (
         <Modal show={show} onHide={closeHandler}>
             <Modal.Header closeButton>
-                <Modal.Title>Delete review</Modal.Title>
+                <Modal.Title>Delete user</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                Are you sure you want to delete this review?
+                Are you sure you want to delete this user?
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={yesHandler}>
@@ -52,4 +51,4 @@ function DeleteReviewConfirm(props) {
 }
 
 // Exporting the component
-export default DeleteReviewConfirm;
+export default DeleteUserConfirm;

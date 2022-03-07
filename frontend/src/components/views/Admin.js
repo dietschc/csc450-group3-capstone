@@ -5,160 +5,330 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/10/2022, Added in basic Layout and functionality)
 //  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
+//  (DAB, 03/06/2022, Added redux connect, state to props, and Searches functional)
+//  (DAB, 03/07/2022, Confirm modals are added for all crit operations)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Navbar, Button, Nav, Form, Container, FormControl, FormGroup, Row, Col, ButtonGroup, ListGroup } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { connect } from "react-redux";
 import XLContainer from '../template/XLContainer';
-import mockStateData from '../../redux/initialState.json';
 import RestaurantEditItem from '../subComponent/RestaurantEditItem';
 import UserEditItem from '../subComponent/UserEditItem';
+import {
+    findByRestaurantNameThunk,
+    deleteAllRestaurants,
+    deleteRestaurantThunk
+} from '../../actions/restaurants';
+import {
+    deleteAdditionalUsers,
+    findByUserNameThunk,
+    updatePermissionThunk,
+    deleteUserThunk
+} from '../../actions/users';
+import C from '../../constants';
+import BanUserConfirm from '../modal/BanUserConfirm';
+import DeleteUserConfirm from '../modal/DeleteUserConfirm';
+import DeleteRestaurantConfirm from '../modal/DeleteRestaurantConfirm';
+import AdminSearchForm from '../form/AdminSearchForm';
 
+/**
+ * The Admin View allows users with admin permission to perform CRUD 
+ * operations on users and restaurants. It operates as a search hub 
+ * so the data can be found efficiently.
+ * 
+ * @param {*} props 
+ * @returns 
+ */
 function Admin(props) {
-    // The mock state will be held as data
-    const [data, setData] = useState(mockStateData);
-    const [ searchInput, setSearchInput ] = useState("");
-    const [ searchType, setSearchType ] = useState("");
+    // Destructuring the data and functions to be used in the search
+    const { users, restaurants } = props;
+    const {
+        findByRestaurantNameThunk, deleteAllRestaurants,
+        deleteRestaurantThunk, findByUserNameThunk,
+        deleteAdditionalUsers, updatePermissionThunk,
+        deleteUserThunk
+    } = props;
 
-    // Destructuring the data to be used in the search
-    const { users, restaurants } = data;
+    // Component specific states
+    const [searchInput, setSearchInput] = useState("");
+    const [searchType, setSearchType] = useState("user");
+    const [isShowResults, setIsShowResults] = useState(false);
+
+    // Modal specific states that allow the the modals to be hidden or displayed as 
+    // well as the data in the modal to be stored in temp state for CRUD operations
+    const [showDeleteUserConfirm, setShowDeleteUserConfirm] = useState(false);
+    const [showBanUserConfirm, setShowBanUserConfirm] = useState(false);
+    const [showDeleteRestaurantConfirm, setShowDeleteRestaurantConfirm] = useState(false);
+    const [currentUserId, setCurrentUserId] = useState();
+    const [currentRestaurantId, setCurrentRestaurantId] = useState()
+
+    // Creating a navigate instance to navigate the application to new routes
+    const navigate = useNavigate();
+
+    // The show and close handlers will either show or close their respective 
+    // modals
+    const showDeleteUserHandler = () => setShowDeleteUserConfirm(true);
+    const closeDeleteUserHandler = () => setShowDeleteUserConfirm(false);
+    const showBanUserHandler = () => setShowBanUserConfirm(true);
+    const closeBanUserHandler = () => setShowBanUserConfirm(false);
+    const showDeleteRestaurantHandler = () => setShowDeleteRestaurantConfirm(true);
+    const closeDeleteRestaurantHandler = () => setShowDeleteRestaurantConfirm(false);
+
+    /****************************** USER METHODS ******************************************/
+
+    // The banHandler will display a modal verifying 
+    // if the user should be banned
+    const banHandler = (userId) => {
+        // Setting the current id and showing the modal 
+        // before allowing the action
+        setCurrentUserId(userId);
+        showBanUserHandler();
+    }
+
+    // The banUser method will update a users permission to banned in both state 
+    // and the database
+    const banUser = () => {
+        // Banning a user in both state and the database with the BAN_USER_PERMISSION 
+        // constant that holds the correct permissionId and permissionName
+        updatePermissionThunk(currentUserId, C.BAN_USER_PERMISSION);
+    }
+
+    // The dashboardHandler will navigate the user to the dashboard 
+    // for the selected userId
+    const dashboardHandler = (userId) => {
+        // Navigating the user to the search page and passing 
+        // the needed search parameters
+        navigate(`../userDashboard/${userId}`);
+    }
+
+    // The deleteUser method will delete a user from both state and the database
+    const deleteUser = () => {
+        deleteUserThunk(currentUserId);
+    }
+
+    // The userDeleteHandler will display a modal verifying 
+    // if the user should be deleted
+    const userDeleteHandler = (userId) => {
+        // Setting the current id and showing the modal 
+        // before allowing the action
+        setCurrentUserId(userId);
+        showDeleteUserHandler();
+    }
+
+    // The userSearch method sets the Redux state to display search specific 
+    // users
+    const userSearch = async () => {
+        // All except the logged in user is deleted from state
+        await deleteAdditionalUsers();
+
+        // If search input is not an empty string the database will be 
+        // queried for users matching the searchInput
+        if (searchInput !== "") {
+            await findByUserNameThunk(0, 25, searchInput);
+        }
+    }
+
+    /************************** RESTAURANT METHODS **************************************/
+
+    // The deleteRestaurant method will delete a restaurant from both state and 
+    // the database
+    const deleteRestaurant = () => {
+        // Deleting the restaurant from state and the database
+        deleteRestaurantThunk(currentRestaurantId);
+    }
+
+    // The deleteRestaurantHandler will display a modal verifying 
+    // if the restaurant should be deleted
+    const deleteRestaurantHandler = (restaurantId) => {
+        // Setting the current id and showing the modal 
+        // before allowing the action
+        setCurrentRestaurantId(restaurantId);
+        showDeleteRestaurantHandler();
+    }
+
+    // The editRestaurantHandler will navigate the user to the edit restaurant
+    // view for the selected restaurantId
+    const editRestaurantHandler = (restaurantId) => {
+        // Navigate to the edit restaurant page
+        navigate(`../editRestaurant/${restaurantId}`);
+
+    }
+
+    // The restaurantSearch method sets the Redux state to display search specific 
+    // restaurants
+    const restaurantSearch = async () => {
+        // Current restaurants are deleted from state
+        await deleteAllRestaurants();
+
+        // If search input is not an empty string the database will be 
+        // queried for restaurants matching the searchInput
+        if (searchInput !== "") {
+            await findByRestaurantNameThunk(0, 25, searchInput);
+        }
+    }
+
+    // The viewRestaurantHandler will navigate the user to the restaurant
+    // for the selected restaurantId
+    const viewRestaurantHandler = (restaurantId) => {
+        // Navigate to restaurant view
+        navigate(`../restaurant/${restaurantId}`);
+    }
+
+    /************************** FORM HANDLERS **************************************/
+
+    // The onChangeHandler handles the actions of the search bar radio buttons
+    const onChangeHandler = (e) => {
+        // Setting the state to the selected radio button
+        setSearchType(e.target.value);
+        // Setting the search results not to show
+        setIsShowResults(false)
+    }
 
     // This submit handler will handle the search form when submitted and assign the 
     // search input and search type to their respective state variables
-    const searchSubmitHandler= (e) => {
+    const searchSubmitHandler = (e) => {
+        // Preventing default form action
         e.preventDefault();
-        setSearchType(e.target.searchOption.value);
+
+        // Setting states to display the correct data (user or restaurant)
         setSearchInput(e.target.search.value)
-        
-        //DEBUG
-        console.log("FORM SUBMITTED")
+        setIsShowResults(true);
+
+        // If the searchType is user the userSearch method 
+        // will be called
+        if (searchType === "user") {
+            userSearch(searchInput)
+        }
+        // Else the restaurantSearch method will be called
+        else {
+            restaurantSearch(searchInput)
+        }
+
+        // Clearing the search input for added UX
+        setSearchInput("");
     }
 
-    // The userSearch method will filter user and return the filtered array with the results
-    const userSearch = (userName) => {
-        // Code for userName search
-        let searchResults = users.filter((user) => ((user.auth.userName).toLowerCase()).match(userName.toLowerCase() + ".*"));
-
-        // Code for first name last name search
-        // let searchResults = user.filter((user) => ((user.firstName).toLowerCase() + " " + (user.lastName).toLowerCase()).match(userName.toLowerCase() + ".*"));
-
-        //DEBUG
-        console.log("Search Results are ", searchResults)
-
-        return searchResults;
-    }
-
-    // The restaurantSearch method will filter restaurant and return only the items that match the search input
-    const restaurantSearch = (restaurantName) => {
-        // Searching based off restaurant name
-        let searchResults = restaurants.filter((restaurant) => (restaurant.name).toLowerCase().match((restaurantName.toLowerCase()) + ".*"));
-
-        // DEBUG
-        console.log("Search Results are ", searchResults)
-
-        return searchResults;
-    }
+    /************************** RENDER METHODS **************************************/
 
     // The searchList method will return either the User or Restaurant EditItem component 
     // based off the search input and search criteria. If there are no matches the user 
     // is notified
     const searchList = () => {
-        if (searchInput === "") {
-            return
-        }
-        else {
-            if (searchType === "user") {
-                //DEBUG
-                console.log("Searching User")
-                console.log(userSearch(searchInput));
+        // If the search is for users, they will be handled
+        if (searchType === "user") {
+            // Destructuring out the logged in user and displaying the rest
+            const [loggedInUser, ...results] = users;
 
-                // The results of the userSearch
-                const results = userSearch(searchInput);
-                if (results.length < 1) {
-                    return (
-                        <h4 className="text-center">
-                            Sorry  no results found for {searchInput}.
-                        </h4>
-                    )
-                }
-                else {
-                    return (
-                        results.map((user) => <UserEditItem key={user.id} user={user}/>)
-                    )  
-                }
+            // If there are were no results it is displayed on the screen
+            if (results.length < 1) {
+                return (isShowResults &&
+                    <h4 className="text-center">
+                        Sorry  no results found.
+                    </h4>
+                )
             }
+            // Else there were results then they are mapped on the screen in their 
+            // respective component
             else {
-                //DEBUG
-                console.log("Restaurant Search");
-                console.log(restaurantSearch(searchInput))
-
-                // The results of the restaurantSearch
-                const results = restaurantSearch(searchInput);
-
-                if (results.length < 1) {
-                    return (
-                        <h4 className="text-center">
-                            Sorry no results found for {searchInput}.
-                        </h4>
-                    )
-                }
-                else {
-                    return (
-                        results.map((restaurant) => <RestaurantEditItem key={restaurant.id} restaurant={restaurant}/>)
-                    )  
-                }
+                return (
+                    results.map((user) => (
+                        <UserEditItem
+                            key={user.id}
+                            user={user}
+                            dashboardHandler={dashboardHandler}
+                            banHandler={banHandler}
+                            userDeleteHandler={userDeleteHandler}
+                            banUserButtonModal={banUserButtonModal}
+                            userDeleteButtonModal={userDeleteButtonModal} />
+                    ))
+                )
             }
         }
+        // Else the restaurant search will be displayed
+        else {
+            // If there are were no results it is displayed on the screen
+            if (restaurants.length < 1) {
+                return (isShowResults &&
+                    <h4 className="text-center">
+                        Sorry no results found.
+                    </h4>
+                )
+            }
+            // Else there were results then they are mapped on the screen in their 
+            // respective component
+            else {
+                return (
+                    restaurants.map((restaurant) => (
+                        <RestaurantEditItem
+                            key={restaurant.id}
+                            restaurant={restaurant}
+                            viewRestaurantHandler={viewRestaurantHandler}
+                            editRestaurantHandler={editRestaurantHandler}
+                            deleteRestaurantHandler={deleteRestaurantHandler}
+                        />
+                    ))
+                )
+            }
+        }
+        
     }
+
+    /********************************** MODALS *******************************************/
+
+    // The modal will display before a user can be banned
+    const banUserButtonModal = (
+        <BanUserConfirm
+            show={showBanUserConfirm}
+            banUser={banUser}
+            closeHandler={closeBanUserHandler} />
+    )
+
+    // The modal will display before a restaurant can be deleted
+    const deleteRestaurantButtonModal = (
+        <DeleteRestaurantConfirm
+            show={showDeleteRestaurantConfirm}
+            deleteRestaurant={deleteRestaurant}
+            closeHandler={closeDeleteRestaurantHandler} />
+    )
+
+    // The modal will display before a user can be deleted
+    const userDeleteButtonModal = (
+        <DeleteUserConfirm
+            show={showDeleteUserConfirm}
+            deleteUser={deleteUser}
+            closeHandler={closeDeleteUserHandler} />
+    )
 
     return (
         <XLContainer>
             <h1>
                 Admin
             </h1>
-            <Form className="px-2" onSubmit={searchSubmitHandler}>
-                <Row>
-                    <FormGroup as={Col} sm={8} className="d-flex justify-content-around align-items-center px-1 mb-3">
-                        <FormControl
-                        type="search"
-                        name="search"
-                        placeholder="Search"
-                        className="me-2"
-                        aria-label="Search"
-                        />
-                        <Button type="submit" variant="primary">
-                            Search
-                        </Button>
-                    </FormGroup>
-                    
-                    <ButtonGroup as={Col} sm={4} 
-                    className="d-flex justify-content-around align-items-center" 
-                    name="searchOption" 
-                    onChange={e => console.log(e.target.value)}>
-                        <Form.Check
-                        label="User"
-                        name="searchOption"
-                        type="radio"
-                        value="user"
-                        defaultChecked
-                        id="searchOptionRadio1"
-                        />
-                        <Form.Check
-                        label="Restaurant"
-                        name="searchOption"
-                        type="radio"
-                        value="restaurant"
-                        id="searchOptionRadio1"
-                        />
-                    </ButtonGroup>
-                </Row>
-            </Form>
+            <AdminSearchForm
+                searchSubmitHandler={searchSubmitHandler}
+                setSearchInput={setSearchInput}
+                onChangeHandler={onChangeHandler}
+                searchInput={searchInput} />
             {searchList()}
+            {banUserButtonModal}
+            {userDeleteButtonModal}
+            {deleteRestaurantButtonModal}
         </XLContainer>
     )
 }
 
+// Mapping the redux store states to props
+const mapStateToProps = (state) => ({
+    restaurants: [...state.restaurants],
+    users: [...state.users],
+});
+
 // Exporting the component
-export default Admin;
+export default connect(mapStateToProps, {
+    findByRestaurantNameThunk, deleteAllRestaurants,
+    findByUserNameThunk, deleteAdditionalUsers,
+    updatePermissionThunk, deleteUserThunk,
+    deleteRestaurantThunk
+})(Admin);

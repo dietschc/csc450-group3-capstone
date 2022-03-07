@@ -94,3 +94,35 @@ export const formatDBReviewFind = (review) => {
         return review
     }
 }
+
+/**
+ * The helper function will nicely format the data retrieved from a find 
+ * user request from the database and format it so it can be used 
+ * by redux reducers to load into state.
+ * 
+ * Dev Notes: Look to the output of findByUserNameOffsetLimit for the 
+ * valid database output this will format
+ * 
+ * @param {*} user 
+ * @returns 
+ */
+export const formatDBUserFind = (user) => {
+    // If data was found it will format and return the result
+    if (user) {
+        return {
+            userId: user.userId,
+            addressId: user.addressId,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            userEmail: user.userEmail,
+            ...user.address,
+            ...user.authentication,
+            ...user.authentication.permission
+
+        }
+    }
+    // Else it will just return the parameter
+    else {
+        return user
+    }
+}

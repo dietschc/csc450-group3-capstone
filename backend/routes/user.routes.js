@@ -4,6 +4,7 @@
 // February 14, 2022
 // Last Edited (Initials, Date, Edits):
 // (CPD, 2/28, Added friend routes on users controller)
+//  (DAB, 3/06/2022, Added in findByNameOffsetLimit)
 
 module.exports = app => {
   const users = require("../controllers/user.controller.js");
@@ -17,6 +18,9 @@ module.exports = app => {
 
   // Retrieve a single User with id
   router.get("/:id", users.findOne);
+
+  // Retrieve authentication searched by user userName with offset and limit
+  router.get("/search/:offset/:limit/:userName", users.findByNameOffsetLimit);
 
   // Add friend for user id specified in body
   router.post("/friends/:id", users.addFriend);
