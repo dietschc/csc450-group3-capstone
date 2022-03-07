@@ -134,8 +134,9 @@ function UserDashboard(props) {
     // Navigates to the Review page passing the requested review to 
     // Review with the review ID into the URL. Used with the 
     // RestaurantReviewDetail.js Component
-    const reviewEditHandler = (id) => {
-        navigate("../review/" + id);
+    const reviewEditHandler = (review) => {
+        console.log("REVIEW IN EDIT HANDLER IS ", review.id);
+        navigate("../review/" + review.id);
     }
 
     // These buttons will be passed into the RestaurantReviewDetail.js 
