@@ -24,7 +24,7 @@ function UDRestaurantReviewDetail(props) {
 
     return (
         <div>
-            <Button className="mx-1" style={{ width: "5rem" }} onClick={() => {reviewEditHandler(review.reviewId)}}>
+            <Button className="mx-1" style={{ width: "5rem" }} onClick={() => {reviewEditHandler(review)}}>
                 Edit
             </Button>
             <Button className="mx-1" style={{ width: "5rem" }} onClick={() => {deleteReviewHandler(review)}}>
