@@ -9,7 +9,7 @@ module.exports = app => {
     var router = require("express").Router();
 
     // Create a new Restaurant
-    router.post("/", image.create);
+    router.post("/", image.upload);
 
     // Retrieve all Restaurants
     router.get("/", image.findAll);
@@ -24,5 +24,5 @@ module.exports = app => {
     router.delete("/:id", image.delete);
 
     // URL to restaurant for route
-    app.use('/image', router);
+    app.use('/images', router);
   };

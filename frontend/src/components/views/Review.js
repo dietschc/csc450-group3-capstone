@@ -4,6 +4,7 @@
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
 // (CPD, 02/4/22, Review View Layout #33 - Initial layout and styling)
+// (CPD, 03/08/22, Added image upload and create review functionality)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -12,7 +13,7 @@ import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstra
 import FloatingImageUpload from '../form/floatingComponents/FloatingImageUpload';
 import ModalCancelConfirm from '../form/modal/ModalCancelConfirm';
 import { useParams, useNavigate } from "react-router-dom";
-import { printStarTotal, printReviewTotal } from '../../helperFunction/StringGenerator';
+import { printStarTotal } from '../../helperFunction/StringGenerator';
 import { connect } from 'react-redux';
 import { addReviewThunk } from '../../actions/reviews';
 
@@ -30,9 +31,9 @@ function Review(props) {
     const [serviceRating, setServiceRating] = useState("3");
     const [cleanRating, setCleanRating] = useState("3");
     const [overallRating, setOverallRating] = useState("3");
-    const [fileName, setFileName] = useState("");
     const [reviewTitle, setReviewTitle] = useState("");
     const [reviewText, setReviewText] = useState("");
+    const [file, setFile] = useState("");
 
     const navigate = useNavigate();
 
@@ -57,8 +58,8 @@ function Review(props) {
     }
 
     const onChangeFileName = e => {
-        const fileName = e.target.value;
-        setFileName(fileName);
+        const file = e.target.files[0]
+        setFile(file);
     }
 
     const onChangeReviewTitle = e => {
@@ -71,17 +72,19 @@ function Review(props) {
         setReviewText(reviewText);
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // console.log("file info: ", file);
 
         if (isEditing) {
             updateReview();
         } else {
-            saveReview();
+            await saveReview();
         }
     };
 
-    const saveReview = () => {
+    const saveReview = async () => {
         // Review redux actions can be tested here*****
         // const reviewId = 1;
         // console.log(props.users)
@@ -96,15 +99,13 @@ function Review(props) {
         //     serviceRating, cleanRating, overallRating, reviewTitle, 
         //     reviewText, fileName)
 
+        // Set user id
         const userId = users[0].id;
-        const imageLocation = fileName;
-
-        // console.log("review data: ", data);
 
         // Pass parameters to add review thunk action
-        addReviewThunk(userId, restaurantId, reviewTitle, reviewText,
-            Number(tasteRating), Number(serviceRating), Number(cleanRating), 
-            Number(overallRating), imageLocation);
+        await addReviewThunk(userId, restaurantId, reviewTitle, reviewText,
+            Number(tasteRating), Number(serviceRating), Number(cleanRating),
+            Number(overallRating), file);
 
         // Bring back to user dashboard after
         setTimeout(() => { navigate("../userDashboard") }, 500);
@@ -240,7 +241,8 @@ function Review(props) {
                                 alt="Upload preview"
                             />
 
-                            <FloatingImageUpload as={Row} fileName={fileName} onChangeFileName={onChangeFileName} />
+                            <FloatingImageUpload as={Row} onChangeFileName={onChangeFileName} />
+
                         </Col>
                     </Row>
 

@@ -10,11 +10,13 @@
 //  load then into state (findAllReviewsOrdered))
 //  (DAB, 3/05/2022, Added in findReviewByAuthorThunk and findReviewByAuthorRestaurantThunk)
 //  (CPD, 3/06/2022, Added deleteReviewThunk)
+//  (CPD, 3/09/2022, Worked on getting addReviewThunk with image upload working)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import C from '../constants';
 import ReviewDataService from "../services/review.service";
+import ImageDataService from "../services/image.service";
 import { formatDBReviewFind } from '../helperFunction/actionHelpers';
 
 /**
@@ -155,29 +157,78 @@ export const findReviewByRestaurantThunk = (offset, limit, restaurantId) => asyn
         })
 }
 
-// UNDER CONSTRUCTION********
-export const addReviewThunk = (
-    userId, restaurantId, reviewTitle, reviewText, tasteRating, serviceRating,
-    cleanlinessRating, overallRating, imageLocation) => async dispatch => {
-        /**
-         * Call and await the user data service create method, passing the parameters and storing the 
-         * results in a constant.
-         */
-        await ReviewDataService.create({
-            userId, restaurantId, reviewTitle, reviewText, tasteRating, serviceRating,
-            cleanlinessRating, overallRating, imageLocation
-        })
-            .then(res => {
-                console.log("data: ", res.data);
+/**
+ * The add review thunk takes all the parameters from the review form, including a file upload and 
+ * passes them to the backend to create a new review. If a file is included it will be uploaded
+ * to the cloud and it's location will be stored in the review details.
+ * 
+ * I tried to break this apart into two thunk functions but I was running into a lot of issues.
+ * 
+ * @param {*} userId 
+ * @param {*} restaurantId 
+ * @param {*} reviewTitle 
+ * @param {*} reviewText 
+ * @param {*} tasteRating 
+ * @param {*} serviceRating 
+ * @param {*} cleanlinessRating 
+ * @param {*} overallRating 
+ * @param {*} file 
+ * @returns 
+ */
+export const addReviewThunk = (userId, restaurantId, reviewTitle, reviewText, tasteRating, serviceRating,
+    cleanlinessRating, overallRating, file) => async dispatch => {
 
-                // It is not necessary to add the review to state since visiting the homepage or dashboard
-                // will automatically refresh all the reviews in state
-                // dispatch(addReview(result))
+        // If file exists, upload to cloud and add location to the new review
+        if (file.size > 0) {
+            // Call and await the image data service upload method, passing the file as a parameter
+            await ImageDataService.upload(file)
+                .then(res => {
+                    // console.log("location: ", res.data.location);
+
+                    // Set the image location from the response data
+                    const imageLocation = res.data.location;
+
+                    // If the imageLocation exists, this implies success uploading
+                    if (imageLocation) {
+                        // Call the review data service create method, passing the form data parameters
+                        ReviewDataService.create({
+                            userId, restaurantId, reviewTitle, reviewText, tasteRating, serviceRating,
+                            cleanlinessRating, overallRating, imageLocation
+                        })
+                    }
+
+                    // It is not necessary to add the review to state since visiting the homepage or dashboard
+                    // will automatically refresh all the reviews in state
+                    // dispatch(addReview(result))
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+
+            // Otherwise use an empty string for the location when creating the new review
+        } else {
+            const imageLocation = "";
+
+            // Call the create review data data service, passing parameters
+            await ReviewDataService.create({
+                userId, restaurantId, reviewTitle, reviewText, tasteRating, serviceRating,
+                cleanlinessRating, overallRating, imageLocation
             })
-            .catch(err => {
-                console.log(err)
-            })
+                .then(res => {
+                    // console.log("res data: ", res.data);
+
+                    // It is not necessary to add the review to state since visiting the homepage or dashboard
+                    // will automatically refresh all the reviews in state
+                    // dispatch(addReview(result))
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
+
+
     }
+
 /**
  * This function takes a single parameter, which is the reviewId of the review to be deleted.
  * 
