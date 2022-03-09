@@ -27,6 +27,7 @@ import {
     updateRestaurantReviewCount, updateRestaurantOwner, addRestaurantThunk, updateRestaurantThunk
 } from '../../actions/restaurants';
 import { formatPhoneNumber, unformatPhoneNumber } from '../../helperFunction/FormatString';
+import ModalConfirmation from '../modal/ModalCancelConfirm';
 
 
 // LAST WAS WORKING ON FORM VALIDATION
@@ -62,6 +63,14 @@ function EditRestaurantForm(props) {
     const [imageId, setImageId] = useState("")
     const [website, setWebsite] = useState("");
     const [fileName, setFileName] = useState("");
+    const [showClearFormConfirm, setShowClearFormConfirm] = useState(false);
+
+
+
+    // The show and close handlers will either show or close their respective 
+    // modals
+    const showClearFormHandler = () => setShowClearFormConfirm(true);
+    const closeClearFormHandler = () => setShowClearFormConfirm(false);
 
     // Loading the database data into state when params are updated on params
     useEffect(() => {
@@ -251,6 +260,10 @@ function EditRestaurantForm(props) {
 
     }
 
+    const clearFormHandler = () => {
+        showClearFormHandler()
+    }
+
     const clearForm = () => {
         setRestaurantName("");
         setAddress("");
@@ -275,8 +288,8 @@ function EditRestaurantForm(props) {
             <FloatingDigitalContact digitalContact={digitalContact} onChangeDigitalContact={onChangeDigitalContact} />
             <FloatingWebsite website={website} onChangeWebsite={onChangeWebsite} />
             <FloatingImageUpload fileName={fileName} onChangeFileName={onChangeFileName} />
-            <EditFormButtons isUpdate={isUpdate} saveAccount={saveAccount} clearForm={clearForm} />
-
+            <EditFormButtons isUpdate={isUpdate} saveAccount={saveAccount} clearFormHandler={clearFormHandler} />
+            <ModalConfirmation show={showClearFormConfirm} closeHandler={closeClearFormHandler} clearForm={clearForm} />
         </Form>
     )
 }

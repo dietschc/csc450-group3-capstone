@@ -44,6 +44,7 @@ function EditRestaurant(props) {
     // If there is a param restaurantId this will be an update
     
     const [isUpdate, setIsUpdate] = useState(false)
+    
 
     console.log("IS RESTAURANT ID", isUpdate)
     console.log("RESTAURANT ID IS", restaurantId)
