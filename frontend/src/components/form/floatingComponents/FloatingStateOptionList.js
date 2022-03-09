@@ -38,6 +38,7 @@ function FloatingStateOptionList(props) {
                 <Form.Select
                 aria-label="select state options"
                 value={state}
+                required
                 onChange={onChangeState}>
                     <option>Select</option>
                     {stateOptions}

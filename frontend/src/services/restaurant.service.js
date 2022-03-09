@@ -12,8 +12,8 @@ class RestaurantDataService {
      * Create a new restaurant
      * 
      * @param { 
-     * userCreatorId, address, city, state, 
-     * zip, imageLocation, restaurantName, 
+     * userCreatorId, restaurantName, address, 
+     * city, state, zip, imageLocation,  
      * restaurantDigiContact, restaurantPhone, 
      * restaurantWebsite
      * } data 

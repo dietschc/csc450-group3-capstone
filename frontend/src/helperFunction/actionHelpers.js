@@ -4,6 +4,7 @@
 // March 1, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 3/03/2022, Added in formatDBFriendFind)
+//  (DAB, 3/07/2022, Added in formatDBRestaurantCreate)
 
 /**
  * The helper function will nicely format the data retrieved from a find 
@@ -31,6 +32,38 @@ export const formatDBFriendFind = (friend) => {
 
 
 /**
+ * The helper function will nicely format the data retrieved from a  
+ * restaurant update request from the database and format it so it can 
+ * be used by redux reducers to load into state. 
+ * 
+ * @param {*} restaurant 
+ * @returns 
+ */
+export const formatDBRestaurantCreate = (restaurant) => {
+    // If data was found it will format and return the result
+    if (restaurant) {
+        return {
+            restaurantId: restaurant.restaurantId,
+            userCreatorId: restaurant.userCreatorId,
+            restaurantDigiContact: restaurant.restaurantDigiContact,
+            restaurantName: restaurant.restaurantName,
+            restaurantPhone: restaurant.restaurantPhone,
+            restaurantWebsite: restaurant.restaurantWebsite,
+            ...restaurant.address,
+            ...restaurant.image,
+            reviewCount: restaurant.reviewCount,  
+            userName: restaurant.userName,
+            ...restaurant.rating
+        }
+    }
+    // Else it will just return the parameter
+    else {
+        return restaurant
+    }
+}
+
+
+/**
  * The helper function will nicely format the data retrieved from a find 
  * restaurant request from the database and format it so it can be used 
  * by redux reducers to load into state.
@@ -53,10 +86,10 @@ export const formatDBRestaurantFind = (restaurant) => {
             reviewCount: restaurant.reviewCount,  
             ...restaurant.userCreator.authentication,
             ratingId: restaurant.rating.ratingId,
-            tasteRating: restaurant.rating.tasteRating/restaurant.reviewCount,
-            serviceRating: restaurant.rating.serviceRating/restaurant.reviewCount,
-            cleanlinessRating: restaurant.rating.cleanlinessRating/restaurant.reviewCount,
-            overallRating: restaurant.rating.overallRating/restaurant.reviewCount 
+            tasteRating: restaurant.rating.tasteRating/restaurant.reviewCount || 0,
+            serviceRating: restaurant.rating.serviceRating/restaurant.reviewCount || 0,
+            cleanlinessRating: restaurant.rating.cleanlinessRating/restaurant.reviewCount || 0,
+            overallRating: restaurant.rating.overallRating/restaurant.reviewCount || 0 
         }
     }
     // Else it will just return the parameter

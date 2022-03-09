@@ -7,6 +7,8 @@
 //  (DAB, 2/27/2022, Added in some offset/limit findAll as well as search 
 //  by name and author Id)
 //  (DAB, 3/05/2022, Beautified the code formatting)
+//  (DAB, 3/07/2022, Added in a user validation for create so there are no 
+//  foreign key errors when creating a restaurant)
 
 const { authentication } = require("../models");
 const db = require("../models");
@@ -16,101 +18,129 @@ const Image = db.image;
 const Address = db.address;
 const Rating = db.rating;
 const User = db.users;
+const Authentication = db.authentication;
 
 // Create and Save a new Restaurant
 exports.create = async (req, res) => {
     // Validate request
-    if (!req.body.restaurantWebsite) {
+    if (!req.body.restaurantWebsite ||
+        !req.body.userCreatorId ||
+        !req.body.restaurantName ||
+        !req.body.restaurantDigiContact) {
         res.status(400).send({
             message: "Content can not be empty!"
         });
         return;
     }
 
-    // Creating an array to hold the needed table ideas as the adjoining 
-    // restaurant tables are created
-    const restaurantData = {
-        userCreatorId: req.body.userCreatorId,
-        userOwnerId: null,
-        ratingId: null,
-        addressId: null,
-        imageId: null,
-        restaurantName: req.body.restaurantName,
-        restaurantDigiContact: req.body.restaurantDigiContact,
-        restaurantWebsite: req.body.restaurantWebsite,
-        restaurantPhone: req.body.restaurantPhone,
-        reviewCount: 0
-    };
+    // Checking if the creator is a user in the database
+    const userAuthData = await Authentication.findOne({
+        attributes: ['userName'],
+        where: { userId: req.body.userCreatorId }
+    })
+        .then(res => res);
 
-    // Ratings start off with a default of 0 so they will show 
-    // no stars
-    const ratingData = {
-        tasteRating: 0,
-        serviceRating: 0,
-        cleanlinessRating: 0,
-        overallRating: 0
+    // If there is a user in the database the query will run
+    const isUser = userAuthData ? true : false;
+
+    // If the user is a creator then the Restaurant is created
+    if (isUser) {
+        // Creating an array to hold the needed table ideas as the adjoining 
+        // restaurant tables are created
+        const restaurantData = {
+            userCreatorId: req.body.userCreatorId,
+            userOwnerId: null,
+            ratingId: null,
+            addressId: null,
+            imageId: null,
+            restaurantName: req.body.restaurantName,
+            restaurantDigiContact: req.body.restaurantDigiContact,
+            restaurantWebsite: req.body.restaurantWebsite,
+            restaurantPhone: req.body.restaurantPhone,
+            reviewCount: 0
+        };
+
+        // Ratings start off with a default of 0 so they will show 
+        // no stars
+        const ratingData = {
+            tasteRating: 0,
+            serviceRating: 0,
+            cleanlinessRating: 0,
+            overallRating: 0
+        }
+
+        // Wait for the address to be created, then copy to a const
+        const address = await Address.create(req.body)
+            .then(newAddress => {
+                // Assigning the id of the newly created table to the restaurant array
+                restaurantData.addressId = newAddress.addressId;
+                // Returning the instance
+                return newAddress;
+            })
+            .catch(err => {
+                // If there is an error, a response is sent to notify the requester
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while creating the Address."
+                });
+            });
+
+        // Wait for the image to be created, then copy to a const
+        const image = await Image.create(req.body)
+            .then(newImage => {
+                // Assigning the id of the newly created table to the restaurant array
+                restaurantData.imageId = newImage.imageId;
+                // Returning the instance
+                return newImage;
+            })
+            .catch(err => {
+                // If there is an error, a response is sent to notify the requester
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while creating the Image."
+                });
+            });
+
+        // Wait for the rating to be created, then copy to a const
+        const rating = await Rating.create(ratingData)
+            .then(newRating => {
+                restaurantData.ratingId = newRating.ratingId;
+                return newRating;
+            })
+            .catch(err => {
+                // If there is an error, a response is sent to notify the requester
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while creating the Rating."
+                });
+            });
+
+        // Save Restaurant in the database
+        await Restaurant.create(restaurantData)
+            .then(newRestaurant => {
+
+                // Send the response JSON with all created table objects
+                res.send({ ...newRestaurant.dataValues, address, rating, image, ...userAuthData.dataValues });
+
+            })
+            .catch(err => {
+                // If there is an error, a response is sent to notify the requester
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while creating the Restaurant."
+                });
+            });
+
+    }
+    else {
+        // If there is no user in the database the response is sent back
+        res.status(404).send({
+            message: "No user in database"
+        })
     }
 
-    // Wait for the address to be created, then copy to a const
-    const address = await Address.create(req.body)
-        .then(newAddress => {
-            // Assigning the id of the newly created table to the restaurant array
-            restaurantData.addressId = newAddress.addressId;
-            // Returning the instance
-            return newAddress;
-        })
-        .catch(err => {
-            // If there is an error, a response is sent to notify the requester
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while creating the Address."
-            });
-        });
 
-    // Wait for the image to be created, then copy to a const
-    const image = await Image.create(req.body)
-        .then(newImage => {
-            // Assigning the id of the newly created table to the restaurant array
-            restaurantData.imageId = newImage.imageId;
-            // Returning the instance
-            return newImage;
-        })
-        .catch(err => {
-            // If there is an error, a response is sent to notify the requester
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while creating the Image."
-            });
-        });
 
-    // Wait for the rating to be created, then copy to a const
-    const rating = await Rating.create(ratingData)
-        .then(newRating => {
-            restaurantData.ratingId = newRating.ratingId;
-            return newRating;
-        })
-        .catch(err => {
-            // If there is an error, a response is sent to notify the requester
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while creating the Rating."
-            });
-        });
-
-    // Save Restaurant in the database
-    await Restaurant.create(restaurantData)
-        .then(newRestaurant => {
-
-            // Send the response JSON with all created table objects
-            res.json({ ...newRestaurant.dataValues, address, rating, image });
-        })
-        .catch(err => {
-            // If there is an error, a response is sent to notify the requester
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while creating the Restaurant."
-            });
-        });
 };
 
 // Retrieve all Restaurants from the database
@@ -271,8 +301,8 @@ exports.update = async (req, res) => {
                         }
                         // If there was an error, a response is sent to notify the requester
                         else {
-                            res.status(500).send({
-                                message: `Cannot update Restaurant with id=${restaurantId}. Maybe Restaurant was not found or req.body is empty!`
+                            res.send({
+                                message: `Restaurant was updated successfully`
                             });
                         }
                     });

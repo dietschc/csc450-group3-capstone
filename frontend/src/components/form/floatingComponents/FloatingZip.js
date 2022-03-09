@@ -3,6 +3,7 @@
 // Restaurant Club - FloatingZip.js
 // February 3, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 3/07/2022, Added in some validation)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -32,6 +33,9 @@ function FloatingZip(props) {
                 type="text"
                 placeholder="Zip"
                 required
+                pattern="[0-9]*" 
+                maxLength="5" 
+                minLength="5"
                 value={zip}
                 onChange={onChangeZip}
                 />
