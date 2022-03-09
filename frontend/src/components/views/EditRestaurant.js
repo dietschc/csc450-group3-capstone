@@ -6,7 +6,7 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import EditRestaurantForm from '../form/EditRestaurantForm';
@@ -16,8 +16,9 @@ import { connect } from 'react-redux';
 import {
     addRestaurant, decrementRestaurantReviewCount, deleteAllRestaurants,
     deleteRestaurant, incrementRestaurantReviewCount, updateRestaurant, updateRestaurantRating,
-    updateRestaurantReviewCount, updateRestaurantOwner, updateRestaurantThunk
+    updateRestaurantReviewCount, updateRestaurantOwner, updateRestaurantThunk, findByRestaurantIdThunk
 } from '../../actions/restaurants';
+import { useNavigate } from 'react-router-dom';
 
 function EditRestaurant(props) {
 
@@ -33,22 +34,59 @@ function EditRestaurant(props) {
 
     const { addRestaurant, decrementRestaurantReviewCount, deleteAllRestaurants,
         deleteRestaurant, incrementRestaurantReviewCount, updateRestaurant, updateRestaurantRating,
-        updateRestaurantReviewCount, updateRestaurantOwner, restaurants, updateRestaurantThunk } = props;
+        updateRestaurantReviewCount, updateRestaurantOwner, restaurants, updateRestaurantThunk, findByRestaurantIdThunk } = props;
     const { restaurantId } = useParams();
+    // Creating a navigate instance to navigate the application to new routes
+    const navigate = useNavigate();
     // These variables will keep track if the form was submitted and whether the 
     // form should load as an update or add
     const submitted = false;
     // If there is a param restaurantId this will be an update
-    const isUpdate = restaurantId ? true : false;
+    
+    const [isUpdate, setIsUpdate] = useState(false)
+
     console.log("IS RESTAURANT ID", isUpdate)
     console.log("RESTAURANT ID IS", restaurantId)
 
-    const getRestaurant = () => {
-        if (restaurants && restaurants.length > 0) {
-            return restaurants.filter((restaurant) => (restaurant.id) == restaurantId)
+    // Loading the database data into state when params are updated on params
+    useEffect(() => {
+        console.log("USEEFFECT 1")
+        if (restaurantId) {
+            const paramRestaurant = restaurants.filter((restaurant) => (restaurant.id) == restaurantId)
+            if (paramRestaurant.length > 0) {
+                setIsUpdate(true)
+            }
+            else {
+                findByRestaurantIdThunk(restaurantId)
+            }
+        }
+        
+    }, []);
+
+    useEffect(() => {
+        console.log("RESTAURANT UPDATE")
+        if (restaurants) {
+            const paramRestaurant = restaurants.filter((restaurant) => (restaurant.id) == restaurantId)
+            if (paramRestaurant.length > 0) {
+                setIsUpdate(true);
+            }
+            else {
+                console.log("redirect")
+                
+            }
+        }
+    }, [restaurants]);
+
+    const getData = () => {
+        const paramRestaurant = restaurants.filter((restaurant) => (restaurant.id) == restaurantId);
+        if (paramRestaurant.length > 0) {
+            return paramRestaurant;
+        }
+        else {
+            return []
         }
     }
-
+    
 
     // Displays the header of EditRestaurant page. Depending on if the form will loaded 
     // in to update or add a restaurant
@@ -65,6 +103,7 @@ function EditRestaurant(props) {
     // of the screen to notify the user that the form was successfully submitted
     const main = (
         <Container fluid as="main" className="p-4 justify-content-center editRestaurant">
+            
             {submitted ?
                 (
                     <div className="text-center">
@@ -77,7 +116,7 @@ function EditRestaurant(props) {
                     </div>
                 ) :
                 (
-                    <EditRestaurantForm restaurant={getRestaurant()} isUpdate={isUpdate} />
+                    <EditRestaurantForm key="1" restaurant={getData()} isUpdate={isUpdate} />
                 )
             }
         </Container>
@@ -102,55 +141,6 @@ const mapStateToProps = state =>
     restaurants: [...state.restaurants]
 });
 
-// Mapping the state actions to props
-const mapDispatchToProps = dispatch =>
-({
-    // This method will add a new review
-    addRestaurant(restaurantId, authorId, authorUserName, ownerId, restaurantName, digitalContact, website,
-        phone, addressId, address, city, state, zip, ratingId, tasteRating, serviceRating, cleanlinessRating, overallRating,
-        reviewCount, imageId, imageLocation) {
-        dispatch(addRestaurant(restaurantId, authorId, authorUserName, ownerId, restaurantName, digitalContact, website,
-            phone, addressId, address, city, state, zip, ratingId, tasteRating, serviceRating, cleanlinessRating, overallRating,
-            reviewCount, imageId, imageLocation)
-        )
-    },
-    decrementRestaurantReviewCount(restaurantId) {
-        dispatch(decrementRestaurantReviewCount(restaurantId)
-        )
-    },
-    deleteAllRestaurants() {
-        dispatch(deleteAllRestaurants()
-        )
-    },
-    deleteRestaurant(id) {
-        dispatch(deleteRestaurant(id))
-    },
-    incrementRestaurantReviewCount(restaurantId) {
-        dispatch(incrementRestaurantReviewCount(restaurantId)
-        )
-    },
-    updateRestaurantOwner(ownerId) {
-        dispatch(updateRestaurantOwner(ownerId)
-        )
-    },
-    updateRestaurant(restaurantName, authorId, authorUserName, address,
-        city, state, zip, phone, digitalContact, website, imageLocation) {
-        dispatch(updateRestaurant(restaurantName, authorId, authorUserName, address,
-            city, state, zip, phone, digitalContact, website, imageLocation)
-        )
-    },
-    updateRestaurantRating(restaurantId, tasteRating, serviceRating,
-        cleanlinessRating, overallRating) {
-        dispatch(updateRestaurantRating(restaurantId, tasteRating, serviceRating,
-            cleanlinessRating, overallRating)
-        )
-    },
-    updateRestaurantReviewCount(restaurantId, reviewCount) {
-        dispatch(updateRestaurantReviewCount(restaurantId, reviewCount)
-        )
-    }
-})
-
 
 // Exporting the connect Wrapped EditRestaurant Component
-export default connect(mapStateToProps, mapDispatchToProps)(EditRestaurant);
+export default connect(mapStateToProps, {findByRestaurantIdThunk})(EditRestaurant);

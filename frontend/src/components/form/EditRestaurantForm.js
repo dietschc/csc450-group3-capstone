@@ -46,7 +46,7 @@ function EditRestaurantForm(props) {
 
     // Is this a restaurant add or update
     const { isUpdate, restaurant, users } = props;
-    console.log("RESTAURANT IS", restaurant)
+    console.log("RESTAURANT IN FORM IS ", restaurant)
 
     // keeps track of if the form was submitted
     const [submitted, setSubmitted] = useState(false);
@@ -65,7 +65,7 @@ function EditRestaurantForm(props) {
 
     // Loading the database data into state when params are updated on params
     useEffect(() => {
-        if (restaurant && restaurant.length > 0) {
+        if (restaurant.length > 0) {
             const [currentRestaurant] = restaurant;
             const [currentImage] = currentRestaurant.images;
             console.log("CURRENT RESTAURANT IS", currentRestaurant)
@@ -81,7 +81,7 @@ function EditRestaurantForm(props) {
             // setImageId(currentRestaurant.images[0].id)
             // setFileStringName(currentImage)
         }
-    }, []);
+    }, [restaurant]);
 
     const onChangeRestaurantName = e => {
         const restaurantName = e.target.value;

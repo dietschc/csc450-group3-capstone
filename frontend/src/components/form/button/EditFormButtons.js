@@ -14,13 +14,13 @@ import 'bootstrap/dist/css/bootstrap.min.css'
  * A React-Bootstrap Button is returned that will work with both Edit Views. 
  * The button will update depending on what parent form is loaded.
  * 
- * @param { isUpdate, saveAccount, clearForm } props 
+ * @param { isUpdate, clearForm } props 
  * @returns
  */
 function EditFormButtons(props) {
     // The form component specific props will be assigned and 
     // used to process the form element
-    const { isUpdate, saveAccount, clearForm } = props;
+    const { isUpdate, clearForm } = props;
 
     return (
         <div className="d-flex justify-content-around pt-2 pb-5">

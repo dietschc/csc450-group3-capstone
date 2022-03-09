@@ -15,6 +15,7 @@
 import C from '../constants';
 import RestaurantDataService from "../services/restaurant.service";
 import { formatDBRestaurantFind, formatDBRestaurantCreate } from '../helperFunction/actionHelpers';
+import { renderMatches } from 'react-router-dom';
 
 
 export const addRestaurantThunk = (
@@ -108,6 +109,43 @@ export const findByRestaurantNameThunk = (offset, limit, restaurantName) => asyn
             console.log(err)
         })
 }
+
+/**
+ * Searches the database by restaurant name for all matching restaurants up to the 
+ * offset/limit. It will then add the results to state.
+ * 
+ * @param {*} restaurantName
+ * @returns 
+ */
+ export const findByRestaurantIdThunk = (restaurantId) => async dispatch => {
+    // The restaurant database will be queried for all restaurants within the 
+    // parameter offset/limit that are like the restaurantName
+    await RestaurantDataService.get(restaurantId)
+        .then(async res => {
+            console.log(res);
+            // If there is data in the query it is added to redux state
+            if (res) {
+                console.log("RESULTS IN FIND BY RESTAURANT", res)
+                // The restaurant data is formatted to be added to redux state
+                const restaurantData = formatDBRestaurantFind(res.data);
+
+                // Adding the restaurant to redux state
+                dispatch(addRestaurant(restaurantData));
+
+                // Returning the restaurant data
+                return restaurantData;
+            }
+            else {
+                res.send({message:"Restaurant not found"})
+            }
+            }
+        )
+        .catch(err => {
+            // If there is an error it will be logged
+            console.log(err)
+        })
+}
+
 
 /**
  * The deleteRestaurantThunk will delete a restaurant from both the database 
