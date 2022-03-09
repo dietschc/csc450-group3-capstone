@@ -146,32 +146,6 @@ export const deleteUserThunk = (userId) => async dispatch => {
         })
 }
 
-// export const addUserThunk = (
-//     userName, firstName, lastName, address,
-//     city, zip, state, userEmail, userPassword) => async dispatch => {
-//         try {
-
-//             /**
-//              * Call and await the user data service create method, passing the parameters and storing the 
-//              * results in a constant.
-//              */
-//             const res = await UserDataService.create({
-//                 userName, firstName, lastName, address, city, zip, state, userEmail, userPassword
-//             });
-
-//             const result = { ...res.data.newUser, ...res.data.newAddress, ...res.data.newAuth }
-//             /**
-//              * Dispatch result data to reducer which extracts values like userId, and authId from the res.data
-//              * and loads that into state.
-//              */
-//             dispatch(addUser(result))
-
-//             return Promise.resolve(result);
-//         } catch (err) {
-//             return Promise.reject(err);
-//         }
-//     };
-
 /**
  * React Redux action will add a new user to state.
  * 

@@ -4,6 +4,8 @@
 // February 13, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/19/2022, Added in comments, altered code for images update)
+//  (DAB, 3/07/2022, Altered the update images code. There will need to be 
+//  an action.imageId in order to update the update properly)
 
 
 // Using React library in order to build components 
@@ -217,35 +219,13 @@ export const rating = (state = {}, action) => {
 export const images = (state = [], action) => {
     switch (action.type) {
         case C.ADD_RESTAURANT:
-                return action.images.map((currentImage) => image(currentImage, action))
+            return action.images.map((currentImage) => image(currentImage, action))
         case C.UPDATE_RESTAURANT:
-            // Set up to only allow for one image in the array
-            console.log(action.images)
-            return action.images.map((currentImage) => {
-                console.log("CURRENT IMAGE", currentImage)
-                return image(currentImage, action)
-            })
-            // return state.map((currentImage) => image(currentImage, action))
-            // return state.map((currentImage) => {
-            //     return action.images.map((actionImage) => {
-            //         if (currentImage.imageLocation === actionImage.imageLocation) {
-            //             return image(currentImage, action)
-            //         }
-            //         else {
-            //             return actionImage
-            //         }
-            //     })
-            // })
-            // return action.images.map((currentImage) => {
-            //     return state.map((stateImage) => {
-            //         if (currentImage.imageLocation === stateImage.imageLocation) {
-            //             return image(currentImage, action)
-            //         }
-            //         else {
-            //             return currentImage
-            //         }
-            //     })
-            // })
+            // ID's are not updated in the update, they do not need to be. They will be updated 
+            // where they are needed during browsing. If id's are desired there will have 
+            // to be another database call that returns all the updated ID's. 
+            // Just add the ID returned to the actions and they will render
+            return action.images.map((actionImage) => image(actionImage, action))
         default:
             return state;
     }
@@ -261,8 +241,12 @@ export const image = (state = {}, action) => {
                 imageLocation: state.imageLocation
             }
         case C.UPDATE_RESTAURANT:
+            // ID's are not updated in the update, they do not need to be. They will be updated 
+            // where they are needed during browsing. If id's are desired there will have 
+            // to be another database call that returns all the updated ID's
+            // Just add the ID returned to the actions and they will render
             return {
-                ...state,
+                id: state.imageId,
                 imageLocation: state.imageLocation
             }
         default:

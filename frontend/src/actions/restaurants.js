@@ -14,7 +14,65 @@
 // for the app and importing needed components
 import C from '../constants';
 import RestaurantDataService from "../services/restaurant.service";
-import { formatDBRestaurantFind } from '../helperFunction/actionHelpers';
+import { formatDBRestaurantFind, formatDBRestaurantCreate } from '../helperFunction/actionHelpers';
+import { renderMatches } from 'react-router-dom';
+
+
+export const addRestaurantThunk = (
+    userCreatorId, restaurantName, address, city, state, 
+    zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
+    imageLocation ) => async dispatch => {
+        /**
+         * Call and await the user data service create method, passing the parameters and storing the 
+         * results in a constant.
+         */
+        await RestaurantDataService.create({
+            userCreatorId, restaurantName, address, city, state, 
+            zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
+            imageLocation
+        })
+            .then(res => {
+                if (res) {
+
+                    const restaurantData = formatDBRestaurantCreate(res.data)
+
+                    dispatch(addRestaurant(restaurantData))
+
+                    return res;
+                }
+                
+
+                else {
+                    console.log("Restaurant was not added");
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+}
+
+export const updateRestaurantThunk = (restaurantId, data) => async dispatch => {
+    // Making the call to the service to request an update to the database
+    await RestaurantDataService.update(restaurantId, data)
+    .then(res => {
+        // If there is a response the state will be updated
+        if (res) {
+            // Destructuring out permissionId and permission name from the data
+            // const { permissionId, permissionName } = data;
+
+            // // Dispatching the action to update state permission
+            dispatch(updateRestaurant(data))
+        }
+        else {
+            console.log("Restaurant was not updated")
+        }
+    })
+    .catch(err => {
+        // If there is an error it will be logged
+        console.log(err)
+    })
+}
+
 
 /**
  * Searches the database by restaurant name for all matching restaurants up to the 
@@ -51,6 +109,43 @@ export const findByRestaurantNameThunk = (offset, limit, restaurantName) => asyn
             console.log(err)
         })
 }
+
+/**
+ * Searches the database by restaurant name for all matching restaurants up to the 
+ * offset/limit. It will then add the results to state.
+ * 
+ * @param {*} restaurantName
+ * @returns 
+ */
+ export const findByRestaurantIdThunk = (restaurantId) => async dispatch => {
+    // The restaurant database will be queried for all restaurants within the 
+    // parameter offset/limit that are like the restaurantName
+    await RestaurantDataService.get(restaurantId)
+        .then(async res => {
+            console.log(res);
+            // If there is data in the query it is added to redux state
+            if (res) {
+                console.log("RESULTS IN FIND BY RESTAURANT", res)
+                // The restaurant data is formatted to be added to redux state
+                const restaurantData = formatDBRestaurantFind(res.data);
+
+                // Adding the restaurant to redux state
+                dispatch(addRestaurant(restaurantData));
+
+                // Returning the restaurant data
+                return restaurantData;
+            }
+            else {
+                res.send({message:"Restaurant not found"})
+            }
+            }
+        )
+        .catch(err => {
+            // If there is an error it will be logged
+            console.log(err)
+        })
+}
+
 
 /**
  * The deleteRestaurantThunk will delete a restaurant from both the database 
@@ -115,7 +210,7 @@ export const findAllRestaurantsOrderedThunk = (offset, limit) => async dispatch 
  * Adds the restaurant to the database and updates state.
  * @returns 
  */
-export const addRestaurantThunk = () => async dispatch => { }
+// export const addRestaurantThunk = () => async dispatch => { }
 
 /**
  * React Redux reducer that will add a new restaurant to state.
@@ -258,18 +353,18 @@ export const updateRestaurantOwner = (restaurantId, ownerId) => ({
  * @param {*} imageLocation 
  * @returns 
  */
-export const updateRestaurant = (restaurantId, restaurantName, authorId, authorUserName, address,
-    city, state, zip, phone, digitalContact, website, imageArray) => ({
+export const updateRestaurant = ({restaurantId, restaurantName, userCreatorId, userName, address,
+    city, state, zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, imageArray}) => ({
         type: C.UPDATE_RESTAURANT,
         id: restaurantId,
         author: {
-            id: authorId,
-            userName: authorUserName
+            id: userCreatorId,
+            userName: userName
         },
         name: restaurantName,
-        digitalContact: digitalContact,
-        website: website,
-        phone: phone,
+        digitalContact: restaurantDigiContact,
+        website: restaurantWebsite,
+        phone: restaurantPhone,
         address: {
             address: address,
             city: city,
