@@ -4,6 +4,7 @@
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
 // (CPD, 02/4/22, Review View Layout #33 - Initial layout and styling)
+// (CPD, 03/08/22, Added image upload and create review functionality)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -11,26 +12,30 @@ import React, { useState } from 'react'
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 import FloatingImageUpload from '../form/floatingComponents/FloatingImageUpload';
 import ModalCancelConfirm from '../form/modal/ModalCancelConfirm';
-import { useParams } from "react-router-dom";
-import { printStarTotal, printReviewTotal } from '../../helperFunction/StringGenerator';
+import { useParams, useNavigate } from "react-router-dom";
+import { printStarTotal } from '../../helperFunction/StringGenerator';
 import { connect } from 'react-redux';
-import { addReview, deleteAllReviews, deleteReview, updateReview } from '../../actions/reviews';
+import { addReviewThunk } from '../../actions/reviews';
 
 
 function Review(props) {
 
-    const { id: restaurantId } = useParams();
-    const { addReview, deleteAllReviews, deleteReview, updateReview } = props;
+    const { users, reviews, addReviewThunk } = props;
 
+    const { id: restaurantId } = useParams();
     const restaurantName = "Joe's Burgers";
+
+    const isEditing = false;
 
     const [tasteRating, setTasteRating] = useState("3");
     const [serviceRating, setServiceRating] = useState("3");
     const [cleanRating, setCleanRating] = useState("3");
     const [overallRating, setOverallRating] = useState("3");
-    const [fileName, setFileName] = useState("");
     const [reviewTitle, setReviewTitle] = useState("");
     const [reviewText, setReviewText] = useState("");
+    const [file, setFile] = useState("");
+
+    const navigate = useNavigate();
 
     const onChangeTasteRating = e => {
         const tasteRating = e.target.value
@@ -53,8 +58,8 @@ function Review(props) {
     }
 
     const onChangeFileName = e => {
-        const fileName = e.target.value;
-        setFileName(fileName);
+        const file = e.target.files[0]
+        setFile(file);
     }
 
     const onChangeReviewTitle = e => {
@@ -67,7 +72,19 @@ function Review(props) {
         setReviewText(reviewText);
     }
 
-    const saveReview = () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        // console.log("file info: ", file);
+
+        if (isEditing) {
+            updateReview();
+        } else {
+            await saveReview();
+        }
+    };
+
+    const saveReview = async () => {
         // Review redux actions can be tested here*****
         // const reviewId = 1;
         // console.log(props.users)
@@ -81,6 +98,21 @@ function Review(props) {
         // updateReview(1,tasteRating, 
         //     serviceRating, cleanRating, overallRating, reviewTitle, 
         //     reviewText, fileName)
+
+        // Set user id
+        const userId = users[0].id;
+
+        // Pass parameters to add review thunk action
+        await addReviewThunk(userId, restaurantId, reviewTitle, reviewText,
+            Number(tasteRating), Number(serviceRating), Number(cleanRating),
+            Number(overallRating), file);
+
+        // Bring back to user dashboard after
+        setTimeout(() => { navigate("../userDashboard") }, 500);
+    }
+
+    const updateReview = () => {
+        console.log("Updating review!");
     }
 
     const starFont = { color: "gold" }
@@ -97,7 +129,7 @@ function Review(props) {
                     <strong>Please rate your visit!</strong>
                 </div>
 
-                <Form>
+                <Form onSubmit={handleSubmit}>
                     <Row className="justify-content-center">
                         <Col xs="6">
                             <Form.Group>
@@ -209,7 +241,8 @@ function Review(props) {
                                 alt="Upload preview"
                             />
 
-                            <FloatingImageUpload as={Row} fileName={fileName} onChangeFileName={onChangeFileName} />
+                            <FloatingImageUpload as={Row} onChangeFileName={onChangeFileName} />
+
                         </Col>
                     </Row>
 
@@ -244,7 +277,7 @@ function Review(props) {
                     </Form.Floating>
 
                     <div className="d-flex justify-content-around pt-2 pb-5">
-                        <Button className="mr-1 w-25" variant="outline-primary" onClick={saveReview}>
+                        <Button type="submit" className="mr-1 w-25" variant="outline-primary">
                             Submit
                         </Button>
 
@@ -257,40 +290,40 @@ function Review(props) {
 }
 
 // Mapping the redux store states to props
-const mapStateToProps = state => 
-    ({
-        reviews: [...state.reviews],
-        users: [...state.users]
-    });
+const mapStateToProps = state =>
+({
+    reviews: [...state.reviews],
+    users: [...state.users]
+});
 
-// Mapping the state actions to props
-const mapDispatchToProps = dispatch => 
-    ({
-        // This method will add a new review
-        addReview(userName, userId, restaurantId, restaurantName, tasteRating, 
-            serviceRating, cleanlinessRating, overallRating, reviewTitle, 
-            reviewText, imageLocation) {
-            dispatch(addReview(userName, userId, restaurantId, restaurantName, tasteRating, 
-                serviceRating, cleanlinessRating, overallRating, reviewTitle, 
-                reviewText, imageLocation)
-                )
-        },
-        deleteAllReviews() {
-            dispatch(deleteAllReviews()
-            )
-        },
-        deleteReview(id) {
-            dispatch(deleteReview(id))
-        },
-        updateReview(reviewId, tasteRating, 
-            serviceRating, cleanlinessRating, overallRating, reviewTitle, 
-            reviewText, imageLocation) {
-                dispatch(updateReview(reviewId, tasteRating, 
-                    serviceRating, cleanlinessRating, overallRating, reviewTitle, 
-                    reviewText, imageLocation))    
-        }
-    })
+// // Mapping the state actions to props
+// const mapDispatchToProps = dispatch => 
+//     ({
+//         // This method will add a new review
+//         addReview(userName, userId, restaurantId, restaurantName, tasteRating, 
+//             serviceRating, cleanlinessRating, overallRating, reviewTitle, 
+//             reviewText, imageLocation) {
+//             dispatch(addReview(userName, userId, restaurantId, restaurantName, tasteRating, 
+//                 serviceRating, cleanlinessRating, overallRating, reviewTitle, 
+//                 reviewText, imageLocation)
+//                 )
+//         },
+//         deleteAllReviews() {
+//             dispatch(deleteAllReviews()
+//             )
+//         },
+//         deleteReview(id) {
+//             dispatch(deleteReview(id))
+//         },
+//         updateReview(reviewId, tasteRating, 
+//             serviceRating, cleanlinessRating, overallRating, reviewTitle, 
+//             reviewText, imageLocation) {
+//                 dispatch(updateReview(reviewId, tasteRating, 
+//                     serviceRating, cleanlinessRating, overallRating, reviewTitle, 
+//                     reviewText, imageLocation))    
+//         }
+//     })
 
 
 // Exporting the connect Wrapped EditAccount Component
-export default connect(mapStateToProps, mapDispatchToProps)(Review);
+export default connect(mapStateToProps, { addReviewThunk })(Review);

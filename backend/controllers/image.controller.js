@@ -3,38 +3,34 @@
 // Restaurant Club - image.controller.js
 // February 20, 2022
 // Last Edited (Initials, Date, Edits):
+// (CPD, 3/8/22, Created upload function to upload images to cloud)
 
 const db = require("../models");
 const Image = db.image;
+const uploadFile = require("../middleware/upload");
 
-// Create and Save a new Restaurant
-exports.create = (req, res) => {
-    // // Validate request
-    // if (!req.body.restaurantEmail) {
-    //     res.status(400).send({
-    //         message: "Content can not be empty!"
-    //     });
-    //     return;
-    // }
-    // // Create a Restaurant
-    // const restaurant = {
-    //     addressId: req.body.addressId,
-    //     fName: req.body.fName,
-    //     lName: req.body.lName,
-    //     restaurantEmail: req.body.restaurantEmail,
-    // };
-    // // Save Restaurant in the database
-    // Review.create(restaurant)
-    //     .then(data => {
-    //         res.send(data);
-    //     })
-    //     .catch(err => {
-    //         res.status(500).send({
-    //             message:
-    //                 err.message || "Some error occurred while creating the Restaurant."
-    //         });
-    //     });
-};
+// Upload endpoint
+exports.upload = async (req, res) => {
+    console.log("req: ", req);
+    try {
+        await uploadFile(req, res);
+        if (req.file == undefined) {
+            // console.log('req details: ', req.file);
+          return res.status(400).send({ message: "Please upload a file!" });
+        }
+
+        // Upload was successful
+        console.log("file location: ", req.file.location);
+        res.status(200).send({
+            // return cloud location so we can use it 
+          location: req.file.location
+        });
+      } catch (err) {
+        res.status(500).send({
+          message: `Could not upload the file: ${req.file.originalname}. ${err}`,
+        });
+      }
+}
 
 // Retrieve all Restaurants from the database.
 exports.findAll = (req, res) => {

@@ -3,6 +3,7 @@
 // Restaurant Club - FloatingImageUpload.js
 // February 3, 2022
 // Last Edited (Initials, Date, Edits):
+//  (CPD, 3/7/22, Removed required from this component)
 //  (DAB, 3/07/2022, Images are no longer required)
 
 // Using React library in order to build components 

@@ -33,6 +33,8 @@ exports.create = async (req, res) => {
         return;
     }
 
+    // console.log("review details:", req.body);
+
     // Creating an array to hold the needed table ideas as the adjoining 
     // restaurant tables are created
     const reviewData = {
