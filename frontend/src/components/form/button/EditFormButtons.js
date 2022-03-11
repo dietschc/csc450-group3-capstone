@@ -3,6 +3,7 @@
 // Restaurant Club - EditFormButtons.js
 // February 3, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 3/09/2022, Added in a clearFormHandler for modal support)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -14,7 +15,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
  * A React-Bootstrap Button is returned that will work with both Edit Views. 
  * The button will update depending on what parent form is loaded.
  * 
- * @param { isUpdate, clearForm } props 
+ * @param { isUpdate, clearFormHandler } props 
  * @returns
  */
 function EditFormButtons(props) {
@@ -32,7 +33,7 @@ function EditFormButtons(props) {
                 Clear
             </Button>
         </div>
-    )  
+    )
 }
 
 // Exporting the component
