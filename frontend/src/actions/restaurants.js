@@ -15,18 +15,99 @@
 // for the app and importing needed components
 import C from '../constants';
 import RestaurantDataService from "../services/restaurant.service";
+import ImageDataService from "../services/image.service";
 import { formatDBRestaurantFind, formatDBRestaurantCreate } from '../helperFunction/actionHelpers';
 
 
 export const addRestaurantThunk = (
     userCreatorId, restaurantName, address, city, state, 
     zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
-    imageLocation ) => async dispatch => {
+    file ) => async dispatch => {
+        let imageLocation;
+        console.log(file)
+        // If file exists, upload to cloud and add location to the new review
+        if (file.size > 0) {
+            // Call and await the image data service upload method, passing the file as a parameter
+            await ImageDataService.upload(file)
+                .then(res => {
+                    console.log("location: ", res.data.location);
+
+                    // Set the image location from the response data
+
+                    // If the imageLocation exists, this implies success uploading
+                    
+                    imageLocation = res.data.location || "";
+                    
+                    // return await RestaurantDataService.create({
+                    //     userCreatorId, restaurantName, address, city, state, 
+                    //     zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
+                    //     imageLocation
+                    // })
+                    //     .then(res => {
+                    //         if (res) {
+            
+                    //             const restaurantData = formatDBRestaurantCreate(res.data)
+            
+                    //             dispatch(addRestaurant(restaurantData))
+            
+                    //             return restaurantData;
+                    //         }
+                            
+            
+                    //         else {
+                                
+                    //             console.log("Restaurant was not added");
+                    //             return false;
+                    //         }
+                    //     })
+                    //     .catch(err => {
+                    //         console.log(err)
+                    //         return false;
+                    //     })
+
+                    // It is not necessary to add the review to state since visiting the homepage or dashboard
+                    // will automatically refresh all the reviews in state
+                    // dispatch(addReview(result))
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+
+            // Otherwise use an empty string for the location when creating the new review
+        } else {
+            imageLocation = "";
+            // return await RestaurantDataService.create({
+            //     userCreatorId, restaurantName, address, city, state, 
+            //     zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
+            //     imageLocation
+            // })
+            //     .then(res => {
+            //         if (res) {
+    
+            //             const restaurantData = formatDBRestaurantCreate(res.data)
+    
+            //             dispatch(addRestaurant(restaurantData))
+    
+            //             return restaurantData;
+            //         }
+                    
+    
+            //         else {
+                        
+            //             console.log("Restaurant was not added");
+            //             return false;
+            //         }
+            //     })
+            //     .catch(err => {
+            //         console.log(err)
+            //         return false;
+            //     })
+        }
         /**
          * Call and await the user data service create method, passing the parameters and storing the 
          * results in a constant.
          */
-        return await RestaurantDataService.create({
+         return await RestaurantDataService.create({
             userCreatorId, restaurantName, address, city, state, 
             zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
             imageLocation

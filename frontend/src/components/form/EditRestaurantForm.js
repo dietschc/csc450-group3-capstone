@@ -54,6 +54,7 @@ function EditRestaurantForm(props) {
     const [digitalContact, setDigitalContact] = useState("");
     const [imageId, setImageId] = useState("")
     const [website, setWebsite] = useState("");
+    const [file, setFile] = useState("");
     const [fileName, setFileName] = useState("");
     const [showClearFormConfirm, setShowClearFormConfirm] = useState(false);
 
@@ -81,7 +82,7 @@ function EditRestaurantForm(props) {
             setDigitalContact(currentRestaurant.digitalContact)
             setWebsite(currentRestaurant.website)
             // setImageId(currentRestaurant.images[0].id)
-            // setFileStringName(currentImage)
+            // setFileName(currentImage)
         }
     }, [restaurant]);
 
@@ -141,6 +142,12 @@ function EditRestaurantForm(props) {
         // const file = e.target.files[0]
         // setFile(file);
         
+    }
+
+    // Change handler for the function name specific form input
+    const onChangeFile = e => {
+        const file = e.target.files[0]
+        setFile(file);
     }
 
 
@@ -235,7 +242,7 @@ function EditRestaurantForm(props) {
                 await addRestaurantThunk(
                     userCreatorId, restaurantName, address,
                     city, state, zip, rawPhone, digitalContact,
-                    website, fileName)
+                    website, file)
                     .then(restaurantData => {
                         // If data is returned the update is successful and the user is navigated to the 
                         // id of the newly stored restaurant
@@ -263,7 +270,7 @@ function EditRestaurantForm(props) {
             <FloatingPhone phone={phone} onChangePhone={onChangePhone} />
             <FloatingDigitalContact digitalContact={digitalContact} onChangeDigitalContact={onChangeDigitalContact} />
             <FloatingWebsite website={website} onChangeWebsite={onChangeWebsite} />
-            <FloatingImageUpload fileName={fileName} onChangeFileName={onChangeFileName} />
+            <FloatingImageUpload fileName={fileName} onChangeFile={onChangeFile} />
             <EditFormButtons isUpdate={isUpdate} saveAccount={saveAccount} clearFormHandler={showClearFormHandler} />
             <ModalConfirmation show={showClearFormConfirm} closeHandler={closeClearFormHandler} clearForm={clearForm} />
         </Form>

@@ -24,7 +24,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 function FloatingImageUpload(props) {
     // The form component specific props will be assigned and 
     // used to process the form element
-    const { fileName, onChangeFileName } = props;
+    const { fileName, onChangeFile } = props;
 
     return (
         <Form.Floating className="mb-3 justify-content-center">
@@ -34,8 +34,7 @@ function FloatingImageUpload(props) {
                     <Form.Control
                     className="pt-3"
                     type="file"
-                    value={fileName}
-                    onChange={onChangeFileName}
+                    onChange={onChangeFile}
                     accept=".jpg,.png,.jpeg,.gif"
                     />
             </FloatingLabel> 
