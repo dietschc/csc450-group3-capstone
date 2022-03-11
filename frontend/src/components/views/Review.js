@@ -15,11 +15,11 @@ import ModalCancelConfirm from '../form/modal/ModalCancelConfirm';
 import { useParams, useNavigate } from "react-router-dom";
 import { printStarTotal } from '../../helperFunction/StringGenerator';
 import { connect } from 'react-redux';
-import { addReviewThunk } from '../../actions/reviews';
+import { addReviewThunk, updateReviewThunk } from '../../actions/reviews';
 
 function Review(props) {
 
-    const { users, reviews, restaurants, addReviewThunk } = props;
+    const { users, reviews, restaurants, addReviewThunk, updateReviewThunk } = props;
 
     // Extract IDs from URL as parameters
     const { restaurantId, reviewId } = useParams();
@@ -88,7 +88,7 @@ function Review(props) {
         // console.log("file info: ", file);
 
         if (isUpdate) {
-            updateReview();
+            await updateReview();
         } else {
             await saveReview();
         }
@@ -110,15 +110,28 @@ function Review(props) {
         setTimeout(() => { navigate("../userDashboard") }, 500);
     }
 
-    const updateReview = () => {
-        console.log("Updating review!");
+    const updateReview = async () => {
+        // Set user id
+        const userId = users[0].id;
+        const imageLocation = paramReview.images[0].imageLocation;
+
+        // Pass parameters to add review thunk action
+        await updateReviewThunk(reviewId, userId, reviewTitle, reviewText,
+            Number(tasteRating), Number(serviceRating), Number(cleanRating),
+            Number(overallRating), file, imageLocation);
+
+        console.log("update new image? ", file);
+
+        // Bring back to user dashboard after
+        setTimeout(() => { navigate("../userDashboard") }, 500);
     }
 
     const displayReviewImage = () => (
         <img
             src={isUpdate && paramReview.images[0].imageLocation !== ''
                 ? paramReview.images[0].imageLocation
-                : window.location.origin + '/reviewImages/3/stock-illustration-retro-diner.jpg'}
+                : window.location.origin + '/reviewImages/3/stock-illustration-retro-diner.jpg'
+            }
             width="300"
             height="200"
             className="p-3 flex-begin"
@@ -333,4 +346,4 @@ const mapStateToProps = state =>
 
 
 // Exporting the connect Wrapped EditAccount Component
-export default connect(mapStateToProps, { addReviewThunk })(Review);
+export default connect(mapStateToProps, { addReviewThunk, updateReviewThunk })(Review);

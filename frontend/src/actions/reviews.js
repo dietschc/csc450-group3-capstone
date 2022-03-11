@@ -225,8 +225,6 @@ export const addReviewThunk = (userId, restaurantId, reviewTitle, reviewText, ta
                     console.log(err)
                 })
         }
-
-
     }
 
 /**
@@ -330,6 +328,57 @@ export const deleteAllReviews = () => ({
     type: C.DELETE_ALL_REVIEWS
 })
 
+export const updateReviewThunk = (reviewId, userId, reviewTitle, reviewText, tasteRating, serviceRating,
+    cleanlinessRating, overallRating, file, imageLocation) => async dispatch => {
+
+        // If file exists, upload to cloud and add location to the new review
+        if (file.size > 0) {
+            // Call and await the image data service upload method, passing the file as a parameter
+            await ImageDataService.upload(file)
+                .then(res => {
+                    // console.log("location: ", res.data.location);
+
+                    // Set the image location from the response data
+                    const imageLocation = res.data.location;
+
+                    // If the imageLocation exists, this implies success uploading
+                    if (imageLocation) {
+                        // Call the review data service create method, passing the form data parameters
+                        ReviewDataService.update(reviewId, {
+                            userId, reviewTitle, reviewText, tasteRating, serviceRating,
+                            cleanlinessRating, overallRating, imageLocation
+                        })
+                    }
+
+                    // It is not necessary to add the review to state since visiting the homepage or dashboard
+                    // will automatically refresh all the reviews in state
+                    // dispatch(addReview(result))
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+
+            // Otherwise use existing imageLocation 
+        } else {
+            // const imageLocation = "";
+
+            // Call the create review data data service, passing parameters
+            await ReviewDataService.update(reviewId, {
+                userId, reviewTitle, reviewText, tasteRating, serviceRating,
+                cleanlinessRating, overallRating, imageLocation
+            })
+                .then(res => {
+                    // console.log("res data: ", res.data);
+
+                    // It is not necessary to add the review to state since visiting the homepage or dashboard
+                    // will automatically refresh all the reviews in state
+                    // dispatch(addReview(result))
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
+    }
 
 /**
  * React-Redux action to update redux state.
