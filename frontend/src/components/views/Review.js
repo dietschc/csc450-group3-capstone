@@ -20,10 +20,16 @@ import { addReviewThunk } from '../../actions/reviews';
 
 function Review(props) {
 
-    const { users, reviews, addReviewThunk } = props;
+    const { users, reviews, restaurants, addReviewThunk } = props;
 
     const { id: restaurantId } = useParams();
-    const restaurantName = "Joe's Burgers";
+    const [paramRestaurant = []] = restaurants.filter((restaurant) => (restaurant.id) == restaurantId);
+
+    // Display restaurant name
+    const restaurantName = paramRestaurant.name;
+
+    console.log("restaurant id: ", restaurantId);
+    console.log("restaurant name: ", paramRestaurant.name);
 
     const isEditing = false;
 
@@ -84,21 +90,10 @@ function Review(props) {
         }
     };
 
+    /**
+     * Save review function calls the addReviewThunk
+     */
     const saveReview = async () => {
-        // Review redux actions can be tested here*****
-        // const reviewId = 1;
-        // console.log(props.users)
-        // console.log(props.reviews)
-        // console.log(props.users[0].auth.userName)
-        // addReview(props.users[0].auth.userName, props.users[0].id, restaurantId, restaurantName, 
-        //     tasteRating, serviceRating, cleanRating, overallRating, reviewTitle, 
-        //     reviewText, fileName);
-        // deleteAllReviews();
-        // deleteReview(0)
-        // updateReview(1,tasteRating, 
-        //     serviceRating, cleanRating, overallRating, reviewTitle, 
-        //     reviewText, fileName)
-
         // Set user id
         const userId = users[0].id;
 
@@ -293,6 +288,7 @@ function Review(props) {
 const mapStateToProps = state =>
 ({
     reviews: [...state.reviews],
+    restaurants: [...state.restaurants],
     users: [...state.users]
 });
 
