@@ -17,17 +17,17 @@ import { printStarTotal } from '../../helperFunction/StringGenerator';
 import { connect } from 'react-redux';
 import { addReviewThunk } from '../../actions/reviews';
 
-
 function Review(props) {
 
     const { users, reviews, restaurants, addReviewThunk } = props;
 
-    const { id: restaurantId } = useParams();
+    const { restaurantId, reviewId } = useParams();
     const [paramRestaurant = []] = restaurants.filter((restaurant) => (restaurant.id) == restaurantId);
 
     // Display restaurant name
     const restaurantName = paramRestaurant.name;
 
+    console.log("review id: ", reviewId);
     console.log("restaurant id: ", restaurantId);
     console.log("restaurant name: ", paramRestaurant.name);
 
@@ -229,7 +229,7 @@ function Review(props) {
 
                         <Col className="text-center">
                             <img
-                                src="../reviewImages/3/stock-illustration-retro-diner.jpg"
+                                src={window.location.origin + '/reviewImages/3/stock-illustration-retro-diner.jpg'}
                                 width="300"
                                 height="200"
                                 className="p-3 flex-begin"

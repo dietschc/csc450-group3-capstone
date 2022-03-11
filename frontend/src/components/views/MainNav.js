@@ -74,7 +74,7 @@ function MainNav(props) {
 
     // Remove everything from state on logout
     const logoutAccount = () => {
-        console.log("loggout account");
+        console.log("logout account");
         deleteAllUsers();
         deleteAllMessages();
         deleteAllReviews();
@@ -135,7 +135,7 @@ function MainNav(props) {
                 expand="md">
                 <Navbar.Brand>
                     <img
-                        src="../logo.gif"
+                        src={window.location.origin + '/logo.gif'}
                         width="90"
                         height="90"
                         className="flex-begin"
