@@ -21,24 +21,28 @@ function Review(props) {
 
     const { users, reviews, restaurants, addReviewThunk } = props;
 
+    // Extract IDs from URL as parameters
     const { restaurantId, reviewId } = useParams();
-    const [paramRestaurant = []] = restaurants.filter((restaurant) => (restaurant.id) == restaurantId);
+    const [paramRestaurant = []] = restaurants.filter((restaurant) => (restaurant.id) === Number(restaurantId));
+    const [paramReview = []] = reviews.filter((review) => (review.id) === Number(reviewId));
 
     // Display restaurant name
     const restaurantName = paramRestaurant.name;
 
     console.log("review id: ", reviewId);
     console.log("restaurant id: ", restaurantId);
-    console.log("restaurant name: ", paramRestaurant.name);
+    console.log("restaurant details: ", paramRestaurant);
+    console.log("review details: ", paramReview);
+    // console.log("review id greater than 0: ", paramReview.id > 0);
 
-    const isEditing = false;
-
-    const [tasteRating, setTasteRating] = useState("3");
-    const [serviceRating, setServiceRating] = useState("3");
-    const [cleanRating, setCleanRating] = useState("3");
-    const [overallRating, setOverallRating] = useState("3");
-    const [reviewTitle, setReviewTitle] = useState("");
-    const [reviewText, setReviewText] = useState("");
+    // If the params review id > 0, this implies you are editing a review 
+    const [isUpdate, setIsUpdate] = useState(paramReview.id > 0 ? true : false);
+    const [tasteRating, setTasteRating] = useState(paramReview.id > 0 ? paramReview.rating.tasteRating : "3");
+    const [serviceRating, setServiceRating] = useState(paramReview.id > 0 ? paramReview.rating.serviceRating : "3");
+    const [cleanRating, setCleanRating] = useState(paramReview.id > 0 ? paramReview.rating.cleanlinessRating : "3");
+    const [overallRating, setOverallRating] = useState(paramReview.id > 0 ? paramReview.rating.overallRating : "3");
+    const [reviewTitle, setReviewTitle] = useState(paramReview.id > 0 ? paramReview.reviewTitle : "");
+    const [reviewText, setReviewText] = useState(paramReview.id > 0 ? paramReview.reviewText : "");
     const [file, setFile] = useState("");
 
     const navigate = useNavigate();
@@ -63,7 +67,7 @@ function Review(props) {
         setOverallRating(overallRating);
     }
 
-    const onChangeFileName = e => {
+    const onChangeFile = e => {
         const file = e.target.files[0]
         setFile(file);
     }
@@ -83,7 +87,7 @@ function Review(props) {
 
         // console.log("file info: ", file);
 
-        if (isEditing) {
+        if (isUpdate) {
             updateReview();
         } else {
             await saveReview();
@@ -109,6 +113,18 @@ function Review(props) {
     const updateReview = () => {
         console.log("Updating review!");
     }
+
+    const displayReviewImage = () => (
+        <img
+            src={isUpdate && paramReview.images[0].imageLocation !== ''
+                ? paramReview.images[0].imageLocation
+                : window.location.origin + '/reviewImages/3/stock-illustration-retro-diner.jpg'}
+            width="300"
+            height="200"
+            className="p-3 flex-begin"
+            alt="Upload preview"
+        />
+    )
 
     const starFont = { color: "gold" }
 
@@ -228,15 +244,10 @@ function Review(props) {
                         </Col>
 
                         <Col className="text-center">
-                            <img
-                                src={window.location.origin + '/reviewImages/3/stock-illustration-retro-diner.jpg'}
-                                width="300"
-                                height="200"
-                                className="p-3 flex-begin"
-                                alt="Upload preview"
-                            />
 
-                            <FloatingImageUpload as={Row} onChangeFileName={onChangeFileName} />
+                            {displayReviewImage()}
+
+                            <FloatingImageUpload as={Row} onChangeFile={onChangeFile} />
 
                         </Col>
                     </Row>
@@ -273,7 +284,7 @@ function Review(props) {
 
                     <div className="d-flex justify-content-around pt-2 pb-5">
                         <Button type="submit" className="mr-1 w-25" variant="outline-primary">
-                            Submit
+                            {isUpdate ? "Update" : "Submit"}
                         </Button>
 
                         <ModalCancelConfirm />
