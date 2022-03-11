@@ -11,6 +11,7 @@
 //  (DAB, 3/05/2022, Added in findReviewByAuthorThunk and findReviewByAuthorRestaurantThunk)
 //  (CPD, 3/06/2022, Added deleteReviewThunk)
 //  (CPD, 3/09/2022, Worked on getting addReviewThunk with image upload working)
+//  (CPD, 3/10/2022, Worked on getting review edit/update working, including updating image)
 
 // Using React library in order to build components 
 // for the app and importing needed components

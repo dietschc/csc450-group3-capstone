@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 //  (CPD, 3/7/22, Removed required from this component)
 //  (DAB, 3/07/2022, Images are no longer required)
+//  (CPD, 3/11/22, Updated name of changeHandler to more accurately reflect its purpose)
 
 // Using React library in order to build components 
 // for the app and importing needed components

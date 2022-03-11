@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 // (CPD, 02/4/22, Review View Layout #33 - Initial layout and styling)
 // (CPD, 03/08/22, Added image upload and create review functionality)
+// (CPD, 03/10/22, Added update review thunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -29,10 +30,10 @@ function Review(props) {
     // Display restaurant name
     const restaurantName = paramRestaurant.name;
 
-    console.log("review id: ", reviewId);
-    console.log("restaurant id: ", restaurantId);
-    console.log("restaurant details: ", paramRestaurant);
-    console.log("review details: ", paramReview);
+    // console.log("review id: ", reviewId);
+    // console.log("restaurant id: ", restaurantId);
+    // console.log("restaurant details: ", paramRestaurant);
+    // console.log("review details: ", paramReview);
     // console.log("review id greater than 0: ", paramReview.id > 0);
 
     // If the params review id > 0, this implies you are editing a review 
@@ -120,7 +121,7 @@ function Review(props) {
             Number(tasteRating), Number(serviceRating), Number(cleanRating),
             Number(overallRating), file, imageLocation);
 
-        console.log("update new image? ", file);
+        // console.log("update new image? ", file);
 
         // Bring back to user dashboard after
         setTimeout(() => { navigate("../userDashboard") }, 500);
