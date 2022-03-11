@@ -245,12 +245,12 @@ export const updateUserThunk = (id, data) => async dispatch => {
  * @returns 
  */
 export const updateUser = ({ id, userName, firstName, lastName,
-    address, city, state, zip, email, password }) => ({
+    address, city, state, zip, userEmail, password }) => ({
         type: C.UPDATE_USER,
         id: id,
         firstName: firstName,
         lastName: lastName,
-        email: email,
+        email: userEmail,
         address: {
             address: address,
             city: city,
