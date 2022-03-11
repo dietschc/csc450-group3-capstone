@@ -9,13 +9,13 @@
 //  (DAB, 3/02/20222, Added in comments)
 //  (DAB, 3/05/2022, Added in findByRestaurantNameThunk)
 //  (DAB, 3/06/2022, Added in deleteRestaurantThunk)
+//  (DAB, 3/07/2022, Added in addRestaurantThunk and updateRestaurantThunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import C from '../constants';
 import RestaurantDataService from "../services/restaurant.service";
 import { formatDBRestaurantFind, formatDBRestaurantCreate } from '../helperFunction/actionHelpers';
-import { renderMatches } from 'react-router-dom';
 
 
 export const addRestaurantThunk = (
@@ -26,7 +26,7 @@ export const addRestaurantThunk = (
          * Call and await the user data service create method, passing the parameters and storing the 
          * results in a constant.
          */
-        await RestaurantDataService.create({
+        return await RestaurantDataService.create({
             userCreatorId, restaurantName, address, city, state, 
             zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
             imageLocation
@@ -38,38 +38,44 @@ export const addRestaurantThunk = (
 
                     dispatch(addRestaurant(restaurantData))
 
-                    return res;
+                    return restaurantData;
                 }
                 
 
                 else {
+                    
                     console.log("Restaurant was not added");
+                    return false;
                 }
             })
             .catch(err => {
                 console.log(err)
+                return false;
             })
 }
 
 export const updateRestaurantThunk = (restaurantId, data) => async dispatch => {
     // Making the call to the service to request an update to the database
-    await RestaurantDataService.update(restaurantId, data)
+    return await RestaurantDataService.update(restaurantId, data)
     .then(res => {
         // If there is a response the state will be updated
         if (res) {
             // Destructuring out permissionId and permission name from the data
             // const { permissionId, permissionName } = data;
 
-            // // Dispatching the action to update state permission
+            // Dispatching the action to update state permission from the param data
             dispatch(updateRestaurant(data))
+            return true;
         }
         else {
             console.log("Restaurant was not updated")
+            return false;
         }
     })
     .catch(err => {
         // If there is an error it will be logged
         console.log(err)
+        return false;
     })
 }
 
