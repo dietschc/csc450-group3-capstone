@@ -24,11 +24,11 @@ const deleteDirectory = async (directory) => {
 
     // S3 does not delete empty directories so we have to go in and delete everything first
     try {
-        const listedObjects = await s3.listObjectsV2(params).promise();
-        console.log("listedObjects: ", listedObjects)
+        const listedFiles = await s3.listObjectsV2(params).promise();
+        console.log("listedFiles: ", listedFiles)
 
         // Directory is already empty
-        // if (listedObjects.Contents.length === 0) return;
+        // if (listedFiles.Contents.length === 0) return;
 
         // If the file was found we will try to delete it
         try {
@@ -38,7 +38,7 @@ const deleteDirectory = async (directory) => {
                 Delete: { Objects: [] }
             };
 
-            listedObjects.Contents.forEach(({ Key }) => {
+            listedFiles.Contents.forEach(({ Key }) => {
                 deleteParams.Delete.Objects.push({ Key });
             });
 
