@@ -11,10 +11,11 @@ import http from "../http-common";
 class ImageDataService {
 
   // Creates a new image by calling the upload image method on the images controller
-  upload(file) {
+  upload(file, userId) {
     let formData = new FormData();
     formData.append("file", file);
-    
+    formData.append("userId", userId)
+
     return http.post("/images/", formData, {
       // Set multipart headers
       headers: {

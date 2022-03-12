@@ -26,10 +26,15 @@ let storage = multerS3({
     acl: 'public-read',
     key: function (req, file, cb) {
         console.log(file);
+        console.log("req: ", req.body);
 
         // Alter filename to be unique but preserve extension
         const fileName = file.originalname.toLowerCase().split(' ').join('-');
-        cb(null, uuidv4() + '-' + fileName)
+
+        // Create path based on type{users, restaurants, etc.} and id
+        const path = `${req.body.type}/${req.body.id}/`; 
+
+        cb(null, path + uuidv4() + '-' + fileName)
     }
 })
 

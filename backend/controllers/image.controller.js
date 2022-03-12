@@ -25,7 +25,7 @@ exports.upload = async (req, res) => {
 			// console.log('req details: ', req.file);
 			return res.status(400).send({ message: "Please upload a file!" });
 		}
-		// console.log("req: ", req);
+		// console.log("userId: ", req.body.userId);
 		// console.log("file location: ", req.file.location);
 
 		// Upload was successful
