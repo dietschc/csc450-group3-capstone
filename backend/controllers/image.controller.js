@@ -8,16 +8,17 @@
 const db = require("../models");
 const Image = db.image;
 const uploadFile = require("../middleware/upload");
+const deleteFile = require("../middleware/delete")
 
 // Upload endpoint
 exports.upload = async (req, res) => {
-    console.log("req: ", req);
     try {
         await uploadFile(req, res);
         if (req.file == undefined) {
             // console.log('req details: ', req.file);
           return res.status(400).send({ message: "Please upload a file!" });
         }
+        // console.log("req: ", req);
 
         // Upload was successful
         console.log("file location: ", req.file.location);
@@ -31,6 +32,39 @@ exports.upload = async (req, res) => {
         });
       }
 }
+
+// Delete an image from cloud storage
+exports.delete = async (req, res) => {
+    // Validate request
+    if (!req.body.location) {
+      res.status(400).send({
+        message: "File location can not be empty!",
+      });
+      return;
+    }
+
+  // Set file location from req.body
+  const location = req.body.location;
+
+  try {
+    await deleteFile(location, res);
+    if (req == undefined) {
+        // console.log('req details: ', req.file);
+      return res.status(400).send({ message: "Please specify file to delete" });
+    }
+
+    // Delete was successful
+    // console.log("file location: ", req.file.location);
+    res.status(200).send({
+        // return cloud location so we can use it 
+      message: "file deleted successfully"
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: `Could not delete the file: ${err}`,
+    });
+  }
+};
 
 // Retrieve all Restaurants from the database.
 exports.findAll = (req, res) => {
@@ -86,30 +120,6 @@ exports.update = (req, res) => {
     //     .catch(err => {
     //         res.status(500).send({
     //             message: "Error updating Restaurant with id=" + id
-    //         });
-    //     });
-};
-
-// Delete a Restaurant with the specified id in the request
-exports.delete = (req, res) => {
-    // const id = req.params.id;
-    // Review.destroy({
-    //     where: { restaurantId: id }
-    // })
-    //     .then(num => {
-    //         if (num == 1) {
-    //             res.send({
-    //                 message: "Restaurant was deleted successfully!"
-    //             });
-    //         } else {
-    //             res.status(500).send({
-    //                 message: `Cannot delete Restaurant with id=${id}. Maybe Restaurant was not found!`
-    //             });
-    //         }
-    //     })
-    //     .catch(err => {
-    //         res.status(500).send({
-    //             message: "Could not delete Restaurant with id=" + id
     //         });
     //     });
 };
