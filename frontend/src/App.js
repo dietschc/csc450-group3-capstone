@@ -42,7 +42,8 @@ function App(props) {
         <Route path='/editRestaurant/:restaurantId' element={<EditRestaurant/>} />
         <Route path='/login' element={<Login/>} />
         <Route path='/review' element={<Review/>} />
-        <Route path='/review/:id' element={<Review/>} />
+        <Route path='/review/:restaurantId' element={<Review/>} />
+        <Route path='/review/:restaurantId/:reviewId' element={<Review/>} />
         <Route path='/search' element={<Search/>} />
         <Route path='/search/:restaurantName' element={<Search/>} />
         <Route path='/search/:restaurantId/:authorId' element={<Search/>} />

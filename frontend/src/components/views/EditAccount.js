@@ -125,7 +125,7 @@ function EditAccount(props) {
             city: city,
             zip: zip,
             state: state,
-            email: email,
+            userEmail: email,
             password: password
         }
 

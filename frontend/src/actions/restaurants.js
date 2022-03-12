@@ -9,24 +9,105 @@
 //  (DAB, 3/02/20222, Added in comments)
 //  (DAB, 3/05/2022, Added in findByRestaurantNameThunk)
 //  (DAB, 3/06/2022, Added in deleteRestaurantThunk)
+//  (DAB, 3/07/2022, Added in addRestaurantThunk and updateRestaurantThunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import C from '../constants';
 import RestaurantDataService from "../services/restaurant.service";
+import ImageDataService from "../services/image.service";
 import { formatDBRestaurantFind, formatDBRestaurantCreate } from '../helperFunction/actionHelpers';
-import { renderMatches } from 'react-router-dom';
 
 
 export const addRestaurantThunk = (
     userCreatorId, restaurantName, address, city, state, 
     zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
-    imageLocation ) => async dispatch => {
+    file ) => async dispatch => {
+        let imageLocation;
+        console.log(file)
+        // If file exists, upload to cloud and add location to the new review
+        if (file.size > 0) {
+            // Call and await the image data service upload method, passing the file as a parameter
+            await ImageDataService.upload(file)
+                .then(res => {
+                    console.log("location: ", res.data.location);
+
+                    // Set the image location from the response data
+
+                    // If the imageLocation exists, this implies success uploading
+                    
+                    imageLocation = res.data.location || "";
+                    
+                    // return await RestaurantDataService.create({
+                    //     userCreatorId, restaurantName, address, city, state, 
+                    //     zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
+                    //     imageLocation
+                    // })
+                    //     .then(res => {
+                    //         if (res) {
+            
+                    //             const restaurantData = formatDBRestaurantCreate(res.data)
+            
+                    //             dispatch(addRestaurant(restaurantData))
+            
+                    //             return restaurantData;
+                    //         }
+                            
+            
+                    //         else {
+                                
+                    //             console.log("Restaurant was not added");
+                    //             return false;
+                    //         }
+                    //     })
+                    //     .catch(err => {
+                    //         console.log(err)
+                    //         return false;
+                    //     })
+
+                    // It is not necessary to add the review to state since visiting the homepage or dashboard
+                    // will automatically refresh all the reviews in state
+                    // dispatch(addReview(result))
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+
+            // Otherwise use an empty string for the location when creating the new review
+        } else {
+            imageLocation = "";
+            // return await RestaurantDataService.create({
+            //     userCreatorId, restaurantName, address, city, state, 
+            //     zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
+            //     imageLocation
+            // })
+            //     .then(res => {
+            //         if (res) {
+    
+            //             const restaurantData = formatDBRestaurantCreate(res.data)
+    
+            //             dispatch(addRestaurant(restaurantData))
+    
+            //             return restaurantData;
+            //         }
+                    
+    
+            //         else {
+                        
+            //             console.log("Restaurant was not added");
+            //             return false;
+            //         }
+            //     })
+            //     .catch(err => {
+            //         console.log(err)
+            //         return false;
+            //     })
+        }
         /**
          * Call and await the user data service create method, passing the parameters and storing the 
          * results in a constant.
          */
-        await RestaurantDataService.create({
+         return await RestaurantDataService.create({
             userCreatorId, restaurantName, address, city, state, 
             zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
             imageLocation
@@ -38,38 +119,44 @@ export const addRestaurantThunk = (
 
                     dispatch(addRestaurant(restaurantData))
 
-                    return res;
+                    return restaurantData;
                 }
                 
 
                 else {
+                    
                     console.log("Restaurant was not added");
+                    return false;
                 }
             })
             .catch(err => {
                 console.log(err)
+                return false;
             })
 }
 
 export const updateRestaurantThunk = (restaurantId, data) => async dispatch => {
     // Making the call to the service to request an update to the database
-    await RestaurantDataService.update(restaurantId, data)
+    return await RestaurantDataService.update(restaurantId, data)
     .then(res => {
         // If there is a response the state will be updated
         if (res) {
             // Destructuring out permissionId and permission name from the data
             // const { permissionId, permissionName } = data;
 
-            // // Dispatching the action to update state permission
+            // Dispatching the action to update state permission from the param data
             dispatch(updateRestaurant(data))
+            return true;
         }
         else {
             console.log("Restaurant was not updated")
+            return false;
         }
     })
     .catch(err => {
         // If there is an error it will be logged
         console.log(err)
+        return false;
     })
 }
 

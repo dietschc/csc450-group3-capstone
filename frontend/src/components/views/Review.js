@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 // (CPD, 02/4/22, Review View Layout #33 - Initial layout and styling)
 // (CPD, 03/08/22, Added image upload and create review functionality)
+// (CPD, 03/10/22, Added update review thunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -15,24 +16,34 @@ import ModalCancelConfirm from '../form/modal/ModalCancelConfirm';
 import { useParams, useNavigate } from "react-router-dom";
 import { printStarTotal } from '../../helperFunction/StringGenerator';
 import { connect } from 'react-redux';
-import { addReviewThunk } from '../../actions/reviews';
-
+import { addReviewThunk, updateReviewThunk } from '../../actions/reviews';
 
 function Review(props) {
 
-    const { users, reviews, addReviewThunk } = props;
+    const { users, reviews, restaurants, addReviewThunk, updateReviewThunk } = props;
 
-    const { id: restaurantId } = useParams();
-    const restaurantName = "Joe's Burgers";
+    // Extract IDs from URL as parameters
+    const { restaurantId, reviewId } = useParams();
+    const [paramRestaurant = []] = restaurants.filter((restaurant) => (restaurant.id) === Number(restaurantId));
+    const [paramReview = []] = reviews.filter((review) => (review.id) === Number(reviewId));
 
-    const isEditing = false;
+    // Display restaurant name
+    const restaurantName = paramRestaurant.name;
 
-    const [tasteRating, setTasteRating] = useState("3");
-    const [serviceRating, setServiceRating] = useState("3");
-    const [cleanRating, setCleanRating] = useState("3");
-    const [overallRating, setOverallRating] = useState("3");
-    const [reviewTitle, setReviewTitle] = useState("");
-    const [reviewText, setReviewText] = useState("");
+    // console.log("review id: ", reviewId);
+    // console.log("restaurant id: ", restaurantId);
+    // console.log("restaurant details: ", paramRestaurant);
+    // console.log("review details: ", paramReview);
+    // console.log("review id greater than 0: ", paramReview.id > 0);
+
+    // If the params review id > 0, this implies you are editing a review 
+    const [isUpdate, setIsUpdate] = useState(paramReview.id > 0 ? true : false);
+    const [tasteRating, setTasteRating] = useState(paramReview.id > 0 ? paramReview.rating.tasteRating : "3");
+    const [serviceRating, setServiceRating] = useState(paramReview.id > 0 ? paramReview.rating.serviceRating : "3");
+    const [cleanRating, setCleanRating] = useState(paramReview.id > 0 ? paramReview.rating.cleanlinessRating : "3");
+    const [overallRating, setOverallRating] = useState(paramReview.id > 0 ? paramReview.rating.overallRating : "3");
+    const [reviewTitle, setReviewTitle] = useState(paramReview.id > 0 ? paramReview.reviewTitle : "");
+    const [reviewText, setReviewText] = useState(paramReview.id > 0 ? paramReview.reviewText : "");
     const [file, setFile] = useState("");
 
     const navigate = useNavigate();
@@ -57,7 +68,7 @@ function Review(props) {
         setOverallRating(overallRating);
     }
 
-    const onChangeFileName = e => {
+    const onChangeFile = e => {
         const file = e.target.files[0]
         setFile(file);
     }
@@ -77,28 +88,17 @@ function Review(props) {
 
         // console.log("file info: ", file);
 
-        if (isEditing) {
-            updateReview();
+        if (isUpdate) {
+            await updateReview();
         } else {
             await saveReview();
         }
     };
 
+    /**
+     * Save review function calls the addReviewThunk
+     */
     const saveReview = async () => {
-        // Review redux actions can be tested here*****
-        // const reviewId = 1;
-        // console.log(props.users)
-        // console.log(props.reviews)
-        // console.log(props.users[0].auth.userName)
-        // addReview(props.users[0].auth.userName, props.users[0].id, restaurantId, restaurantName, 
-        //     tasteRating, serviceRating, cleanRating, overallRating, reviewTitle, 
-        //     reviewText, fileName);
-        // deleteAllReviews();
-        // deleteReview(0)
-        // updateReview(1,tasteRating, 
-        //     serviceRating, cleanRating, overallRating, reviewTitle, 
-        //     reviewText, fileName)
-
         // Set user id
         const userId = users[0].id;
 
@@ -111,9 +111,34 @@ function Review(props) {
         setTimeout(() => { navigate("../userDashboard") }, 500);
     }
 
-    const updateReview = () => {
-        console.log("Updating review!");
+    const updateReview = async () => {
+        // Set user id
+        const userId = users[0].id;
+        const imageLocation = paramReview.images[0].imageLocation;
+
+        // Pass parameters to add review thunk action
+        await updateReviewThunk(reviewId, userId, reviewTitle, reviewText,
+            Number(tasteRating), Number(serviceRating), Number(cleanRating),
+            Number(overallRating), file, imageLocation);
+
+        // console.log("update new image? ", file);
+
+        // Bring back to user dashboard after
+        setTimeout(() => { navigate("../userDashboard") }, 500);
     }
+
+    const displayReviewImage = () => (
+        <img
+            src={isUpdate && paramReview.images[0].imageLocation !== ''
+                ? paramReview.images[0].imageLocation
+                : window.location.origin + '/reviewImages/3/stock-illustration-retro-diner.jpg'
+            }
+            width="300"
+            height="200"
+            className="p-3 flex-begin"
+            alt="Upload preview"
+        />
+    )
 
     const starFont = { color: "gold" }
 
@@ -233,15 +258,10 @@ function Review(props) {
                         </Col>
 
                         <Col className="text-center">
-                            <img
-                                src="../reviewImages/3/stock-illustration-retro-diner.jpg"
-                                width="300"
-                                height="200"
-                                className="p-3 flex-begin"
-                                alt="Upload preview"
-                            />
 
-                            <FloatingImageUpload as={Row} onChangeFileName={onChangeFileName} />
+                            {displayReviewImage()}
+
+                            <FloatingImageUpload as={Row} onChangeFile={onChangeFile} />
 
                         </Col>
                     </Row>
@@ -278,7 +298,7 @@ function Review(props) {
 
                     <div className="d-flex justify-content-around pt-2 pb-5">
                         <Button type="submit" className="mr-1 w-25" variant="outline-primary">
-                            Submit
+                            {isUpdate ? "Update" : "Submit"}
                         </Button>
 
                         <ModalCancelConfirm />
@@ -293,6 +313,7 @@ function Review(props) {
 const mapStateToProps = state =>
 ({
     reviews: [...state.reviews],
+    restaurants: [...state.restaurants],
     users: [...state.users]
 });
 
@@ -326,4 +347,4 @@ const mapStateToProps = state =>
 
 
 // Exporting the connect Wrapped EditAccount Component
-export default connect(mapStateToProps, { addReviewThunk })(Review);
+export default connect(mapStateToProps, { addReviewThunk, updateReviewThunk })(Review);

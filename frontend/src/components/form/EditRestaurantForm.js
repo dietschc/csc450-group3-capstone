@@ -6,6 +6,7 @@
 //  (DAB, 2/18/2022, Added in redux connect for state)
 //  (DAB, 3/07/2022, Create and Update Restaurant is working but 
 //  no current authentication or undefined protections)
+//  (DAB, 3/10/2022, Added in comments and cleaned up debugs)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -21,38 +22,29 @@ import FloatingWebsite from './floatingComponents/FloatingWebsite';
 import EditFormButtons from './button/EditFormButtons';
 import FloatingImageUpload from './floatingComponents/FloatingImageUpload';
 import { connect } from 'react-redux';
-import {
-    addRestaurant, decrementRestaurantReviewCount, deleteAllRestaurants,
-    deleteRestaurant, incrementRestaurantReviewCount, updateRestaurant, updateRestaurantRating,
-    updateRestaurantReviewCount, updateRestaurantOwner, addRestaurantThunk, updateRestaurantThunk
-} from '../../actions/restaurants';
+import { useNavigate } from 'react-router-dom';
+import { addRestaurantThunk, updateRestaurantThunk } from '../../actions/restaurants';
 import { formatPhoneNumber, unformatPhoneNumber } from '../../helperFunction/FormatString';
 import ModalConfirmation from '../modal/ModalCancelConfirm';
 
-
 // LAST WAS WORKING ON FORM VALIDATION
-//  STILL NEED TO GET IMAGE WORKING AND TEST OUT SOME CRASHES DUE TO 
-//  UNEXPECTED NAVIGATION (TEST WITH STATE CLEARED, maybe reroute to main or
-//  to search page if there is no matching restaurant id in state)
-// BIG IMPLEMENTATION NEEDED IS IMAGE UPLOAD, HOW TO SORT AND STORE THEM
-//  RENAME THEM AND STORE TO PUBLIC OR IS THERE A BETTER WAY?
+//  STILL NEED TO GET IMAGE WORKING
 
-
+/**
+ * The EditRestaurantForm will display a form that will allow the user to 
+ * create and/or update a restaurant depending on if a user is logged in and 
+ * that isUpdate is true (edit) or false(create).
+ * 
+ * @param { isUpdate, restaurant, users, addRestaurantThunk, updateRestaurantThunk } props 
+ * @returns 
+ */
 function EditRestaurantForm(props) {
-    // Redux store functions
-    const { addRestaurant, decrementRestaurantReviewCount, deleteAllRestaurants,
-        deleteRestaurant, incrementRestaurantReviewCount, updateRestaurant, updateRestaurantRating,
-        updateRestaurantReviewCount, updateRestaurantOwner, addRestaurantThunk,
-        updateRestaurantThunk } = props;
-
-    // Is this a restaurant add or update
+    // Destructuring needed redux store state and functions
     const { isUpdate, restaurant, users } = props;
-    console.log("RESTAURANT IN FORM IS ", restaurant)
+    // Redux store functions
+    const { addRestaurantThunk, updateRestaurantThunk } = props;
 
-    // keeps track of if the form was submitted
-    const [submitted, setSubmitted] = useState(false);
-
-    //*******The following test states will be replaced by Redux in Milestone 2**********/
+    // Component specific state to handle form data
     const [restaurantName, setRestaurantName] = useState("");
     const [address, setAddress] = useState("");
     const [city, setCity] = useState("");
@@ -62,23 +54,25 @@ function EditRestaurantForm(props) {
     const [digitalContact, setDigitalContact] = useState("");
     const [imageId, setImageId] = useState("")
     const [website, setWebsite] = useState("");
+    const [file, setFile] = useState("");
     const [fileName, setFileName] = useState("");
     const [showClearFormConfirm, setShowClearFormConfirm] = useState(false);
 
+    // Creating a navigate instance to navigate the application to new routes
+    const navigate = useNavigate();
 
 
-    // The show and close handlers will either show or close their respective 
-    // modals
-    const showClearFormHandler = () => setShowClearFormConfirm(true);
-    const closeClearFormHandler = () => setShowClearFormConfirm(false);
-
-    // Loading the database data into state when params are updated on params
+    // This useEffect will trigger a render when restaurant prop is altered
     useEffect(() => {
+        // If there is a restaurant in the restaurant prop
         if (restaurant.length > 0) {
+            // That restaurant is destructured into currentRestaurant
             const [currentRestaurant] = restaurant;
             const [currentImage] = currentRestaurant.images;
             console.log("CURRENT RESTAURANT IS", currentRestaurant)
 
+            // The form values are set to match those found in the restaurant 
+            // data
             setRestaurantName(currentRestaurant.name);
             setAddress(currentRestaurant.address.address)
             setCity(currentRestaurant.address.city)
@@ -88,40 +82,48 @@ function EditRestaurantForm(props) {
             setDigitalContact(currentRestaurant.digitalContact)
             setWebsite(currentRestaurant.website)
             // setImageId(currentRestaurant.images[0].id)
-            // setFileStringName(currentImage)
+            // setFileName(currentImage)
         }
     }, [restaurant]);
 
+
+    // Change handler for the function name specific form input
     const onChangeRestaurantName = e => {
         const restaurantName = e.target.value;
         setRestaurantName(restaurantName);
     }
 
+    // Change handler for the function name specific form input
     const onChangeAddress = e => {
         const address = e.target.value;
         setAddress(address);
     }
 
+    // Change handler for the function name specific form input
     const onChangeCity = e => {
         const city = e.target.value;
         setCity(city);
     }
 
+    // Change handler for the function name specific form input
     const onChangeZip = e => {
         const zip = e.target.value;
         setZip(zip);
     }
 
+    // Change handler for the function name specific form input
     const onChangeState = e => {
         const state = e.target.value;
         setState(state);
     }
 
+    // Change handler for the function name specific form input
     const onChangePhone = e => {
         const phone = formatPhoneNumber(e.target.value);
         setPhone(phone);
     }
 
+    // Change handler for the function name specific form input
     const onChangeDigitalContact = e => {
         const digitalContact = e.target.value;
         setDigitalContact(digitalContact);
@@ -132,16 +134,55 @@ function EditRestaurantForm(props) {
         setWebsite(website);
     }
 
+    // Change handler for the function name specific form input
     const onChangeFileName = e => {
         const fileName = e.target.value;
         setFileName(fileName);
+        // CORRECT WAY
+        // const file = e.target.files[0]
+        // setFile(file);
+        
     }
 
-    const saveAccount = (e) => {
+    // Change handler for the function name specific form input
+    const onChangeFile = e => {
+        const file = e.target.files[0]
+        setFile(file);
+    }
+
+
+    // The clearForm method will clear the form values
+    const clearForm = () => {
+        setRestaurantName("");
+        setAddress("");
+        setCity("");
+        setState("");
+        setZip("");
+        setPhone("");
+        setDigitalContact("");
+        setWebsite("");
+        setFileName("");
+    }
+
+
+    // The show and close handlers will either show or close their respective 
+    // modals
+    const closeClearFormHandler = () => setShowClearFormConfirm(false);
+    const showClearFormHandler = () => setShowClearFormConfirm(true);
+
+
+    // The saveAccount method will save an account to the database and 
+    // update the state. It will call the correct Thunk depending on 
+    // if the current form is displaying an update or create
+    const saveAccount = async (e) => {
+        // Preventing the default submit form action
         e.preventDefault();
+
+        // If the form is in update view
         if (isUpdate) {
-            // Update the restaurant
+            // If there is a user in state
             if (users && users.length > 0) {
+                // The user information is destructured from the state
                 const [currentUser] = users;
                 const [currentRestaurant] = restaurant;
                 const userCreatorId = currentUser.id;
@@ -149,6 +190,8 @@ function EditRestaurantForm(props) {
 
                 console.log("IMAGE ID IS READING", imageId);
 
+                // The updateData variable will hold the needed data to 
+                // update the restaurant in the correct format
                 const updateData = {
                     restaurantId: currentRestaurant.id,
                     restaurantName: restaurantName,
@@ -169,113 +212,53 @@ function EditRestaurantForm(props) {
                     state: state,
                     zip: zip
                 }
-                updateRestaurantThunk(currentRestaurant.id, updateData)
 
+                // The update Thunk is called and if the update is successful the user is redirected 
+                // to the updated restaurant page
+                await updateRestaurantThunk(currentRestaurant.id, updateData).then(isUpdated => {
+                    // If the entry was updated the user is redirected
+                    if (isUpdated) {
+                        // Navigating the user to the restaurant view for the updated restaurant
+                        navigate(`../restaurant/${currentRestaurant.id}`);
+                    }
+                    // If no update occurs a log is sent
+                    else {
+                        console.log("Restaurant was not updated.")
+                    }
+                });
             }
         }
+        // Else there is no restaurant and a new one will be created
         else {
-            // Create a new restaurant
+            // If a user is logged in
             if (users && users.length > 0) {
+                // The users id is destructured from state
                 const userCreatorId = users[0].id;
-                const rawPhone = unformatPhoneNumber(phone);
-                console.log(rawPhone);
 
-                addRestaurantThunk(
+                // The form phone number is unformatted to be saved in the database
+                const rawPhone = unformatPhoneNumber(phone);
+
+                // The restaurant is added to the database and state by calling the addRestaurantThunk
+                await addRestaurantThunk(
                     userCreatorId, restaurantName, address,
                     city, state, zip, rawPhone, digitalContact,
-                    website, fileName);
-                clearForm();
+                    website, file)
+                    .then(restaurantData => {
+                        // If data is returned the update is successful and the user is navigated to the 
+                        // id of the newly stored restaurant
+                        if (restaurantData) {
+                            clearForm();
+                            navigate(`../restaurant/${restaurantData.restaurantId}`);
+                        }
+                        // Else the restaurant was not updated and the user remains on the page to fix errors
+                        else {
+                            console.log("There was an issue creating restaurant")
+                        }
+                    });
             }
-            
-
         }
-        var data = {
-            restaurantName: restaurantName,
-            address: address,
-            city: city,
-            state: state,
-            zip: zip,
-            phone: phone,
-            digitalContact: digitalContact,
-            website: website,
-            fileName: fileName
-        }
-
-        // console.log(data);
-        // setSubmitted(true);
-
-        //DEBUG Redux Test data
-        var testData = {
-            restaurantId: 0,
-            authorId: 11,
-            authorUserName: "Test Author",
-            ownerId: 12,
-            restaurantName: "Happy Fun Time",
-            digitalContact: "Test Contact",
-            website: "Test Website",
-            phone: "test number",
-            addressId: 13,
-            address: "123 Test Lane",
-            city: "Testopolis",
-            state: "CA",
-            zip: "88444",
-            ratingId: 13,
-            tasteRating: 1,
-            serviceRating: 2,
-            cleanlinessRating: 3,
-            overallRating: 5,
-            reviewCount: 100,
-            images: [
-                {
-                    imageId: 10,
-                    imageLocation: "Fake Image Test"
-                },
-                {
-                    imageId: 15,
-                    imageLocation: "Fake Image 2"
-                }
-            ]
-
-        }
-
-        // DEBUG REDUX METHODS
-        // addRestaurant(testData.restaurantId, testData.authorId, testData.authorUserName, testData.ownerId, 
-        //     testData.restaurantName, testData.digitalContact, testData.website, 
-        //     testData.phone, testData.addressId, testData.address, testData.city, testData.state, testData.zip, 
-        //     testData.ratingId, testData.tasteRating, testData.serviceRating, testData.cleanlinessRating, 
-        //     testData.overallRating, 
-        //     testData.reviewCount, testData.imageId, testData.imageLocation)
-        // decrementRestaurantReviewCount(testData.restaurantId)
-        // incrementRestaurantReviewCount(testData.restaurantId)
-        // deleteRestaurant(testData.restaurantId)
-        // updateRestaurantOwner(testData.restaurantId, testData.ownerId)
-
-        // updateRestaurant(testData.restaurantId, testData.restaurantName, testData.authorId, testData.authorUserName, 
-        //     testData.address, testData.city, testData.state, testData.zip, testData.phone, 
-        //     testData.digitalContact, testData.website, testData.imageArray)
-
-        // updateRestaurantRating(testData.restaurantId, testData.tasteRating, testData.serviceRating, 
-        //     testData.cleanlinessRating, testData.overallRating)
-        // updateRestaurantReviewCount(testData.restaurantId, testData.reviewCount)
-
     }
 
-    const clearFormHandler = () => {
-        showClearFormHandler()
-    }
-
-    const clearForm = () => {
-        setRestaurantName("");
-        setAddress("");
-        setCity("");
-        setState("");
-        setZip("");
-        setPhone("");
-        setDigitalContact("");
-        setWebsite("");
-        setFileName("");
-        console.log("Form cleared");
-    }
 
     // The EditRestaurant form will be displayed using floating labels
     return (
@@ -287,8 +270,8 @@ function EditRestaurantForm(props) {
             <FloatingPhone phone={phone} onChangePhone={onChangePhone} />
             <FloatingDigitalContact digitalContact={digitalContact} onChangeDigitalContact={onChangeDigitalContact} />
             <FloatingWebsite website={website} onChangeWebsite={onChangeWebsite} />
-            <FloatingImageUpload fileName={fileName} onChangeFileName={onChangeFileName} />
-            <EditFormButtons isUpdate={isUpdate} saveAccount={saveAccount} clearFormHandler={clearFormHandler} />
+            <FloatingImageUpload fileName={fileName} onChangeFile={onChangeFile} />
+            <EditFormButtons isUpdate={isUpdate} saveAccount={saveAccount} clearFormHandler={showClearFormHandler} />
             <ModalConfirmation show={showClearFormConfirm} closeHandler={closeClearFormHandler} clearForm={clearForm} />
         </Form>
     )
@@ -297,15 +280,8 @@ function EditRestaurantForm(props) {
 // Mapping the redux store states to props
 const mapStateToProps = state =>
 ({
-    reviews: [...state.reviews],
-    users: [...state.users],
-    messages: [...state.messages]
+    users: [...state.users]
 });
 
-
-
-
 // Exporting the connect Wrapped EditRestaurantForm Component
-export default connect(mapStateToProps, {
-    addRestaurantThunk, updateRestaurantThunk
-})(EditRestaurantForm);
+export default connect(mapStateToProps, { addRestaurantThunk, updateRestaurantThunk })(EditRestaurantForm);

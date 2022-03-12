@@ -137,7 +137,9 @@ function UserDashboard(props) {
     // RestaurantReviewDetail.js Component
     const reviewEditHandler = (review) => {
         console.log("REVIEW IN EDIT HANDLER IS ", review.id);
-        navigate("../review/" + review.id);
+        const restaurantId = review.restaurant.id;
+        const reviewId = review.id;
+        navigate(`../review/${restaurantId}/${reviewId}`);
     }
 
     // These buttons will be passed into the RestaurantReviewDetail.js 
