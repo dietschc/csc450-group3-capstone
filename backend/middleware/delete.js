@@ -13,31 +13,33 @@ const s3 = new aws.S3({
     endpoint: spacesEndpoint
 });
 
-const deleteFile = (location) => {
+const deleteFile = async (location) => {
     // Split the file key from our full URL path
     const data = location.split('https://restaurantclub.nyc3.digitaloceanspaces.com/')
     const key = data[1];
 
     const params = {
         Bucket: 'restaurantclub',
-        Delete: {
-            Objects: [{ Key: key }],
-            Quiet: false,
-        }
+        Key: key
     };
 
-    console.log("deletefile: ", params);
-
-    s3.deleteObjects(params, (err, data) => {
-        if (err) {
-            console.error("error: ", err);
-        } else {
-            console.log("data: ",data);
+    // S3 does not return if a file was deleted so we have to check it exists first
+    try {
+        await s3.headObject(params).promise()
+        console.log("File Found in S3")
+        try {
+            await s3.deleteObject(params).promise()
+            console.log("file deleted Successfully")
+            return "1"
         }
-    });
-
+        catch (err) {
+             console.log("ERROR in file Deleting : " + JSON.stringify(err))
+             return -2;
+        }
+    } catch (err) {
+            console.log("File not Found ERROR : " + err.code)
+            return -1;
+    }
 };
 
-let deleteFileMiddleware = util.promisify(deleteFile);
-
-module.exports = deleteFileMiddleware;
+module.exports = deleteFile;
