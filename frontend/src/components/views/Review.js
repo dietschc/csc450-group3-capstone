@@ -6,7 +6,7 @@
 // (CPD, 02/4/22, Review View Layout #33 - Initial layout and styling)
 // (CPD, 03/08/22, Added image upload and create review functionality)
 // (CPD, 03/10/22, Added update review thunk)
-// (CPD, 03/10/22, Added code to display an upload image preview)
+// (CPD, 03/12/22, Added code to display an upload image preview)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -136,7 +136,7 @@ function Review(props) {
     /**
      * This will display the existing image if you are editing, or else it will display
      * the placeholder image, until you upload a new image, at which point it should
-     * display the new image (in a temp tempFileUrl)
+     * display the new image (in the tempFileUrl).
      * 
      * @returns 
      */
