@@ -5,24 +5,27 @@
 // Last Edited (Initials, Date, Edits):
 
 module.exports = app => {
-    const image = require("../controllers/image.controller.js");
-    var router = require("express").Router();
+  const image = require("../controllers/image.controller.js");
+  var router = require("express").Router();
 
-    // Create a new Restaurant
-    router.post("/", image.upload);
+  // Create a new Restaurant
+  router.post("/", image.upload);
 
-    // Retrieve all Restaurants
-    router.get("/", image.findAll);
+  // Retrieve all Restaurants
+  router.get("/", image.findAll);
 
-    // Retrieve a single Restaurant with id
-    router.get("/:id", image.findOne);
+  // Retrieve a single Restaurant with id
+  router.get("/:id", image.findOne);
 
-    // Update a Restaurant with id
-    router.put("/:id", image.update);
+  // Update a Restaurant with id
+  router.put("/:id", image.update);
 
-    // Delete a Restaurant with id
-    router.delete("/:id", image.delete);
+  // Delete a Restaurant with id
+  router.delete("/", image.delete);
 
-    // URL to restaurant for route
-    app.use('/images', router);
-  };
+  // Delete a Restaurant with id
+  router.delete("/dir", image.deleteDirectory);
+
+  // URL to restaurant for route
+  app.use('/images', router);
+};

@@ -10,6 +10,7 @@ const db = require("../models");
 const Image = db.image;
 const uploadFile = require("../middleware/upload");
 const deleteFile = require("../middleware/delete");
+const deleteDirectory = require("../middleware/deleteDirectory");
 
 /**
  * Upload endpoint takes a multipart form with a file as the parameter
@@ -49,12 +50,12 @@ exports.upload = async (req, res) => {
  */
 exports.delete = async (req, res) => {
 	// Validate request
-	// if (!req.body.location) {
-	// 	res.status(404).send({
-	// 		message: "File location can not be empty!",
-	// 	});
-	// 	return;
-	// }
+	if (!req.body.location) {
+		res.status(404).send({
+			message: "File location can not be empty!",
+		});
+		return;
+	}
 
 	// Set file location from req.body
 	const { location } = req.body;
@@ -83,6 +84,46 @@ exports.delete = async (req, res) => {
 	} catch (err) {
 		res.status(500).send({
 			message: `Could not delete the file: ${err}`,
+		});
+	}
+};
+
+exports.deleteDirectory = async (req, res) => {
+	// Validate request
+	if (!req.body.directory) {
+		res.status(404).send({
+			message: "Directory location can not be empty!",
+		});
+		return;
+	}
+
+	// Set file location from req.body
+	const { directory } = req.body;
+
+	// console.log("directory: ", directory);
+
+	try {
+		// Since AWS does not confirm file deletion, we must do this ourselves
+		const status = await deleteDirectory(directory, res);
+
+		console.log("status: ", status);
+
+		// Status code will be 1 if file was deleted successfully 
+		if (status === 1) {
+			res.status(200).send({
+				message: "Directory deleted successfully"
+			});
+
+			// Status will be something else if the file was not deleted
+		} else {
+			res.status(500).send({
+				message: "Could not delete dir, perhaps dir is already deleted?"
+			});
+		}
+
+	} catch (err) {
+		res.status(500).send({
+			message: `Could not delete the dir: ${err}`,
 		});
 	}
 };
