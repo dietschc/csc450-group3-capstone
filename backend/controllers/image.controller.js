@@ -10,7 +10,6 @@ const db = require("../models");
 const Image = db.image;
 const uploadFile = require("../middleware/upload");
 const deleteFile = require("../middleware/delete");
-const https = require('https');
 
 /**
  * Upload endpoint takes a multipart form with a file as the parameter
