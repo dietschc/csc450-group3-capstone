@@ -10,7 +10,7 @@ const db = require("../models");
 const Image = db.image;
 const uploadFile = require("../middleware/upload");
 const deleteFile = require("../middleware/delete");
-const deleteDirectory = require("../middleware/deleteDirectory");
+const deleteUserDirectory = require("../middleware/deleteUserDirectory");
 
 /**
  * Upload endpoint takes a multipart form with a file as the parameter
@@ -88,23 +88,12 @@ exports.delete = async (req, res) => {
 	}
 };
 
-exports.deleteDirectory = async (req, res) => {
-	// Validate request
-	if (!req.body.directory) {
-		res.status(404).send({
-			message: "Directory location can not be empty!",
-		});
-		return;
-	}
-
-	// Set file location from req.body
-	const { directory } = req.body;
-
-	// console.log("directory: ", directory);
+exports.deleteUserDirectory = async (req, res) => {
+    const id = req.params.id;
 
 	try {
 		// Since AWS does not confirm file deletion, we must do this ourselves
-		const status = await deleteDirectory(directory, res);
+		const status = await deleteUserDirectory(id, res);
 
 		console.log("status: ", status);
 

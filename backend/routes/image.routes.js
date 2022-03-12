@@ -24,7 +24,7 @@ module.exports = app => {
   router.delete("/", image.delete);
 
   // Delete a Restaurant with id
-  router.delete("/dir", image.deleteDirectory);
+  router.delete("/:id", image.deleteUserDirectory);
 
   // URL to restaurant for route
   app.use('/images', router);

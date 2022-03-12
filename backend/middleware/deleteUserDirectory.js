@@ -1,6 +1,6 @@
 // Coleman Dietsch
 // CSC450 Capstone
-// Restaurant Club - deleteDirectory.js
+// Restaurant Club - deleteUserDirectory.js
 // March 11, 2022
 // Last Edited (Initials, Date, Edits):
 
@@ -12,14 +12,14 @@ const s3 = new aws.S3({
     endpoint: spacesEndpoint
 });
 
-const deleteDirectory = async (directory) => {
+const deleteUserDirectory = async (directory) => {
     // Split the file key from our full URL path
     // const data = location.split('https://restaurantclub.nyc3.digitaloceanspaces.com/')
     // const key = data[1];
 
     const params = {
         Bucket: 'restaurantclub',
-        Prefix: directory
+        Prefix: 'users/' + directory
     };
 
     // S3 does not delete empty directories so we have to go in and delete everything first
@@ -27,8 +27,11 @@ const deleteDirectory = async (directory) => {
         const listedFiles = await s3.listObjectsV2(params).promise();
         console.log("listedFiles: ", listedFiles)
 
-        // Directory is already empty
-        // if (listedFiles.Contents.length === 0) return;
+        // Directory is already empty, do nothing
+        if (listedFiles.Contents.length === 0) {
+            console.log("directory is empty")
+            return -3;
+        }
 
         // If the file was found we will try to delete it
         try {
@@ -61,4 +64,4 @@ const deleteDirectory = async (directory) => {
     }
 };
 
-module.exports = deleteDirectory;
+module.exports = deleteUserDirectory;
