@@ -4,6 +4,7 @@
 // February 20, 2022
 // Last Edited (Initials, Date, Edits):
 // (CPD, 3/8/22, Created upload function to upload images to cloud)
+// (CPD, 3/11/22, Created delete image function to remove images from cloud)
 
 const db = require("../models");
 const Image = db.image;
@@ -11,7 +12,13 @@ const uploadFile = require("../middleware/upload");
 const deleteFile = require("../middleware/delete");
 const https = require('https');
 
-// Upload endpoint
+/**
+ * Upload endpoint takes a multipart form with a file as the parameter
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 
+ */
 exports.upload = async (req, res) => {
 	try {
 		await uploadFile(req, res);
@@ -20,9 +27,9 @@ exports.upload = async (req, res) => {
 			return res.status(400).send({ message: "Please upload a file!" });
 		}
 		// console.log("req: ", req);
+		// console.log("file location: ", req.file.location);
 
 		// Upload was successful
-		console.log("file location: ", req.file.location);
 		res.status(200).send({
 			// return cloud location so we can use it 
 			location: req.file.location
@@ -34,7 +41,13 @@ exports.upload = async (req, res) => {
 	}
 }
 
-// Delete an image from cloud storage
+/**
+ * Delete image endpoint takes a location from the req.body as the parameter
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 
+ */
 exports.delete = async (req, res) => {
 	// Validate request
 	if (!req.body.location) {
@@ -53,16 +66,16 @@ exports.delete = async (req, res) => {
 
 		console.log("status: ", status);
 
-		// Status code will be 1 if file was deleted from aws cloud
-		if (Number(status) === 1) {
+		// Status code will be 1 if file was deleted successfully 
+		if (status === 1) {
 			res.status(200).send({
-				message: "file deleted successfully"
+				message: "File deleted successfully"
 			});
 
 			// Status will be something else if the file was not deleted
 		} else {
 			res.status(500).send({
-				message: "could not delete file, perhaps file is already deleted?"
+				message: "Could not delete file, perhaps file is already deleted?"
 			});
 		}
 

@@ -1,10 +1,9 @@
 // Coleman Dietsch
 // CSC450 Capstone
-// Restaurant Club - upload.js
-// March 9, 2022
+// Restaurant Club - delete.js
+// March 11, 2022
 // Last Edited (Initials, Date, Edits):
 
-const util = require("util");
 const aws = require('aws-sdk');
 
 // Set S3 endpoint to DigitalOcean Spaces
@@ -27,18 +26,22 @@ const deleteFile = async (location) => {
     try {
         await s3.headObject(params).promise()
         console.log("File Found in S3")
+
+        // If the file was found we will try to delete it
         try {
             await s3.deleteObject(params).promise()
             console.log("file deleted Successfully")
-            return "1"
+            return 1;
         }
+        // Something went wrong trying to delete the file
         catch (err) {
-             console.log("ERROR in file Deleting : " + JSON.stringify(err))
-             return -2;
+            console.log("ERROR in file Deleting : " + JSON.stringify(err))
+            return -2;
         }
+        // Else the file was not found
     } catch (err) {
-            console.log("File not Found ERROR : " + err.code)
-            return -1;
+        console.log("File not Found ERROR : " + err.code)
+        return -1;
     }
 };
 
