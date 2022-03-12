@@ -332,8 +332,16 @@ export const deleteAllReviews = () => ({
 export const updateReviewThunk = (reviewId, userId, reviewTitle, reviewText, tasteRating, serviceRating,
     cleanlinessRating, overallRating, file, imageLocation) => async dispatch => {
 
-        // If file exists, upload to cloud and add location to the new review
+        // If input file exists, upload to cloud and add location to the new review
         if (file.size > 0) {
+
+            // Delete old image from cloud if it exists
+            if (imageLocation !== '') {
+                const oldLocation = imageLocation;
+                console.log("old location: ", oldLocation);
+                await ImageDataService.delete(oldLocation);
+            }
+
             // Call and await the image data service upload method, passing the file as a parameter
             await ImageDataService.upload(file)
                 .then(res => {
@@ -361,8 +369,6 @@ export const updateReviewThunk = (reviewId, userId, reviewTitle, reviewText, tas
 
             // Otherwise use existing imageLocation 
         } else {
-            // const imageLocation = "";
-
             // Call the create review data data service, passing parameters
             await ReviewDataService.update(reviewId, {
                 userId, reviewTitle, reviewText, tasteRating, serviceRating,

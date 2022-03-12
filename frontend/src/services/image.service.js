@@ -23,8 +23,8 @@ class ImageDataService {
   }
 
   // Deletes a specific image
-  delete(id) {
-    return http.delete(`/images/${id}`);
+  delete(location) {
+    return http.delete(`/images/1`, { data: { location } });
   }
 }
 
