@@ -3,7 +3,8 @@
 // Restaurant Club - image.routes.js
 // February 20, 2022
 // Last Edited (Initials, Date, Edits):
-// (CPD, 3/12/22, Updated delete routes and comments)
+// 	(CPD, 3/12/2022, Updated delete routes and comments)
+//	(DAB, 3/13/2022, Added in deleteRestaurantDirectory route)
 
 module.exports = app => {
 	const image = require("../controllers/image.controller.js");

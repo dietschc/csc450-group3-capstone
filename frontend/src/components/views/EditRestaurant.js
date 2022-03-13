@@ -20,7 +20,6 @@ import { useParams } from "react-router-dom";
 import { connect } from 'react-redux';
 import { findByRestaurantIdThunk } from '../../actions/restaurants';
 
-
 /**
  * The EditRestaurant View will allow a user to either create or update a restaurant
  * depending on the data in the database and state. The restaurant is queried off of 
@@ -37,7 +36,6 @@ function EditRestaurant(props) {
     // The isUpdate state will keep track of whether this is an update or create 
     // restaurant view
     const [isUpdate, setIsUpdate] = useState(false)
-
 
     // This useEffect will initially check if there is a restaurantId. If there is is not, 
     // it will query the database for that Id
@@ -58,7 +56,6 @@ function EditRestaurant(props) {
         }
     }, []);
 
-
     // This useEffect will reRender when the restaurants state changes. It will check if the restaurant 
     // has been loaded into state. If it has, then isUpdate is set to true
     useEffect(() => {
@@ -73,17 +70,6 @@ function EditRestaurant(props) {
     }, [restaurants]);
 
     
-    // Displays the header of EditRestaurant page. Depending on if the form will loaded 
-    // in to update or add a restaurant
-    const header = (
-        <Container as="header">
-            <div className="text-center p-1 mb-3">
-                <h1>{isUpdate ? "Edit" : "Create"} Restaurant</h1>
-            </div>
-        </Container>
-    );
-
-
     // The getData() method filters the restaurants state for the restaurant based on id. If a restaurant 
     // is not found, an empty array is passed back
     const getData = () => {
@@ -99,6 +85,17 @@ function EditRestaurant(props) {
             return []
         }
     }
+
+
+    // Displays the header of EditRestaurant page. Depending on if the form will loaded 
+    // in to update or add a restaurant
+    const header = (
+        <Container as="header">
+            <div className="text-center p-1 mb-3">
+                <h1>{isUpdate ? "Edit" : "Create"} Restaurant</h1>
+            </div>
+        </Container>
+    );
 
 
     // The EditRestaurant View will display a header and main content. The content is 

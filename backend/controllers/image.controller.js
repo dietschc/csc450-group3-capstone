@@ -95,13 +95,13 @@ exports.delete = async (req, res) => {
 // The deleteRestaurantDirectory will delete the restaurant image directory of the restaurant with the 
 // matching directory
 exports.deleteRestaurantDirectory = async (req, res) => {
+	// The chosen directory name of where the restaurant image will be stored
     const directory = req.params.directory;
 
+	// Enclosing the delete operation in a try/catch to prevent crashes
 	try {
 		// Since AWS does not confirm file deletion, we must do this ourselves
 		const status = await deleteRestaurantDirectory(directory, res);
-
-		console.log("status: ", status);
 
 		// Status code will be 1 if file was deleted successfully 
 		if (status === 1) {
@@ -115,7 +115,6 @@ exports.deleteRestaurantDirectory = async (req, res) => {
 				message: `Could not delete dir, perhaps dir is already deleted? ${directory}`
 			});
 		}
-
 	} catch (err) {
 		// If there is an error a response will be sent
 		res.status(500).send({
