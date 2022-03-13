@@ -13,6 +13,7 @@
 //  (CPD, 3/09/2022, Worked on getting addReviewThunk with image upload working)
 //  (CPD, 3/10/2022, Worked on getting review edit/update working, including updating image)
 //  (CPD, 3/12/2022, Added image delete code to updateReviewThunk)
+//  (CPD, 3/12/2022, Implemented user subdirectories for review images)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -182,8 +183,12 @@ export const addReviewThunk = (userId, restaurantId, reviewTitle, reviewText, ta
 
         // If file exists, upload to cloud and add location to the new review
         if (file.size > 0) {
+            // Parameters for user subdirectories
+            const id = userId;
+            const type = "users";
+
             // Call and await the image data service upload method, passing the file as a parameter
-            await ImageDataService.upload(file)
+            await ImageDataService.upload(file, id, type)
                 .then(res => {
                     // console.log("location: ", res.data.location);
 
@@ -235,11 +240,14 @@ export const addReviewThunk = (userId, restaurantId, reviewTitle, reviewText, ta
  * @param {*} reviewId 
  * @returns 
  */
-export const deleteReviewThunk = (reviewId) => async dispatch => {
-    /**
-     * Call and await the review data service delete method, passing the parameters and storing the 
-     * results in a constant.
-     */
+export const deleteReviewThunk = (reviewId, imageLocation) => async dispatch => {
+
+    // Delete the image from cloud storage if it exists
+    if (imageLocation !== '') {
+        await ImageDataService.delete(imageLocation);
+    }
+
+    //Call and await the review data service delete method, passing the parameters
     await ReviewDataService.delete(reviewId)
         .then(review => {
 
@@ -253,7 +261,7 @@ export const deleteReviewThunk = (reviewId) => async dispatch => {
                 dispatch(deleteReview(reviewId))
             }
         })
-
+        // Catch and log any errors
         .catch(err => {
             console.log(err)
         })
@@ -359,8 +367,13 @@ export const updateReviewThunk = (reviewId, userId, reviewTitle, reviewText, tas
                 await ImageDataService.delete(oldLocation);
             }
 
+            // Parameters for user subdirectories
+            const id = userId;
+            const type = "users";
+
             // Call and await the image data service upload method, passing the file as a parameter
-            await ImageDataService.upload(file)
+            await ImageDataService.upload(file, id, type)
+
                 .then(res => {
                     // console.log("location: ", res.data.location);
 

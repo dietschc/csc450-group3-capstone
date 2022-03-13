@@ -10,11 +10,21 @@ import http from "../http-common";
 
 class ImageDataService {
 
-  // Creates a new image by calling the upload image method on the images controller
-  upload(file, userId) {
+  /**
+   * Creates a new image by calling the upload image method on the images controller.
+   * 
+   * The image URL will look something like this: https://...com/type/id/file
+   * 
+   * @param {*} file - the file stored in an object passed as a param
+   * @param {*} id - the user or restaurant id to be be the 2nd subdirectory
+   * @param {*} type - first subdirectory, should be either users or restaurants
+   * @returns 
+   */
+  upload(file, id, type) {
     let formData = new FormData();
+    formData.append("id", id);
+    formData.append("type", type);
     formData.append("file", file);
-    formData.append("userId", userId)
 
     return http.post("/images/", formData, {
       // Set multipart headers
@@ -24,9 +34,25 @@ class ImageDataService {
     });
   }
 
-  // Deletes a specific image at cloud location
+  /**
+   * Deletes a specific image at cloud location
+   * 
+   * @param {*} location 
+   * @returns 
+   */
   delete(location) {
-    return http.delete(`/images/1`, { data: { location } });
+    return http.delete(`/images/`, { data: { location } });
+  }
+
+  /**
+   * CAUTION
+   * This function deletes a user directory and all files within
+   * 
+   * @param {*} id 
+   * @returns 
+   */
+  deleteUserDirectory(id) {
+    return http.delete(`/images/${id}`);
   }
 }
 
