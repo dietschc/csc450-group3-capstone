@@ -20,6 +20,14 @@ const deleteUserDirectory = require("../middleware/deleteUserDirectory");
  * @returns 
  */
 exports.upload = async (req, res) => {
+	// Validate request
+	if (!req.body.id && !req.body.type) {
+		res.status(404).send({
+			message: "You must supply the correct type and id parameters!",
+		});
+		return;
+	}
+
 	try {
 		await uploadFile(req, res);
 		if (req.file == undefined) {
@@ -89,7 +97,7 @@ exports.delete = async (req, res) => {
 };
 
 exports.deleteUserDirectory = async (req, res) => {
-    const id = req.params.id;
+	const id = req.params.id;
 
 	try {
 		// Since AWS does not confirm file deletion, we must do this ourselves
