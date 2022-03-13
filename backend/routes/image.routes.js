@@ -21,8 +21,11 @@ module.exports = app => {
 	// Update a Image with id
 	router.put("/:id", image.update);
 
-	// Delete an image from a specifica location, specified in the req.body
+	// Delete an image from a specific location, specified in the req.body
 	router.delete("/", image.delete);
+
+	// Delete a restaurant sub directory and all files contained within it
+	router.delete("/restaurants/:directory", image.deleteRestaurantDirectory);
 
 	// Delete a user sub directory and all files contained within it
 	router.delete("/:id", image.deleteUserDirectory);

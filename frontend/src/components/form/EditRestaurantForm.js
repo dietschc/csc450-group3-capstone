@@ -30,6 +30,9 @@ import ModalConfirmation from '../modal/ModalCancelConfirm';
 // LAST WAS WORKING ON FORM VALIDATION
 //  STILL NEED TO GET IMAGE WORKING
 
+
+// *********ABOUT TO TEST ADD AND UPLOAD RESTAURANT< SHOULD BE WORKING
+
 /**
  * The EditRestaurantForm will display a form that will allow the user to 
  * create and/or update a restaurant depending on if a user is logged in and 
@@ -56,6 +59,8 @@ function EditRestaurantForm(props) {
     const [website, setWebsite] = useState("");
     const [file, setFile] = useState("");
     const [fileName, setFileName] = useState("");
+    const [currentFileName, setCurrentFileName] = useState("");
+    const [tempFileUrl, setTempFileUrl] = useState("");
     const [showClearFormConfirm, setShowClearFormConfirm] = useState(false);
 
     // Creating a navigate instance to navigate the application to new routes
@@ -81,8 +86,8 @@ function EditRestaurantForm(props) {
             setPhone(formatPhoneNumber(currentRestaurant.phone))
             setDigitalContact(currentRestaurant.digitalContact)
             setWebsite(currentRestaurant.website)
-            // setImageId(currentRestaurant.images[0].id)
-            // setFileName(currentImage)
+            setImageId(currentRestaurant.images[0].id)
+            setFileName(currentRestaurant.images[0].imageLocation)
         }
     }, [restaurant]);
 
@@ -137,17 +142,23 @@ function EditRestaurantForm(props) {
     // Change handler for the function name specific form input
     const onChangeFileName = e => {
         const fileName = e.target.value;
-        setFileName(fileName);
+        setCurrentFileName(fileName);
         // CORRECT WAY
         // const file = e.target.files[0]
         // setFile(file);
-        
+        // Create temporary URL for image preview
+        // const tempFileUrl = URL.createObjectURL(file);
+        // CHECK ON THIS
+        setTempFileUrl(URL.createObjectURL(file));
     }
 
     // Change handler for the function name specific form input
     const onChangeFile = e => {
         const file = e.target.files[0]
         setFile(file);
+
+        // CHECK ON THIS, MIGHT SHOW UPDATED WHEN NOT
+        setTempFileUrl(URL.createObjectURL(file));
     }
 
 
@@ -193,25 +204,21 @@ function EditRestaurantForm(props) {
                 // The updateData variable will hold the needed data to 
                 // update the restaurant in the correct format
                 const updateData = {
-                    restaurantId: currentRestaurant.id,
                     restaurantName: restaurantName,
                     restaurantDigiContact: digitalContact,
                     restaurantPhone: unformatPhoneNumber(phone),
                     userCreatorId: userCreatorId,
                     restaurantWebsite: website,
                     userName: userName,
-                    imageLocation: fileName,
-                    imageArray: [
-                        {
-                            imageId: imageId,
-                            imageLocation: fileName
-                        }
-                    ],
+                    imageId: imageId,
+                    imageLocation: fileName || "",
                     address: address,
                     city: city,
                     state: state,
-                    zip: zip
+                    zip: zip,
+                    file: file
                 }
+                console.log("IMAGE FILENAME IS ", updateData.imageLocation)
 
                 // The update Thunk is called and if the update is successful the user is redirected 
                 // to the updated restaurant page

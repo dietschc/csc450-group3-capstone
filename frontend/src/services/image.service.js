@@ -54,7 +54,20 @@ class ImageDataService {
   deleteUserDirectory(id) {
     return http.delete(`/images/${id}`);
   }
+
+  /**
+   * CAUTION
+   * This function deletes a restaurant directory and all files within
+   * 
+   * @param {*} directory
+   * @returns 
+   */
+   deleteRestaurantDirectory(directory) {
+    return http.delete(`/images/restaurant/${directory}`);
+  }
 }
+
+
 
 // Exporting the data service
 export default new ImageDataService();
