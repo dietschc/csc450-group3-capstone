@@ -1,6 +1,6 @@
 // Initially Created by: Devin Brueberg
 // CSC450 Capstone
-// Image Club - image.routes.js
+// Restaurant Club - image.routes.js
 // February 20, 2022
 // Last Edited (Initials, Date, Edits):
 // (CPD, 3/12/22, Updated delete routes and comments)
