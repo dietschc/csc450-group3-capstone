@@ -49,15 +49,17 @@ exports.upload = async (req, res) => {
  */
 exports.delete = async (req, res) => {
 	// Validate request
-	if (!req.body.location) {
-		res.status(400).send({
-			message: "File location can not be empty!",
-		});
-		return;
-	}
+	// if (!req.body.location) {
+	// 	res.status(404).send({
+	// 		message: "File location can not be empty!",
+	// 	});
+	// 	return;
+	// }
 
 	// Set file location from req.body
-	const location = req.body.location;
+	const { location } = req.body;
+
+	console.log("location: ", location);
 
 	try {
 		// Since AWS does not confirm file deletion, we must do this ourselves

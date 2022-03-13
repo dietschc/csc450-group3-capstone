@@ -12,6 +12,7 @@
 //  (CPD, 3/06/2022, Added deleteReviewThunk)
 //  (CPD, 3/09/2022, Worked on getting addReviewThunk with image upload working)
 //  (CPD, 3/10/2022, Worked on getting review edit/update working, including updating image)
+//  (CPD, 3/12/2022, Added image delete code to updateReviewThunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -329,11 +330,35 @@ export const deleteAllReviews = () => ({
     type: C.DELETE_ALL_REVIEWS
 })
 
+/**
+ * The update review thunk will update the parameters, including a new file if it was uploaded. This 
+ * function will also delete the old cloud image if a new one is uploaded.
+ * 
+ * @param {*} reviewId 
+ * @param {*} userId 
+ * @param {*} reviewTitle 
+ * @param {*} reviewText 
+ * @param {*} tasteRating 
+ * @param {*} serviceRating 
+ * @param {*} cleanlinessRating 
+ * @param {*} overallRating 
+ * @param {*} file 
+ * @param {*} imageLocation 
+ * @returns 
+ */
 export const updateReviewThunk = (reviewId, userId, reviewTitle, reviewText, tasteRating, serviceRating,
     cleanlinessRating, overallRating, file, imageLocation) => async dispatch => {
 
-        // If file exists, upload to cloud and add location to the new review
+        // If input file exists, upload to cloud and add location to the new review
         if (file.size > 0) {
+
+            // Delete old image from cloud if it exists
+            if (imageLocation !== '') {
+                const oldLocation = imageLocation;
+                console.log("old location: ", oldLocation);
+                await ImageDataService.delete(oldLocation);
+            }
+
             // Call and await the image data service upload method, passing the file as a parameter
             await ImageDataService.upload(file)
                 .then(res => {
@@ -353,7 +378,6 @@ export const updateReviewThunk = (reviewId, userId, reviewTitle, reviewText, tas
 
                     // It is not necessary to add the review to state since visiting the homepage or dashboard
                     // will automatically refresh all the reviews in state
-                    // dispatch(addReview(result))
                 })
                 .catch(err => {
                     console.log(err)
@@ -361,8 +385,6 @@ export const updateReviewThunk = (reviewId, userId, reviewTitle, reviewText, tas
 
             // Otherwise use existing imageLocation 
         } else {
-            // const imageLocation = "";
-
             // Call the create review data data service, passing parameters
             await ReviewDataService.update(reviewId, {
                 userId, reviewTitle, reviewText, tasteRating, serviceRating,
@@ -373,7 +395,6 @@ export const updateReviewThunk = (reviewId, userId, reviewTitle, reviewText, tas
 
                     // It is not necessary to add the review to state since visiting the homepage or dashboard
                     // will automatically refresh all the reviews in state
-                    // dispatch(addReview(result))
                 })
                 .catch(err => {
                     console.log(err)

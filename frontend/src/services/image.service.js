@@ -4,6 +4,7 @@
 // February 14, 2022
 // Last Edited (Initials, Date, Edits):
 // (CPD, 3/8/22, Created upload service route, removed unnecessary functions)
+// (CPD, 3/12/22, Created delete service route)
 
 import http from "../http-common";
 
@@ -22,9 +23,9 @@ class ImageDataService {
     });
   }
 
-  // Deletes a specific image
-  delete(id) {
-    return http.delete(`/images/${id}`);
+  // Deletes a specific image at cloud location
+  delete(location) {
+    return http.delete(`/images/1`, { data: { location } });
   }
 }
 
