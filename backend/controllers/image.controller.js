@@ -10,6 +10,7 @@ const db = require("../models");
 const Image = db.image;
 const uploadFile = require("../middleware/upload");
 const deleteFile = require("../middleware/delete");
+const deleteUserDirectory = require("../middleware/deleteUserDirectory");
 
 /**
  * Upload endpoint takes a multipart form with a file as the parameter
@@ -25,7 +26,7 @@ exports.upload = async (req, res) => {
 			// console.log('req details: ', req.file);
 			return res.status(400).send({ message: "Please upload a file!" });
 		}
-		// console.log("req: ", req);
+		// console.log("userId: ", req.body.userId);
 		// console.log("file location: ", req.file.location);
 
 		// Upload was successful
@@ -49,12 +50,12 @@ exports.upload = async (req, res) => {
  */
 exports.delete = async (req, res) => {
 	// Validate request
-	// if (!req.body.location) {
-	// 	res.status(404).send({
-	// 		message: "File location can not be empty!",
-	// 	});
-	// 	return;
-	// }
+	if (!req.body.location) {
+		res.status(404).send({
+			message: "File location can not be empty!",
+		});
+		return;
+	}
 
 	// Set file location from req.body
 	const { location } = req.body;
@@ -83,6 +84,35 @@ exports.delete = async (req, res) => {
 	} catch (err) {
 		res.status(500).send({
 			message: `Could not delete the file: ${err}`,
+		});
+	}
+};
+
+exports.deleteUserDirectory = async (req, res) => {
+    const id = req.params.id;
+
+	try {
+		// Since AWS does not confirm file deletion, we must do this ourselves
+		const status = await deleteUserDirectory(id, res);
+
+		console.log("status: ", status);
+
+		// Status code will be 1 if file was deleted successfully 
+		if (status === 1) {
+			res.status(200).send({
+				message: "Directory deleted successfully"
+			});
+
+			// Status will be something else if the file was not deleted
+		} else {
+			res.status(500).send({
+				message: "Could not delete dir, perhaps dir is already deleted?"
+			});
+		}
+
+	} catch (err) {
+		res.status(500).send({
+			message: `Could not delete the dir: ${err}`,
 		});
 	}
 };

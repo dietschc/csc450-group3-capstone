@@ -102,10 +102,12 @@ function UserDashboard(props) {
     const deleteReview = () => {
         // Define our id paramaeter
         const reviewId = currentReview.id;
+        const imageLocation = currentReview.images[0].imageLocation ?? "";
+
         // console.log("review id is: ", reviewId);
 
         // Call thunk method and pass parameters to backend
-        deleteReviewThunk(reviewId);
+        deleteReviewThunk(reviewId, imageLocation);
 
         console.log(currentReview.id + " review was deleted!");
     }
