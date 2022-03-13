@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 02/07/2022, The Main Layout was constructed)
 //  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
+//  (DAB, 03/13/2022, Moved DevelopersNav into MainNav)
 
 // Using React library in order to build components
 // for the app and importing needed components
@@ -12,7 +13,6 @@ import React, { useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import { Container } from "react-bootstrap";
-import DevelopersNav from "../DevelopersNav";
 import RestaurantReviewDetail from "../subComponent/RestaurantReviewDetail";
 import MainRRDetailButtonGroup from "../form/button/MainRRDetailButtonGroup";
 import XLContainer from "../template/XLContainer";
@@ -23,7 +23,6 @@ import {
     findAllReviewsOrderedThunk,
 } from "../../actions/reviews";
 import {
-    addRestaurantThunk,
     deleteAllRestaurants,
     findAllRestaurantsOrderedThunk,
 } from "../../actions/restaurants";
@@ -43,31 +42,11 @@ function Main(props) {
 
     // Destructuring the needed methods from props
     const {
-        addReviewThunk,
-        findAllReviewsOrderedThunk,
-        findAllRestaurantsOrderedThunk,
         deleteAllReviews,
         deleteAllRestaurants,
         findAllReviewsRestaurantsOrderedThunk,
         addFriendThunk,
     } = props;
-
-    // ToDo
-    // Get buttons to be functional
-    // * More button - "more from user." Uses the review author
-    // id and restaurant id to search for more reviews from
-    // this author and restaurant
-    // * Restaurant button - takes the user to the restaurant page for
-    // the review restaurant
-    //     FOR RESTAURANT PAGE SEARCH CURRENT STATE FOR RESTAURANT, IF
-    //     NOT IN STATE THEN GET IT FROM DATABASE, ADD TO STATE,
-    //     AND MAYBE SORT STATE?
-    // * Friend button - adds the review author to the users
-    // friend list (Possibly add one side of the relation then,
-    // request the other side if it does not exist when the other
-    // user logs in. Accepting will add that friend and complete
-    // the two way database entry) (or just one entry and order
-    // does not matter?** CURRENT IMPLEMENTATION)
 
     // Loading the database data into state and clearing the old state
     const loadState = () => {
@@ -144,7 +123,6 @@ function Main(props) {
                 style={{ maxWidth: "500px", fontSize: 30 }}
                 className="pt-5"
             >
-                <DevelopersNav />
             </Container>
             {/* {End of Developers Nav---} */}
         </XLContainer>
