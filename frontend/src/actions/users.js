@@ -323,9 +323,11 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
             // console.log("res data: ", res);
             // Delete the current users in the Users state array
             dispatch(deleteAllUsers());
-            const result = { ...res.data.getUser, ...res.data.getAddress, ...res.data.getAuth }
+            const result = { ...res.data.getUser, ...res.data.getAddress, ...res.data.getAuth, ...res.data.getAuth.permission }
             const friends = [ ...res.data.friends ];
 
+            console.log("IN USERS RESULTS", result);
+            console.log("IN USERS FRIENDS", friends)
             // Return an array that contains the response from addUser in res[0]
             // and a copy of the friends array in res[1]
             return [dispatch(addUser(result)), friends];

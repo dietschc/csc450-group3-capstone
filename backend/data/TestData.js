@@ -201,10 +201,10 @@ const friend4Data = {
 
 loadTestData = async () => {
     console.log("Adding Permission table data");
-    db.permission.create({ permissionName: "Member" });
-    db.permission.create({ permissionName: "Owner" });
-    db.permission.create({ permissionName: "Banned" });
-    db.permission.create({ permissionName: "Admin" });
+    db.permission.create({ permissionName: "member" });
+    db.permission.create({ permissionName: "owner" });
+    db.permission.create({ permissionName: "banned" });
+    db.permission.create({ permissionName: "admin" });
 
     console.log("Loading in Users")
     await addUser(user1Data) 

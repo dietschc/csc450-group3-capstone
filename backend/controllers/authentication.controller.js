@@ -62,10 +62,12 @@ exports.login = async (req, res) => {
     const userPassword = req.body.userPassword;
 
     // Create getAuth object
-    const getAuth = await Authentication.findOne({
-        where: {
-            userName: userName,
-            userPassword: userPassword
+    const getAuth = await Authentication.findOne(
+        {   
+            include:[Permission],
+            where: {
+                userName: userName,
+                userPassword: userPassword
         }
     })
         .then(data => {
