@@ -101,8 +101,18 @@ function Chat(props) {
     const formatMessages = () => (
         <>
             {messages.map((message) => (
-                (message.userMessage.from === user.id) ? (<span style={{ color: "darkblue" }}>{userName + "[" + message.timeStamp + "]: "}<span style={{ color: "blue" }}>{message.message}</span><br /><br /></span>) :
-                    (<span style={{ color: "darkred" }}>{friendName + "[" + message.timeStamp + "]: "}<span style={{ color: "red" }}>{message.message + "\n"}</span><br /><br /></span>)
+                (message.userMessage.from === user.id)
+                    ? (
+                        <span style={{ color: "darkblue" }}>
+                            {userName + "[" + message.timeStamp + "]: "}
+                            <span style={{ color: "blue" }}>
+                                {message.message}</span><br /><br /></span>
+                    ) : (
+                        <span style={{ color: "darkred" }}>
+                            {friendName + "[" + message.timeStamp + "]: "}
+                            <span style={{ color: "red" }}>
+                                {message.message + "\n"}</span><br /><br /></span>
+                    )
             ))}
         </>
     )

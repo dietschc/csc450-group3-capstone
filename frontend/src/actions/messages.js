@@ -19,7 +19,7 @@ import MessageDataService from '../services/message.service';
  * @param {*} message 
  * @returns 
  */
-export const addMessage = (toUserId, fromUserId, message) => ({
+export const addMessage = ({ toUserId, fromUserId, message }) => ({
     type: C.ADD_MESSAGE,
     id: v4(),
     userMessage: {
@@ -75,9 +75,9 @@ export const findByConversationIdOffsetLimitThunk =
                 messageData.forEach(e => {
                     // console.log(e);
 
-                    const newMessage = { 
-                        toUserId: userToId, 
-                        fromUserId: userFromId, 
+                    const newMessage = {
+                        toUserId: userToId,
+                        fromUserId: userFromId,
                         message: e.message
                     }
 
