@@ -68,7 +68,7 @@ class MessageDataService {
      * @returns - All messages found between the two users in ASC modifiedAt order
      */
     findByConversationIdOffsetLimit(userToId, userFromId, offset, limit) {
-        return http.put(`/message/sorted/date/${userToId}/${userFromId}/${offset}/${limit}`);
+        return http.get(`/message/sorted/date/${userToId}/${userFromId}/${offset}/${limit}`);
     }
 
 }

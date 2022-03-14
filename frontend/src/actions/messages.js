@@ -9,6 +9,7 @@
 // for the app and importing needed components
 import { v4 } from 'uuid';
 import C from '../constants';
+import MessageDataService from '../services/message.service';
 
 /**
  * React Redux reducer that will add a new message to state.
@@ -18,7 +19,7 @@ import C from '../constants';
  * @param {*} message 
  * @returns 
  */
-export const addMessage = (toUserId, fromUserId, message) => ({
+export const addMessage = ({ toUserId, fromUserId, message }) => ({
     type: C.ADD_MESSAGE,
     id: v4(),
     userMessage: {
@@ -50,3 +51,73 @@ export const deleteMessage = (id) => ({
     type: C.DELETE_MESSAGE,
     id: id
 })
+
+/**
+ * Thunk that downloads conversations based on the user IDs of both participants
+ * 
+ * @param {*} userToId 
+ * @param {*} userFromId 
+ * @returns 
+ */
+export const findByConversationIdOffsetLimitThunk =
+    (userToId, userFromId) => async (dispatch) => {
+
+        const offset = 0;
+        const limit = 15;
+
+        await MessageDataService.findByConversationIdOffsetLimit(userToId, userFromId, offset, limit)
+            .then((res) => {
+
+                // console.log("res: ", res.data);
+                const messageData = res.data;
+
+                // Add each friend from the array
+                messageData.forEach(e => {
+                    // console.log("e: ", e);
+
+                    //({ toUserId, fromUserId, message }) 
+                    const newMessage = {
+                        toUserId: e.conversation.userToId,
+                        fromUserId: e.conversation.userFromId,
+                        message: e.message
+                    }
+
+                    // console.log("sample message: ", newMessage);
+
+                    // Dispatch to add each message to state
+                    dispatch(addMessage(newMessage));
+                });
+            })
+            .catch((err) => {
+                // Errors will be logged
+                console.log(err);
+            });
+    };
+
+// { userToId, userFromId, message } 
+export const sendMessageThunk =
+    (userToId, userFromId, message) => async (dispatch) => {
+
+        // Call message data service to create a new message
+        await MessageDataService.create({ userToId, userFromId, message })
+            .then((res) => {
+
+                // console.log("message log: ", res);
+
+                const newMessage = {
+                    toUserId: userToId,
+                    fromUserId: userFromId,
+                    message: message
+                }
+
+                // console.log("sample message: ", newMessage);
+
+                // Dispatch to add each message to state
+                dispatch(addMessage(newMessage));
+
+            })
+            .catch((err) => {
+                // Errors will be logged
+                console.log(err);
+            });
+    };
