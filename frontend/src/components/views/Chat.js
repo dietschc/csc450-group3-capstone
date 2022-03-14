@@ -7,7 +7,7 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Row, Col, Form, Button, Card } from 'react-bootstrap';
 import FormContainer from '../template/XLContainer';
@@ -40,19 +40,23 @@ function Chat(props) {
     const friends = user.friends;
 
     // Get friend specified in parameter
-    const [paramFriend = []] = friends.filter((friend) => (friend.id) === Number(friendId));
+    const [paramFriend] = friends ? friends.filter((friend) => (friend.id) === Number(friendId)) : [];
+
+    const messageScrollTo = useRef();
 
     // Convenience variables
-    const userName = user.auth.userName;
-    const friendName = paramFriend.userName;
+    const userName = user?.auth?.userName;
+    const friendName = paramFriend?.userName;
 
     const loadState = () => {
         deleteAllMessages();
         findByConversationIdOffsetLimitThunk(user.id, friendId);
     }
 
+    // The use effect will rerender only once initially
     useEffect(() => {
         loadState();
+        
 
         // const interval = setInterval(() => {
         //     console.log('This will run every 15 seconds!');
@@ -60,6 +64,13 @@ function Chat(props) {
         // }, 15000);
         // return () => clearInterval(interval);
     }, []);
+
+    // The use effect will rerender only when messages state has changed
+    useEffect(() => {
+        messageEndScroll()
+    }, [messages]);
+
+    
 
     const onChangeMessage = e => {
         const chatMessage = e.target.value
@@ -82,6 +93,9 @@ function Chat(props) {
         // Clear form after you send each message
         clearForm();
 
+        // Scrolling down to the newest message when one is sent
+        
+        // messageEndScroll()
         // const testState = {
         //     messageId: 0,
         //     toUserId: 1,
@@ -113,19 +127,24 @@ function Chat(props) {
         // console.log("Form cleared")
     }
 
+    const messageEndScroll = () => {
+        if (!messageScrollTo.current) return;
+        messageScrollTo.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest'});
+    }
+
     const formatMessages = () => (
         <>
             {messages.map((message, index) => (
                 (message.userMessage.from === user.id)
                     ? (
                         <span key={index} style={{ color: "darkblue" }}>
-                            {userName + "[" + formatTimeCalendar(message.timeStamp) + "]: "}
+                            {`${userName}[${formatTimeCalendar(message.timeStamp)}]: `}
                             <span style={{ color: "blue" }}>
                                 {message.message}
                             </span><br /><br /></span>
                     ) : (
                         <span key={index} style={{ color: "darkred" }}>
-                            {friendName + "[" + formatTimeCalendar(message.timeStamp) + "]: "}
+                            {`${friendName}[${formatTimeCalendar(message.timeStamp)}]: `}
                             <span style={{ color: "red" }}>
                                 {message.message + "\n"}
                             </span><br /><br /></span>
@@ -139,12 +158,13 @@ function Chat(props) {
             <h1>
                 Chat
             </h1>
-            <Card className="" style={{ height: "200rem" }}>
+            <Card className="" style={{}}>
                 <Card.Title className="text-center mt-2 mb-0">
                     {userName} chatting with {friendName}
                 </Card.Title>
-                <Card.Text className="border m-3 p-2 mh-50" style={{ minHeight: "10rem", maxHeight: "15rem", overflow: "auto" }}>
+                <Card.Text className="border m-3 p-2 " style={{ minHeight: "10rem", maxHeight: "15rem", overflow: "auto" }}>
                     {formatMessages()}
+                    <span className="p-0 m-0" ref={messageScrollTo} />
                 </Card.Text>
                 <Card.Body>
                     <Form className="">
