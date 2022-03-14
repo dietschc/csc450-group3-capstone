@@ -10,6 +10,10 @@
 //  (DAB, 3/05/2022, Added in findByRestaurantNameThunk)
 //  (DAB, 3/06/2022, Added in deleteRestaurantThunk)
 //  (DAB, 3/07/2022, Added in addRestaurantThunk and updateRestaurantThunk)
+//  (DAB, 3/10/2022, Fixed addRestaurantThunk to match new image controller specs)
+//  (DAB, 3/13/2022, Both updateRestaurantThunk and addRestaurantThunk work with image 
+//  uploads and deletes. Fully functional by current models)
+//  (DAB, 3/13/2022, Added comments and arranged methods for better readability)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -19,145 +23,228 @@ import ImageDataService from "../services/image.service";
 import { formatDBRestaurantFind, formatDBRestaurantCreate } from '../helperFunction/actionHelpers';
 
 
+/************************************ REDUX THUNK ACTIONS ***********************************/
+
+
+/**
+ * The addRestaurantThunk will add a new restaurant to the image cloud, database, and 
+ * redux state.
+ * 
+ * @param {*} userCreatorId 
+ * @param {*} restaurantName 
+ * @param {*} address 
+ * @param {*} city 
+ * @param {*} state 
+ * @param {*} zip 
+ * @param {*} restaurantPhone 
+ * @param {*} restaurantDigiContact 
+ * @param {*} restaurantWebsite 
+ * @param {*} file 
+ * @returns 
+ */
 export const addRestaurantThunk = (
-    userCreatorId, restaurantName, address, city, state, 
-    zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
-    file ) => async dispatch => {
-        let imageLocation;
-        console.log(file)
+    userCreatorId, restaurantName, address, city, state,
+    zip, restaurantPhone, restaurantDigiContact, restaurantWebsite,
+    file) => async dispatch => {
+        // Defining imageLocation as an empty string for default
+        let imageLocation = "";
+
         // If file exists, upload to cloud and add location to the new review
-        if (file.size > 0) {
+        if (file && file.size > 0) {
+            // The default directory and type to be used with restaurant image uploads
+            const directory = "main";
+            const type = "restaurants";
+
             // Call and await the image data service upload method, passing the file as a parameter
-            await ImageDataService.upload(file)
-                .then(res => {
-                    console.log("location: ", res.data.location);
-
-                    // Set the image location from the response data
-
-                    // If the imageLocation exists, this implies success uploading
-                    
+            return await ImageDataService.upload(file, directory, type)
+                .then(async res => {
+                    // Upon result, either the newly created cloud server location or an empty 
+                    // string will be used
                     imageLocation = res.data.location || "";
-                    
-                    // return await RestaurantDataService.create({
-                    //     userCreatorId, restaurantName, address, city, state, 
-                    //     zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
-                    //     imageLocation
-                    // })
-                    //     .then(res => {
-                    //         if (res) {
-            
-                    //             const restaurantData = formatDBRestaurantCreate(res.data)
-            
-                    //             dispatch(addRestaurant(restaurantData))
-            
-                    //             return restaurantData;
-                    //         }
-                            
-            
-                    //         else {
-                                
-                    //             console.log("Restaurant was not added");
-                    //             return false;
-                    //         }
-                    //     })
-                    //     .catch(err => {
-                    //         console.log(err)
-                    //         return false;
-                    //     })
 
-                    // It is not necessary to add the review to state since visiting the homepage or dashboard
-                    // will automatically refresh all the reviews in state
-                    // dispatch(addReview(result))
+                    // Call and await the user data service create method, passing the parameters and storing the 
+                    // results in a constant
+                    return await RestaurantDataService.create({
+                        userCreatorId, restaurantName, address, city, state,
+                        zip, restaurantPhone, restaurantDigiContact, restaurantWebsite,
+                        imageLocation
+                    })
+                        .then(res => {
+                            // If the results are added to the database the state is updated 
+                            // to reflect the change
+                            if (res) {
+                                // Formatting the data received from the restaurant data service 
+                                // and saving it to a constant
+                                const restaurantData = formatDBRestaurantCreate(res.data)
+
+                                // Dispatching the formatted data to the redux action to add 
+                                // it to state
+                                dispatch(addRestaurant(restaurantData))
+
+                                // Returning the data to the caller
+                                return restaurantData;
+                            }
+                            // Else the console is logged a not added message and false is returned
+                            else {
+                                console.log("Restaurant was not added");
+
+                                // Failed to update/upload, false is returned
+                                return false;
+                            }
+                        })
+                        .catch(err => {
+                            // Any errors will be printed to the console
+                            console.log(err)
+
+                            // Failed to add/upload, false is returned
+                            return false;
+                        })
                 })
                 .catch(err => {
+                    // Any errors will be printed to the console
                     console.log(err)
-                })
 
-            // Otherwise use an empty string for the location when creating the new review
-        } else {
-            imageLocation = "";
-            // return await RestaurantDataService.create({
-            //     userCreatorId, restaurantName, address, city, state, 
-            //     zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
-            //     imageLocation
-            // })
-            //     .then(res => {
-            //         if (res) {
-    
-            //             const restaurantData = formatDBRestaurantCreate(res.data)
-    
-            //             dispatch(addRestaurant(restaurantData))
-    
-            //             return restaurantData;
-            //         }
-                    
-    
-            //         else {
-                        
-            //             console.log("Restaurant was not added");
-            //             return false;
-            //         }
-            //     })
-            //     .catch(err => {
-            //         console.log(err)
-            //         return false;
-            //     })
-        }
-        /**
-         * Call and await the user data service create method, passing the parameters and storing the 
-         * results in a constant.
-         */
-         return await RestaurantDataService.create({
-            userCreatorId, restaurantName, address, city, state, 
-            zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, 
-            imageLocation
-        })
-            .then(res => {
-                if (res) {
-
-                    const restaurantData = formatDBRestaurantCreate(res.data)
-
-                    dispatch(addRestaurant(restaurantData))
-
-                    return restaurantData;
-                }
-                
-
-                else {
-                    
-                    console.log("Restaurant was not added");
+                    // Failed to add/upload, false is returned
                     return false;
-                }
+                })
+        }
+        // Else there is not image to upload so the data is only updated in the database
+        else {
+            // Call and await the user data service create method, passing the parameters and storing the 
+            // results in a constant
+            return await RestaurantDataService.create({
+                userCreatorId, restaurantName, address, city, state,
+                zip, restaurantPhone, restaurantDigiContact, restaurantWebsite,
+                imageLocation
             })
-            .catch(err => {
-                console.log(err)
-                return false;
-            })
+                .then(res => {
+                    // If the results are added to the database the state is updated 
+                    // to reflect the change
+                    if (res) {
+                        // Formatting the data received from the restaurant data service 
+                        // and saving it to a constant
+                        const restaurantData = formatDBRestaurantCreate(res.data)
+
+                        // Dispatching the formatted data to the redux action to add 
+                        // it to state
+                        dispatch(addRestaurant(restaurantData))
+
+                        // Returning the data to the caller
+                        return restaurantData;
+                    }
+                    // Else the console is logged a not added message and false is returned
+                    else {
+                        console.log("Restaurant was not added");
+
+                        // Failed to update/upload, false is returned
+                        return false;
+                    }
+                })
+                .catch(err => {
+                    // Any errors will be printed to the console
+                    console.log(err)
+
+                    // Failed to update/upload, false is returned
+                    return false;
+                })
+        }
+    }
+
+
+/**
+ * The deleteRestaurantThunk will delete a restaurant from both the database 
+ * and state by referencing the userId.
+ * 
+ * @param {*} userId 
+ * @returns 
+ */
+export const deleteRestaurantThunk = (restaurantId) => async dispatch => {
+    // Making the call to the service to request the deletion of the restaurant
+    await RestaurantDataService.delete(restaurantId)
+        .then(res => {
+            // If there is a response the state will be updated
+            if (res) {
+
+                // Dispatching the action to delete the restaurant from state
+                dispatch(deleteRestaurant(restaurantId));
+            }
+        })
+        .catch(err => {
+            // If there is an error it will be logged
+            console.log(err)
+        })
 }
 
-export const updateRestaurantThunk = (restaurantId, data) => async dispatch => {
-    // Making the call to the service to request an update to the database
-    return await RestaurantDataService.update(restaurantId, data)
-    .then(res => {
-        // If there is a response the state will be updated
-        if (res) {
-            // Destructuring out permissionId and permission name from the data
-            // const { permissionId, permissionName } = data;
 
-            // Dispatching the action to update state permission from the param data
-            dispatch(updateRestaurant(data))
-            return true;
+/**
+ * Searches the database for all restaurants with up to the offset/limit. It will then 
+ * add the results to state.
+ * 
+ * @param {*} offset 
+ * @param {*} limit 
+ * @returns 
+ */
+export const findAllRestaurantsOrderedThunk = (offset, limit) => async dispatch => {
+    // The restaurant database will be queried for all restaurants within the 
+    // parameter offset/limit
+    await RestaurantDataService.findAllOffsetLimit(offset, limit)
+        .then(async res => {
+            // If there is data in the query it is added to redux state
+            if (res) {
+                // Iterating through the restaurant data
+                await res.data.map(restaurant => {
+                    // The restaurant data is formatted to be added to redux state
+                    const restaurantData = formatDBRestaurantFind(restaurant);
+
+                    // Adding the restaurant to redux state
+                    dispatch(addRestaurant(restaurantData));
+
+                    // Returning the restaurant data
+                    return restaurant;
+                })
+            }
+        })
+        .catch(err => {
+            // If there is an error it will be logged
+            console.log(err)
+        })
+}
+
+
+/**
+ * Searches the database by restaurant name for all matching restaurants up to the 
+ * offset/limit. It will then add the results to state.
+ * 
+ * @param {*} restaurantName
+ * @returns 
+ */
+export const findByRestaurantIdThunk = (restaurantId) => async dispatch => {
+    // The restaurant database will be queried for all restaurants within the 
+    // parameter offset/limit that are like the restaurantName
+    await RestaurantDataService.get(restaurantId)
+        .then(async res => {
+            console.log(res);
+            // If there is data in the query it is added to redux state
+            if (res) {
+                console.log("RESULTS IN FIND BY RESTAURANT", res)
+                // The restaurant data is formatted to be added to redux state
+                const restaurantData = formatDBRestaurantFind(res.data);
+
+                // Adding the restaurant to redux state
+                dispatch(addRestaurant(restaurantData));
+
+                // Returning the restaurant data
+                return restaurantData;
+            }
+            else {
+                res.send({ message: "Restaurant not found" })
+            }
         }
-        else {
-            console.log("Restaurant was not updated")
-            return false;
-        }
-    })
-    .catch(err => {
-        // If there is an error it will be logged
-        console.log(err)
-        return false;
-    })
+        )
+        .catch(err => {
+            // If there is an error it will be logged
+            console.log(err)
+        })
 }
 
 
@@ -197,107 +284,210 @@ export const findByRestaurantNameThunk = (offset, limit, restaurantName) => asyn
         })
 }
 
-/**
- * Searches the database by restaurant name for all matching restaurants up to the 
- * offset/limit. It will then add the results to state.
- * 
- * @param {*} restaurantName
- * @returns 
- */
- export const findByRestaurantIdThunk = (restaurantId) => async dispatch => {
-    // The restaurant database will be queried for all restaurants within the 
-    // parameter offset/limit that are like the restaurantName
-    await RestaurantDataService.get(restaurantId)
-        .then(async res => {
-            console.log(res);
-            // If there is data in the query it is added to redux state
-            if (res) {
-                console.log("RESULTS IN FIND BY RESTAURANT", res)
-                // The restaurant data is formatted to be added to redux state
-                const restaurantData = formatDBRestaurantFind(res.data);
-
-                // Adding the restaurant to redux state
-                dispatch(addRestaurant(restaurantData));
-
-                // Returning the restaurant data
-                return restaurantData;
-            }
-            else {
-                res.send({message:"Restaurant not found"})
-            }
-            }
-        )
-        .catch(err => {
-            // If there is an error it will be logged
-            console.log(err)
-        })
-}
-
 
 /**
- * The deleteRestaurantThunk will delete a restaurant from both the database 
- * and state by referencing the userId.
+ * The updateRestaurantThunk will update an existing restaurant in the database. It 
+ * updates the state, database, and image cloud server with the new data. 
  * 
- * @param {*} userId 
+ * @param {*} restaurantId 
+ * @param {
+ * @param restaurantName
+ * @param restaurantDigiContact
+ * @param restaurantPhone
+ * @param userCreatorId
+ * @param restaurantWebsite
+ * @param userName
+ * @param imageId
+ * @param imageLocation
+ * @param address
+ * @param city
+ * @param state
+ * @param zip
+ * @param file - file to upload, only uploads one file at index 0
+ * } param1 
  * @returns 
  */
- export const deleteRestaurantThunk = (restaurantId) => async dispatch => {
-    // Making the call to the service to request the deletion of the restaurant
-    await RestaurantDataService.delete(restaurantId)
-    .then(res => {
-        // If there is a response the state will be updated
-        if (res) {
+export const updateRestaurantThunk = (restaurantId,
+    {
+        restaurantName,
+        restaurantDigiContact,
+        restaurantPhone,
+        userCreatorId,
+        restaurantWebsite,
+        userName,
+        imageId,
+        imageLocation,
+        address,
+        city,
+        state,
+        zip,
+        file
+    }) => async dispatch => {
+        // If file exists, upload to cloud and add location to the new review
+        if (file && file.size > 0) {
+            // The default directory and type to be used with restaurant image uploads
+            const directory = "main";
+            const type = "restaurants";
 
-            // Dispatching the action to delete the restaurant from state
-            dispatch(deleteRestaurant(restaurantId));
-        }
-    })
-    .catch(err => {
-        // If there is an error it will be logged
-        console.log(err)
-    })
-}
+            // If the imageLocation is not an empty string then it is deleted from the image 
+            // cloud server
+            imageLocation !== "" && await ImageDataService.delete(imageLocation)
+                .catch(err => {
+                    // If there is an error it will be logged
+                    console.log(`Did not delete an image ${err}`)
+                });
 
-/**
- * Searches the database for all restaurants with up to the offset/limit. It will then 
- * add the results to state.
- * 
- * @param {*} offset 
- * @param {*} limit 
- * @returns 
- */
-export const findAllRestaurantsOrderedThunk = (offset, limit) => async dispatch => {
-    // The restaurant database will be queried for all restaurants within the 
-    // parameter offset/limit
-    await RestaurantDataService.findAllOffsetLimit(offset, limit)
-        .then(async res => {
-            // If there is data in the query it is added to redux state
-            if (res) {
-                // Iterating through the restaurant data
-                await res.data.map(restaurant => {
-                    // The restaurant data is formatted to be added to redux state
-                    const restaurantData = formatDBRestaurantFind(restaurant);
+            // Call and await the image data service upload method, passing the file as a parameter
+            return await ImageDataService.upload(file, directory, type)
+                .then(async res => {
+                    // Upon result, either the newly created cloud server location or an empty 
+                    // string will be used
+                    imageLocation = res.data.location || "";
 
-                    // Adding the restaurant to redux state
-                    dispatch(addRestaurant(restaurantData));
+                    // Making the call to the service to request an update to the database
+                    return await RestaurantDataService.update(restaurantId,
+                        {
+                            restaurantName,
+                            restaurantDigiContact,
+                            restaurantPhone,
+                            userCreatorId,
+                            restaurantWebsite,
+                            userName,
+                            imageId,
+                            imageLocation,
+                            address,
+                            city,
+                            state,
+                            zip
+                        })
+                        .then(res => {
+                            // If the results are updated in the database the state is updated 
+                            // to reflect the change
+                            if (res) {
+                                // Creating an imageArray to update the redux state
+                                const imageArray =
+                                    [
+                                        {
+                                            imageId: imageId,
+                                            imageLocation: imageLocation
+                                        }
+                                    ]
 
-                    // Returning the restaurant data
-                    return restaurant;
+                                // Dispatching the action to update state permission from the param data
+                                dispatch(updateRestaurant({
+                                    restaurantId,
+                                    restaurantName,
+                                    restaurantDigiContact,
+                                    restaurantPhone,
+                                    userCreatorId,
+                                    restaurantWebsite,
+                                    userName,
+                                    imageArray,
+                                    address,
+                                    city,
+                                    state,
+                                    zip
+                                }))
+
+                                // A successful update returns true
+                                return true;
+                            }
+                            // If no update occurred the console is logged a not 
+                            // added message and false is returned
+                            else {
+                                console.log("Restaurant was not updated")
+
+                                // False is returned for no update
+                                return false;
+                            }
+                        })
+                        .catch(err => {
+                            // Any errors will be printed to the console
+                            console.log(err)
+
+                            // Failed to update/upload, false is returned
+                            return false;
+                        });
                 })
-            }
-        })
-        .catch(err => {
-            // If there is an error it will be logged
-            console.log(err)
-        })
-}
+                .catch(err => {
+                    // Any errors will be printed to the console
+                    console.log(err);
 
-/**
- * UNDER CONSTRUCTION
- * Adds the restaurant to the database and updates state.
- * @returns 
- */
-// export const addRestaurantThunk = () => async dispatch => { }
+                    // Failed to update/upload, false is returned
+                    return false;
+                });
+        }
+        else {
+            // Making the call to the service to request an update to the database
+            return await RestaurantDataService.update(restaurantId,
+                {
+                    restaurantName,
+                    restaurantDigiContact,
+                    restaurantPhone,
+                    userCreatorId,
+                    restaurantWebsite,
+                    userName,
+                    imageId,
+                    imageLocation,
+                    address,
+                    city,
+                    state,
+                    zip
+                })
+                .then(res => {
+                    // If the results are updated in the database the state is updated 
+                    // to reflect the change
+                    if (res) {
+                        // Creating an imageArray to update the redux state
+                        const imageArray =
+                            [
+                                {
+                                    imageId: imageId,
+                                    imageLocation: imageLocation
+                                }
+                            ]
+
+                        // Dispatching the action to update state permission from the param data
+                        dispatch(updateRestaurant({
+                            restaurantId,
+                            restaurantName,
+                            restaurantDigiContact,
+                            restaurantPhone,
+                            userCreatorId,
+                            restaurantWebsite,
+                            userName,
+                            imageArray,
+                            address,
+                            city,
+                            state,
+                            zip
+                        }))
+
+                        // A successful update returns true
+                        return true;
+                    }
+                    // If no update occurred the console is logged a not 
+                    // added message and false is returned
+                    else {
+                        console.log("Restaurant was not updated")
+
+                        // False is returned for no update
+                        return false;
+                    }
+                })
+                .catch(err => {
+                    // If there is an error it will be logged
+                    console.log(err)
+
+                    // Failed to update/upload, false is returned
+                    return false;
+                })
+        }
+    }
+
+
+/************************************ REACT REDUX ACTIONS ***********************************/
+
 
 /**
  * React Redux reducer that will add a new restaurant to state.
@@ -440,8 +630,8 @@ export const updateRestaurantOwner = (restaurantId, ownerId) => ({
  * @param {*} imageLocation 
  * @returns 
  */
-export const updateRestaurant = ({restaurantId, restaurantName, userCreatorId, userName, address,
-    city, state, zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, imageArray}) => ({
+export const updateRestaurant = ({ restaurantId, restaurantName, userCreatorId, userName, address,
+    city, state, zip, restaurantPhone, restaurantDigiContact, restaurantWebsite, imageArray }) => ({
         type: C.UPDATE_RESTAURANT,
         id: restaurantId,
         author: {
@@ -459,8 +649,6 @@ export const updateRestaurant = ({restaurantId, restaurantName, userCreatorId, u
             zip: zip
         },
         images: imageArray
-
-
     })
 
 /**

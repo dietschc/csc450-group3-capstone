@@ -7,11 +7,13 @@
 //  (DAB, 3/07/2022, Create and Update Restaurant is working but 
 //  no current authentication or undefined protections)
 //  (DAB, 3/10/2022, Added in comments and cleaned up debugs)
+//  (DAB, 3/13/2022, Both add and update restaurant are working as 
+//  fully intended with image uploads/deletes)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useEffect, useState } from 'react';
-import { Form } from 'react-bootstrap';
+import { Form, Image } from 'react-bootstrap';
 import FloatingAddress from './floatingComponents/FloatingAddress';
 import FloatingStateZip from './floatingComponents/FloatingStateZip';
 import FloatingCity from './floatingComponents/FloatingCity';
@@ -26,9 +28,6 @@ import { useNavigate } from 'react-router-dom';
 import { addRestaurantThunk, updateRestaurantThunk } from '../../actions/restaurants';
 import { formatPhoneNumber, unformatPhoneNumber } from '../../helperFunction/FormatString';
 import ModalConfirmation from '../modal/ModalCancelConfirm';
-
-// LAST WAS WORKING ON FORM VALIDATION
-//  STILL NEED TO GET IMAGE WORKING
 
 /**
  * The EditRestaurantForm will display a form that will allow the user to 
@@ -55,12 +54,12 @@ function EditRestaurantForm(props) {
     const [imageId, setImageId] = useState("")
     const [website, setWebsite] = useState("");
     const [file, setFile] = useState("");
-    const [fileName, setFileName] = useState("");
+    const [imageLocationName, setImageLocationName] = useState("");
+    const [tempFileUrl, setTempFileUrl] = useState("");
     const [showClearFormConfirm, setShowClearFormConfirm] = useState(false);
 
     // Creating a navigate instance to navigate the application to new routes
     const navigate = useNavigate();
-
 
     // This useEffect will trigger a render when restaurant prop is altered
     useEffect(() => {
@@ -68,87 +67,21 @@ function EditRestaurantForm(props) {
         if (restaurant.length > 0) {
             // That restaurant is destructured into currentRestaurant
             const [currentRestaurant] = restaurant;
-            const [currentImage] = currentRestaurant.images;
-            console.log("CURRENT RESTAURANT IS", currentRestaurant)
 
             // The form values are set to match those found in the restaurant 
             // data
             setRestaurantName(currentRestaurant.name);
-            setAddress(currentRestaurant.address.address)
-            setCity(currentRestaurant.address.city)
-            setZip(currentRestaurant.address.zip)
-            setState(currentRestaurant.address.state)
-            setPhone(formatPhoneNumber(currentRestaurant.phone))
-            setDigitalContact(currentRestaurant.digitalContact)
-            setWebsite(currentRestaurant.website)
-            // setImageId(currentRestaurant.images[0].id)
-            // setFileName(currentImage)
+            setAddress(currentRestaurant.address.address);
+            setCity(currentRestaurant.address.city);
+            setZip(currentRestaurant.address.zip);
+            setState(currentRestaurant.address.state);
+            setPhone(formatPhoneNumber(currentRestaurant.phone));
+            setDigitalContact(currentRestaurant.digitalContact);
+            setWebsite(currentRestaurant.website);
+            setImageId(currentRestaurant.images[0].id);
+            setImageLocationName(currentRestaurant.images[0].imageLocation);
         }
     }, [restaurant]);
-
-
-    // Change handler for the function name specific form input
-    const onChangeRestaurantName = e => {
-        const restaurantName = e.target.value;
-        setRestaurantName(restaurantName);
-    }
-
-    // Change handler for the function name specific form input
-    const onChangeAddress = e => {
-        const address = e.target.value;
-        setAddress(address);
-    }
-
-    // Change handler for the function name specific form input
-    const onChangeCity = e => {
-        const city = e.target.value;
-        setCity(city);
-    }
-
-    // Change handler for the function name specific form input
-    const onChangeZip = e => {
-        const zip = e.target.value;
-        setZip(zip);
-    }
-
-    // Change handler for the function name specific form input
-    const onChangeState = e => {
-        const state = e.target.value;
-        setState(state);
-    }
-
-    // Change handler for the function name specific form input
-    const onChangePhone = e => {
-        const phone = formatPhoneNumber(e.target.value);
-        setPhone(phone);
-    }
-
-    // Change handler for the function name specific form input
-    const onChangeDigitalContact = e => {
-        const digitalContact = e.target.value;
-        setDigitalContact(digitalContact);
-    }
-
-    const onChangeWebsite = e => {
-        const website = e.target.value;
-        setWebsite(website);
-    }
-
-    // Change handler for the function name specific form input
-    const onChangeFileName = e => {
-        const fileName = e.target.value;
-        setFileName(fileName);
-        // CORRECT WAY
-        // const file = e.target.files[0]
-        // setFile(file);
-        
-    }
-
-    // Change handler for the function name specific form input
-    const onChangeFile = e => {
-        const file = e.target.files[0]
-        setFile(file);
-    }
 
 
     // The clearForm method will clear the form values
@@ -161,14 +94,101 @@ function EditRestaurantForm(props) {
         setPhone("");
         setDigitalContact("");
         setWebsite("");
-        setFileName("");
+        setImageLocationName("");
+        setTempFileUrl("");
+        setFile(null);
+        document.getElementById('floatingImageInput').value = null;
     }
 
 
-    // The show and close handlers will either show or close their respective 
-    // modals
+    // The close handler will close the clear form modal
     const closeClearFormHandler = () => setShowClearFormConfirm(false);
-    const showClearFormHandler = () => setShowClearFormConfirm(true);
+
+
+    // The imagePreview method will show a preview image of the element that will be 
+    // submitted to the database
+    const imagePreview = () => (
+        (tempFileUrl || (restaurant.length > 0 && imageLocationName)) &&
+        <Image className="p-3 d-flex mx-auto"
+            src={tempFileUrl !== "" ? tempFileUrl : imageLocationName}
+            width="300px" height="200px" alt="Upload Preview" />
+    )
+
+
+    // Change handler for the function name specific form input
+    const onChangeAddress = (e) => {
+        const address = e.target.value;
+        setAddress(address);
+    }
+
+
+    // Change handler for the function name specific form input
+    const onChangeCity = (e) => {
+        const city = e.target.value;
+        setCity(city);
+    }
+
+
+    // Change handler for the function name specific form input
+    const onChangeDigitalContact = (e) => {
+        const digitalContact = e.target.value;
+        setDigitalContact(digitalContact);
+    }
+
+
+    // Change handler for the function file specific form input 
+    const onChangeFile = (e) => {
+        // Assigning the file from the input to file
+        const file = e.target.files[0]
+
+        // Setting the file to local state
+        setFile(file);
+
+        // If there is a file the tempFileUrl will be set to that 
+        // file
+        if (file) {
+            setTempFileUrl(URL.createObjectURL(file));
+        }
+        // Else the tempFileUrl will be an empty string
+        else {
+            setTempFileUrl("");
+        }
+    }
+
+
+    // Change handler for the function name specific form input
+    const onChangePhone = (e) => {
+        const phone = formatPhoneNumber(e.target.value);
+        setPhone(phone);
+    }
+
+
+    // Change handler for the function name specific form input
+    const onChangeRestaurantName = (e) => {
+        const restaurantName = e.target.value;
+        setRestaurantName(restaurantName);
+    }
+
+
+    // Change handler for the function name specific form input
+    const onChangeState = (e) => {
+        const state = e.target.value;
+        setState(state);
+    }
+
+
+    // Change handler for the function website specific form input
+    const onChangeWebsite = (e) => {
+        const website = e.target.value;
+        setWebsite(website);
+    }
+
+
+    // Change handler for the function name specific form input
+    const onChangeZip = (e) => {
+        const zip = e.target.value;
+        setZip(zip);
+    }
 
 
     // The saveAccount method will save an account to the database and 
@@ -188,29 +208,22 @@ function EditRestaurantForm(props) {
                 const userCreatorId = currentUser.id;
                 const userName = currentUser.auth.userName;
 
-                console.log("IMAGE ID IS READING", imageId);
-
                 // The updateData variable will hold the needed data to 
                 // update the restaurant in the correct format
                 const updateData = {
-                    restaurantId: currentRestaurant.id,
                     restaurantName: restaurantName,
                     restaurantDigiContact: digitalContact,
                     restaurantPhone: unformatPhoneNumber(phone),
                     userCreatorId: userCreatorId,
                     restaurantWebsite: website,
                     userName: userName,
-                    imageLocation: fileName,
-                    imageArray: [
-                        {
-                            imageId: imageId,
-                            imageLocation: fileName
-                        }
-                    ],
+                    imageId: imageId,
+                    imageLocation: imageLocationName || "",
                     address: address,
                     city: city,
                     state: state,
-                    zip: zip
+                    zip: zip,
+                    file: file
                 }
 
                 // The update Thunk is called and if the update is successful the user is redirected 
@@ -260,6 +273,10 @@ function EditRestaurantForm(props) {
     }
 
 
+    // The show handler will show the close form modal
+    const showClearFormHandler = () => setShowClearFormConfirm(true);
+
+
     // The EditRestaurant form will be displayed using floating labels
     return (
         <Form onSubmit={saveAccount}>
@@ -270,7 +287,8 @@ function EditRestaurantForm(props) {
             <FloatingPhone phone={phone} onChangePhone={onChangePhone} />
             <FloatingDigitalContact digitalContact={digitalContact} onChangeDigitalContact={onChangeDigitalContact} />
             <FloatingWebsite website={website} onChangeWebsite={onChangeWebsite} />
-            <FloatingImageUpload fileName={fileName} onChangeFile={onChangeFile} />
+            <FloatingImageUpload onChangeFile={onChangeFile} />
+            {imagePreview()}
             <EditFormButtons isUpdate={isUpdate} saveAccount={saveAccount} clearFormHandler={showClearFormHandler} />
             <ModalConfirmation show={showClearFormConfirm} closeHandler={closeClearFormHandler} clearForm={clearForm} />
         </Form>

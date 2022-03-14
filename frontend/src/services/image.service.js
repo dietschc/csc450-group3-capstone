@@ -3,8 +3,9 @@
 // Restaurant Club - image.service.js
 // February 14, 2022
 // Last Edited (Initials, Date, Edits):
-// (CPD, 3/8/22, Created upload service route, removed unnecessary functions)
-// (CPD, 3/12/22, Created delete service route)
+//  (CPD, 3/8/2022, Created upload service route, removed unnecessary functions)
+//  (CPD, 3/12/2022, Created delete service route)
+//  (DAB, 3/13/2022, Added deleteRestaurantDirectory)
 
 import http from "../http-common";
 
@@ -53,6 +54,17 @@ class ImageDataService {
    */
   deleteUserDirectory(id) {
     return http.delete(`/images/${id}`);
+  }
+
+  /**
+   * CAUTION
+   * This function deletes a restaurant directory and all files within
+   * 
+   * @param {*} directory
+   * @returns 
+   */
+   deleteRestaurantDirectory(directory) {
+    return http.delete(`/images/restaurant/${directory}`);
   }
 }
 

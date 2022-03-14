@@ -3,7 +3,8 @@
 // Restaurant Club - image.routes.js
 // February 20, 2022
 // Last Edited (Initials, Date, Edits):
-// (CPD, 3/12/22, Updated delete routes and comments)
+// 	(CPD, 3/12/2022, Updated delete routes and comments)
+//	(DAB, 3/13/2022, Added in deleteRestaurantDirectory route)
 
 module.exports = app => {
 	const image = require("../controllers/image.controller.js");
@@ -21,8 +22,11 @@ module.exports = app => {
 	// Update a Image with id
 	router.put("/:id", image.update);
 
-	// Delete an image from a specifica location, specified in the req.body
+	// Delete an image from a specific location, specified in the req.body
 	router.delete("/", image.delete);
+
+	// Delete a restaurant sub directory and all files contained within it
+	router.delete("/restaurants/:directory", image.deleteRestaurantDirectory);
 
 	// Delete a user sub directory and all files contained within it
 	router.delete("/:id", image.deleteUserDirectory);
