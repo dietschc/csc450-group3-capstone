@@ -75,3 +75,11 @@ export const unformatPhoneNumber = (formattedNumber) => {
     // Cleanse the input to be only numeric and return the result
     return formattedNumber.replace(/[^\d]/g, "");
 }
+
+export const formatTimeCalendar = (time) => {
+    // If there is no time it is returned
+    if (!time) return time;
+
+    // Formatting and returning the time
+    return moment(time).calendar();
+}

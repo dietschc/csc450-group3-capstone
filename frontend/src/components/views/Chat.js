@@ -9,11 +9,11 @@
 // for the app and importing needed components
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Row, Col, Form, Container, Button, FloatingLabel, Card } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Row, Col, Form, Button, Card } from 'react-bootstrap';
 import FormContainer from '../template/XLContainer';
 import { connect } from 'react-redux';
 import { findByConversationIdOffsetLimitThunk, deleteAllMessages } from '../../actions/messages';
+import { formatTimeCalendar } from '../../helperFunction/FormatString'
 
 function Chat(props) {
     const {
@@ -49,9 +49,6 @@ function Chat(props) {
     useEffect(() => {
         loadState();
     }, []);
-
-    // navigate will allow navigation between the Views
-    const navigate = useNavigate();
 
     const onChangeMessage = e => {
         const chatMessage = e.target.value
@@ -100,18 +97,20 @@ function Chat(props) {
 
     const formatMessages = () => (
         <>
-            {messages.map((message) => (
+            {messages.map((message, index) => (
                 (message.userMessage.from === user.id)
                     ? (
-                        <span style={{ color: "darkblue" }}>
-                            {userName + "[" + message.timeStamp + "]: "}
+                        <span key={index} style={{ color: "darkblue" }}>
+                            {userName + "[" + formatTimeCalendar(message.timeStamp) + "]: "}
                             <span style={{ color: "blue" }}>
-                                {message.message}</span><br /><br /></span>
+                                {message.to.message}
+                                </span><br /><br /></span>
                     ) : (
-                        <span style={{ color: "darkred" }}>
-                            {friendName + "[" + message.timeStamp + "]: "}
+                        <span key={index} style={{ color: "darkred" }}>
+                            {friendName + "[" + formatTimeCalendar(message.timeStamp) + "]: "}
                             <span style={{ color: "red" }}>
-                                {message.message + "\n"}</span><br /><br /></span>
+                                {message.message + "\n"}
+                                </span><br /><br /></span>
                     )
             ))}
         </>
