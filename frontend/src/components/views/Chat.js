@@ -7,27 +7,23 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Row, Col, Form, Container, Button, FloatingLabel, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import FormContainer from '../template/XLContainer';
 import { connect } from 'react-redux';
-import { addMessage, deleteAllMessages, deleteMessage } from '../../actions/messages';
+import { findByConversationIdOffsetLimitThunk, deleteAllMessages } from '../../actions/messages';
 
 function Chat(props) {
-    // The mock state will be held as data
-    // const [data, setData] = useState(mockStateData);
-    const [chatMessage, setChatMessage] = useState("");
-    // const [messageHistory, setMessageHistory]=useState(data.messages);
-
     const {
-        messages: messageHistory,
+        messages,
         users,
-        addMessage,
         deleteAllMessages,
-        deleteMessage
+        findByConversationIdOffsetLimitThunk
     } = props;
+
+    const [chatMessage, setChatMessage] = useState("");
 
     // Extract friend ID from parameters
     const { id: friendId } = useParams();
@@ -40,13 +36,27 @@ function Chat(props) {
 
     // Get friend specified in parameter
     const [paramFriend = []] = friends.filter((friend) => (friend.id) === Number(friendId));
-    
+
     // Convenience variables
     const userName = user.auth.userName;
     const friendName = paramFriend.userName;
 
+    const loadState = () => {
+        deleteAllMessages();
+        findByConversationIdOffsetLimitThunk(user.id, friendId);
+    }
+
+    useEffect(() => {
+        loadState();
+    }, []);
+
     // navigate will allow navigation between the Views
     const navigate = useNavigate();
+
+    const onChangeMessage = e => {
+        const chatMessage = e.target.value
+        setChatMessage(chatMessage);
+    }
 
     // The moreHandler will load in the Search View with the 
     // needed URL parameters for the desired search
@@ -54,18 +64,20 @@ function Chat(props) {
         e.preventDefault();
         console.log(chatMessage);
 
-        const testState = {
-            messageId: 0,
-            toUserId: 1,
-            fromUserId: 2,
-            message: "Test message"
-        }
-        
+        // Clear form after you send each message
+        clearForm();
+
+        // const testState = {
+        //     messageId: 0,
+        //     toUserId: 1,
+        //     fromUserId: 2,
+        //     message: "Test message"
+        // }
         // addMessage(testState.toUserId, testState.fromUserId, testState.message)
         // deleteMessage(testState.messageId)
         // deleteAllMessages()
         // setMessageHistory( 
-        //     ...messageHistory,
+        //     ...messages,
         //     {
         //         messageId: 10,
         //         userMessage: {
@@ -78,8 +90,22 @@ function Chat(props) {
         //     }
         // );
         // setChatMessage("");
-        console.log(messageHistory)
+        // console.log(messages)
     }
+
+    const clearForm = () => {
+        setChatMessage("");
+        // console.log("Form cleared")
+    }
+
+    const formatMessages = () => (
+        <>
+            {messages.map((message) => (
+                (message.userMessage.from === user.id) ? (<span style={{ color: "darkblue" }}>{userName + "[" + message.timeStamp + "]: "}<span style={{ color: "blue" }}>{message.message}</span><br /><br /></span>) :
+                    (<span style={{ color: "darkred" }}>{friendName + "[" + message.timeStamp + "]: "}<span style={{ color: "red" }}>{message.message + "\n"}</span><br /><br /></span>)
+            ))}
+        </>
+    )
 
     return (
         <FormContainer>
@@ -91,14 +117,7 @@ function Chat(props) {
                     {userName} chatting with {friendName}
                 </Card.Title>
                 <Card.Text className="border m-3 p-2 mh-50" style={{ minHeight: "10rem", maxHeight: "15rem", overflow: "auto" }}>
-                    {messageHistory.map((message) => (
-                        (message.userMessage.from === user.id) ? (<span style={{ color: "darkblue" }}>{userName + "[" + message.timeStamp + "]: "}<span style={{ color: "blue" }}>{message.message}</span><br /><br /></span>) :
-                            (<span style={{ color: "darkred" }}>{friendName + "[" + message.timeStamp + "]: "}<span style={{ color: "red" }}>{message.message + "\n"}</span><br /><br /></span>)
-                    ))}
-                    <br />
-                    <br />
-                    <br />
-                    <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+                    {formatMessages()}
                 </Card.Text>
                 <Card.Body>
                     <Form className="">
@@ -110,7 +129,7 @@ function Chat(props) {
                                     <Form.Control as="textarea"
                                         className="p-2" rows={3}
                                         value={chatMessage}
-                                        onChange={e => setChatMessage(e.target.value)} />
+                                        onChange={onChangeMessage} />
                                 </Form.Group>
                                 <Button type="submit"
                                     className="d-flex ms-auto justify-content-center"
@@ -153,4 +172,7 @@ const mapStateToProps = state =>
 
 
 // Exporting the connect Wrapped EditAccount Component
-export default connect(mapStateToProps, {})(Chat);
+export default connect(mapStateToProps, {
+    findByConversationIdOffsetLimitThunk,
+    deleteAllMessages
+})(Chat);

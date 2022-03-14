@@ -9,6 +9,7 @@
 // for the app and importing needed components
 import { v4 } from 'uuid';
 import C from '../constants';
+import MessageDataService from '../services/message.service';
 
 /**
  * React Redux reducer that will add a new message to state.
@@ -50,3 +51,44 @@ export const deleteMessage = (id) => ({
     type: C.DELETE_MESSAGE,
     id: id
 })
+
+/**
+ * Thunk that downloads conversations based on the user IDs of both participants
+ * 
+ * @param {*} userToId 
+ * @param {*} userFromId 
+ * @returns 
+ */
+export const findByConversationIdOffsetLimitThunk =
+    (userToId, userFromId) => async (dispatch) => {
+
+        const offset = 0;
+        const limit = 5;
+
+        await MessageDataService.findByConversationIdOffsetLimit(userToId, userFromId, offset, limit)
+            .then((res) => {
+
+                // console.log("res: ", res.data);
+                const messageData = res.data;
+
+                // Add each friend from the array
+                messageData.forEach(e => {
+                    // console.log(e);
+
+                    const newMessage = { 
+                        toUserId: userToId, 
+                        fromUserId: userFromId, 
+                        message: e.message
+                    }
+
+                    // console.log("sample message: ", newMessage);
+
+                    // Dispatch to add each message to state
+                    dispatch(addMessage(newMessage));
+                });
+            })
+            .catch((err) => {
+                // Errors will be logged
+                console.log(err);
+            });
+    };
