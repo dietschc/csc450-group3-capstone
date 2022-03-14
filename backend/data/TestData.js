@@ -4,6 +4,7 @@
 // March 4, 2022
 // Last Edited (Initials, Date, Edits):
 // (CPD, 3/5/2022, Added friend test data and functions)
+//  (DAB, 03/13/2022, Added in messages and more friends)
 
 const db = require("../models");
 const Sequelize = require("sequelize");
@@ -18,6 +19,8 @@ const Restaurant = db.restaurants;
 const History = db.history;
 const Review = db.review;
 const ReviewImage = db.reviewImage;
+const Message = db.message;
+const Conversation = db.conversation;
 
 
 const user1Data = {
@@ -69,14 +72,14 @@ const user4Data = {
 }
 
 const user5Data = {
-    address: "12754 Happy St NW", 
-    city: "Tampico", 
+    address: "12754 Happy St NW",
+    city: "Tampico",
     state: "FL",
-    zip: "66123", 
-    firstName: "Admi", 
-    lastName: "Nistrator",  
-    userEmail: "boss@admin.com", 
-    userName: "admin", 
+    zip: "66123",
+    firstName: "Admi",
+    lastName: "Nistrator",
+    userEmail: "boss@admin.com",
+    userName: "admin",
     userPassword: "admin"
 }
 const restaurant1Data = {
@@ -184,9 +187,19 @@ const friend1Data = {
     friendTwoId: 3
 }
 
+const friend4Data = {
+    friendOneId: 3,
+    friendTwoId: 1
+}
+
 const friend2Data = {
     friendOneId: 2,
     friendTwoId: 1
+}
+
+const friend5Data = {
+    friendOneId: 1,
+    friendTwoId: 2
 }
 
 const friend3Data = {
@@ -194,24 +207,226 @@ const friend3Data = {
     friendTwoId: 3
 }
 
-const friend4Data = {
+const friend6Data = {
+    friendOneId: 3,
+    friendTwoId: 2
+}
+
+const friend7Data = {
     friendOneId: 2,
     friendTwoId: 4
 }
 
+const friend8Data = {
+    friendOneId: 4,
+    friendTwoId: 2
+}
+
+const friend9Data = {
+    friendOneId: 5,
+    friendTwoId: 1
+}
+
+const friend10Data = {
+    friendOneId: 1,
+    friendTwoId: 5
+}
+
+const friend11Data = {
+    friendOneId: 5,
+    friendTwoId: 2
+}
+
+const friend12Data = {
+    friendOneId: 2,
+    friendTwoId: 5
+}
+
+const friend13Data = {
+    friendOneId: 5,
+    friendTwoId: 3
+}
+
+const friend14Data = {
+    friendOneId: 3,
+    friendTwoId: 5
+}
+
+const friend15Data = {
+    friendOneId: 5,
+    friendTwoId: 4
+}
+
+const friend16Data = {
+    friendOneId: 4,
+    friendTwoId: 5
+}
+
+const friend17Data = {
+    friendOneId: 4,
+    friendTwoId: 3
+}
+
+const friend18Data = {
+    friendOneId: 3,
+    friendTwoId: 4
+}
+
+const friend19Data = {
+    friendOneId: 4,
+    friendTwoId: 1
+}
+
+const friend20Data = {
+    friendOneId: 1,
+    friendTwoId: 4
+}
+
+const friendArray = [
+    friend1Data,
+    friend2Data,
+    friend3Data,
+    friend4Data,
+    friend5Data,
+    friend6Data,
+    friend7Data,
+    friend8Data,
+    friend9Data,
+    friend10Data,
+    friend11Data,
+    friend12Data,
+    friend13Data,
+    friend14Data,
+    friend15Data,
+    friend16Data,
+    friend17Data,
+    friend18Data,
+    friend19Data,
+    friend20Data
+]
+
+const message1Data = {
+    userToId: 5,
+    userFromId: 1,
+    message: "Hello buddy!"
+}
+
+const message2Data = {
+    userToId: 1,
+    userFromId: 5,
+    message: "Hey there"
+}
+
+const message3Data = {
+    userToId: 5,
+    userFromId: 1,
+    message: "Where can I find some good steak?"
+}
+
+const message4Data = {
+    userToId: 5,
+    userFromId: 1,
+    message: "All the ones I found have been very dry!"
+}
+
+const message5Data = {
+    userToId: 1,
+    userFromId: 5,
+    message: "Roadhouse is my favorite. Check out the reviews, they are awesome!"
+}
+
+const message6Data = {
+    userToId: 1,
+    userFromId: 5,
+    message: "Thanks"
+}
+
+const message7Data = {
+    userToId: 3,
+    userFromId: 1,
+    message: "Hi, thanks for the add!"
+}
+
+const message8Data = {
+    userToId: 3,
+    userFromId: 1,
+    message: "No problem, we seem to enjoy the same foods"
+}
+
+const message9Data = {
+    userToId: 3,
+    userFromId: 1,
+    message: "I am looking to wine and dine, any suggestions?"
+}
+
+const message10Data = {
+    userToId: 1,
+    userFromId: 3,
+    message: "Osaka hibachi is pretty cool if you go earlier"
+}
+
+const message11Data = {
+    userToId: 3,
+    userFromId: 1,
+    message: "Awesome, I will try it!"
+}
+
+const message12Data = {
+    userToId: 1,
+    userFromId: 2,
+    message: "Hi"
+}
+
+
+const message13Data = {
+    userToId: 2,
+    userFromId: 1,
+    message: "Yo"
+}
+
+const message14Data = {
+    userToId: 1,
+    userFromId: 2,
+    message: "Burger at Mcoys in 30?"
+}
+
+const message15Data = {
+    userToId: 2,
+    userFromId: 1,
+    message: "You bet"
+}
+
+const messageArray = [
+    message1Data,
+    message2Data,
+    message3Data,
+    message4Data,
+    message5Data,
+    message6Data,
+    message7Data,
+    message8Data,
+    message9Data,
+    message10Data,
+    message11Data,
+    message12Data,
+    message13Data,
+    message14Data,
+    message15Data
+]
+
 loadTestData = async () => {
     console.log("Adding Permission table data");
-    db.permission.create({ permissionName: "member" });
-    db.permission.create({ permissionName: "owner" });
-    db.permission.create({ permissionName: "banned" });
-    db.permission.create({ permissionName: "admin" });
+    await db.permission.create({ permissionName: "member" });
+    await db.permission.create({ permissionName: "owner" });
+    await db.permission.create({ permissionName: "banned" });
+    await db.permission.create({ permissionName: "admin" });
 
     console.log("Loading in Users")
-    await addUser(user1Data) 
-    await addUser(user2Data) 
-    await addUser(user3Data) 
-    await addUser(user4Data) 
-    await addUser(user5Data) 
+    await addUser(user1Data)
+    await addUser(user2Data)
+    await addUser(user3Data)
+    await addUser(user4Data)
+    await addUser(user5Data)
 
     const data = {
         userId: 5,
@@ -233,10 +448,10 @@ loadTestData = async () => {
     await addReview(review4Data)
 
     console.log("Loading in Friends")
-    await addFriend(friend1Data)
-    await addFriend(friend2Data)
-    await addFriend(friend3Data)
-    await addFriend(friend4Data)
+    await friendArray.forEach(async friend => await addFriend(friend))
+
+    console.log("Loading in Messages")
+    await messageArray.forEach(message => addMessage(message));
 }
 
 const addUser = async ({ userName, firstName, lastName, address,
@@ -460,20 +675,58 @@ const addFriend = async ({ friendOneId, friendTwoId }) => {
 
     // Save Friend in the database
     Friend.create(friend)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            return ({
-                message:
-                    err.message || "Some error occurred while creating the Friend."
-            });
-        });
-
 }
 
-updatePermission = async (data) => {
-    await Authentication.update(data, { where: { userId: data.userId }})
+const updatePermission = async (data) => {
+    await Authentication.update(data, { where: { userId: data.userId } })
+}
+
+const addMessage = async (data) => {
+    // Creating a message data object to hold the message data as 
+    // it is created
+    const messageData = {
+        conversationId: null,
+        message: data.message,
+    }
+
+    // Searching if the conversation between the two users exists or not
+    await Conversation.findOne({
+        where: {
+            [Op.and]: [
+                { userToId: data.userToId },
+                { userFromId: data.userFromId }
+            ]
+        }
+    }).then(async conversation => {
+        // If the conversation exists, a mew message is added to the database
+        if (conversation) {
+            // Assigning the correct conversation id to the message data
+            messageData.conversationId = conversation.conversationId;
+
+            // Creating the new message and returning the values created
+            await Message.create(messageData);
+        }
+        // Else there is not a conversation entry in the database so a new 
+        // one is created before the message is added
+        else {
+            // Creating a new conversation with the message details
+            conversation = await Conversation.create(data)
+            .then(newConversation => {
+                // Assigning the correct conversationId to the message data
+                messageData.conversationId = newConversation.conversationId;
+
+                // Returning that conversation data
+                return newConversation;
+            })
+            .catch(err => {
+                // If there is an error it is logged
+                console.log(err);
+            });
+
+            // Creating the message in the database with the message data
+            await Message.create(messageData);
+        }
+    })
 }
 
 module.exports = { loadTestData }
