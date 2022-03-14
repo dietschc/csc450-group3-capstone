@@ -8,9 +8,8 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Row, Col, Form, Container, Button, FloatingLabel, Card } from 'react-bootstrap';
-import mockStateData from "../../redux/initialState.json";
 import { useNavigate } from 'react-router-dom';
 import FormContainer from '../template/XLContainer';
 import { connect } from 'react-redux';
@@ -18,12 +17,29 @@ import { addMessage, deleteAllMessages, deleteMessage } from '../../actions/mess
 
 function Chat(props) {
     // The mock state will be held as data
-    const [data, setData]=useState(mockStateData);
-    const [chatMessage, setChatMessage]=useState("");
+    // const [data, setData] = useState(mockStateData);
+    const [chatMessage, setChatMessage] = useState("");
     // const [messageHistory, setMessageHistory]=useState(data.messages);
 
-    const { messages: messageHistory } = props;
-    const { addMessage, deleteAllMessages, deleteMessage } = props;
+    const {
+        messages: messageHistory,
+        users,
+        addMessage,
+        deleteAllMessages,
+        deleteMessage
+    } = props;
+
+    const { id: friendId } = useParams();
+    const [user = []] = users;
+    const friends = user.friends;
+
+    // Get friend specified in parameter
+    const [paramFriend = []] = friends.filter((friend) => (friend.id) === Number(friendId));
+    
+    // console.log("friend param: ", paramFriend);
+
+    const userName = user.auth.userName;
+    const friendName = paramFriend.userName;
 
     // navigate will allow navigation between the Views
     const navigate = useNavigate();
@@ -59,31 +75,25 @@ function Chat(props) {
         // setChatMessage("");
         console.log(messageHistory)
     }
-    
 
-    // Destructuring the needed data from the intitialState.json file
-    const { users } = data; 
-    const [user, ...otherUsers] = users;
-    const { address: currentAddress }  = user;
-    const { friend: currentFriendList } = user;
     return (
         <FormContainer>
             <h1>
                 Chat
             </h1>
-            <Card className="" style={{height:"200rem"}}>
+            <Card className="" style={{ height: "200rem" }}>
                 <Card.Title className="text-center mt-2 mb-0">
-                    {users[0].auth.userName} chatting with {users[1].auth.userName}
+                    {userName} chatting with {friendName}
                 </Card.Title>
-                <Card.Text className="border m-3 p-2 mh-50" style={{minHeight:"10rem", maxHeight:"15rem",  overflow:"auto"}}>
+                <Card.Text className="border m-3 p-2 mh-50" style={{ minHeight: "10rem", maxHeight: "15rem", overflow: "auto" }}>
                     {messageHistory.map((message) => (
-                        (message.userMessage.from === users[0].id) ?  (<span style={{color:"darkblue"}}>{users[0].auth.userName + "[" + message.timeStamp + "]: "}<span style={{color:"blue"}}>{message.message}</span><br/><br/></span>) :
-                        (<span style={{color:"darkred"}}>{users[1].auth.userName + "[" + message.timeStamp + "]: "}<span style={{color:"red"}}>{message.message + "\n"}</span><br/><br/></span>)
+                        (message.userMessage.from === user.id) ? (<span style={{ color: "darkblue" }}>{userName + "[" + message.timeStamp + "]: "}<span style={{ color: "blue" }}>{message.message}</span><br /><br /></span>) :
+                            (<span style={{ color: "darkred" }}>{friendName + "[" + message.timeStamp + "]: "}<span style={{ color: "red" }}>{message.message + "\n"}</span><br /><br /></span>)
                     ))}
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+                    <br />
+                    <br />
+                    <br />
+                    <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
                 </Card.Text>
                 <Card.Body>
                     <Form className="">
@@ -92,50 +102,50 @@ function Chat(props) {
                             <Col sm={12} md={6}>
                                 <Form.Group className="mb-3" controlId="formMessageInput" >
                                     <Form.Label className="visually-hidden">Message</Form.Label>
-                                    <Form.Control as="textarea" 
-                                    className="p-2"rows={3} 
-                                    value={chatMessage} 
-                                    onChange={e=>setChatMessage(e.target.value)}/>
+                                    <Form.Control as="textarea"
+                                        className="p-2" rows={3}
+                                        value={chatMessage}
+                                        onChange={e => setChatMessage(e.target.value)} />
                                 </Form.Group>
-                            <Button type="submit" 
-                            className="d-flex ms-auto justify-content-center" 
-                            style={{ width: "5rem"}} 
-                            onClick={(e)=>sendMessageHandler(e)}>Send</Button>
+                                <Button type="submit"
+                                    className="d-flex ms-auto justify-content-center"
+                                    style={{ width: "5rem" }}
+                                    onClick={(e) => sendMessageHandler(e)}>Send</Button>
                             </Col>
                         </Row>
                     </Form>
                 </Card.Body>
             </Card>
         </FormContainer>
-            
+
     )
 }
 
 // Mapping the redux store states to props
-const mapStateToProps = state => 
-    ({
-        reviews: [...state.reviews],
-        users: [...state.users],
-        messages: [...state.messages]
-    });
+const mapStateToProps = state =>
+({
+    reviews: [...state.reviews],
+    users: [...state.users],
+    messages: [...state.messages]
+});
 
 // Mapping the state actions to props
-const mapDispatchToProps = dispatch => 
-    ({
-        // This method will add a new review
-        addMessage(toUserId, fromUserId, message) {
-            dispatch(addMessage(toUserId, fromUserId, message)
-                )
-        },
-        deleteAllMessages() {
-            dispatch(deleteAllMessages()
-            )
-        },
-        deleteMessage(id) {
-            dispatch(deleteMessage(id))
-        }
-    })
+// const mapDispatchToProps = dispatch => 
+//     ({
+//         // This method will add a new review
+//         addMessage(toUserId, fromUserId, message) {
+//             dispatch(addMessage(toUserId, fromUserId, message)
+//                 )
+//         },
+//         deleteAllMessages() {
+//             dispatch(deleteAllMessages()
+//             )
+//         },
+//         deleteMessage(id) {
+//             dispatch(deleteMessage(id))
+//         }
+//     })
 
 
 // Exporting the connect Wrapped EditAccount Component
-export default connect(mapStateToProps, mapDispatchToProps)(Chat);
+export default connect(mapStateToProps, {})(Chat);
