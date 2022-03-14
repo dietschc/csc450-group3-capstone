@@ -73,11 +73,12 @@ export const findByConversationIdOffsetLimitThunk =
 
                 // Add each friend from the array
                 messageData.forEach(e => {
-                    // console.log(e);
+                    // console.log("e: ", e);
 
+                    //({ toUserId, fromUserId, message }) 
                     const newMessage = {
-                        toUserId: userToId,
-                        fromUserId: userFromId,
+                        toUserId: e.conversation.userToId,
+                        fromUserId: e.conversation.userFromId,
                         message: e.message
                     }
 

@@ -103,7 +103,7 @@ function Chat(props) {
                         <span key={index} style={{ color: "darkblue" }}>
                             {userName + "[" + formatTimeCalendar(message.timeStamp) + "]: "}
                             <span style={{ color: "blue" }}>
-                                {message.to.message}
+                                {message.message}
                                 </span><br /><br /></span>
                     ) : (
                         <span key={index} style={{ color: "darkred" }}>
