@@ -16,7 +16,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
 import { deleteAllUsers } from '../../actions/users';
-import { deleteAllMessages} from '../../actions/messages';
+import { deleteAllMessages } from '../../actions/messages';
 import { deleteAllReviews } from '../../actions/reviews';
 import { deleteAllRestaurants } from '../../actions/restaurants';
 import { checkLogin } from '../../helperFunction/CheckLogin';
@@ -30,12 +30,12 @@ function MainNav(props) {
     const navigate = useNavigate();
 
     // Get user state from props
-    const { 
-        users, 
-        deleteAllUsers, 
-        deleteAllMessages, 
-        deleteAllReviews, 
-        deleteAllRestaurants 
+    const {
+        users,
+        deleteAllUsers,
+        deleteAllMessages,
+        deleteAllReviews,
+        deleteAllRestaurants
     } = props;
 
     // Setting the active nav element
@@ -84,6 +84,25 @@ function MainNav(props) {
         navigate("/");
     }
 
+    const showAdmin = () => {
+        if (users) {
+            const [currentUser] = users;
+            if (
+                currentUser.isLoggedIn &&
+                currentUser.auth.permission.permissionName === "admin") {
+                return (
+                    <Nav.Item className="mx-3">
+                        <LinkContainer to="/admin">
+                            <Nav.Link>
+                                Admin
+                            </Nav.Link>
+                        </LinkContainer>
+                    </Nav.Item>
+                )
+            }
+        }
+    }
+
     const showLoginControls = () => (
         <>
             {checkLogin(users) ? (
@@ -95,6 +114,7 @@ function MainNav(props) {
                             </Nav.Link>
                         </LinkContainer>
                     </Nav.Item>
+                    {showAdmin()}
                     <Nav.Item className="mx-3" onClick={logoutHandler}>
                         <Nav.Link>
                             Logout
@@ -186,9 +206,9 @@ const mapStateToProps = state =>
 
 // Exporting the component
 // export default MainNav;
-export default connect(mapStateToProps, { 
-    deleteAllUsers, 
-    deleteAllMessages, 
-    deleteAllReviews, 
-    deleteAllRestaurants  
+export default connect(mapStateToProps, {
+    deleteAllUsers,
+    deleteAllMessages,
+    deleteAllReviews,
+    deleteAllRestaurants
 })(MainNav);
