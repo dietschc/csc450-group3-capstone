@@ -63,7 +63,7 @@ export const findByConversationIdOffsetLimitThunk =
     (userToId, userFromId) => async (dispatch) => {
 
         const offset = 0;
-        const limit = 5;
+        const limit = 15;
 
         await MessageDataService.findByConversationIdOffsetLimit(userToId, userFromId, offset, limit)
             .then((res) => {
@@ -87,6 +87,34 @@ export const findByConversationIdOffsetLimitThunk =
                     // Dispatch to add each message to state
                     dispatch(addMessage(newMessage));
                 });
+            })
+            .catch((err) => {
+                // Errors will be logged
+                console.log(err);
+            });
+    };
+
+// { userToId, userFromId, message } 
+export const sendMessageThunk =
+    (userToId, userFromId, message) => async (dispatch) => {
+
+        // Call message data service to create a new message
+        await MessageDataService.create({ userToId, userFromId, message })
+            .then((res) => {
+
+                // console.log("message log: ", res);
+
+                const newMessage = {
+                    toUserId: userToId,
+                    fromUserId: userFromId,
+                    message: message
+                }
+
+                // console.log("sample message: ", newMessage);
+
+                // Dispatch to add each message to state
+                dispatch(addMessage(newMessage));
+
             })
             .catch((err) => {
                 // Errors will be logged

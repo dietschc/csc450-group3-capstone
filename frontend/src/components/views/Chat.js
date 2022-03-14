@@ -12,15 +12,20 @@ import { useParams } from 'react-router-dom';
 import { Row, Col, Form, Button, Card } from 'react-bootstrap';
 import FormContainer from '../template/XLContainer';
 import { connect } from 'react-redux';
-import { findByConversationIdOffsetLimitThunk, deleteAllMessages } from '../../actions/messages';
-import { formatTimeCalendar } from '../../helperFunction/FormatString'
+import { formatTimeCalendar } from '../../helperFunction/FormatString';
+import {
+    findByConversationIdOffsetLimitThunk,
+    deleteAllMessages,
+    sendMessageThunk
+} from '../../actions/messages';
 
 function Chat(props) {
     const {
         messages,
         users,
         deleteAllMessages,
-        findByConversationIdOffsetLimitThunk
+        findByConversationIdOffsetLimitThunk,
+        sendMessageThunk
     } = props;
 
     const [chatMessage, setChatMessage] = useState("");
@@ -48,6 +53,12 @@ function Chat(props) {
 
     useEffect(() => {
         loadState();
+
+        // const interval = setInterval(() => {
+        //     console.log('This will run every 15 seconds!');
+        //     loadState();
+        // }, 15000);
+        // return () => clearInterval(interval);
     }, []);
 
     const onChangeMessage = e => {
@@ -59,7 +70,14 @@ function Chat(props) {
     // needed URL parameters for the desired search
     const sendMessageHandler = (e) => {
         e.preventDefault();
-        console.log(chatMessage);
+        // console.log(chatMessage);
+
+        const userToId = friendId;
+        const userFromId = user.id;
+        const message = chatMessage;
+
+        // Call thunk and pass message parameters
+        sendMessageThunk(userToId, userFromId, message);
 
         // Clear form after you send each message
         clearForm();
@@ -104,13 +122,13 @@ function Chat(props) {
                             {userName + "[" + formatTimeCalendar(message.timeStamp) + "]: "}
                             <span style={{ color: "blue" }}>
                                 {message.message}
-                                </span><br /><br /></span>
+                            </span><br /><br /></span>
                     ) : (
                         <span key={index} style={{ color: "darkred" }}>
                             {friendName + "[" + formatTimeCalendar(message.timeStamp) + "]: "}
                             <span style={{ color: "red" }}>
                                 {message.message + "\n"}
-                                </span><br /><br /></span>
+                            </span><br /><br /></span>
                     )
             ))}
         </>
@@ -183,5 +201,6 @@ const mapStateToProps = state =>
 // Exporting the connect Wrapped EditAccount Component
 export default connect(mapStateToProps, {
     findByConversationIdOffsetLimitThunk,
-    deleteAllMessages
+    deleteAllMessages,
+    sendMessageThunk
 })(Chat);
