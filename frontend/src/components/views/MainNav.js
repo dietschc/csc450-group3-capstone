@@ -6,6 +6,9 @@
 //  (DAB, 01/28/2022, Upgraded the color scheme)
 //  (DAB, 01/28/2022, Added state to nav)
 //  (CPD, 2/26/22, Added checkLogin method and state constants)
+//  (DAB, 03/13/2022, Added in Admin link when an admin is logged in 
+//  light front end only secured)
+//  (DAB, 03/13/2022, Moved DevelopersNav into MainNav)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -21,6 +24,7 @@ import { deleteAllReviews } from '../../actions/reviews';
 import { deleteAllRestaurants } from '../../actions/restaurants';
 import { checkLogin } from '../../helperFunction/CheckLogin';
 import ModalLogoutConfirm from '../modal/LogoutConfirm';
+import DevelopersNav from '../DevelopersNav';
 
 function MainNav(props) {
     // Setting up the basic state needed to run MainNav
@@ -167,6 +171,7 @@ function MainNav(props) {
                     <Nav fill variant="pills" bg="dark" className="mb-auto pe-3"
                         activeKey={basicActive}
                         onSelect={(key) => setActive(key)}>
+                        <DevelopersNav />
                         <Nav.Item className="mx-3">
                             <LinkContainer to="/">
                                 <Nav.Link>
