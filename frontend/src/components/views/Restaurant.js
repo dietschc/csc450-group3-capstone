@@ -50,8 +50,8 @@ function Restaurant(props) {
 
     // Saving the deconstructed current restaurant as an object to be used for 
     // component construction
-    const [currentRestaurant] = restaurants.length > 0 && restaurants.filter(
-        (restaurant) => (restaurantId === restaurant.id.toString()))
+    const [currentRestaurant] = restaurants.length > 0 ? restaurants.filter(
+        (restaurant) => (restaurantId === restaurant.id.toString())) : [];
 
     // Loading in the initial data from the database
     const loadData = () => {

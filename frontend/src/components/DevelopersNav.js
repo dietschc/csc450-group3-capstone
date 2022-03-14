@@ -20,56 +20,56 @@ import 'bootstrap/dist/css/bootstrap.min.css'
  */
 function DevelopersNav(props) {
     return (
-        <NavDropdown title="Dev Nav" variant="flush">
-            <NavDropdown.Item className="text-center text-muted">
+        <NavDropdown as="ul" title="Dev Nav" variant="flush">
+            <NavDropdown.Item as="li"  className="text-center text-muted">
                 <Link className="text-decoration-none text-reset" to="/restaurant">
                     Restaurant
                 </Link>
             </NavDropdown.Item>
 
-            <NavDropdown.Item className="text-center text-muted">
+            <NavDropdown.Item as="li" className="text-center text-muted">
                 <Link className="text-decoration-none text-reset" to="/chat">
                     Chat
                 </Link>
             </NavDropdown.Item>
 
-            <NavDropdown.Item className="text-center text-muted">
+            <NavDropdown.Item as="li" className="text-center text-muted">
                 <Link className="text-decoration-none text-reset" to="/editAccount">
                     Edit Account
                 </Link>
             </NavDropdown.Item>
 
-            <NavDropdown.Item className="text-center text-muted">
+            <NavDropdown.Item as="li" className="text-center text-muted">
                 <Link className="text-decoration-none text-reset" to="/editRestaurant">
                     Edit Restaurant
                 </Link>
             </NavDropdown.Item>
 
-            <NavDropdown.Item className="text-center text-muted">
+            <NavDropdown.Item as="li" className="text-center text-muted">
                 <Link className="text-decoration-none text-reset" to="/login">
                     Login
                 </Link>
             </NavDropdown.Item>
 
-            <NavDropdown.Item className="text-center text-muted">
+            <NavDropdown.Item as="li" className="text-center text-muted">
                 <Link className="text-decoration-none text-reset" to="/review">
                     Review
                 </Link>
             </NavDropdown.Item>
 
-            <NavDropdown.Item className="text-center text-muted">
+            <NavDropdown.Item as="li" className="text-center text-muted">
                 <Link className="text-decoration-none text-reset" to="/search">
                     Search
                 </Link>
             </NavDropdown.Item>
 
-            <NavDropdown.Item className="text-center text-muted">
+            <NavDropdown.Item as="li" className="text-center text-muted">
                 <Link className="text-decoration-none text-reset" to="/userDashboard">
                     User Dashboard
                 </Link>
             </NavDropdown.Item>
 
-            <NavDropdown.Item className="text-center text-muted">
+            <NavDropdown.Item as="li" className="text-center text-muted">
                 <Link className="text-decoration-none text-reset" to="/Admin">
                     Admin
                 </Link>
