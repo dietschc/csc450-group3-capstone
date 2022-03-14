@@ -29,15 +29,19 @@ function Chat(props) {
         deleteMessage
     } = props;
 
+    // Extract friend ID from parameters
     const { id: friendId } = useParams();
+
+    // Extract current user from users state array
     const [user = []] = users;
+
+    // Create a copy of the friends array
     const friends = user.friends;
 
     // Get friend specified in parameter
     const [paramFriend = []] = friends.filter((friend) => (friend.id) === Number(friendId));
     
-    // console.log("friend param: ", paramFriend);
-
+    // Convenience variables
     const userName = user.auth.userName;
     const friendName = paramFriend.userName;
 
@@ -56,7 +60,8 @@ function Chat(props) {
             fromUserId: 2,
             message: "Test message"
         }
-        addMessage(testState.toUserId, testState.fromUserId, testState.message)
+        
+        // addMessage(testState.toUserId, testState.fromUserId, testState.message)
         // deleteMessage(testState.messageId)
         // deleteAllMessages()
         // setMessageHistory( 
