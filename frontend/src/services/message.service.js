@@ -3,7 +3,9 @@
 // Restaurant Club - message.service.js
 // February 28, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 3/14/2022, Added service for findAllAfterDateOffsetLimit)
 
+// Importing the Axios default settings
 import http from "../http-common";
 
 class MessageDataService {
@@ -60,6 +62,7 @@ class MessageDataService {
     }
 
     /**
+     * The findByConversationIdOffsetLimit will connect to the back end server method.
      * 
      * @param {*} userToId - userId of the sender
      * @param {*} userFromId - userId of the receiver
@@ -71,6 +74,19 @@ class MessageDataService {
         return http.get(`/message/sorted/date/${userToId}/${userFromId}/${offset}/${limit}`);
     }
 
+    /**
+     * The findAllAfterDateOffsetLimit will connect to the back end server method.
+     * 
+     * @param {*} createdAt - results will return all messages after this dateTime
+     * @param {*} userToId - userId of the sender
+     * @param {*} userFromId - userId of the receiver
+     * @param {*} offset 
+     * @param {*} limit 
+     * @returns - All messages found between the two users in ASC modifiedAt order
+     */
+    findAllAfterDateOffsetLimit(createdAt, userToId, userFromId, offset, limit) {
+        return http.get(`/message/sorted/date2/${createdAt}/${userToId}/${userFromId}/${offset}/${limit}`);
+    }
 }
 
 // Exporting DataService

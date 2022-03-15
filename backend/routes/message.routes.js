@@ -4,6 +4,7 @@
 // February 27, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/28/2022, Added in comments)
+//  (DAB, 3/14/2022, Added in findAllAfterDateOffsetLimit)
 
 module.exports = app => {
   const message = require("../controllers/message.controller.js");
@@ -26,6 +27,10 @@ module.exports = app => {
 
   // Retrieve all messages using the userFrom and To ids. Sorted newest to oldest with offset and limit
   router.get("/sorted/date/:userToId/:userFromId/:offset/:limit", message.findByConversationIdOffsetLimit);
+
+  // Retrieve all messages using the userFrom and To ids written after the createdAt date.
+  // Sorted newest to oldest with offset and limit
+  router.get("/sorted/date2/:createdAt/:userToId/:userFromId/:offset/:limit", message.findAllAfterDateOffsetLimit);
 
   // URL to message for route
   app.use('/message', router);
