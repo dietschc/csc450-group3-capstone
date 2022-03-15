@@ -42,6 +42,10 @@ function Chat(props) {
 
     // The chatMessage will hold the state of the message text area
     const [chatMessage, setChatMessage] = useState("");
+    const [lastQueryTimeStamp, setLastQueryTimeStamp] = useState(0);
+    let lastQueryTime = 0;
+    let lastQueryMessageId = 0;
+    const testRef = useRef(0);
 
     // Extract friend ID from parameters
     const { id: friendId } = useParams();
@@ -65,11 +69,26 @@ function Chat(props) {
 
         // New messages are queried from the database
         await findByConversationIdOffsetLimitThunk(user.id, friendId, 0, 15);
+        setLastQueryTimeStamp(new Date());
+        lastQueryTime = new Date();
+        // console.log("LAST QUERY TIMESTAMP IN LOADSTATE", lastQueryTimeStamp);
+        console.log("lastQueryTime IN LOADSTATE", lastQueryTime);
+        if (messages && messages.length > 0) {
+            // The last message in the message array is destructured out
+            const [oldestMessage] = [...messages].reverse();
+
+            // createdAt is set to the newest messages createdAt time
+            lastQueryMessageId = messages.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0);
+            testRef.current = messages.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0);
+            console.log("MESSAGE ID IN LOADIN", lastQueryMessageId);
+            console.log("testRef in load in", testRef.current)
+            console.log("MESSAGES LENGTH", messages.length)
+        }
     }
 
     // The database is queried for new messages that may exist in the database, 
     // the state is only updated if data is found
-    const loadNewMessages = () => {
+    const loadNewMessages = async () => {
         // createdAt is primed to be 0 so all new messages can be retrieved
         let createdAt = 0;
 
@@ -80,11 +99,47 @@ function Chat(props) {
             const [oldestMessage] = [...messages].reverse();
 
             // createdAt is set to the newest messages createdAt time
-            createdAt = oldestMessage.timeStamp;
+            // createdAt = oldestMessage.timeStamp;
+
+            createdAt = new Date();
+            lastQueryTime = new Date();
         }
 
+        // console.log("CreatedAt TIME STAMP IN REFRESH", createdAt)
+        // console.log("testVariable TIME STAMP IN REFRESH", lastQueryTime)
+
+
         // The database is checked for new messages
-        findAllAfterDateOffsetLimitThunk(createdAt, user.id, friendId, 0, 15)
+        // findAllAfterDateOffsetLimitThunk(createdAt, user.id, friendId, 0, 15)
+        // lastQueryMessageId = await messages.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0);
+        console.log("Highest message ID going into query", lastQueryMessageId)
+        const result = await findAllAfterDateOffsetLimitThunk(testRef.current, user.id, friendId, 0, 15)
+        .then(res => {
+            // testRef.current = messages.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0)
+        })
+        console.log("PRINT QUERY RESULT", result)
+        if (result) {
+            // lastQueryMessageId = await messages.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0);
+            // console.log("HIGHEST MESSAGE ID right after non successful query", lastQueryMessageId)
+        }
+        // testRef.current = messages.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0);
+        console.log("testRef AFTER QUERY REFERSH", testRef.current);
+
+        // setLastQueryTimeStamp(lastQueryTimeStamp => new Date());
+        // lastQueryTime = new Date();
+        // console.log("LAST QUERY TIMESTAMP IN UPDATESTATE", lastQueryTimeStamp);
+        // console.log("LAST QUERY testVariable IN UPDATESTATE", lastQueryTime);
+        console.log("HIGHEST MESSAGE ID IN REFRESH after if message found and query", lastQueryMessageId)
+        console.log("MESSAGES LENGTH IN REFRESH", messages.length)
+        console.log("MESSAGES IN REFRESH", messages)
+        // let test = Math.max(messages.map(message => {console.log(message.id); return (message.id)}), 0);
+        // console.log("MATH MAX MAX ID", test)
+        // messages.reduce((previous, current) => {
+        //     console.log("PREVIOUS", previous);
+        //     console.log("PREVIOUS ID", previous.id);
+        //     console.log("CURRENT ID", current.id);
+        //     return (previous > current.id) ? previous : current.id
+        // })
     }
 
     // The use effect will rerender only once initially and will only load state 
@@ -108,11 +163,17 @@ function Chat(props) {
             const interval = setInterval(async () => {
                 // Calling loadNewMessages to check and possibly load in new messages
                 await loadNewMessages();
+                setLastQueryTimeStamp(new Date())
             }, 15000);
-
+            testRef.current = messages.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0)
+            console.log("Messages in useEffect after interval", messages.length)
+            console.log("testRef in useEffect after interval", testRef)
             // The interval is cleared when the component is unmounted
             return () => clearInterval(interval);
         }
+        // lastQueryMessageId = messages.reduce((previous, current) => (previous.id > current.id) ? previous.id : current.id, 0);
+        console.log("HIGHEST MESSAGE ID IN REFRESH OUTSIDE OF INTERVAL if message found", lastQueryMessageId)
+        console.log("MESSAGE LENGTH IN MESSAGE USEEFFECT", messages.length)
     }, [messages]);
 
     // This function will set chatMessage state with the new message

@@ -84,8 +84,8 @@ class MessageDataService {
      * @param {*} limit 
      * @returns - All messages found between the two users in ASC modifiedAt order
      */
-    findAllAfterDateOffsetLimit(createdAt, userToId, userFromId, offset, limit) {
-        return http.get(`/message/sorted/date2/${createdAt}/${userToId}/${userFromId}/${offset}/${limit}`);
+    findAllAfterDateOffsetLimit(messageId, userToId, userFromId, offset, limit) {
+        return http.get(`/message/sorted/date2/${messageId}/${userToId}/${userFromId}/${offset}/${limit}`);
     }
 }
 

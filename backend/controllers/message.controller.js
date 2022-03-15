@@ -216,7 +216,7 @@ exports.findAllAfterDateOffsetLimit = async (req, res) => {
     const searchOffset = isNaN(req.params.offset) ? 0 : parseInt(req.params.offset);
     const searchLimit = isNaN(req.params.limit) ? 999999999999 : parseInt(req.params.limit);
     // Grabbing the ids and createdAt date out of params to find the conversation
-    const { userToId, userFromId, createdAt } = req.params;
+    const { userToId, userFromId, messageId } = req.params;
 
     // Async searching the database and returning all messages. The 
     // search includes all joined tables and attributes. Data will 
@@ -228,24 +228,14 @@ exports.findAllAfterDateOffsetLimit = async (req, res) => {
         order: [['updatedAt', 'DESC']],
         where: {
             [Op.and]: [
-                {
-                    [Op.or]: [
-                        {
-                            [Op.and]: [
-                                { '$conversation.userToId$': userToId },
-                                { '$conversation.userFromId$': userFromId }
-                            ]
-                        },
-                        {
-                            [Op.and]: [
-                                { '$conversation.userToId$': userFromId },
-                                { '$conversation.userFromId$': userToId }
-                            ]
-                        }
+                {   
+                    [Op.and]: [
+                        { '$conversation.userToId$': userToId },
+                        { '$conversation.userFromId$': userFromId }
                     ]
                 },
                 {
-                    createdAt: { [Op.gt]: createdAt }
+                    messageId: { [Op.gt]: messageId }
                 }]
         },
         offset: searchOffset,

@@ -98,7 +98,7 @@ export const findByConversationIdOffsetLimitThunk =
  * the userToId and userFromId. It will then return results up to the specified offset and limit 
  * then add results to state.
  * 
- * @param {*} createdAt 
+ * @param {*} messageId 
  * @param {*} userToId 
  * @param {*} userFromId 
  * @param {*} offset 
@@ -106,13 +106,15 @@ export const findByConversationIdOffsetLimitThunk =
  * @returns 
  */
 export const findAllAfterDateOffsetLimitThunk =
-(createdAt, userToId, userFromId, offset, limit) => async (dispatch) => {
-    await MessageDataService.findAllAfterDateOffsetLimit(createdAt, userToId, userFromId, offset, limit)
+(messageId, userToId, userFromId, offset, limit) => async (dispatch) => {
+    return await MessageDataService.findAllAfterDateOffsetLimit(messageId, userToId, userFromId, offset, limit)
         .then((res) => {
             // If a result was found it is ordered and added to state
             if (res) {
                 // Grabbing the data part of the response
                 const messageData = res.data;
+
+                console.log("MESSAGE ID IN THUNK", messageId)
 
                 // The data order will be reversed and then added to state one at 
                 // at time
@@ -126,15 +128,18 @@ export const findAllAfterDateOffsetLimitThunk =
                     // Dispatch to add each message to state
                     dispatch(addMessage(newMessage));
                 });
+                return true;
             }
             else {
                 // If no data was found it is logged in the console
                 console.log("No new messages found")
+                return false;
             }
         })
         .catch((err) => {
             // Errors will be logged
             console.log(err);
+            return false;
         });
 };
 
