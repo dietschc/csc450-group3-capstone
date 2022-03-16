@@ -7,6 +7,7 @@
 //  (DAB, 03/14/2022, Chat box now scrolls to the bottom after each message)
 //  (DAB, 03/14/2022, Chat now works with interval chat on 15 sec delay)
 //  (DAB, 03/14/2022, Added comments)
+//  (DAB, 03/15/2022, Fixed logic for interval database retrieval)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -42,7 +43,13 @@ function Chat(props) {
 
     // The chatMessage will hold the state of the message text area
     const [chatMessage, setChatMessage] = useState("");
-
+    const updateMessageIdRef = useRef(0);
+    // This Ref will allow for the program to know if a query has returned data
+    const isQueriedRef = useRef(false);
+    // This const references the end of the message body
+    const messageScrollTo = useRef();
+    // The messageRef will be used in useEffects to query the database with the most recent data
+    const messagesRef = useRef(messages);
     // Extract friend ID from parameters
     const { id: friendId } = useParams();
     // Extract current user from users state array
@@ -55,9 +62,7 @@ function Chat(props) {
     const userName = user?.auth?.userName;
     const friendName = paramFriend?.userName;
 
-    // This const references the end of the message body
-    const messageScrollTo = useRef();
-    
+
     // The loadState method will load the initial Chat state from the database
     const loadState = async () => {
         // All old messages are deleted
@@ -65,61 +70,78 @@ function Chat(props) {
 
         // New messages are queried from the database
         await findByConversationIdOffsetLimitThunk(user.id, friendId, 0, 15);
+
+        // If there are messages found, the most recent messageId is filtered from messages
+        if (messages && messages.length > 0) {
+            updateMessageIdRef.current = messagesRef.current.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0);
+        }
     }
+
 
     // The database is queried for new messages that may exist in the database, 
     // the state is only updated if data is found
-    const loadNewMessages = () => {
-        // createdAt is primed to be 0 so all new messages can be retrieved
-        let createdAt = 0;
-
-        // If there are messages in state the newest messages data will be assigned 
-        // to createdBy for the database query
-        if (messages.length > 0) {
-            // The last message in the message array is destructured out
-            const [oldestMessage] = [...messages].reverse();
-
-            // createdAt is set to the newest messages createdAt time
-            createdAt = oldestMessage.timeStamp;
-        }
-
-        // The database is checked for new messages
-        findAllAfterDateOffsetLimitThunk(createdAt, user.id, friendId, 0, 15)
+    const loadNewMessages = async () => {
+        await findAllAfterDateOffsetLimitThunk(updateMessageIdRef.current, user.id, friendId, 0, 15)
+            .then(res => {
+                // If results were returned from the database query, isQueried is set to true to update the 
+                // newest messageId
+                if (res) {
+                    isQueriedRef.current = true;
+                }
+            })
     }
 
-    // The use effect will rerender only once initially and will only load state 
-    // if a user is logged in
-    useEffect(() => {
-        if (user?.id) {
-            loadState();
-        }
-    }, []);
 
-    // The use effect will rerender only when messages state has changed. It 
-    // will scroll to the end of the message box and trigger a database query for 
-    // new messages on an interval timer
+    // The use effect will rerender only once initially and will only load state 
+    // if a user is logged in. It will also start an interval to search the database for new 
+    // messages to this user
     useEffect(() => {
-        // Scrolling to the last message
-        messageEndScroll()
-        
-        // If a user is logged in and has an id an interval will be set to query 
-        // the database for new messages
+        // If a user is logged in the messages will be loaded and an interval set to retrieve new 
+        // messages
         if (user?.id) {
+            // Loading in the initial message state
+            loadState();
+
+            // Setting an interval to query the database and retrieve new messages
             const interval = setInterval(async () => {
                 // Calling loadNewMessages to check and possibly load in new messages
                 await loadNewMessages();
-            }, 15000);
+            }, 8000);
 
             // The interval is cleared when the component is unmounted
             return () => clearInterval(interval);
         }
+
+    }, []);
+
+
+    // The use effect will rerender only when messages state has changed. It 
+    // will scroll to the end of the message box and update the needed variables
+    // that affect messages
+    useEffect(() => {
+        // Scrolling to the last message
+        messageEndScroll()
+
+        // If new messages were found in the database and added, the oldest messageId will be updated
+        if (isQueriedRef.current) {
+            // Storing the messageId in to be used in the database query
+            updateMessageIdRef.current = messages.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0);
+
+            // The messageId is updated so isQueried is set to false
+            isQueriedRef.current = false;
+        }
+
+        // Updating the current reference to the messages array to be used in useEffect
+        messagesRef.current = messages;
     }, [messages]);
+
 
     // This function will set chatMessage state with the new message
     const onChangeMessage = (e) => {
         const chatMessage = e.target.value
         setChatMessage(chatMessage);
     }
+
 
     // The sendMessageHandler will sent the message to be added to both the database 
     // and state
@@ -137,15 +159,17 @@ function Chat(props) {
             // Call thunk and pass message parameters
             user?.id && sendMessageThunk(userToId, userFromId, message);
         }
-        
+
         // Clear form after you send each message
         clearForm();
     }
+
 
     // Clears the chatMessage text input after each new chat message
     const clearForm = () => {
         setChatMessage("");
     }
+
 
     // This function will scroll the message window to the bottom to read the newest message
     const messageEndScroll = () => {
@@ -153,8 +177,9 @@ function Chat(props) {
         if (!messageScrollTo.current) return;
 
         // If the page is rendered the message box will be scrolled to the bottom
-        messageScrollTo.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest'});
+        messageScrollTo.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
     }
+
 
     // The formatMessages method will format all the new messages to display based off to or from users. 
     // The result will be an easy to read text display
@@ -178,6 +203,7 @@ function Chat(props) {
             ))}
         </>
     )
+
 
     // Returning the Chat View
     return (
