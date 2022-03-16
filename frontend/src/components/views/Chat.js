@@ -73,7 +73,8 @@ function Chat(props) {
 
         // If there are messages found, the most recent messageId is filtered from messages
         if (messages && messages.length > 0) {
-            updateMessageIdRef.current = messagesRef.current.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0);
+            // updateMessageIdRef.current = messagesRef.current.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0);
+            updateMessageIdRef.current = messages.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0);
         }
     }
 
@@ -95,17 +96,18 @@ function Chat(props) {
     // The use effect will rerender only once initially and will only load state 
     // if a user is logged in. It will also start an interval to search the database for new 
     // messages to this user
-    useEffect(() => {
+    useEffect(async () => {
+        messagesRef.current = messages;
         // If a user is logged in the messages will be loaded and an interval set to retrieve new 
         // messages
         if (user?.id) {
             // Loading in the initial message state
-            loadState();
-
+            await loadState()
+            
             // Setting an interval to query the database and retrieve new messages
-            const interval = setInterval(async () => {
+            const interval = setInterval(() => {
                 // Calling loadNewMessages to check and possibly load in new messages
-                await loadNewMessages();
+                loadNewMessages();
             }, 8000);
 
             // The interval is cleared when the component is unmounted
@@ -121,11 +123,15 @@ function Chat(props) {
     useEffect(() => {
         // Scrolling to the last message
         messageEndScroll()
-
+        
+        console.log("IS QUERIEDREF IN USE EFFECT", isQueriedRef.current)
         // If new messages were found in the database and added, the oldest messageId will be updated
         if (isQueriedRef.current) {
             // Storing the messageId in to be used in the database query
             updateMessageIdRef.current = messages.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0);
+            console.log("Message in updateMessageIdRef", updateMessageIdRef.current);
+            console.log("MESSAGES IN update true", messages)
+            console.log("REF MESSAGES IN update true"< messagesRef.current)
 
             // The messageId is updated so isQueried is set to false
             isQueriedRef.current = false;
@@ -133,6 +139,7 @@ function Chat(props) {
 
         // Updating the current reference to the messages array to be used in useEffect
         messagesRef.current = messages;
+        
     }, [messages]);
 
 
