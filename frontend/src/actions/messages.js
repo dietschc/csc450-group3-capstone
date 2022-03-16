@@ -6,6 +6,8 @@
 //  (DAB, 2/16/2022, Added in basic redux actions)
 //  (DAB, 3/14/2022, Added findAllAfterDateOffsetLimitThunk to search 
 //  for messages after the createdAt date)
+//  (DAB, 3/15/2022, Altered the findAllAfterDateOffsetLimitThunk to 
+//  return results based off a messageId )
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -94,7 +96,7 @@ export const findByConversationIdOffsetLimitThunk =
 
 
 /**
- * The findAllAfterDateOffsetLimitThunk will find all messages after the createdAt date given 
+ * The findAllAfterDateOffsetLimitThunk will find all messages after the messageId given 
  * the userToId and userFromId. It will then return results up to the specified offset and limit 
  * then add results to state.
  * 
@@ -110,11 +112,9 @@ export const findAllAfterDateOffsetLimitThunk =
     return await MessageDataService.findAllAfterDateOffsetLimit(messageId, userToId, userFromId, offset, limit)
         .then((res) => {
             // If a result was found it is ordered and added to state
-            if (res) {
+            if (res.data.length > 0) {
                 // Grabbing the data part of the response
                 const messageData = res.data;
-
-                console.log("MESSAGE ID IN THUNK", messageId)
 
                 // The data order will be reversed and then added to state one at 
                 // at time

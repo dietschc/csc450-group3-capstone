@@ -28,7 +28,7 @@ module.exports = app => {
   // Retrieve all messages using the userFrom and To ids. Sorted newest to oldest with offset and limit
   router.get("/sorted/date/:userToId/:userFromId/:offset/:limit", message.findByConversationIdOffsetLimit);
 
-  // Retrieve all messages using the userFrom and To ids written after the createdAt date.
+  // Retrieve all messages using the userFrom and To ids written after the current messageId.
   // Sorted newest to oldest with offset and limit
   router.get("/sorted/date2/:messageId/:userToId/:userFromId/:offset/:limit", message.findAllAfterDateOffsetLimit);
 

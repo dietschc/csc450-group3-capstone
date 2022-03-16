@@ -206,7 +206,7 @@ exports.findByConversationIdOffsetLimit = async (req, res) => {
 
 /**
  * The findAllAfterDateOffsetLimit method will find all messages using the user and friend 
- * ids created after the createBy data up to the specified limit and offset.
+ * ids created after the current messageId data up to the specified limit and offset.
  * 
  * @param {*} req 
  * @param {*} res 
@@ -215,7 +215,7 @@ exports.findAllAfterDateOffsetLimit = async (req, res) => {
     // Checking that offset and limit are numbers, if not a default value will be used
     const searchOffset = isNaN(req.params.offset) ? 0 : parseInt(req.params.offset);
     const searchLimit = isNaN(req.params.limit) ? 999999999999 : parseInt(req.params.limit);
-    // Grabbing the ids and createdAt date out of params to find the conversation
+    // Grabbing the ids and messageId date out of params to find the conversation
     const { userToId, userFromId, messageId } = req.params;
 
     // Async searching the database and returning all messages. The 
