@@ -3,6 +3,7 @@
 // Restaurant Club - RestaurantEditItem.js
 // February 10, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 3/06/2022, Added in button functionality)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -22,11 +23,17 @@ import { formatPhoneNumber } from '../../helperFunction/FormatString';
 function RestaurantEditItem(props) {
     // The form component specific props will be assigned and 
     // used to process the form element
-    const { restaurant } = props;
+    const { 
+        restaurant, 
+        viewRestaurantHandler,
+        editRestaurantHandler,
+        deleteRestaurantHandler 
+    } = props;
+    const restaurantId = restaurant.id;
 
     return (
         <ListGroup as="ul" className="justify-content-center px-0 mb-2">
-            <ListGroup.Item  as="li" className="border-3" style={{minHeight:"3rem"}} action>
+            <ListGroup.Item as="li" className="border-3" style={{ minHeight: "3rem" }} action>
                 <Row className="d-flex justify-content-between align-items-center">
                     <Col sm={6}>
                         <Row>
@@ -35,8 +42,8 @@ function RestaurantEditItem(props) {
                                     {restaurant.name}
                                 </div>
                             </Col>
-                            <Col xs={6} 
-                            className="d-flex justify-content-center justify-content-sm-start ps-0">
+                            <Col xs={6}
+                                className="d-flex justify-content-center justify-content-sm-start ps-0">
                                 <div>
                                     {formatPhoneNumber(restaurant.phone)}
                                 </div>
@@ -44,20 +51,29 @@ function RestaurantEditItem(props) {
                         </Row>
                     </Col>
                     <Col sm={6} className="d-flex justify-content-between">
-                        <Button className="mx-1" style={{width:"7rem"}}>
+                        <Button
+                            className="mx-1"
+                            style={{ width: "7rem" }}
+                            onClick={() => viewRestaurantHandler(restaurantId)}>
                             View
                         </Button>
-                        <Button className="mx-1" style={{width:"7rem"}}>
+                        <Button
+                            className="mx-1"
+                            style={{ width: "7rem" }}
+                            onClick={() => editRestaurantHandler(restaurantId)}>
                             Edit
                         </Button>
-                        <Button className="mx-1" style={{width:"7rem"}}>
+                        <Button
+                            className="mx-1"
+                            style={{ width: "7rem" }}
+                            onClick={() => deleteRestaurantHandler(restaurantId)}>
                             Delete
                         </Button>
                     </Col>
                 </Row>
             </ListGroup.Item>
         </ListGroup>
-    )  
+    )
 }
 
 // Exporting the component

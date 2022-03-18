@@ -17,14 +17,19 @@ export const printStarTotal = (starCount) => {
     let totalStarCount = 0;
     let stars = "";
 
-    for (let i = 0; i < starCount; i++) {
-        stars += '★';
-        totalStarCount += 1;
+    if (starCount === -1) {
     }
+    else {
+        for (let i = 0; i < starCount; i++) {
+            stars += '★';
+            totalStarCount += 1;
+        }
 
-    for (let i = totalStarCount; i < 5; i++) {
-        stars += '☆';
+        for (let i = totalStarCount; i < 5; i++) {
+            stars += '☆';
+        }
     }
+    
 
     return stars;
 }
@@ -37,10 +42,16 @@ export const printStarTotal = (starCount) => {
  * @returns 
  */
 export const printReviewTotal = (reviewCount) => {
-    if (reviewCount <= 1) {
-        return reviewCount + " Review"
+    if (reviewCount === -1) {
+        return "";
     }
     else {
-        return reviewCount + " Reviews"
+        if (reviewCount <= 1) {
+            return reviewCount + " Review"
+        }
+        else {
+            return reviewCount + " Reviews"
+        }
     }
+    
 }

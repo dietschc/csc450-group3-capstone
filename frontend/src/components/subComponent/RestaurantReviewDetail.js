@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 02/07/2022, Changed plain buttons variable to a buttonGroup function)
 //  (DAB, 02/07/2022, Broke up into multiple reusable components)
+//  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -19,7 +20,7 @@ import ReviewHeadingCardBody from './ReviewHeadingCardBody';
  * A React-Bootstrap formatted component that shows the restaurant 
  * details will be generated. 
  * 
- * @param { review, restaurant, buttonGroup, modal } props 
+ * @param { reviews, restaurants, buttonGroup, modal } props 
  * @returns 
  */
 function RestaurantReviewDetail(props) {
@@ -27,37 +28,37 @@ function RestaurantReviewDetail(props) {
     // used to process the form element. 
     //**********NOTE: Feel free to add props but do not remove props you did not add
     // Also do not edit the styles in this component, only outside is allowed ******
-    const { review, restaurant, buttonGroup, modal } = props;
-    
+    const { reviews, restaurants, buttonGroup, modal } = props;
+
     return (
         <Container fluid>
-                <Row>
-                    {review.map((review) => (
-                        <Card className="mb-2" key={review.reviewId} style={{}}>
-                            <ReviewHeadingCardBody review={review} restaurant={restaurant}/>
-                            {/** MAKE SURE TO REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
-                            {console.log("REVIEW IN RRD IS ", review)}
-                            <Card.Img className="mx-auto" 
-                            style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }} 
-                            src={review.image[0].imageLocation} />
-                            <Card.Text className="text-center pt-1">
-                                {review.author.userName}
-                            </Card.Text>
-                            <FullStarRatingRow review={review}/>
-                            <ReviewTextCardBody review={review}/>
-                            <Container  fluid className="d-flex px-0 mb-2 justify-content-center justify-content-sm-center justify-content-md-end ">
-                                {/**Buttons to add function for this Container will generate here, add the 
+            <Row>
+                {reviews.length > 0 && reviews.map((review, index) => (
+                    <Card className="mb-2" key={index} style={{}}>
+                        <ReviewHeadingCardBody review={review} restaurants={restaurants} />
+                        {/** DEBUG MAKE SURE TO REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
+                        {/* {console.log("REVIEW IN RRD IS ", review)} */}
+                        <Card.Img className="mx-auto"
+                            style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }}
+                            src={review.images[0].imageLocation} />
+                        <Card.Text className="text-center pt-1">
+                            {review.author.userName}
+                        </Card.Text>
+                        <FullStarRatingRow key={review.reviewId} review={review} />
+                        <ReviewTextCardBody key={review.reviewId} review={review} />
+                        <Container fluid className="d-flex px-0 mb-2 justify-content-center justify-content-sm-center justify-content-md-end ">
+                            {/**Buttons to add function for this Container will generate here, add the 
                                  * buttons to the container by passing them as functional props*/}
-                                {buttonGroup(review)}
-                            </Container>
-                        </Card>
-                    ))}
-                    {/** A modal can be generated here, add the modal to the container 
+                            {buttonGroup(review)}
+                        </Container>
+                    </Card>
+                ))}
+                {/** A modal can be generated here, add the modal to the container 
                      * by passing it as props*/}
-                    {modal}
-                </Row>
-            </Container>
-    )  
+                {modal}
+            </Row>
+        </Container>
+    )
 }
 
 // Exporting the component

@@ -1,8 +1,9 @@
 // Initially Created by: Devin Brueberg
 // CSC450 Capstone
-// Restaurant Club - DeleteFriendConfirm.js
+// Restaurant Club - DeleteReviewConfirm.js
 // February 6, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 3/06/2022, updated comments)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -12,19 +13,19 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 /**
  * A React Bootstrap formatted confirmation modal that will ask 
- * a user if they wish to delete a friend. If the confirmation 
- * is accepted the deleteFriend function will handle the 
- * deletion of that friend.
+ * a user if they wish to delete a review. If the confirmation 
+ * is accepted the deleteReview function will handle the 
+ * deletion of that review.
  * 
- * @param { show, friend, deleteFriend, closeHandler } props 
+ * @param { show, review, deleteFriend, closeHandler } props 
  * @returns 
  */
 function DeleteReviewConfirm(props) {
     // Destructuring the needed functions and variables from props
-    const { show, review, deleteReview, closeHandler } = props;
+    const { show, deleteReview, closeHandler } = props;
 
-    // The yesHandler will call both the deleteFriend and closeHandler 
-    // functions in order to delete the friend
+    // The yesHandler will call both the deleteReview and closeHandler 
+    // functions in order to delete the review
     const yesHandler = () => {
         deleteReview();
         closeHandler();

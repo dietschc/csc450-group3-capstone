@@ -3,30 +3,42 @@
 // Restaurant Club - EditAccount.js
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
-// (CPD, 1/29/22, GitHub-#29-EditAccount View Layout)
+//  (CPD, 1/29/22, GitHub-#29-EditAccount View Layout)
+//  (DAB, 2/13/2022, Added in react redux connect)
+//  (CPD, 2/22/22, Connected frontend to backend with addUserThunk)
+//  (CPD, 2/27/22, Got states working with redux so we can update values now)
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
-import FormContainer from '../template/FormContainer'
+import FormContainer from '../template/FormContainer';
+import { addUserThunk, updateUserThunk } from '../../actions/users';
+import { checkLogin } from '../../helperFunction/CheckLogin'
+import FloatingStateOptionList from '../form/floatingComponents/FloatingStateOptionList';
 
 function EditAccount(props) {
-    let editing = false
+    const { addUserThunk, updateUserThunk, users } = props;
 
     // keeps track of if the form was submitted
     const [submitted, setSubmitted] = useState(false)
+    // const [validated, setValidated] = useState(false);
+    // Check if user is logged in
+    const isEditing = checkLogin(users);
 
-    const [userName, setUserName] = useState("");
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [address, setAddress] = useState("");
-    const [city, setCity] = useState("");
-    const [zip, setZip] = useState("");
-    const [state, setState] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [userName, setUserName] = useState(users.length > 0 ? users[0].auth.userName : "");
+    const [firstName, setFirstName] = useState(users.length > 0 ? users[0].firstName : "");
+    const [lastName, setLastName] = useState(users.length > 0 ? users[0].lastName : "");
+    const [address, setAddress] = useState(users.length > 0 ? users[0].address.address : "");
+    const [city, setCity] = useState(users.length > 0 ? users[0].address.city : "");
+    const [zip, setZip] = useState(users.length > 0 ? users[0].address.zip : "");
+    const [state, setState] = useState(users.length > 0 ? users[0].address.state : "");
+    const [email, setEmail] = useState(users.length > 0 ? users[0].email : "");
+    const [password, setPassword] = useState(users.length > 0 ? users[0].auth.password : "");
+
+    const navigate = useNavigate();
 
     const onChangeUserName = e => {
         const userName = e.target.value
@@ -73,8 +85,39 @@ function EditAccount(props) {
         setPassword(password);
     }
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        // console.log("handle submit pressed");
+        // const form = event.currentTarget;
+        // if (form.checkValidity() === false) {
+        //     event.preventDefault();
+        //     event.stopPropagation();
+        // }
+
+        // setValidated(true);
+
+        if (isEditing) {
+            updateAccount();
+        } else {
+            saveAccount();
+        }
+    };
+
     const saveAccount = () => {
-        var data = {
+        // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
+        addUserThunk(userName, firstName, lastName, address, city, state, zip, email, password)
+
+        setSubmitted(true)
+
+        // Bring back to user dashboard after
+        setTimeout(() => { navigate("../userDashboard") }, 500);
+    }
+
+    const updateAccount = () => {
+        const id = users.length > 0 ? users[0].id : "";
+
+        let data = {
             userName: userName,
             firstName: firstName,
             lastName: lastName,
@@ -82,12 +125,40 @@ function EditAccount(props) {
             city: city,
             zip: zip,
             state: state,
-            email: email,
+            userEmail: email,
             password: password
         }
-        console.log(data)
-        setSubmitted(true)
+
+        // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
+        updateUserThunk(id, data)
+        // console.log("id: ", id);
+        // console.log("updating with data: ", data);
+
+        // Bring back to user dashboard after
+        setTimeout(() => { navigate("../userDashboard") }, 500);
     }
+
+    /**
+     * Depening on whether you are logged in or not will determine the type of submit button
+     * and calls the relevant save/update function.
+     */
+    const displaySubmitButton = () => (
+        <div className="d-flex justify-content-around pt-2 pb-5">
+            {isEditing ? (
+                <Button type="submit" variant="outline-primary">
+                    Update
+                </Button>
+            ) : (
+                <Button type="submit" variant="outline-primary">
+                    Submit
+                </Button>
+            )}
+
+            <Button variant="outline-primary" onClick={clearForm}>
+                Clear
+            </Button>
+        </div>
+    )
 
     const clearForm = () => {
         setUserName("");
@@ -106,7 +177,7 @@ function EditAccount(props) {
         <FormContainer>
             <Container as="header">
                 <div className="text-center p-1">
-                    <h1>{editing ? "Edit" : "Create"} Account</h1>
+                    <h1>{isEditing ? "Edit" : "Create"} Account</h1>
                 </div>
             </Container>
             <Container fluid as="main" className="p-4 justify-content-center">
@@ -119,147 +190,122 @@ function EditAccount(props) {
                     </div>
 
                 ) : (
-                    <Form>
+                    <Form onSubmit={handleSubmit}>
                         <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel 
-                                controlId="floatingUserId" 
+                            <FloatingLabel
+                                controlId="floatingUserId"
                                 label="User Name">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="User Name"
-                                        required
-                                        value={userName}
-                                        onChange={onChangeUserName}
-                                    />
-                                </FloatingLabel>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="User Name"
+                                    required
+                                    value={userName}
+                                    onChange={onChangeUserName}
+                                />
+                            </FloatingLabel>
                         </Form.Floating>
 
                         <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel 
-                                controlId="floatingFirstName" 
+                            <FloatingLabel
+                                controlId="floatingFirstName"
                                 label="First Name">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="User Name"
-                                        required
-                                        value={firstName}
-                                        onChange={onChangeFirstName}
-                                    />
-                                </FloatingLabel>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="User Name"
+                                    value={firstName}
+                                    onChange={onChangeFirstName}
+                                />
+                            </FloatingLabel>
                         </Form.Floating>
 
                         <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel 
-                                controlId="floatingLastName" 
+                            <FloatingLabel
+                                controlId="floatingLastName"
                                 label="Last Name">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Last Name"
-                                        required
-                                        value={lastName}
-                                        onChange={onChangeLastName}
-                                    />
-                                </FloatingLabel>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Last Name"
+                                    value={lastName}
+                                    onChange={onChangeLastName}
+                                />
+                            </FloatingLabel>
                         </Form.Floating>
-                        
+
                         <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel 
-                                controlId="floatingAddress" 
+                            <FloatingLabel
+                                controlId="floatingAddress"
                                 label="Address">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Address"
-                                        required
-                                        value={address}
-                                        onChange={onChangeAddress}
-                                    />
-                                </FloatingLabel>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Address"
+                                    value={address}
+                                    onChange={onChangeAddress}
+                                />
+                            </FloatingLabel>
                         </Form.Floating>
-                        
+
                         <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel 
-                                controlId="floatingCity" 
+                            <FloatingLabel
+                                controlId="floatingCity"
                                 label="City">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="City"
-                                        required
-                                        value={city}
-                                        onChange={onChangeCity}
-                                    />
-                                </FloatingLabel>
+                                <Form.Control
+                                    type="text"
+                                    placeholder="City"
+                                    value={city}
+                                    onChange={onChangeCity}
+                                />
+                            </FloatingLabel>
                         </Form.Floating>
 
-                        
+
                         <Row className="justify-content-center">
-                            <Form.Floating as={Col} sm={6} className="mb-3 justify-content-center">
-                                <FloatingLabel 
-                                    controlId="floatingState" 
-                                    label="State">
-                                       <Form.Select
-                                        aria-label="select state options"
-                                        value={state}
-                                        onChange={onChangeState}>
-                                            <option>Select</option>
-                                            <option value="MN">MN</option>
-                                            <option value="WI">WI</option>
-                                            <option value="XX">XX</option>
-                                        </Form.Select> 
-                                    </FloatingLabel>
-                            </Form.Floating>
+
+                            <FloatingStateOptionList state={state} onChangeState={onChangeState} />
 
                             <Form.Floating as={Col} sm={6} className="mb-3 justify-content-center">
-                                <FloatingLabel 
-                                    controlId="floatingZip" 
+                                <FloatingLabel
+                                    controlId="floatingZip"
                                     label="Zip">
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Zip"
-                                            required
-                                            value={zip}
-                                            onChange={onChangeZip}
-                                        />
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Zip"
+                                        value={zip}
+                                        onChange={onChangeZip}
+                                    />
                                 </FloatingLabel>
                             </Form.Floating>
                         </Row>
 
                         <Form.Floating className="mb-3 justify-content-center">
                             <FloatingLabel
-                                controlId="floatingEmail" 
+                                controlId="floatingEmail"
                                 label="Email">
-                                    <Form.Control
-                                        type="email"
-                                        placeholder="Email"
-                                        required
-                                        value={email}
-                                        onChange={onChangeEmail}
-                                    />
-                                </FloatingLabel>
+                                <Form.Control
+                                    type="email"
+                                    placeholder="Email"
+                                    required
+                                    value={email}
+                                    onChange={onChangeEmail}
+                                />
+                            </FloatingLabel>
                         </Form.Floating>
 
                         <Form.Floating className="mb-3 justify-content-center">
                             <FloatingLabel
-                                controlId="floatingPassword" 
+                                controlId="floatingPassword"
                                 label="Password">
-                                    <Form.Control
-                                        type="password"
-                                        placeholder="Password"
-                                        required
-                                        value={password}
-                                        onChange={onChangePassword}
-                                    />
-                                </FloatingLabel>
+                                <Form.Control
+                                    type="password"
+                                    placeholder="Password"
+                                    required
+                                    value={password}
+                                    onChange={onChangePassword}
+                                />
+                            </FloatingLabel>
                         </Form.Floating>
 
-                        <div className="d-flex justify-content-around pt-2 pb-5">
-                            <Button variant="outline-primary" onClick={saveAccount}>
-                                {editing ? "Update" : "Submit"}
-                            </Button>
+                        {displaySubmitButton()}
 
-                            <Button variant="outline-primary" onClick={clearForm}>
-                                Clear
-                            </Button>
-                        </div>
                     </Form>
                 )}
             </Container>
@@ -267,5 +313,53 @@ function EditAccount(props) {
     )
 }
 
-// Exporting the component
-export default EditAccount;
+// Mapping the redux store states to props
+const mapStateToProps = state =>
+({
+    users: [...state.users]
+});
+
+// // Mapping the state actions to props
+// const mapDispatchToProps = dispatch => 
+//     ({
+//         // This method will add a new user to users
+//         addUser(userName, firstName, lastName, 
+//             address, city, state, zip, email, password) {
+//             dispatch(addUser(userName, firstName, lastName, 
+//                 address, city, state, zip, email, password))
+//         },
+//         deleteUser(userId) {
+//             dispatch(deleteUser(userId))
+//         },
+//         deleteAllUsers() {
+//             dispatch(deleteAllUsers())
+//         },
+//         updateUser(userId, userName, firstName, lastName, 
+//             address, city, state, zip, email, password) {
+//             dispatch(updateUser(userId, userName, firstName, lastName, 
+//                 address, city, state, zip, email, password))
+//         },
+//         addFriend(userId, friendId, friendUserName) {
+//             dispatch(addFriend(userId, friendId, friendUserName))
+//         },
+//         deleteFriend(userId, friendId) {
+//             dispatch(deleteFriend(userId, friendId))
+//         },
+//         deleteAllFriends(userId) {
+//             dispatch(deleteAllFriends(userId))
+//         },
+//         login(userId) {
+//             dispatch(login(userId))
+//         },
+//         logout(userId) {
+//             dispatch(logout(userId))
+//         },
+//         updatePermission(userId, permissionId, permissionName) {
+//             dispatch(updatePermission(userId, permissionId, permissionName))
+//         }
+
+//     })
+
+
+// Exporting the connect Wrapped EditAccount Component
+export default connect(mapStateToProps, { addUserThunk, updateUserThunk })(EditAccount);

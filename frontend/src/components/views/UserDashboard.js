@@ -9,32 +9,62 @@
 //  (DAB, 02/06/2022, finished the code for RestaurantDetailDetail Component)
 //  (DAB, 02/06/2022, breaking up components/functionality into their own .js files)
 //  (DAB, 02/07/2022, changed buttons to buttonGroup function)
+//  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
+//  (CPD, 03/02/2022, Wiring up frontend to use parameters from backend (user, authentication, address))
+//  (CPD, 03/03/2022, Got currentUser info including friends, reviews, and restaurants loading from backend)
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import mockStateData from "../../redux/initialState.json";
+// import mockStateData from "../../redux/initialState.json";
+import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import FriendList from '../subComponent/FriendList';
 import UserInfo from '../subComponent/UserInfo';
 import RestaurantReviewDetail from '../subComponent/RestaurantReviewDetail';
 import UDRestaurantReviewDetail from '../form/button/UDRestaurantReviewDetail';
 import DeleteReviewConfirm from '../modal/DeleteReviewConfirm';
+import { findByAuthorIdThunk } from '../../actions/reviewsRestaurants';
+import { deleteFriendThunk } from '../../actions/friend';
+import { deleteAllReviews, deleteReviewThunk } from '../../actions/reviews';
+import { deleteAllRestaurants } from '../../actions/restaurants';
 
 function UserDashboard(props) {
+    const {
+        users,
+        restaurants,
+        reviews,
+        findByAuthorIdThunk,
+        deleteFriendThunk,
+        deleteAllReviews,
+        deleteAllRestaurants,
+        deleteReviewThunk
+    } = props;
+
+
     // *** Temporary test data, this will be replaced with Redux in the future ***
-    const [data, setData]=useState(mockStateData);
+    // const [data, setData] = useState(mockStateData);
     const [showFriendConfirm, setShowFriendConfirm] = useState(false);
     const [showReviewConfirm, setShowReviewConfirm] = useState(false);
     const [friend, setFriend] = useState([]);
     const [currentReview, setCurrentReview] = useState([]);
 
     // Destructuring the needed data from the intitialState.json file
-    const { user, restaurant, review, message } = data; 
-    const [currentUser, ...otherUser] = user;
-    const { address: currentAddress }  = currentUser;
-    const { friend: currentFriendList } = currentUser;
+    // const { messages } = data;
+    const [user = []] = users;
+    const { address: currentAddress = [] } = user;
+    const { friends = [] } = user;
+
+    const loadState = () => {
+        deleteAllReviews();
+        deleteAllRestaurants();
+        findByAuthorIdThunk(user.id);
+    }
+
+    useEffect(() => {
+        loadState();
+    }, []);
 
     // Allows for the navigation to the specified webpage
     const navigate = useNavigate();
@@ -53,10 +83,16 @@ function UserDashboard(props) {
 
     // Deletes the friend with the returned friend.userId
     const deleteFriend = () => {
-            // Delete Friend Code Here, use friend.userId to 
-            // grab the correct friend
-            console.log(friend.userName + " was deleted!");
-        }
+        // Define our id paramaeter
+        const id = users.length > 0 ? users[0].id : "";
+
+        // Define our friend id parameter
+        const friendId = friend.id;
+
+        // Call thunk method and pass parameters to backend
+        deleteFriendThunk(id, friendId);
+        console.log(friend.userName + " was deleted!");
+    }
 
     // Handlers for the DeleteReviewConfirm modal
     const showReviewHandler = () => setShowReviewConfirm(true);
@@ -64,15 +100,23 @@ function UserDashboard(props) {
 
     // Deletes the review with the returned reviewId
     const deleteReview = () => {
-        // Delete Review Code Here
-        console.log(currentReview.reviewId + " review was deleted!");
+        // Define our id paramaeter
+        const reviewId = currentReview.id;
+        const imageLocation = currentReview.images[0].imageLocation ?? "";
+
+        // console.log("review id is: ", reviewId);
+
+        // Call thunk method and pass parameters to backend
+        deleteReviewThunk(reviewId, imageLocation);
+
+        console.log(currentReview.id + " review was deleted!");
     }
 
     // Handles the click on the delete review button and sets 
     // the selected review into state
     const deleteReviewHandler = (review) => {
         setCurrentReview(review);
-        console.log("REVIEW IN DELETE HANDLER IS ", currentReview);
+        console.log("REVIEW IN DELETE HANDLER IS ", review);
         showReviewHandler();
     }
 
@@ -85,15 +129,19 @@ function UserDashboard(props) {
     // Navigates to the Chat page passing the requested friend to 
     // chat with's ID into the URL. Used with the FriendList.js 
     // Component
-    const chatHandler = (id) => {
-        navigate("../chat/" + id);
+    const chatHandler = (friend) => {
+        console.log("FRIEND ID FOR CHAT HANDLER IS ", friend.id);
+        navigate("../chat/" + friend.id);
     }
 
     // Navigates to the Review page passing the requested review to 
     // Review with the review ID into the URL. Used with the 
     // RestaurantReviewDetail.js Component
-    const reviewEditHandler = (id) => {
-        navigate("../review/" + id);
+    const reviewEditHandler = (review) => {
+        console.log("REVIEW IN EDIT HANDLER IS ", review.id);
+        const restaurantId = review.restaurant.id;
+        const reviewId = review.id;
+        navigate(`../review/${restaurantId}/${reviewId}`);
     }
 
     // These buttons will be passed into the RestaurantReviewDetail.js 
@@ -101,49 +149,63 @@ function UserDashboard(props) {
     // The review variable needs to be passed as an argument so it can 
     // be generated in the parent
     const buttonGroup = (review) => (
-        <UDRestaurantReviewDetail reviewEditHandler={reviewEditHandler} 
-        deleteReviewHandler={deleteReviewHandler} review={review}/>
+        <UDRestaurantReviewDetail reviewEditHandler={reviewEditHandler}
+            deleteReviewHandler={deleteReviewHandler} review={review} />
     )
 
     // This modal will be passed into the RestaurantReviewDetail.js 
     // Component to allow a confirmation before a review is deleted
     const deleteButtonModal = (
-        <DeleteReviewConfirm 
-        show={showReviewConfirm} 
-        deleteReview={deleteReview}
-        closeHandler={closeReviewHandler} 
-        review={review} />
+        <DeleteReviewConfirm
+            show={showReviewConfirm}
+            deleteReview={deleteReview}
+            closeHandler={closeReviewHandler} />
     )
 
     return (
-        <Container className="justify-content-center" style={{maxWidth: "1000px"}}>
-            {console.log("Test is ", user)}
-            {console.log("Current User is ", currentUser)}
+        <Container className="justify-content-center" style={{ maxWidth: "1000px" }}>
+            {/* {console.log("Test is ", users)}
+            {console.log("Current User is ", user)}
             {console.log("Current Address is ", currentAddress)}
-            {console.log("Test Data .user is ", mockStateData.user)}
+            {console.log("Test Data .user is ", mockStateData.users)} */}
             <h1>
                 User Dashboard
             </h1>
             <Row>
                 <Col className="pb-2" md={6}>
-                    <UserInfo 
-                    currentUser={currentUser}   
-                    currentAddress={currentAddress} 
-                    userInfoHandler={userInfoHandler}/>
+                    <UserInfo
+                        currentUser={user}
+                        currentAddress={currentAddress}
+                        userInfoHandler={userInfoHandler} />
                 </Col>
                 <Col className="pb-2" md={6}>
-                    <FriendList friend={friend} chatHandler={chatHandler} 
-                    deleteFriendHandler={deleteFriendHandler} showFriendConfirm={showFriendConfirm} 
-                    deleteFriend={deleteFriend} closeFriendHandler={closeFriendHandler}
-                    currentFriendList={currentFriendList} closeReviewHandler={closeReviewHandler} 
-                    restaurant={restaurant}/>
+                    <FriendList friend={friend} chatHandler={chatHandler}
+                        deleteFriendHandler={deleteFriendHandler} showFriendConfirm={showFriendConfirm}
+                        deleteFriend={deleteFriend} closeFriendHandler={closeFriendHandler}
+                        friends={friends} closeReviewHandler={closeReviewHandler}
+                        restaurant={restaurants} />
                 </Col>
             </Row>
-            <RestaurantReviewDetail review={review} restaurant={restaurant} 
-            buttonGroup={buttonGroup} modal={deleteButtonModal}/>
+            <RestaurantReviewDetail reviews={reviews} restaurants={restaurants}
+                buttonGroup={buttonGroup} modal={deleteButtonModal} />
         </Container>
     )
 }
 
+// Mapping the redux store states to props
+const mapStateToProps = state =>
+({
+    users: [...state.users],
+    restaurants: [...state.restaurants],
+    reviews: [...state.reviews]
+});
+
 // Exporting the component
-export default UserDashboard;
+// export default UserDashboard;
+export default connect(mapStateToProps, {
+    findByAuthorIdThunk,
+    deleteFriendThunk,
+    deleteAllRestaurants,
+    deleteAllReviews,
+    deleteReviewThunk
+})(UserDashboard);

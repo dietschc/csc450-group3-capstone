@@ -22,7 +22,33 @@ import { printStarTotal, printReviewTotal } from '../../helperFunction/StringGen
 function ReviewHeadingCardBody(props) {
     // The form component specific props will be assigned and 
     // used to process the form element
-    const { review, restaurant } = props;
+    const { review, restaurants } = props;
+
+    // const starTotal = () => {restaurants.filter((restaurant) => (restaurant.id === review.restaurant.id))
+    // .then(currentRestaurant => {
+    //     if (currentRestaurant) {
+    //         return currentRestaurant[0].rating.overallRating
+    //     }
+        
+    // })}
+
+    const currentReview = restaurants.filter((restaurant) => (restaurant.id === review.restaurant.id))
+    const starTotal = currentReview.length > 0 ? currentReview[0].rating.overallRating : -1;
+
+    const currentRestaurant = restaurants.filter((restaurant) => (restaurant.id === review.restaurant.id))
+    const reviewTotal = currentRestaurant.length > 0 ? currentRestaurant[0].reviewCount : -1;
+        
+
+    // const reviewTotal = async () => { await restaurants.filter((restaurant) => (restaurant.id === review.restaurant.id))
+    //     .then(currentReview => {
+    //         if (currentReview) {
+    //             return currentReview[0].reviewCount
+    //         }
+    //         else {
+    //             return 0
+    //         }
+            
+    //     })}
 
     return (
         <Card.Body>
@@ -31,12 +57,14 @@ function ReviewHeadingCardBody(props) {
                     {review.restaurant.name}
                 </div>
             </Card.Title>
-            <Card.Text as="h4" className="text-center">
+            <Card.Text as="h3" className="text-center">
                 <div>
-                    {printStarTotal(restaurant.filter((restaurant) => (restaurant.id === review.restaurant.id))[0].rating.overallRating)}
+                    {/* {printStarTotal(restaurants.filter((restaurant) => (restaurant.id === review.restaurant.id))[0].rating.overallRating)} */}
+                    {printStarTotal(starTotal)}
                 </div>
                 <div className="h6 mb-0">
-                    {printReviewTotal(restaurant.filter((restaurant) => (restaurant.id === review.restaurant.id))[0].reviewCount)}
+                    {/* {printReviewTotal(restaurants.filter((restaurant) => (restaurant.id === review.restaurant.id))[0].reviewCount)} */}
+                    {printReviewTotal(reviewTotal)}
                 </div>
             </Card.Text>
         </Card.Body>
