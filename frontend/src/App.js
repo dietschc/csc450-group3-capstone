@@ -23,43 +23,91 @@ import Search from './components/views/Search';
 import UserDashboard from './components/views/UserDashboard';
 import Admin from './components/views/Admin';
 import { connect } from "react-redux";
+import AuthAdmin from './components/auth/AuthAdmin';
+import AuthLoggedIn from './components/auth/AuthLoggedIn';
+import AuthReview from './components/auth/AuthReview';
 
 function App(props) {
-  // Authentication testing DEBUG*********
-  // const { users } = props;
-  // const [ user=[] ] = users
-  return (
-    <div className="App pb-5">
-      <Routes>
-        <Route exact path='/' element={<Main/>} />
-        <Route path='/restaurant' element={<Restaurant/>} />
-        <Route path='/restaurant/:restaurantId' element={<Restaurant/>} />
-        <Route path='/restaurant/:restaurantId/:authorId' element={<Restaurant/>} />
-        <Route path='/chat' element={<Chat/>} />
-        <Route path='/chat/:id' element={<Chat/>} />
-        <Route path='/editAccount' element={<EditAccount/>} />
-        <Route path='/editRestaurant' element={<EditRestaurant/>} />
-        <Route path='/editRestaurant/:restaurantId' element={<EditRestaurant/>} />
-        <Route path='/login' element={<Login/>} />
-        <Route path='/review' element={<Review/>} />
-        <Route path='/review/:restaurantId' element={<Review/>} />
-        <Route path='/review/:restaurantId/:reviewId' element={<Review/>} />
-        <Route path='/search' element={<Search/>} />
-        <Route path='/search/:restaurantName' element={<Search/>} />
-        <Route path='/search/:restaurantId/:authorId' element={<Search/>} />
-        <Route path='/userDashboard' element={<UserDashboard/>} />
-        <Route path='/userDashboard/:userId' element={<UserDashboard/>} />
-        <Route path='/admin' element={<Admin/>} />
-        <Route path="*" element={<Whoops404/>} />
-      </Routes>
-    </div>
-  );
+    // Authentication testing DEBUG*********
+    // const { users } = props;
+    // const [ user=[] ] = users
+
+    // Need loggedIn = true and permission = admin wrapper
+    // Need loggedIn = true wrapper
+    // Need loggedIn = true && userId = userId wrapper
+    // Need loggedIn = true && (authorId = userId || permission = admin) wrapper
+
+
+
+    // MOST DONE, SOME CHANGES NEED TO BE MADE
+    //  UserDashboard does not load in new user with param. It needs to get updated for an admin to be able to edit all accounts
+    //  EditAccount also has no param and it needs to be added for admin purposes
+    //  Alter Chat to pass userId and FriendId params so admin can check out chat?
+    //  Look into Reviews, admins should be able to edit all reviews. How to implement this? Maybe database calls in the wrapper? Could use for other Views as well
+    //  **Keep in mind we want to allow users to bookmark pages so they should work!!!!
+
+    // Need to add in a way to redirect failed page access attempts to the logIn page then
+    // back to original
+    return (
+        <div className="App pb-5">
+            <Routes>
+                <Route exact path='/' element={<Main />} />
+                <Route path='/restaurant' element={<Restaurant />} />
+                <Route path='/restaurant/:restaurantId' element={<Restaurant />} />
+                <Route path='/restaurant/:restaurantId/:authorId' element={<Restaurant />} />
+                <Route path='/chat' element={<Chat />} />
+                <Route path='/chat/:id' element={<Chat />} />
+                <Route path='/chat/:userId/:friendId' element={<Chat />} />
+                <Route path='/editAccount' element={<EditAccount />} />
+                <Route path='/editAccount/:userId' element={
+                    <AuthAdmin>
+                        <EditAccount />
+                    </AuthAdmin>} />
+                <Route path='/editRestaurant' element={
+                    <AuthLoggedIn>
+                        <EditRestaurant />
+                    </AuthLoggedIn>
+                } />
+                <Route path='/editRestaurant/:restaurantId' element={
+                    <AuthAdmin>
+                        <EditRestaurant />
+                    </AuthAdmin>} />
+                <Route path='/login' element={<Login />} />
+                {/* <Route path='/review' element={<Review />} /> */}
+                <Route path='/review/:restaurantId' element={
+                    <AuthLoggedIn>
+                        <Review />
+                    </AuthLoggedIn>} />
+                <Route path='/review/:restaurantId/:reviewId' element={
+                    <AuthReview>
+                        <Review />
+                    </AuthReview>} />
+                <Route path='/search' element={<Search />} />
+                <Route path='/search/:restaurantName' element={<Search />} />
+                <Route path='/search/:restaurantId/:authorId' element={<Search />} />
+                <Route path='/userDashboard' element={
+                    <AuthLoggedIn>
+                        <UserDashboard />
+                    </AuthLoggedIn>} />
+                <Route path='/userDashboard/:userId' element={
+                    <AuthAdmin>
+                        <UserDashboard />
+                    </AuthAdmin>} />
+                <Route path='/admin' element={
+                    <AuthAdmin>
+                        <Admin />
+                    </AuthAdmin>
+                } />
+                <Route path="*" element={<Whoops404 />} />
+            </Routes>
+        </div>
+    );
 }
 
 
 // Mapping the redux store states to props
 const mapStateToProps = (state) => ({
-  // users: [...state.users]
+    // users: [...state.users]
 });
 
 // Exporting the component

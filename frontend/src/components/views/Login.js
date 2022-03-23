@@ -9,7 +9,7 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button, Form, Container, FloatingLabel, Alert } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { connect } from 'react-redux';
@@ -28,6 +28,7 @@ function Login(props) {
     const [password, setPassword] = useState(users.length > 0 ? users[0].auth.password : "");
 
     const navigate = useNavigate();
+    const { state } = useLocation();
 
     const onChangeUserName = e => {
         setShowError(false);
@@ -103,7 +104,7 @@ function Login(props) {
                     setShowSuccess(true);
 
                     // Navigate to dashboard after .5 seconds
-                    setTimeout(() => { navigate("../userDashboard") }, 500)
+                    setTimeout(() => { navigate(state?.path || "../userDashboard") }, 500)
                 } else {
                     clearForm();
                     setShowError(true);
