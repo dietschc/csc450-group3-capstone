@@ -5,6 +5,8 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/01/2022, Added in Login View Structure)
 //  (CPD, 2/22/22, Connected frontend to backend with loginThunk)
+//  (DAB, 3/22/2022, Added in useLocation state to allow for a user to be redirected back 
+//  to the previous location after logging in)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -28,6 +30,8 @@ function Login(props) {
     const [password, setPassword] = useState(users.length > 0 ? users[0].auth.password : "");
 
     const navigate = useNavigate();
+    // Pulling state from useLocation to allow for the user to be redirected back to the page 
+    // they were previously on before redirect
     const { state } = useLocation();
 
     const onChangeUserName = e => {
@@ -103,7 +107,7 @@ function Login(props) {
                     // setSubmitted(true);
                     setShowSuccess(true);
 
-                    // Navigate to dashboard after .5 seconds
+                    // Navigate to previous page or dashboard after .5 seconds
                     setTimeout(() => { navigate(state?.path || "../userDashboard") }, 500)
                 } else {
                     clearForm();

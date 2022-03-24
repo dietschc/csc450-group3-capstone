@@ -6,10 +6,14 @@
 // TJI, 13 Feb 2022, Added pb-5 to stop sticky footer covering low content
 //  (DAB, 3/05/2022, Added in search for restaurantName param)
 //  (DAB, 3/06/2022, Added in routes for params with editRestaurant and userDashboard)
+//  (DAB, 3/24/2022, Added in Route Authentication for Admin, UserDashboard, Chat, EditAccount, 
+//  EditRestaurant, and Review)
+//  (DAB, 3/24/2022, Added in enhanced UX by auto directing then redirecting a user to where they 
+//  want to go)
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import './App.css';
 import Main from './components/views/Main';
 import Whoops404 from './components/views/Whoops404';
@@ -26,37 +30,26 @@ import { connect } from "react-redux";
 import AuthAdmin from './components/auth/AuthAdmin';
 import AuthLoggedIn from './components/auth/AuthLoggedIn';
 import AuthReview from './components/auth/AuthReview';
+import AuthChat from './components/auth/AuthChat';
 
 function App(props) {
     // Authentication testing DEBUG*********
     // const { users } = props;
     // const [ user=[] ] = users
 
-    // Need loggedIn = true and permission = admin wrapper
-    // Need loggedIn = true wrapper
-    // Need loggedIn = true && userId = userId wrapper
-    // Need loggedIn = true && (authorId = userId || permission = admin) wrapper
-
-
-
-    // MOST DONE, SOME CHANGES NEED TO BE MADE
-    //  UserDashboard does not load in new user with param. It needs to get updated for an admin to be able to edit all accounts
-    //  EditAccount also has no param and it needs to be added for admin purposes
-    //  Alter Chat to pass userId and FriendId params so admin can check out chat?
-    //  Look into Reviews, admins should be able to edit all reviews. How to implement this? Maybe database calls in the wrapper? Could use for other Views as well
-    //  **Keep in mind we want to allow users to bookmark pages so they should work!!!!
-
-    // Need to add in a way to redirect failed page access attempts to the logIn page then
-    // back to original
     return (
         <div className="App pb-5">
             <Routes>
                 <Route exact path='/' element={<Main />} />
-                <Route path='/restaurant' element={<Restaurant />} />
+                <Route path='/restaurant' element={<Navigate replace to='/search' />} />
                 <Route path='/restaurant/:restaurantId' element={<Restaurant />} />
                 <Route path='/restaurant/:restaurantId/:authorId' element={<Restaurant />} />
-                <Route path='/chat' element={<Chat />} />
-                <Route path='/chat/:id' element={<Chat />} />
+                <Route path='/chat' element={<Navigate replace to='/userDashboard' />} />
+                <Route path='/chat/:id' element={
+                    <AuthChat>
+                        <Chat />
+                    </AuthChat>
+                } />
                 <Route path='/chat/:userId/:friendId' element={<Chat />} />
                 <Route path='/editAccount' element={<EditAccount />} />
                 <Route path='/editAccount/:userId' element={
@@ -73,7 +66,7 @@ function App(props) {
                         <EditRestaurant />
                     </AuthAdmin>} />
                 <Route path='/login' element={<Login />} />
-                {/* <Route path='/review' element={<Review />} /> */}
+                <Route path='/review' element={<Navigate replace to='/search' />} />
                 <Route path='/review/:restaurantId' element={
                     <AuthLoggedIn>
                         <Review />

@@ -7,7 +7,7 @@
 //  (DAB, 03/14/2022, Chat box now scrolls to the bottom after each message)
 //  (DAB, 03/14/2022, Chat now works with interval chat on 15 sec delay)
 //  (DAB, 03/14/2022, Added comments)
-//  (DAB, 03/15/2022, Fixed logic for interval database retrieval)
+//  (DAB, 03/15/2022, Fixed logic for interval database retrieval)F
 
 // Using React library in order to build components 
 // for the app and importing needed components
