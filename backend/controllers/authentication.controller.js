@@ -14,6 +14,8 @@ const User = db.users;
 const Address = db.address;
 const Friend = db.friend;
 const Permission = db.permission;
+const config = require("../config/auth.config");
+const jwt = require("jsonwebtoken");
 
 // Create and Save a new Authentication
 exports.create = (req, res) => {
@@ -81,7 +83,7 @@ exports.login = async (req, res) => {
             return err;
         });
 
-    // Setup out userId parameter (if it exists)
+    // Setup our userId parameter (if it exists)
     let id = 0;
     if (getAuth) {
         id = getAuth.userId;
@@ -146,12 +148,17 @@ exports.login = async (req, res) => {
         friends = formatFriends(getFriends);
     }
 
+    // Create New Access Token
+    const token = jwt.sign({ id: getUser.userId }, config.secret, {
+        expiresIn: config.jwtExpiration
+    });
+
     // Get address info
     Address.findByPk(addressId)
         .then(getAddress => {
             if (getAddress) {
-                // Return all 3 JSON objects in an array in the response
-                res.json({ getAuth, getUser, friends, getAddress });
+                // Return the following JSON objects in the response
+                res.json({ getAuth, getUser, friends, getAddress, token });
             } else {
                 res.status(404).send({
                     message: `Cannot find User`

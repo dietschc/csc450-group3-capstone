@@ -7,36 +7,48 @@
 //  (DAB, 3/06/2022, Added in findByNameOffsetLimit)
 
 module.exports = app => {
-  const users = require("../controllers/user.controller.js");
-  var router = require("express").Router();
+	const users = require("../controllers/user.controller.js");
+	var router = require("express").Router();
+	const { authJwt } = require("../middleware");
 
-  // Create a new User
-  router.post("/", users.create);
+	router.use(function (req, res, next) {
+		res.header(
+			"Access-Control-Allow-Headers",
+			"x-access-token, Origin, Content-Type, Accept"
+		);
+		next();
+	});
 
-  // Retrieve all Users
-  router.get("/", users.findAll);
+	// Create a new User
+	router.post("/", users.create);
 
-  // Retrieve a single User with id
-  router.get("/:id", users.findOne);
+	// Retrieve all Users
+	// router.get("/", users.findAll);
 
-  // Retrieve authentication searched by user userName with offset and limit
-  router.get("/search/:offset/:limit/:userName", users.findByNameOffsetLimit);
+	// Enforce token check to retrieve all users
+	router.get("/", [authJwt.verifyToken], users.findAll);
 
-  // Add friend for user id specified in body
-  router.post("/friends/:id", users.addFriend);
+	// Retrieve a single User with id
+	router.get("/:id", users.findOne);
 
-  // Get all friends for user id
-  router.get("/friends/:id", users.getAllFriends);
+	// Retrieve authentication searched by user userName with offset and limit
+	router.get("/search/:offset/:limit/:userName", users.findByNameOffsetLimit);
 
-  // Delete friend for user id specified in body
-  router.delete("/friends/:id", users.deleteFriend);
+	// Add friend for user id specified in body
+	router.post("/friends/:id", users.addFriend);
 
-  // Update a User with id
-  router.put("/:id", users.update);
+	// Get all friends for user id
+	router.get("/friends/:id", users.getAllFriends);
 
-  // Delete a User with id
-  router.delete("/:id", users.delete);
+	// Delete friend for user id specified in body
+	router.delete("/friends/:id", users.deleteFriend);
 
-  // URL to user for route
-  app.use('/users', router);
+	// Update a User with id
+	router.put("/:id", users.update);
+
+	// Delete a User with id
+	router.delete("/:id", users.delete);
+
+	// URL to user for route
+	app.use('/users', router);
 };
