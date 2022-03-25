@@ -32,7 +32,7 @@ function Review(props) {
     const restaurantName = paramRestaurant.name;
 
     // console.log("review id: ", reviewId);
-    // console.log("restaurant id: ", restaurantId);
+    console.log("restaurant id: ", restaurantId);
     // console.log("restaurant details: ", paramRestaurant);
     // console.log("review details: ", paramReview);
     // console.log("review id greater than 0: ", paramReview.id > 0);
@@ -49,6 +49,16 @@ function Review(props) {
     const [tempFileUrl, setTempFileUrl] = useState("");
 
     const navigate = useNavigate();
+
+    // Probably throw in a useEffect with []
+    const isRestaurant = () => {
+        if (paramRestaurant.length <= 0) {
+            // Maybe even check that restaurantId is a number to skip a database request first?
+            // Search database for restaurant
+            // If no results are found then redirect to...? search so a new one can be added
+            // or searched for
+        }
+    }
 
     const onChangeTasteRating = e => {
         const tasteRating = e.target.value
