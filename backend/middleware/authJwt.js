@@ -1,7 +1,15 @@
+// Initially Created by: Coleman Dietsch
+// CSC450 Capstone
+// Restaurant Club - authJwt.js
+// March 24, 2022
+// Last Edited (Initials, Date, Edits):
+
 const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
 const db = require("../models");
-const User = db.user;
+const Authentication = db.authentication;
+const User = db.users;
+const Address = db.address;
 
 // Catch expired access tokens
 const { TokenExpiredError } = jwt;
@@ -40,50 +48,76 @@ const verifyToken = (req, res, next) => {
 };
 
 /**
+ * Function to check permission level matching admin 
  * 
  * @param {*} req 
  * @param {*} res 
  * @param {*} next 
  */
 const isAdmin = (req, res, next) => {
-    User.findByPk(req.userId).then(user => {
-        user.getRoles().then(roles => {
-            for (let i = 0; i < roles.length; i++) {
-                if (roles[i].name === "admin") {
-                    next();
-                    return;
-                }
-            }
+
+    // Set id variable from req parameter
+    const id = req.userId;
+
+    // Check the user table to get permission id (level)
+    User.findByPk((id), { include: [Address, Authentication] })
+        .then(user => {
+
+            // PermissionId 4 is admin
+            if (user.authentication.permissionId === 4) {
+                // res.send(user);
+                next();
+                return;
+            } 
+
+            // Send 403 permission error response otherwise
             res.status(403).send({
-                message: "Requires Admin Permissions!"
+                message: "Requires Admin Permission!"
             });
-            return;
+        })
+        // Catch other errors
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Error retrieving User with id=" + id
+            });
         });
-    });
 };
 
 /**
+ * Function to check permission level matching owner 
  * 
  * @param {*} req 
  * @param {*} res 
  * @param {*} next 
  */
 const isOwner = (req, res, next) => {
-    User.findByPk(req.userId).then(user => {
+    // Set id variable from req parameter
+    const id = req.userId;
 
-        user.getRoles().then(roles => {
-            for (let i = 0; i < roles.length; i++) {
-                if (roles[i].name === "owner") {
-                    next();
-                    return;
-                }
-            }
+    // Check the user table to get permission id (level)
+    User.findByPk((id), { include: [Address, Authentication] })
+        .then(user => {
 
+            // PermissionId 2 is owner
+            if (user.authentication.permissionId === 2) {
+                // res.send(user);
+                next();
+                return;
+            } 
+
+            // Send 403 permission error response otherwise
             res.status(403).send({
                 message: "Requires Owner Permission!"
             });
+        })
+        // Catch other errors
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Error retrieving User with id=" + id
+            });
         });
-    });
 };
 
 

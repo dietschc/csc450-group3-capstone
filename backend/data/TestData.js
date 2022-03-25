@@ -428,12 +428,20 @@ loadTestData = async () => {
     await addUser(user4Data)
     await addUser(user5Data)
 
+    // Set user 5 to admin permission
     const data = {
         userId: 5,
         permissionId: 4
     }
 
+    // Set user 2 to owner permission
+    const data2 = {
+        userId: 2,
+        permissionId: 2
+    }
+
     await updatePermission(data);
+    await updatePermission(data2);
 
     console.log("Loading in Restaurants")
     await addRestaurant(restaurant1Data)

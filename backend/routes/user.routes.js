@@ -26,7 +26,10 @@ module.exports = app => {
 	// router.get("/", users.findAll);
 
 	// Enforce token check to retrieve all users
-	router.get("/", [authJwt.verifyToken], users.findAll);
+	// router.get("/", [authJwt.verifyToken], users.findAll);
+
+	// Enforce token check to retrieve all users and is admin
+	router.get("/", [authJwt.verifyToken, authJwt.isAdmin], users.findAll);
 
 	// Retrieve a single User with id
 	router.get("/:id", users.findOne);

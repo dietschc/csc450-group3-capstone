@@ -148,8 +148,8 @@ exports.login = async (req, res) => {
         friends = formatFriends(getFriends);
     }
 
-    // Create New Access Token
-    const token = jwt.sign({ id: getUser.userId }, config.secret, {
+    // Create New Access Token, include user id
+    const accessToken = jwt.sign({ id: getUser.userId }, config.secret, {
         expiresIn: config.jwtExpiration
     });
 
@@ -158,7 +158,7 @@ exports.login = async (req, res) => {
         .then(getAddress => {
             if (getAddress) {
                 // Return the following JSON objects in the response
-                res.json({ getAuth, getUser, friends, getAddress, token });
+                res.json({ getAuth, getUser, friends, getAddress, accessToken });
             } else {
                 res.status(404).send({
                     message: `Cannot find User`
