@@ -4,13 +4,15 @@
 // February 14, 2022
 // Last Edited (Initials, Date, Edits):
 // (CPD, 2/28, Added friend routes on users controller)
-//  (DAB, 3/06/2022, Added in findByNameOffsetLimit)
+// (DAB, 3/06/2022, Added in findByNameOffsetLimit)
+// (CPD, 3/24/2022, Added x-access-token to header, testing authJwt functions)
 
 module.exports = app => {
 	const users = require("../controllers/user.controller.js");
 	var router = require("express").Router();
 	const { authJwt } = require("../middleware");
 
+	// Add access tokens to headers
 	router.use(function (req, res, next) {
 		res.header(
 			"Access-Control-Allow-Headers",
@@ -26,7 +28,7 @@ module.exports = app => {
 	// router.get("/", users.findAll);
 
 	// Enforce token check to retrieve all users
-	// router.get("/", [authJwt.verifyToken], users.findAll);
+	router.get("/", [authJwt.verifyToken], users.findAll);
 
 	// Enforce token check to retrieve all users and is admin
 	router.get("/", [authJwt.verifyToken, authJwt.isAdmin], users.findAll);

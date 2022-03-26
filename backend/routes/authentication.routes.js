@@ -4,16 +4,30 @@
 // February 15, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 3/06/2022, Added in updateByUserId)
+//  (CPD, 3/26/2022, Added access token header parameters and new route for refreshToken)
 
 module.exports = app => {
   const authentication = require("../controllers/authentication.controller.js");
   var router = require("express").Router();
+  // const { authJwt } = require("../middleware");
+
+  // Add access tokens to headers
+  // router.use(function (req, res, next) {
+  //   res.header(
+  //     "Access-Control-Allow-Headers",
+  //     "x-access-token, Origin, Content-Type, Accept"
+  //   );
+  //   next();
+  // });
 
   // Create a new Authentication
   router.post("/", authentication.create);
 
   // Call login function
   router.post("/login", authentication.login);
+
+  // Request new access token, as long as the refresh token is not expired
+  router.post("/refreshtoken", authentication.refreshToken);
 
   // Call checkUserName function
   router.post("/checkusername", authentication.checkUserName);
