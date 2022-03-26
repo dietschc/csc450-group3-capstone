@@ -31,17 +31,20 @@ const catchError = (err, res) => {
 const verifyToken = (req, res, next) => {
     let token = req.headers["x-access-token"];
     
+    // Must provide access token in headers
     if (!token) {
         return res.status(403).send({
             message: "No token provided!"
         });
     }
 
+    // Use JWT verify function on supplied token
     jwt.verify(token, config.secret, (err, decoded) => {
         if (err) {
             return catchError(err, res);
         }
 
+        // Keep track of the decoded user id of this token
         req.userId = decoded.id;
         next();
     });
