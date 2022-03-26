@@ -18,7 +18,8 @@ module.exports = (sequelize, Sequelize) => {
     });
 
     /**
-     * Creates a new refresh token in the database, the refresh token string is returned
+     * Static method called from Authentication.login() that creates a new refresh token 
+     * and stores that in the database. The token string is returned.
      * 
      * @param {*} user 
      * @returns 
@@ -43,7 +44,8 @@ module.exports = (sequelize, Sequelize) => {
     };
 
     /**
-     * Simple function will return true if the argument token is expired
+     * Static helper method called from Authentication.refreshToken() will return true if the argument 
+     * token is expired. Is used to remove expired tokens from the database.
      * 
      * @param {*} token 
      * @returns 
