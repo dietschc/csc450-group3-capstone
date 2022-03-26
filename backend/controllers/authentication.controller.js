@@ -382,6 +382,7 @@ exports.refreshToken = async (req, res) => {
     }
 
     try {
+        // Make sure the supplied refresh token is present in the database
         let refreshToken = await RefreshToken.findOne({ where: { token: requestToken } });
         console.log(refreshToken)
 
@@ -397,6 +398,7 @@ exports.refreshToken = async (req, res) => {
         if (RefreshToken.verifyExpiration(refreshToken)) {
             RefreshToken.destroy({ where: { id: refreshToken.id } });
 
+            // Send 403 response indicating that your token was expired
             res.status(403).json({
                 message: "Refresh token was expired. Please make a new signin request",
             });
@@ -404,7 +406,7 @@ exports.refreshToken = async (req, res) => {
             return;
         }
 
-        // Create new access token, include user id
+        // Create new access token, include user id, secret, and expiration
         const newAccessToken = jwt.sign({ id: userId }, config.secret, {
             expiresIn: config.jwtExpiration,
         });
