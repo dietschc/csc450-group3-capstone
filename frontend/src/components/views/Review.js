@@ -3,14 +3,18 @@
 // Restaurant Club - Review.js
 // January 24, 2022
 // Last Edited (Initials, Date, Edits):
-// (CPD, 02/4/22, Review View Layout #33 - Initial layout and styling)
-// (CPD, 03/08/22, Added image upload and create review functionality)
-// (CPD, 03/10/22, Added update review thunk)
-// (CPD, 03/12/22, Added code to display an upload image preview)
+//  (CPD, 02/4/22, Review View Layout #33 - Initial layout and styling)
+//  (CPD, 03/08/22, Added image upload and create review functionality)
+//  (CPD, 03/10/22, Added update review thunk)
+//  (CPD, 03/12/22, Added code to display an upload image preview)
+//  (DAB, 3/24/22, Began adding inner authorization for reviewing restaurants)
+//  (DAB, 3/27/22, Inner authorization for reviews complete. A user can now 
+//  only review a valid restaurant and the review must be for that restaurant)
+//  (DAB, 3/27/22, Enhanced comments)
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 import FloatingImageUpload from '../form/floatingComponents/FloatingImageUpload';
 import ModalCancelConfirm from '../form/modal/ModalCancelConfirm';
@@ -18,58 +22,115 @@ import { useParams, useNavigate } from "react-router-dom";
 import { printStarTotal } from '../../helperFunction/StringGenerator';
 import { connect } from 'react-redux';
 import { addReviewThunk, updateReviewThunk } from '../../actions/reviews';
+import { findByRestaurantIdThunk } from '../../actions/restaurants';
 
+/**
+ * The Review View will allow a user to create and edit restaurant reviews. The 
+ * Review page has validations that verify the user can only create reviews for 
+ * existing restaurants and edit reviews referencing their respective restaurants.
+ * 
+ * @param {*} props 
+ * @returns 
+ */
 function Review(props) {
 
-    const { users, reviews, restaurants, addReviewThunk, updateReviewThunk } = props;
+    // Destructuring the needed arrays and data functions from props
+    const { users, reviews, restaurants } = props;
+    const { addReviewThunk, updateReviewThunk, findByRestaurantIdThunk } = props;
+    const starFont = { color: "gold" }
 
     // Extract IDs from URL as parameters
     const { restaurantId, reviewId } = useParams();
-    const [paramRestaurant = []] = restaurants.filter((restaurant) => (restaurant.id) === Number(restaurantId));
-    const [paramReview = []] = reviews.filter((review) => (review.id) === Number(reviewId));
+    let [paramRestaurant = []] = restaurants.filter((restaurant) => (restaurant.id) === Number(restaurantId));
+    const [paramReview] = reviews.filter((review) => (review.id) === Number(reviewId));
 
     // Display restaurant name
     const restaurantName = paramRestaurant.name;
 
-    // console.log("review id: ", reviewId);
-    // console.log("restaurant id: ", restaurantId);
-    // console.log("restaurant details: ", paramRestaurant);
-    // console.log("review details: ", paramReview);
-    // console.log("review id greater than 0: ", paramReview.id > 0);
-
     // If the params review id > 0, this implies you are editing a review 
-    const [isUpdate, setIsUpdate] = useState(paramReview.id > 0 ? true : false);
-    const [tasteRating, setTasteRating] = useState(paramReview.id > 0 ? paramReview.rating.tasteRating : "3");
-    const [serviceRating, setServiceRating] = useState(paramReview.id > 0 ? paramReview.rating.serviceRating : "3");
-    const [cleanRating, setCleanRating] = useState(paramReview.id > 0 ? paramReview.rating.cleanlinessRating : "3");
-    const [overallRating, setOverallRating] = useState(paramReview.id > 0 ? paramReview.rating.overallRating : "3");
-    const [reviewTitle, setReviewTitle] = useState(paramReview.id > 0 ? paramReview.reviewTitle : "");
-    const [reviewText, setReviewText] = useState(paramReview.id > 0 ? paramReview.reviewText : "");
+    const [isUpdate, setIsUpdate] = useState(paramReview?.id > 0 ? true : false);
+    const [tasteRating, setTasteRating] = useState(paramReview?.id > 0 ? paramReview.rating.tasteRating : "3");
+    const [serviceRating, setServiceRating] = useState(paramReview?.id > 0 ? paramReview.rating.serviceRating : "3");
+    const [cleanRating, setCleanRating] = useState(paramReview?.id > 0 ? paramReview.rating.cleanlinessRating : "3");
+    const [overallRating, setOverallRating] = useState(paramReview?.id > 0 ? paramReview.rating.overallRating : "3");
+    const [reviewTitle, setReviewTitle] = useState(paramReview?.id > 0 ? paramReview.reviewTitle : "");
+    const [reviewText, setReviewText] = useState(paramReview?.id > 0 ? paramReview.reviewText : "");
     const [file, setFile] = useState("");
     const [tempFileUrl, setTempFileUrl] = useState("");
 
+    // The navigate reference will allow redirecting users to appropriate pages if needed
     const navigate = useNavigate();
 
-    const onChangeTasteRating = e => {
-        const tasteRating = e.target.value
-        setTasteRating(tasteRating);
+    // This useEffect will run only once on load in
+    useEffect(() => {
+        // If there is a restaurantId then the restaurant will be loaded in if needed
+        if (restaurantId) {
+            // If there is no restaurant in paramRestaurant, then the database will 
+            // be queried for that restaurant
+            if (paramRestaurant.length <= 0) {
+                // Calling get restaurant to search and add a restaurant to state if 
+                // it exists
+                getRestaurant()
+            }
+        }
+    }, []);
+
+
+    // This useEffect runs every time the restaurants state is changed
+    useEffect(() => {
+        // Checking the restaurants state for a restaurant that matched the param restaurantId
+        paramRestaurant = restaurants.filter((restaurant) => (restaurant.id) === Number(restaurantId));
+
+        // If a restaurant was found and a review exists
+        if (paramRestaurant.length > 0 && paramReview) {
+            // If the review is not written for the referenced restaurantId the user is 
+            // rerouted back to dashBoard
+            if (paramRestaurant[0]?.id != paramReview?.restaurant?.id) {
+                navigate("/userDashboard");
+            }
+        }
+    }, [restaurants])
+
+
+    // The getRestaurant method will search the database for the restaurant in the restaurantId. 
+    // If it exists it will add it to state otherwise it will navigate the user to the search 
+    // page to look for a different restaurant
+    const getRestaurant = async () => {
+        // Saving the query result of true (success)/false (no data) to result
+        const result = await findByRestaurantIdThunk(restaurantId)
+
+        // If the database was searched and no results were found, the user is 
+        // navigated to the search page
+        if (!result) {
+            navigate('/search');
+        }
     }
 
-    const onChangeServiceRating = e => {
-        const serviceRating = e.target.value
-        setServiceRating(serviceRating);
-    }
 
+    // The handleSubmit method will handle the initial form submission
+    const handleSubmit = async (e) => {
+        // Preventing default form submission action
+        e.preventDefault();
+
+        // If this is an update to an existing review, updateReview is called
+        if (isUpdate) {
+            await updateReview();
+        }
+        // Else this is a new review so saveReview is called
+        else {
+            await saveReview();
+        }
+    };
+
+
+    // Handles the clean rating form input
     const onChangeCleanRating = e => {
         const cleanRating = e.target.value
         setCleanRating(cleanRating);
     }
 
-    const onChangeOverallRating = e => {
-        const overallRating = e.target.value
-        setOverallRating(overallRating);
-    }
 
+    // Handles the file form input
     const onChangeFile = e => {
         const file = e.target.files[0]
         setFile(file);
@@ -79,31 +140,44 @@ function Review(props) {
         setTempFileUrl(tempFileUrl);
     }
 
-    const onChangeReviewTitle = e => {
-        const reviewTitle = e.target.value
-        setReviewTitle(reviewTitle);
+
+    // Handles the overall rating form input
+    const onChangeOverallRating = e => {
+        const overallRating = e.target.value
+        setOverallRating(overallRating);
     }
 
+
+    // Handles the review text form input
     const onChangeReviewText = e => {
         const reviewText = e.target.value
         setReviewText(reviewText);
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
 
-        // console.log("file info: ", file);
+    // Handles the review title form input
+    const onChangeReviewTitle = e => {
+        const reviewTitle = e.target.value
+        setReviewTitle(reviewTitle);
+    }
 
-        if (isUpdate) {
-            await updateReview();
-        } else {
-            await saveReview();
-        }
-    };
 
-    /**
-     * Save review function calls the addReviewThunk
-     */
+    // Handles the service rating form input
+    const onChangeServiceRating = e => {
+        const serviceRating = e.target.value
+        setServiceRating(serviceRating);
+    }
+
+
+    // Handles the taste rating form input
+    const onChangeTasteRating = e => {
+        const tasteRating = e.target.value
+        setTasteRating(tasteRating);
+    }
+
+
+    // The saveReview method will save the new review to the database then navigate the 
+    // user to the dashboard
     const saveReview = async () => {
         // Set user id
         const userId = users[0].id;
@@ -153,7 +227,6 @@ function Review(props) {
         />
     )
 
-    const starFont = { color: "gold" }
 
     return (
         <Container fluid className="text-muted" style={{ maxWidth: "1000px" }}>
@@ -330,34 +403,9 @@ const mapStateToProps = state =>
     users: [...state.users]
 });
 
-// // Mapping the state actions to props
-// const mapDispatchToProps = dispatch => 
-//     ({
-//         // This method will add a new review
-//         addReview(userName, userId, restaurantId, restaurantName, tasteRating, 
-//             serviceRating, cleanlinessRating, overallRating, reviewTitle, 
-//             reviewText, imageLocation) {
-//             dispatch(addReview(userName, userId, restaurantId, restaurantName, tasteRating, 
-//                 serviceRating, cleanlinessRating, overallRating, reviewTitle, 
-//                 reviewText, imageLocation)
-//                 )
-//         },
-//         deleteAllReviews() {
-//             dispatch(deleteAllReviews()
-//             )
-//         },
-//         deleteReview(id) {
-//             dispatch(deleteReview(id))
-//         },
-//         updateReview(reviewId, tasteRating, 
-//             serviceRating, cleanlinessRating, overallRating, reviewTitle, 
-//             reviewText, imageLocation) {
-//                 dispatch(updateReview(reviewId, tasteRating, 
-//                     serviceRating, cleanlinessRating, overallRating, reviewTitle, 
-//                     reviewText, imageLocation))    
-//         }
-//     })
-
-
 // Exporting the connect Wrapped EditAccount Component
-export default connect(mapStateToProps, { addReviewThunk, updateReviewThunk })(Review);
+export default connect(mapStateToProps, {
+    addReviewThunk,
+    updateReviewThunk,
+    findByRestaurantIdThunk
+})(Review);
