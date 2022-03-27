@@ -5,6 +5,8 @@
 // Last Edited (Initials, Date, Edits):
 // (CPD, 2/27/2022, Added findByNameOffsetLimit function)
 // (CPD, 3/3/2022, Updating login function to return friends)
+// (CPD, 3/24/2022, Included creating new access token to login)
+// (CPD, 3/26/2022, Included new refresh token to login)
 
 const db = require("../models");
 const Sequelize = require("sequelize");
@@ -14,6 +16,9 @@ const User = db.users;
 const Address = db.address;
 const Friend = db.friend;
 const Permission = db.permission;
+const RefreshToken = db.refreshToken;
+const config = require("../config/auth.config");
+const jwt = require("jsonwebtoken");
 
 // Create and Save a new Authentication
 exports.create = (req, res) => {
@@ -63,13 +68,13 @@ exports.login = async (req, res) => {
 
     // Create getAuth object
     const getAuth = await Authentication.findOne(
-        {   
-            include:[Permission],
+        {
+            include: [Permission],
             where: {
                 userName: userName,
                 userPassword: userPassword
-        }
-    })
+            }
+        })
         .then(data => {
             if (data) {
                 return data;
@@ -81,7 +86,7 @@ exports.login = async (req, res) => {
             return err;
         });
 
-    // Setup out userId parameter (if it exists)
+    // Setup our userId parameter (if it exists)
     let id = 0;
     if (getAuth) {
         id = getAuth.userId;
@@ -146,12 +151,23 @@ exports.login = async (req, res) => {
         friends = formatFriends(getFriends);
     }
 
+    // Create new Access Token, include user id
+    const accessToken = jwt.sign({ id: getUser.userId }, config.secret, {
+        expiresIn: config.jwtExpiration
+    });
+
+    // Create new refresh token, pass in getUser object data as parameter
+    const refreshToken = await RefreshToken.createToken(getUser);
+
     // Get address info
     Address.findByPk(addressId)
         .then(getAddress => {
             if (getAddress) {
-                // Return all 3 JSON objects in an array in the response
-                res.json({ getAuth, getUser, friends, getAddress });
+                // Return the following JSON objects in the response
+                res.json({
+                    getAuth, getUser, friends, getAddress,
+                    accessToken, refreshToken
+                });
             } else {
                 res.status(404).send({
                     message: `Cannot find User`
@@ -350,3 +366,59 @@ exports.findByNameOffsetLimit = async (req, res) => {
             });
         });
 }
+
+/**
+ * This function will attempt to create a new access token, as long as the refresh token is not expired
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 
+ */
+exports.refreshToken = async (req, res) => {
+    // Refresh token is required
+    const { refreshToken: requestToken } = req.body;
+    if (requestToken == null) {
+        return res.status(403).json({ message: "Refresh Token is required!" });
+    }
+
+    try {
+        // Make sure the supplied refresh token is present in the database
+        let refreshToken = await RefreshToken.findOne({ where: { token: requestToken } });
+        console.log(refreshToken)
+
+        if (!refreshToken) {
+            res.status(403).json({ message: "Refresh token is not in database!" });
+            return;
+        }
+
+        // Save our userId so we can use it to create more access tokens
+        const { userId } = refreshToken;
+
+        // If the refresh token is expired, remove it from the database
+        if (RefreshToken.verifyExpiration(refreshToken)) {
+            RefreshToken.destroy({ where: { id: refreshToken.id } });
+
+            // Send 403 response indicating that your token was expired
+            res.status(403).json({
+                message: "Refresh token was expired. Please make a new signin request",
+            });
+
+            return;
+        }
+
+        // Create new access token, include user id, secret, and expiration
+        const newAccessToken = jwt.sign({ id: userId }, config.secret, {
+            expiresIn: config.jwtExpiration,
+        });
+
+        // Return new access token and refresh token in response
+        return res.status(200).json({
+            accessToken: newAccessToken,
+            refreshToken: refreshToken.token,
+        });
+
+        // Catch all other errors
+    } catch (err) {
+        return res.status(500).send({ message: err });
+    }
+};
