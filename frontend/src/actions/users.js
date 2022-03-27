@@ -119,6 +119,74 @@ export const deleteUserThunk = (userId) => async dispatch => {
  * @param {*} userName
  * @returns 
  */
+ export const findByUserIdThunk = (userId) => async dispatch => {
+    // The user database will be queried for all users within the 
+    // parameter offset/limit that are like the userName
+    await UserDataService.get(userId)
+        .then(async res => {
+            console.log(res);
+            // If there is data in the query it is added to redux state
+            if (res.data) {
+                    // The user data is formatted to be added to redux state
+                    const userData = formatDBUserFind(res.data);
+                    const { friendOne } = res.data;
+                    console.log("friendsOne", friendOne);
+                    console.log("USERS DATA IN FIND FRIEND BY ID", userData)
+
+
+                    // // Adding the user to redux state
+                    await dispatch(addUser(userData));
+
+                    await friendOne.forEach(friend => {
+                        console.log(friend);
+                        // const newFriend = {
+                        //     friendOneId: friend.friendTwoId,
+                        //     friendTwoId: friend.friendId,
+                        //     userName: friend.friendTwo.authentication.userName
+                        // }
+                        const newFriend = {
+                            friendOneId: friend.friendOneId,
+                            friendTwoId: friend.friendTwoId,
+                            userName: friend.friendTwo.authentication.userName
+                        }
+
+                        dispatch(addFriend(newFriend));
+                    });
+
+            //         // Add each friend to state
+            // res[1].forEach(e => {
+            //     // console.log(e);
+                
+            //     const newFriend = { 
+            //         friendOneId: res[0].id, 
+            //         friendTwoId: e.userId, 
+            //         userName: e.userName
+            //     }
+            //     dispatch(addFriend(newFriend));
+            // });
+
+                    // Returning the user data
+                    // return userData;
+                    return true;
+                
+            }
+        })
+        .catch(err => {
+            // If there is an error it will be logged
+            console.log(err)
+            return false;
+        })
+}
+
+/**
+ * Searches the database by user name for all matching users up to the 
+ * offset/limit. It will then add the results to state.
+ * 
+ * @param {*} offset 
+ * @param {*} limit 
+ * @param {*} userName
+ * @returns 
+ */
  export const findByUserNameThunk = (offset, limit, userName) => async dispatch => {
     // The user database will be queried for all users within the 
     // parameter offset/limit that are like the userName
@@ -155,7 +223,7 @@ export const deleteUserThunk = (userId) => async dispatch => {
 export const addUser = ({ userId, userName,
     firstName, lastName, address, addressId, authId,
     city, state, zip, userEmail, permissionId, permissionName, 
-    isLoggedIn, userPassword, createdAt, modifiedAt }) => ({
+    isLoggedIn, userPassword, createdAt, modifiedAt, friends }) => ({
         type: C.ADD_USER,
         id: userId,
         firstName: firstName,
@@ -179,6 +247,7 @@ export const addUser = ({ userId, userName,
             modifiedAt: modifiedAt || new Date()
         },
         email: userEmail,
+        friends: friends,
         isLoggedIn: isLoggedIn || false
     })
 

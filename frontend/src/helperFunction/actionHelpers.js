@@ -142,6 +142,7 @@ export const formatDBReviewFind = (review) => {
 export const formatDBUserFind = (user) => {
     // If data was found it will format and return the result
     if (user) {
+        console.log("USER IN FORMAT IS", user)
         return {
             userId: user.userId,
             addressId: user.addressId,
@@ -151,8 +152,29 @@ export const formatDBUserFind = (user) => {
             ...user.address,
             ...user.authentication,
             ...user.authentication.permission
-
         }
+        // let friends = [];
+        // user?.friendOne.forEach(e => {
+        //     friends = [
+        //         ...friends,
+        //         {
+        //             friendOneId: e.friendOneId,
+        //             friendTwoId: e.friendTwoId,
+        //             userName: e.friendTwo.authentication.userName
+        //         }
+        //     ]
+        // })
+        // return {
+        //     userId: user.userId,
+        //     addressId: user.addressId,
+        //     firstName: user.firstName,
+        //     lastName: user.lastName,
+        //     userEmail: user.userEmail,
+        //     ...user.address,
+        //     ...user.authentication,
+        //     ...user.authentication.permission,
+        //     friends: friends
+        // }
     }
     // Else it will just return the parameter
     else {

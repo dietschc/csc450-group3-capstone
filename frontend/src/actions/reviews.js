@@ -244,7 +244,10 @@ export const deleteReviewThunk = (reviewId, imageLocation) => async dispatch => 
 
     // Delete the image from cloud storage if it exists
     if (imageLocation !== '') {
-        await ImageDataService.delete(imageLocation);
+        await ImageDataService.delete(imageLocation)
+        .catch(err => {
+            console.log(err);
+        })
     }
 
     //Call and await the review data service delete method, passing the parameters

@@ -36,7 +36,7 @@ function UserInfo(props) {
                                     User Id:
                                 </Col>
                                 <Col className="justify-content-start" xs={7} lg={8}>
-                                    {currentUser.id}
+                                    {currentUser?.id}
                                 </Col>
                             </Row>
                         </ListGroup.Item>
@@ -46,7 +46,7 @@ function UserInfo(props) {
                                     First Name:
                                 </Col>
                                 <Col className="justify-content-start" xs={7} lg={8}>
-                                    {currentUser.firstName}
+                                    {currentUser?.firstName}
                                 </Col>
                             </Row>
                         </ListGroup.Item>
@@ -56,7 +56,7 @@ function UserInfo(props) {
                                     Last Name:
                                 </Col>
                                 <Col className="justify-content-start" xs={7} lg={8}>
-                                    {currentUser.lastName}
+                                    {currentUser?.lastName}
                                 </Col>
                             </Row>
                         </ListGroup.Item>
@@ -66,7 +66,7 @@ function UserInfo(props) {
                                     Address:
                                 </Col>
                                 <Col className="justify-content-start" xs={7} lg={8}>
-                                    {currentAddress.address}
+                                    {currentAddress?.address}
                                 </Col>
                             </Row>
                         </ListGroup.Item>
@@ -76,7 +76,7 @@ function UserInfo(props) {
                                     City:
                                 </Col>
                                 <Col className="justify-content-start" xs={7} lg={8}>
-                                    {currentAddress.city}
+                                    {currentAddress?.city}
                                 </Col>
                             </Row>
                         </ListGroup.Item>
@@ -86,7 +86,7 @@ function UserInfo(props) {
                                     State:
                                 </Col>
                                 <Col className="justify-content-start" xs={7} lg={8}>
-                                    {currentAddress.state}
+                                    {currentAddress?.state}
                                 </Col>
                             </Row>
                         </ListGroup.Item>
@@ -96,7 +96,7 @@ function UserInfo(props) {
                                     Zip:
                                 </Col>
                                 <Col className="justify-content-start" xs={7} lg={8}>
-                                    {currentAddress.zip}
+                                    {currentAddress?.zip}
                                 </Col>
                             </Row>
                         </ListGroup.Item>
@@ -106,7 +106,7 @@ function UserInfo(props) {
                                     Email:
                                 </Col>
                                 <Col className="justify-content-start" xs={7} lg={8}>
-                                    {currentUser.email}
+                                    {currentUser?.email}
                                 </Col>
                             </Row>
                         </ListGroup.Item>

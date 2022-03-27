@@ -16,10 +16,9 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
-// import mockStateData from "../../redux/initialState.json";
+import { Container, Row, Col, Alert, Toast } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import FriendList from '../subComponent/FriendList';
 import UserInfo from '../subComponent/UserInfo';
 import RestaurantReviewDetail from '../subComponent/RestaurantReviewDetail';
@@ -29,6 +28,7 @@ import { findByAuthorIdThunk } from '../../actions/reviewsRestaurants';
 import { deleteFriendThunk } from '../../actions/friend';
 import { deleteAllReviews, deleteReviewThunk } from '../../actions/reviews';
 import { deleteAllRestaurants } from '../../actions/restaurants';
+import { deleteAdditionalUsers, deleteUser, findByUserIdThunk } from '../../actions/users';
 
 function UserDashboard(props) {
     const {
@@ -37,10 +37,14 @@ function UserDashboard(props) {
         reviews,
         findByAuthorIdThunk,
         deleteFriendThunk,
+        deleteAdditionalUsers,
         deleteAllReviews,
         deleteAllRestaurants,
-        deleteReviewThunk
+        deleteReviewThunk,
+        findByUserIdThunk,
+        deleteUser
     } = props;
+    const { userId } = useParams();
 
 
     // *** Temporary test data, this will be replaced with Redux in the future ***
@@ -50,21 +54,76 @@ function UserDashboard(props) {
     const [friend, setFriend] = useState([]);
     const [currentReview, setCurrentReview] = useState([]);
 
+    // const [show, setShow] = useState(false);
+
+    const [user, setUser] = useState(users.length > 0 ? users[0] : []);
+    const [currentAddress, setCurrentAddress] = useState(users.length > 0 ? users[0].address : []);
+    const [friends, setFriends] = useState(users.length > 0 ? users[0].friends : []);
     // Destructuring the needed data from the intitialState.json file
     // const { messages } = data;
-    const [user = []] = users;
-    const { address: currentAddress = [] } = user;
-    const { friends = [] } = user;
+    // let [user = []] = users;
+    // let { address: currentAddress = [] } = user;
+    // let { friends = [] } = user;
 
-    const loadState = () => {
-        deleteAllReviews();
-        deleteAllRestaurants();
-        findByAuthorIdThunk(user.id);
+    const loadState = async () => {
+        await deleteAllReviews();
+        await deleteAllRestaurants();
+
+        console.log("USER ID FOR PARAM IS", userId)
+        if (userId) {
+            const result = await findByAuthorIdThunk(userId);
+            console.log("Result in loadState is", result)
+            if (!result) {
+                navigate("/admin")
+                console.log("Should navigate to admin here")
+            }
+            else {
+                if (userId != users[0].id) {
+                    // add a user to state, and filter for that user. 
+                    // Assign this user to the user variable
+                    const tempUser = users.filter(user => Number(userId) === user.id);
+                    // if (tempUser.length < 1) {
+                    //     console.log("LOADING IN A NEW USER< SHOULD NOT BE IN STATE")
+                    //     await findByUserIdThunk(userId)
+                    // }
+                    if (tempUser.length > 0) {
+                        await deleteUser(Number(userId));
+                    }
+                    console.log("LOADING IN A NEW USER< SHOULD NOT BE IN STATE")
+                    await findByUserIdThunk(userId)
+
+
+
+
+                }
+            }
+
+        }
+        else {
+            findByAuthorIdThunk(user.id);
+        }
+
     }
 
     useEffect(() => {
+        // deleteAdditionalUsers();
         loadState();
     }, []);
+
+    useEffect(() => {
+        if (userId) {
+            // user = users.filter(user => Number(userId) === user.id)[0]
+            const tempUser = users.filter(user => Number(userId) === user.id)[0]
+            setUser(tempUser)
+            setCurrentAddress(tempUser?.address)
+            setFriends(tempUser?.friends || []);
+            // currentAddress = await user.address;
+            console.log("USER IS", tempUser)
+        }
+        else {
+            setFriends(users[0]?.friends)
+        }
+    }, [users])
 
     // Allows for the navigation to the specified webpage
     const navigate = useNavigate();
@@ -83,15 +142,25 @@ function UserDashboard(props) {
 
     // Deletes the friend with the returned friend.userId
     const deleteFriend = () => {
-        // Define our id paramaeter
-        const id = users.length > 0 ? users[0].id : "";
+        if (!userId) {
+            // Define our id paramaeter
+            const id = users.length > 0 ? users[0].id : "";
 
-        // Define our friend id parameter
-        const friendId = friend.id;
+            // Define our friend id parameter
+            const friendId = friend.id;
 
-        // Call thunk method and pass parameters to backend
-        deleteFriendThunk(id, friendId);
-        console.log(friend.userName + " was deleted!");
+            // Call thunk method and pass parameters to backend
+            deleteFriendThunk(id, friendId);
+            console.log(friend.userName + " was deleted!");
+        }
+        else {
+            const id = user.id;
+            const friendId = friend.id;
+
+            deleteFriendThunk(id, friendId);
+            console.log(friend.userName + " was deleted")
+        }
+        
     }
 
     // Handlers for the DeleteReviewConfirm modal
@@ -100,7 +169,7 @@ function UserDashboard(props) {
 
     // Deletes the review with the returned reviewId
     const deleteReview = () => {
-        // Define our id paramaeter
+        // Define our id parameter 
         const reviewId = currentReview.id;
         const imageLocation = currentReview.images[0].imageLocation ?? "";
 
@@ -123,7 +192,13 @@ function UserDashboard(props) {
     // Navigates to the user editAccount page. This is used 
     // in the UserInfo.js component to edit the current account
     const userInfoHandler = () => {
-        navigate("../editAccount");
+        if (!userId) {
+            navigate("../editAccount");
+        }
+        else {
+            navigate(`/editAccount/${userId}`);
+        }
+        
     }
 
     // Navigates to the Chat page passing the requested friend to 
@@ -131,7 +206,13 @@ function UserDashboard(props) {
     // Component
     const chatHandler = (friend) => {
         console.log("FRIEND ID FOR CHAT HANDLER IS ", friend.id);
-        navigate("../chat/" + friend.id);
+        if (!userId) {
+            navigate("../chat/" + friend.id);
+        }
+        else {
+            // setShow(true);
+        }
+
     }
 
     // Navigates to the Review page passing the requested review to 
@@ -183,7 +264,7 @@ function UserDashboard(props) {
                         deleteFriendHandler={deleteFriendHandler} showFriendConfirm={showFriendConfirm}
                         deleteFriend={deleteFriend} closeFriendHandler={closeFriendHandler}
                         friends={friends} closeReviewHandler={closeReviewHandler}
-                        restaurant={restaurants} />
+                        restaurant={restaurants} userId={userId} />
                 </Col>
             </Row>
             <RestaurantReviewDetail reviews={reviews} restaurants={restaurants}
@@ -207,5 +288,8 @@ export default connect(mapStateToProps, {
     deleteFriendThunk,
     deleteAllRestaurants,
     deleteAllReviews,
-    deleteReviewThunk
+    deleteReviewThunk,
+    findByUserIdThunk,
+    deleteAdditionalUsers,
+    deleteUser
 })(UserDashboard);
