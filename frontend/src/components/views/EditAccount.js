@@ -126,7 +126,7 @@ function EditAccount(props) {
             zip: zip,
             state: state,
             userEmail: email,
-            password: password
+            userPassword: password
         }
 
         // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
