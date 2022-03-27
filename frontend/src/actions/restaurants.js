@@ -234,10 +234,12 @@ export const findByRestaurantIdThunk = (restaurantId) => async dispatch => {
                 dispatch(addRestaurant(restaurantData));
 
                 // Returning the restaurant data
-                return restaurantData;
+                // return restaurantData;
+                return true;
             }
             else {
-                res.send({ message: "Restaurant not found" })
+                console.log("Restaurant not found");
+                return false;
             }
         }
         )

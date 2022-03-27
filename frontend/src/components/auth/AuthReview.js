@@ -60,6 +60,10 @@ function AuthReview(props) {
         const isAuthor = users[0]?.id === reviews.filter(review => review.id === Number(reviewId))[0]?.author?.id;
         // Checking if the user holds an admin permission
         isAdmin = users[0]?.auth?.permission?.permissionName === 'admin';
+        console.log("IsLoggedIn", isLoggedIn)
+        console.log("Admin", isAdmin);
+        console.log("Is Author", isAuthor)
+        console.log("FINAL RESULT", isLoggedIn && (isAuthor || isAdmin))
 
         // If the user is logged in and is either an author or holds an admin permission. All other 
         // conditions will return false

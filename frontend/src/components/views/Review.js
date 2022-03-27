@@ -26,7 +26,7 @@ function Review(props) {
 
     // Extract IDs from URL as parameters
     const { restaurantId, reviewId } = useParams();
-    const [paramRestaurant = []] = restaurants.filter((restaurant) => (restaurant.id) === Number(restaurantId));
+    let [paramRestaurant = []] = restaurants.filter((restaurant) => (restaurant.id) === Number(restaurantId));
     const [paramReview = []] = reviews.filter((review) => (review.id) === Number(reviewId));
 
     // Display restaurant name
@@ -51,6 +51,8 @@ function Review(props) {
 
     const navigate = useNavigate();
 
+    // CHECK THE REVIEW IN DATABASE NEXT
+
     // Probably throw in a useEffect with []
     // const isRestaurant = () => {
     //     if (paramRestaurant.length <= 0) {
@@ -61,31 +63,91 @@ function Review(props) {
     //     }
     // }
 
+    const getData = async () => {
+        // setIsUpdate(true);
+                // ADD THE CHECK TO SEE IF RESTAURANT IS ALREADY IN STATE
+                // await findByRestaurantIdThunk(restaurantId)
+                // .then(result => {
+                //         // paramRestaurant = restaurants.filter((restaurant) => (restaurant.id) === Number(restaurantId));
+                //         // if (paramRestaurant.length <= 0) {
+                //         //     // navigate("/userDashboard")
+                //         //     console.log("PARAMRESTAURANT IN GETDATA IF", paramRestaurant)
+                //         // }
+                //         // else {
+                //         //     console.log("PARAMRESTAURANT IN GETDATA ELSE", paramRestaurant)
+                //         //     if (paramRestaurant[0]?.id !== paramReview[0]?.restaurant?.id) {
+                //         //         console.log("REVIEW AND RESTAURANT ID DO NOT MATCH")
+                //         //     }
+                //         // }
+                //         if (result) {
+                //             console.log("RESULT DATA IS", result)
+                //             console.log("DATA WAS FOUND SO NO REROUTE")
+                //         }
+                //         else {
+                //             console.log("ELSE DATA IS", result)
+                //             console.log("DATA WAS NOT FOUND SO REROUTE")
+                //         }
+                //     }
+                    
+                // )
+                if (await findByRestaurantIdThunk(restaurantId)) {
+                    console.log("RESULT DATA IS")
+                    console.log("DATA WAS FOUND SO NO REROUTE")
+                }
+                else {
+                    console.log("ELSE DATA IS")
+                    console.log("DATA WAS NOT FOUND SO REROUTE")
+                }
+                
+    }
+
     // This useEffect will initially check if there is a restaurantId. If there is is not, 
     // it will query the database for that Id
     useEffect(() => {
+        console.log("PARAMRESTAURANT", paramRestaurant)
         // If there is a restaurantId then the restaurant will be loaded in if needed. The 
         // isUpdate is also set to true so that form will render in update mode vs create
         if (restaurantId) {
             // Filtering to see if the restaurant is in state
             // const paramRestaurant = restaurants.filter((restaurant) => (restaurant.id) == restaurantId)
             // If it is, then isUpdate is set to true
-            if (paramRestaurant.length > 0) {
-                setIsUpdate(true);
-            }
-            // Else the restaurant Id is queried in the database
-            else {
-                setIsUpdate(false);
-                if (findByRestaurantIdThunk(restaurantId)) {
-                    setIsUpdate(true)
-                }
-                else {
-                    navigate("/userDashboard")
-                }
-            
+            if (paramRestaurant.length <= 0) {
+                getData()
             }
         }
+        // if (reviewId) {
+        //     if (paramReview.length > 0) {
+                
+        //     }
+        // }
     }, []);
+
+    useEffect(() => {
+        paramRestaurant = restaurants.filter((restaurant) => (restaurant.id) === Number(restaurantId));
+        console.log("PARAMRESTAURANT IN USEEFFECT FOR RESTAURANTS", paramRestaurant)
+        console.log("PARAMREVIEW IS", paramReview)
+        console.log("LENGTHS", paramRestaurant.length, paramReview)
+        if (paramRestaurant.length > 0 && paramReview) {
+            console.log("BOTH paramRestaurant and review have length")
+            if (paramRestaurant[0]?.id != paramReview?.restaurant?.id) {
+                    console.log("REVIEW AND RESTAURANT ID DO NOT MATCH, reroute")
+            }
+            else {
+                console.log("Review Id and Restaurant ID do match, no reroute")
+            }
+        }
+    }, [restaurants])
+
+    // useEffect(() => {
+    //     if (paramRestaurant.length > 0 && paramReview.length > 0) {
+    //         if (paramRestaurant[0]?.id !== paramReview[0]?.restaurant?.id) {
+    //                 console.log("REVIEW AND RESTAURANT ID DO NOT MATCH, reroute")
+    //         }
+    //         else {
+    //             console.log("Review Id and Restaurant ID do match, no reroute")
+    //         }
+    //     }
+    // }, [paramRestaurant])
 
     const onChangeTasteRating = e => {
         const tasteRating = e.target.value
