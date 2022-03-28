@@ -9,6 +9,7 @@
 //  (CPD, 2/27/22, Got states working with redux so we can update values now)
 //  (DAB, 3/28/22, Admin editAccount functionality implemented)
 //  (DAB, 3/28/22, Cleaned up code and added comments)
+//  (DAB, 3/28/22, Added in clear form modal)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -20,6 +21,7 @@ import FormContainer from '../template/FormContainer';
 import { addUserThunk, updateUserThunk, findByUserIdThunk, deleteUser } from '../../actions/users';
 import { checkLogin } from '../../helperFunction/CheckLogin'
 import FloatingStateOptionList from '../form/floatingComponents/FloatingStateOptionList';
+import ModalConfirmation from '../modal/ModalCancelConfirm';
 
 /**
  * The EditAccount View will allow a users account information to be 
@@ -44,6 +46,9 @@ function EditAccount(props) {
 
     // keeps track of if the form was submitted
     const [submitted, setSubmitted] = useState(false)
+
+    // Confirm modal local state
+    const [showClearFormConfirm, setShowClearFormConfirm] = useState(false);
 
     // Form field state
     const [userName, setUserName] = useState(users.length > 0 ? users[0].auth.userName : "");
@@ -98,6 +103,10 @@ function EditAccount(props) {
         setEmail("");
         setPassword("");
     }
+
+
+    // The close handler will close the clear form modal
+    const closeClearFormHandler = () => setShowClearFormConfirm(false);
 
 
     // The handleSubmit method will call either update account or 
@@ -246,6 +255,10 @@ function EditAccount(props) {
     }
 
 
+    // The show handler will show the close form modal
+    const showClearFormHandler = () => setShowClearFormConfirm(true);
+
+
     // The updateAccount will allow the user to update an existing account. 
     // If a param userId exists the user will update that account, if not 
     // the user will update their own account
@@ -308,7 +321,7 @@ function EditAccount(props) {
                 </Button>
             )}
 
-            <Button variant="outline-primary" onClick={clearForm}>
+            <Button variant="outline-primary" onClick={showClearFormHandler}>
                 Clear
             </Button>
         </div>
@@ -450,6 +463,10 @@ function EditAccount(props) {
                     </Form>
                 )}
             </Container>
+            <ModalConfirmation 
+            show={showClearFormConfirm} 
+            closeHandler={closeClearFormHandler} 
+            clearForm={clearForm} />
         </FormContainer>
     )
 }
