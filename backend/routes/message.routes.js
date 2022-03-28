@@ -5,6 +5,8 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/28/2022, Added in comments)
 //  (DAB, 3/14/2022, Added in findAllAfterDateOffsetLimit)
+//  (DAB, 3/28/2022, Updated the route name for findAllAfterDateOffsetLimit 
+//  to describe its behavior of findAllByIdOffsetLimit)
 
 module.exports = app => {
   const message = require("../controllers/message.controller.js");
@@ -30,7 +32,7 @@ module.exports = app => {
 
   // Retrieve all messages using the userFrom and To ids written after the current messageId.
   // Sorted newest to oldest with offset and limit
-  router.get("/sorted/date2/:messageId/:userToId/:userFromId/:offset/:limit", message.findAllAfterDateOffsetLimit);
+  router.get("/sorted/byId/:messageId/:userToId/:userFromId/:offset/:limit", message.findAllByIdOffsetLimit);
 
   // URL to message for route
   app.use('/message', router);

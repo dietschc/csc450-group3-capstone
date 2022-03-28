@@ -4,6 +4,8 @@
 // February 28, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 3/14/2022, Added service for findAllAfterDateOffsetLimit)
+//  (DAB, 3/28/2022, Updated the service name for findAllAfterDateOffsetLimit 
+//  to describe its behavior of findAllByIdOffsetLimit)
 
 // Importing the Axios default settings
 import http from "../http-common";
@@ -84,8 +86,8 @@ class MessageDataService {
      * @param {*} limit 
      * @returns - All messages found between the two users in ASC modifiedAt order
      */
-    findAllAfterDateOffsetLimit(messageId, userToId, userFromId, offset, limit) {
-        return http.get(`/message/sorted/date2/${messageId}/${userToId}/${userFromId}/${offset}/${limit}`);
+    findAllByIdOffsetLimit(messageId, userToId, userFromId, offset, limit) {
+        return http.get(`/message/sorted/byId/${messageId}/${userToId}/${userFromId}/${offset}/${limit}`);
     }
 }
 
