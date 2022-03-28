@@ -56,10 +56,10 @@ exports.create = async (req, res) => {
             return "Error checking username";
         });
     // Debug code
-    console.log("user name is: " + userNameAvaialble);
+    console.log("user name is: " + userNameAvailable);
 
     // If the userName is available, procede with creating a new account
-    if (userNameAvaialble === "Available") {
+    if (userNameAvailable === "Available") {
 
         // Build parameters for address table insert
         const address = {
@@ -108,7 +108,7 @@ exports.create = async (req, res) => {
             permissionId: 1, // FK constraint with Permission table
             userName: req.body.userName,
             userPassword: req.body.userPassword,
-            // historyId: null, // FK constraing with History table
+            // historyId: null, // FK constraint with History table
         }
 
         if(authentication.userPassword)

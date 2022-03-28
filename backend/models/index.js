@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 // (DAB, 2/20/2022, Added in image, reviewImage, review and rating models)
 // (CPD, 2/28/2022, Commented out History and Authentication association)
+// (CPD, 2/28/2022, Added RefreshToken and Authentication associations)
 
 const dbConfig = require("../config/db.config.js");
 const Sequelize = require("sequelize");
@@ -36,6 +37,7 @@ db.history = require("./history.model")(sequelize, Sequelize);
 db.conversation = require("./conversation.model")(sequelize, Sequelize);
 db.message = require("./message.model")(sequelize, Sequelize);
 db.permission = require("./permission.model")(sequelize, Sequelize);
+db.refreshToken = require("./refreshToken.model")(sequelize, Sequelize);
 
 
 // Authentication to Permission Association
@@ -108,6 +110,10 @@ db.friend.belongsTo(db.users, { as: 'friendTwo', foreignKey: 'friendTwoId' });
 // User to Review Association
 db.users.hasMany(db.review, { foreignKey: 'userId' });
 db.review.belongsTo(db.users, { foreignKey: 'userId' });
+
+// Authentication to refreshToken Association
+db.refreshToken.belongsTo(db.authentication, { foreignKey: 'userId' });
+db.authentication.hasOne(db.refreshToken, { foreignKey: 'userId' });
 
 // Exporting the database
 module.exports = db;

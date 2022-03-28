@@ -221,29 +221,31 @@ export const findAllRestaurantsOrderedThunk = (offset, limit) => async dispatch 
 export const findByRestaurantIdThunk = (restaurantId) => async dispatch => {
     // The restaurant database will be queried for all restaurants within the 
     // parameter offset/limit that are like the restaurantName
-    await RestaurantDataService.get(restaurantId)
+    return await RestaurantDataService.get(restaurantId)
         .then(async res => {
-            console.log(res);
             // If there is data in the query it is added to redux state
             if (res) {
-                console.log("RESULTS IN FIND BY RESTAURANT", res)
                 // The restaurant data is formatted to be added to redux state
                 const restaurantData = formatDBRestaurantFind(res.data);
 
                 // Adding the restaurant to redux state
                 dispatch(addRestaurant(restaurantData));
 
-                // Returning the restaurant data
-                return restaurantData;
+                // Returning true if data was added to the state
+                return true;
             }
+            // Else data was not found so false is returned
             else {
-                res.send({ message: "Restaurant not found" })
+                console.log("Restaurant not found");
+                return false;
             }
         }
         )
         .catch(err => {
-            // If there is an error it will be logged
+            // If there is an error it will be logged, and false 
+            // will be returned
             console.log(err)
+            return false;
         })
 }
 
