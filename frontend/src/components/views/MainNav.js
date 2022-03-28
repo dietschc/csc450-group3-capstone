@@ -45,7 +45,6 @@ function MainNav(props) {
     // Setting the active nav element
     const setActive = (value) => {
         if (value === basicActive) return;
-        console.log("Navigating to " + value)
         setBasicActive(value);
     }
 
