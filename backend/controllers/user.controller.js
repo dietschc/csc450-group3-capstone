@@ -19,6 +19,7 @@ const Authentication = db.authentication;
 const Permission = db.permission;
 const Address = db.address;
 const Friend = db.friend;
+const bcrypt = require('bcrypt');
 
 // Create and Save a new User
 // Asynchronous method to create a user with the parameters passed from the frontend.
@@ -110,6 +111,12 @@ exports.create = async (req, res) => {
             // historyId: null, // FK constraing with History table
         }
 
+        if(authentication.userPassword)
+        {
+            const salt = await bcrypt.genSaltSync(10, 'a');
+            authentication.userPassword = bcrypt.hashSync(authentication.userPassword, salt);
+        }
+
         // Save Authentication in the database
         Authentication.create(authentication)
             .then(newAuth => {
@@ -198,6 +205,12 @@ exports.update = async (req, res) => {
         .then(status => {
             return status;
         })
+
+    if(req.body.userPassword)
+    {
+        const salt = await bcrypt.genSaltSync(10, 'a');
+        req.body.userPassword = bcrypt.hashSync(req.body.userPassword, salt);
+    }
 
     // Try to update auth table
     const authUpdateStatus = await Authentication.update(req.body, {

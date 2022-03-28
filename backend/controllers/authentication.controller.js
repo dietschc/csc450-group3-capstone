@@ -14,6 +14,7 @@ const User = db.users;
 const Address = db.address;
 const Friend = db.friend;
 const Permission = db.permission;
+const bcrypt = require('bcrypt');
 
 // Create and Save a new Authentication
 exports.create = (req, res) => {
@@ -33,6 +34,14 @@ exports.create = (req, res) => {
         userPassword: req.body.userPassword,
         // historyId: req.body.historyId,
     };
+
+    if(authentication.userPassword)
+    {
+        const salt = bcrypt.genSaltSync(10, 'a');
+        authentication.userPassword = bcrypt.hashSync(authentication.userPassword, salt);
+    }
+
+    console.log(authentication);
 
     // Save Authentication in the database
     Authentication.create(authentication)
@@ -67,15 +76,20 @@ exports.login = async (req, res) => {
             include:[Permission],
             where: {
                 userName: userName,
-                userPassword: userPassword
         }
     })
         .then(data => {
-            if (data) {
-                return data;
-            } else {
-                return "incorrect username password";
-            }
+            const match = bcrypt.compareSync(userPassword, data.userPassword);
+
+            if (match)
+                { return data; }
+            else
+                { return "incorrect password";}
+            // if (data) {
+            //     return data;
+            // } else {
+            //     return "incorrect username password";
+            // }
         })
         .catch(err => {
             return err;
@@ -245,6 +259,10 @@ exports.findOne = (req, res) => {
 // Update a Authentication by the id in the request
 exports.update = (req, res) => {
     const id = req.params.id;
+    const salt = bcrypt.genSaltSync(10, 'a');
+    req.body.userPassword = bcrypt.hashSync(req.body.userPassword, salt);
+    console.log(req.body);
+
     Authentication.update(req.body, {
         where: { authId: id }
     })
@@ -269,6 +287,9 @@ exports.update = (req, res) => {
 // Update a Authentication by the id in the request
 exports.updateByUserId = (req, res) => {
     const userId = req.params.userId;
+    const salt = bcrypt.genSaltSync(10, 'a');
+    req.body.userPassword = bcrypt.hashSync(req.body.userPassword, salt);
+    
     Authentication.update(req.body, {
         where: { userId: userId }
     })
