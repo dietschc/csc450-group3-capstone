@@ -5,11 +5,15 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 3/02/2022, "Added in some additional comments, cleaned up code")
 //  (CPD, 3/03/2022, "Added in findByAuthorIdThunk")
+//  (DAB, 3/27/2022, Altered findByAuthorIdThunk to check for a user before 
+//  searching for review and restaurant data. It is in reaction to admin 
+//  needs in the userDashboard)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import ReviewDataService from "../services/review.service";
 import RestaurantDataService from "../services/restaurant.service";
+import UserDataService from "../services/user.service";
 import { addRestaurant } from './restaurants';
 import { addReview } from './reviews';
 import { formatDBRestaurantFind, formatDBReviewFind } from '../helperFunction/actionHelpers';
@@ -87,6 +91,28 @@ export const findAllReviewsRestaurantsOrderedThunk = (offset, limit) => async di
  export const findByAuthorIdThunk = (userId) => async dispatch => {
     // Creating a Set to hold unique restaurant id's
     const restaurantIdSet = new Set();
+
+    // Checking if the user exists in the database
+    const isUser = await UserDataService.get(userId)
+    .then(result => {
+        // If he does, true is returned
+        if (result) {
+            return true;
+        }
+        // Else false is returned
+        else {
+            return false;
+        }
+    })
+    .catch(err => {
+        // A 404 or other error will also return false
+        return false;
+    })
+
+    // If a user was not found the thunk terminates here with false
+    if (!isUser) {
+        return false;
+    }
     
     // Making a call to the database to request the reviews
     await ReviewDataService.findByAuthorId(userId)
@@ -140,4 +166,6 @@ export const findAllReviewsRestaurantsOrderedThunk = (offset, limit) => async di
         // If there was an error it is logged in the console
         console.log(err);
     })
+
+    return true;
 }

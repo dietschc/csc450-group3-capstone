@@ -9,6 +9,7 @@
 //  (CPD, 3/1/2022, Fixed bug where state and zip are swapped when creating a new user)
 //  (DAB, 3/06/2022, Added in findByUserNameThunk and updated addUser to not have a history 
 //  table)
+//  (DAB, 3/27/2022, Added in findByUserIdThunk that will also add in the friends of the user)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -54,7 +55,7 @@ export const addUserThunk = (
             .catch(err => {
                 console.log(err)
             })
-}
+    }
 
 /**
  * The updatePermissionThunk will update a users permission to the specified 
@@ -67,23 +68,23 @@ export const addUserThunk = (
 export const updatePermissionThunk = (userId, data) => async dispatch => {
     // Making the call to the service to request an update to the database
     await AuthenticationDataService.updateByUserId(userId, data)
-    .then(res => {
-        // If there is a response the state will be updated
-        if (res) {
-            // Destructuring out permissionId and permission name from the data
-            const { permissionId, permissionName } = data;
+        .then(res => {
+            // If there is a response the state will be updated
+            if (res) {
+                // Destructuring out permissionId and permission name from the data
+                const { permissionId, permissionName } = data;
 
-            // Dispatching the action to update state permission
-            dispatch(updatePermission(userId, permissionId, permissionName))
-        }
-        else {
-            console.log("Permission was not updated")
-        }
-    })
-    .catch(err => {
-        // If there is an error it will be logged
-        console.log(err)
-    })
+                // Dispatching the action to update state permission
+                dispatch(updatePermission(userId, permissionId, permissionName))
+            }
+            else {
+                console.log("Permission was not updated")
+            }
+        })
+        .catch(err => {
+            // If there is an error it will be logged
+            console.log(err)
+        })
 }
 
 /**
@@ -96,18 +97,66 @@ export const updatePermissionThunk = (userId, data) => async dispatch => {
 export const deleteUserThunk = (userId) => async dispatch => {
     // Making the call to the service to request the deletion of the user
     await UserDataService.delete(userId)
-    .then(res => {
-        // If there is a response the state will be updated
-        if (res) {
+        .then(res => {
+            // If there is a response the state will be updated
+            if (res) {
 
-            // Dispatching the action to delete the user from state
-            dispatch(deleteUser(userId));
-        }
-    })
-    .catch(err => {
-        // If there is an error it will be logged
-        console.log(err)
-    })
+                // Dispatching the action to delete the user from state
+                dispatch(deleteUser(userId));
+            }
+        })
+        .catch(err => {
+            // If there is an error it will be logged
+            console.log(err)
+        })
+}
+
+
+/**
+ * Searches the database by user id for one matching user. 
+ * All user stats are returned but no sensitive data. It will then 
+ * add the results to state.
+ * 
+ * @param {*} userId
+ * @returns 
+ */
+export const findByUserIdThunk = (userId) => async dispatch => {
+    // The user database will be queried for a user with the userId
+    await UserDataService.get(userId)
+        .then(async res => {
+            // If there is data in the query it is added to redux state
+            if (res.data) {
+                // The user data is formatted to be added to redux state
+                const userData = formatDBUserFind(res.data);
+                // The friend data is also destructured
+                const { friendOne } = res.data;
+
+                // Adding the user to redux state
+                await dispatch(addUser(userData));
+
+                // Iterating through the users friends and adding them to 
+                // state after formatting
+                await friendOne.forEach(friend => {
+                    const newFriend = {
+                        friendOneId: friend.friendOneId,
+                        friendTwoId: friend.friendTwoId,
+                        userName: friend.friendTwo.authentication.userName
+                    }
+
+                    // Adding the users friends to state
+                    dispatch(addFriend(newFriend));
+                });
+
+                // Returning true because a user was successfully found
+                return true;
+
+            }
+        })
+        .catch(err => {
+            // If there is an error it will be logged
+            console.log(err)
+            return false;
+        })
 }
 
 /**
@@ -119,7 +168,7 @@ export const deleteUserThunk = (userId) => async dispatch => {
  * @param {*} userName
  * @returns 
  */
- export const findByUserNameThunk = (offset, limit, userName) => async dispatch => {
+export const findByUserNameThunk = (offset, limit, userName) => async dispatch => {
     // The user database will be queried for all users within the 
     // parameter offset/limit that are like the userName
     await UserDataService.findByUserNameOffsetLimit(offset, limit, userName)
@@ -154,8 +203,8 @@ export const deleteUserThunk = (userId) => async dispatch => {
  */
 export const addUser = ({ userId, userName,
     firstName, lastName, address, addressId, authId,
-    city, state, zip, userEmail, permissionId, permissionName, 
-    isLoggedIn, userPassword, createdAt, modifiedAt }) => ({
+    city, state, zip, userEmail, permissionId, permissionName,
+    isLoggedIn, userPassword, createdAt, modifiedAt, friends }) => ({
         type: C.ADD_USER,
         id: userId,
         firstName: firstName,
@@ -179,6 +228,7 @@ export const addUser = ({ userId, userName,
             modifiedAt: modifiedAt || new Date()
         },
         email: userEmail,
+        friends: friends,
         isLoggedIn: isLoggedIn || false
     })
 
@@ -261,7 +311,7 @@ export const updateUser = ({ id, userName, firstName, lastName,
             userName: userName,
             password: password,
             modifiedAt: new Date()
-            
+
         }
     })
 
@@ -274,7 +324,7 @@ export const updateUser = ({ id, userName, firstName, lastName,
  * @param {*} friendUserName 
  * @returns 
  */
-export const addFriend = ({friendOneId, friendTwoId, userName}) => ({
+export const addFriend = ({ friendOneId, friendTwoId, userName }) => ({
     type: C.ADD_FRIEND,
     userId: friendOneId,
     id: friendTwoId,
@@ -324,7 +374,7 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
             // Delete the current users in the Users state array
             dispatch(deleteAllUsers());
             const result = { ...res.data.getUser, ...res.data.getAddress, ...res.data.getAuth, ...res.data.getAuth.permission }
-            const friends = [ ...res.data.friends ];
+            const friends = [...res.data.friends];
 
             console.log("IN USERS RESULTS", result);
             console.log("IN USERS FRIENDS", friends)
@@ -338,15 +388,15 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
             // Add each friend to state
             res[1].forEach(e => {
                 // console.log(e);
-                
-                const newFriend = { 
-                    friendOneId: res[0].id, 
-                    friendTwoId: e.userId, 
+
+                const newFriend = {
+                    friendOneId: res[0].id,
+                    friendTwoId: e.userId,
                     userName: e.userName
                 }
                 dispatch(addFriend(newFriend));
             });
-            
+
             // Dispatch userId (now stored in id) to login state action
             return dispatch(login(res[0].id));
         })
