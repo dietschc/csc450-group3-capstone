@@ -129,9 +129,11 @@ function MainNav(props) {
                     </Nav.Item>
                     {showAdmin()}
                     <Nav.Item className="mx-3" onClick={logoutHandler}>
-                        <Nav.Link>
-                            Logout
-                        </Nav.Link>
+                        <LinkContainer to="login">
+                            <Nav.Link>
+                                Logout
+                            </Nav.Link>
+                        </LinkContainer>
                     </Nav.Item>
                 </>
             ) : (
@@ -178,7 +180,7 @@ function MainNav(props) {
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
                     <Nav fill variant="pills" bg="dark" className="mb-auto pe-3"
-                        activeKey={basicActive}
+                        activeKey={location.pathname.substring(0, location.pathname.lastIndexOf('/'))}
                         onSelect={(key) => setActive(key)}>
                         <DevelopersNav />
                         <Nav.Item className="mx-3">
@@ -188,9 +190,7 @@ function MainNav(props) {
                                 </Nav.Link>
                             </LinkContainer>
                         </Nav.Item>
-
                         {showLoginControls()}
-
                     </Nav>
                     <Form onSubmit={searchHandler} className="d-flex">
                         <FormControl
