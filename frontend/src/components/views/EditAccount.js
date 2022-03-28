@@ -10,17 +10,17 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 import FormContainer from '../template/FormContainer';
-import { addUserThunk, updateUserThunk } from '../../actions/users';
+import { addUserThunk, updateUserThunk, findByUserIdThunk, deleteUser } from '../../actions/users';
 import { checkLogin } from '../../helperFunction/CheckLogin'
 import FloatingStateOptionList from '../form/floatingComponents/FloatingStateOptionList';
 
 function EditAccount(props) {
-    const { addUserThunk, updateUserThunk, users } = props;
+    const { addUserThunk, updateUserThunk, users, findByUserIdThunk, deleteUser } = props;
 
     // keeps track of if the form was submitted
     const [submitted, setSubmitted] = useState(false)
@@ -37,8 +37,74 @@ function EditAccount(props) {
     const [state, setState] = useState(users.length > 0 ? users[0].address.state : "");
     const [email, setEmail] = useState(users.length > 0 ? users[0].email : "");
     const [password, setPassword] = useState(users.length > 0 ? users[0].auth.password : "");
+    const [user, setUser] = useState();
 
     const navigate = useNavigate();
+    const { userId } = useParams();
+
+    useEffect(() => {
+        if (users.length > 0) {
+            loadData();
+        }
+    }, [])
+
+    useEffect(() => {
+        if (userId) {
+            const checkUser = users.filter(currentUser => currentUser.id === Number(userId));
+            if (checkUser.length > 0) {
+                setUser(checkUser[0]);
+                setForm(checkUser[0]);
+                console.log("CheckUser is ", checkUser);
+                
+                
+                
+            }
+        }
+
+    }, [users])
+
+    const loadData = async () => {
+        if (userId) {
+                
+            // Check if userId is in state
+            const checkUser = users.filter(currentUser => currentUser.id === Number(userId));
+            if (checkUser.length > 0) {
+                setUser(checkUser[0]);
+            }
+            else {
+                const result = await findByUserIdThunk(userId)
+                console.log("RESULT IS", result)
+                if (!result) {
+                    // Navigating back to the add new user dashboard
+                    clearForm();
+                    navigate('/admin');
+                    console.log("No matching user, navigating back to createUser")
+                }
+            }
+            // If it is reference possibly (change all to reference), if not database call 
+            // then add to user reference in next useEffect with [users]
+            // Set the form fields to the user in userId
+            // 
+        }
+        else {
+            setUser(users[0]);
+            console.log("In useEffect else")
+            console.log("User is set to ", users[0])
+        }
+    }
+
+    const setForm = (user) => {
+        setUserName(user.auth.userName);
+        setFirstName(user.firstName);
+        setLastName(user.lastName);
+        setAddress(user.address.address);
+        setCity(user.address.city);
+        setZip(user.address.zip);
+        setState(user.address.state);
+        setEmail(user.email);
+        setPassword(user.auth.password);
+        console.log("Form updated")
+    }
 
     const onChangeUserName = e => {
         const userName = e.target.value
@@ -96,6 +162,7 @@ function EditAccount(props) {
         // }
 
         // setValidated(true);
+        // navigate(`/userDashboard/${userId}`)
 
         if (isEditing) {
             updateAccount();
@@ -128,14 +195,24 @@ function EditAccount(props) {
             userEmail: email,
             password: password
         }
-
-        // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
-        updateUserThunk(id, data)
-        // console.log("id: ", id);
-        // console.log("updating with data: ", data);
+        if (!userId) {
+            // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
+            updateUserThunk(id, data)
+            // console.log("id: ", id);
+            // console.log("updating with data: ", data);
+            // Bring back to user dashboard after
+            setTimeout(() => { navigate("../userDashboard") }, 500);
+        }
+        else {
+            updateUserThunk(userId, data);
+            deleteUser(userId);
+            // setTimeout(() => { navigate(`/userDashboard/${userId}`) }, 500);
+            navigate(`/userDashboard/${userId}`)
+        }
+        
 
         // Bring back to user dashboard after
-        setTimeout(() => { navigate("../userDashboard") }, 500);
+        // setTimeout(() => { navigate("../userDashboard") }, 500);
     }
 
     /**
@@ -362,4 +439,4 @@ const mapStateToProps = state =>
 
 
 // Exporting the connect Wrapped EditAccount Component
-export default connect(mapStateToProps, { addUserThunk, updateUserThunk })(EditAccount);
+export default connect(mapStateToProps, { addUserThunk, updateUserThunk, findByUserIdThunk, deleteUser })(EditAccount);
