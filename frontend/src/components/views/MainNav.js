@@ -13,7 +13,7 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Navbar, Button, Nav, Form, Container, FormControl } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -32,6 +32,7 @@ function MainNav(props) {
     const [basicActive, setBasicActive] = useState();
     const [searchInput, setSearchInput] = useState("");
     const navigate = useNavigate();
+    const location = useLocation();
 
     // Get user state from props
     const {
@@ -78,14 +79,22 @@ function MainNav(props) {
 
     // Remove everything from state on logout
     const logoutAccount = () => {
-        console.log("logout account");
+        // On logout users and user messages are always deleted 
+        // from state
         deleteAllUsers();
         deleteAllMessages();
-        deleteAllReviews();
-        deleteAllRestaurants();
-
-        // Navigate to home after logout
-        navigate("/");
+        
+        // If the user is not on the home page, all reviews and 
+        // restaurants are deleted. The home page does this 
+        // already
+        if (location.pathname !== '/') {
+            // Deleting all reviews and restaurants so fresh 
+            // ones can be loaded onto the home page
+            deleteAllReviews();
+            deleteAllRestaurants();
+           // Navigate to home after logout
+            navigate('/'); 
+        }
     }
 
     const showAdmin = () => {
