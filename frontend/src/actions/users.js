@@ -10,6 +10,7 @@
 //  (DAB, 3/06/2022, Added in findByUserNameThunk and updated addUser to not have a history 
 //  table)
 //  (DAB, 3/27/2022, Added in findByUserIdThunk that will also add in the friends of the user)
+//  (DAB, 3/28/2022, Altered findByUserNameThunk to exclude logged in user userId)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -159,23 +160,34 @@ export const findByUserIdThunk = (userId) => async dispatch => {
 
 /**
  * Searches the database by user name for all matching users up to the 
- * offset/limit. It will then add the results to state.
+ * offset/limit. It will then add the results to state. 
+ * ***The results will exclude the logged in user***
  * 
  * @param {*} offset 
  * @param {*} limit 
  * @param {*} userName
  * @returns 
  */
-export const findByUserNameThunk = (offset, limit, userName) => async dispatch => {
+export const findByUserNameThunk = (offset, limit, userName) => async (dispatch, getState) => {
     // The user database will be queried for all users within the 
     // parameter offset/limit that are like the userName
     await UserDataService.findByUserNameOffsetLimit(offset, limit, userName)
         .then(async res => {
-            console.log(res);
             // If there is data in the query it is added to redux state
             if (res) {
+                // Destructuring out the users current state
+                const { users } = getState();
+                // Assigning filteredData to the results
+                let filteredResults = res.data;
+
+                // If there are users logged in the raw data will be filtered to exclude 
+                // the logged in users
+                if (users.length > 0) {
+                    filteredResults = res.data.filter(user => user.userId != users[0].id);
+                }
+                
                 // Iterating through the restaurant data
-                await res.data.map(user => {
+                await filteredResults.map(user => {
                     // The user data is formatted to be added to redux state
                     const userData = formatDBUserFind(user);
 
