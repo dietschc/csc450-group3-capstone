@@ -207,6 +207,10 @@ function Review(props) {
         setTimeout(() => { navigate("../userDashboard") }, 500);
     }
 
+
+    //*************************** RENDER FUNCTIONS  *********************************/
+
+
     /**
      * This will display the existing image if you are editing, or else it will display
      * the placeholder image, until you upload a new image, at which point it should

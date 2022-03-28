@@ -7,6 +7,8 @@
 //  (DAB, 2/13/2022, Added in react redux connect)
 //  (CPD, 2/22/22, Connected frontend to backend with addUserThunk)
 //  (CPD, 2/27/22, Got states working with redux so we can update values now)
+//  (DAB, 3/28/22, Admin editAccount functionality implemented)
+//  (DAB, 3/28/22, Cleaned up code and added comments)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -19,15 +21,31 @@ import { addUserThunk, updateUserThunk, findByUserIdThunk, deleteUser } from '..
 import { checkLogin } from '../../helperFunction/CheckLogin'
 import FloatingStateOptionList from '../form/floatingComponents/FloatingStateOptionList';
 
+/**
+ * The EditAccount View will allow a users account information to be 
+ * edited. 'Members' can edit their own accounts only while admins 
+ * can use this page to edit all users accounts if needed. This page 
+ * responsively converts between a Create Account and Edit Account 
+ * View that will either create a new account in the database or 
+ * edit the existing referenced account.
+ * 
+ * @param {*} props 
+ * @returns 
+ */
 function EditAccount(props) {
-    const { addUserThunk, updateUserThunk, users, findByUserIdThunk, deleteUser } = props;
+    // Destructuring out needed state and actions
+    const { users } = props;
+    const { findByUserIdThunk, deleteUser, addUserThunk, updateUserThunk } = props;
+
+    // Destructuring out the param if there is one
+    const { userId } = useParams();
+    // Allows for the navigation to the specified webpage
+    const navigate = useNavigate();
 
     // keeps track of if the form was submitted
     const [submitted, setSubmitted] = useState(false)
-    // const [validated, setValidated] = useState(false);
-    // Check if user is logged in
-    const isEditing = checkLogin(users);
 
+    // Form field state
     const [userName, setUserName] = useState(users.length > 0 ? users[0].auth.userName : "");
     const [firstName, setFirstName] = useState(users.length > 0 ? users[0].firstName : "");
     const [lastName, setLastName] = useState(users.length > 0 ? users[0].lastName : "");
@@ -37,62 +55,184 @@ function EditAccount(props) {
     const [state, setState] = useState(users.length > 0 ? users[0].address.state : "");
     const [email, setEmail] = useState(users.length > 0 ? users[0].email : "");
     const [password, setPassword] = useState(users.length > 0 ? users[0].auth.password : "");
-    const [user, setUser] = useState();
 
-    const navigate = useNavigate();
-    const { userId } = useParams();
+    // Check if user is logged in
+    const isEditing = checkLogin(users);
 
+    // This useEffect renders only once on the initial page load in
     useEffect(() => {
+        // If a user is logged in the data is loaded in if needed
         if (users.length > 0) {
             loadData();
         }
     }, [])
 
+
+    // This useEffect will trigger a rerender every time the users state array 
+    // changes
     useEffect(() => {
+        // If there is a param userId then that user will be used to
+        // set the form data
         if (userId) {
+            // Checking if the user is in state
             const checkUser = users.filter(currentUser => currentUser.id === Number(userId));
+
+            // If the user is in state the form fields are set to their data
             if (checkUser.length > 0) {
-                setUser(checkUser[0]);
+                // Updating the form fields with the param userId data
                 setForm(checkUser[0]);
-                console.log("CheckUser is ", checkUser);
-                
-                
-                
             }
         }
-
     }, [users])
 
-    const loadData = async () => {
-        if (userId) {
-                
-            // Check if userId is in state
-            const checkUser = users.filter(currentUser => currentUser.id === Number(userId));
-            if (checkUser.length > 0) {
-                setUser(checkUser[0]);
-            }
-            else {
-                const result = await findByUserIdThunk(userId)
-                console.log("RESULT IS", result)
-                if (!result) {
-                    // Navigating back to the add new user dashboard
-                    clearForm();
-                    navigate('/admin');
-                    console.log("No matching user, navigating back to createUser")
-                }
-            }
-            // If it is reference possibly (change all to reference), if not database call 
-            // then add to user reference in next useEffect with [users]
-            // Set the form fields to the user in userId
-            // 
+
+    // The clearForm function will clear the form data
+    const clearForm = () => {
+        setUserName("");
+        setFirstName("");
+        setLastName("");
+        setAddress("");
+        setCity("");
+        setZip("");
+        setState("");
+        setEmail("");
+        setPassword("");
+    }
+
+
+    // The handleSubmit method will call either update account or 
+    // save account depending on if the account is being edited 
+    // or created
+    const handleSubmit = (e) => {
+        // Preventing default form submission
+        e.preventDefault();
+
+        // If editing the account is updated in 
+        // the database
+        if (isEditing) {
+            updateAccount();
         }
+        // If not updating the account is saved 
+        // to the database
         else {
-            setUser(users[0]);
-            console.log("In useEffect else")
-            console.log("User is set to ", users[0])
+            saveAccount();
         }
     }
 
+
+    // The loadData function is async and will query the database if the 
+    // param userId user was not found in state. If there is no user 
+    // with the param userId, the user is rerouted to admin since only 
+    // admins can access the enhanced editAccount view
+    const loadData = async () => {
+        // If there is a param userId
+        if (userId) {
+            // If the userId matches the logged in user they are rerouted 
+            // to the non param editAccount
+            if (Number(userId) === users[0].id) {
+                navigate('/editAccount')
+            }
+
+            // Check if userId is in state
+            const checkUser = users.filter(currentUser => currentUser.id === Number(userId));
+
+            // If the userId user was not found in state, the database is queried
+            if (checkUser.length <= 0) {
+                // result will hold true if a result was found and false if a 
+                // result was not found
+                const result = await findByUserIdThunk(userId)
+
+                // If a result was not found then the userId does no exist in 
+                // the database and the user is rerouted to admin
+                if (!result) {
+                    // Navigating to the admin page to look for the correct user
+                    clearForm();
+                    navigate('/admin');
+                }
+            }
+        }
+    }
+
+
+    // Handles the address form input
+    const onChangeAddress = e => {
+        const address = e.target.value
+        setAddress(address);
+    }
+
+
+    // Handles the city form input
+    const onChangeCity = e => {
+        const city = e.target.value
+        setCity(city);
+    }
+
+
+    // Handles the email form input
+    const onChangeEmail = e => {
+        const email = e.target.value
+        setEmail(email);
+    }
+    
+
+    // Handles the first name form input
+    const onChangeFirstName = e => {
+        const firstName = e.target.value
+        setFirstName(firstName);
+    }
+
+
+    // Handles the last name form input
+    const onChangeLastName = e => {
+        const lastName = e.target.value
+        setLastName(lastName);
+    }
+
+
+    // Handles the password form input
+    const onChangePassword = e => {
+        const password = e.target.value
+        setPassword(password);
+    }
+
+
+    // Handles the state form input
+    const onChangeState = e => {
+        const state = e.target.value
+        setState(state);
+    }
+
+
+    // Handles the user name form input
+    const onChangeUserName = e => {
+        const userName = e.target.value
+        setUserName(userName);
+    }
+
+
+    // Handles the zip form input
+    const onChangeZip = e => {
+        const zip = e.target.value
+        setZip(zip);
+    }
+
+
+    // The saveAccount function will create a new user in the database and 
+    // navigate to that users dashboard
+    const saveAccount = () => {
+        // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
+        addUserThunk(userName, firstName, lastName, address, city, state, zip, email, password)
+
+        // The form was submitted so local state is set to true
+        setSubmitted(true);
+
+        // Send the new user to their new dashboard
+        setTimeout(() => { navigate("../userDashboard") }, 500);
+    }
+
+
+    // The setForm method will fill out the form fields when given 
+    // the param user data
     const setForm = (user) => {
         setUserName(user.auth.userName);
         setFirstName(user.firstName);
@@ -103,87 +243,19 @@ function EditAccount(props) {
         setState(user.address.state);
         setEmail(user.email);
         setPassword(user.auth.password);
-        console.log("Form updated")
     }
 
-    const onChangeUserName = e => {
-        const userName = e.target.value
-        setUserName(userName);
-    }
 
-    const onChangeFirstName = e => {
-        const firstName = e.target.value
-        setFirstName(firstName);
-    }
-
-    const onChangeLastName = e => {
-        const lastName = e.target.value
-        setLastName(lastName);
-    }
-
-    const onChangeAddress = e => {
-        const address = e.target.value
-        setAddress(address);
-    }
-
-    const onChangeCity = e => {
-        const city = e.target.value
-        setCity(city);
-    }
-
-    const onChangeZip = e => {
-        const zip = e.target.value
-        setZip(zip);
-    }
-
-    const onChangeState = e => {
-        const state = e.target.value
-        setState(state);
-    }
-
-    const onChangeEmail = e => {
-        const email = e.target.value
-        setEmail(email);
-    }
-
-    const onChangePassword = e => {
-        const password = e.target.value
-        setPassword(password);
-    }
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        // console.log("handle submit pressed");
-        // const form = event.currentTarget;
-        // if (form.checkValidity() === false) {
-        //     event.preventDefault();
-        //     event.stopPropagation();
-        // }
-
-        // setValidated(true);
-        // navigate(`/userDashboard/${userId}`)
-
-        if (isEditing) {
-            updateAccount();
-        } else {
-            saveAccount();
-        }
-    };
-
-    const saveAccount = () => {
-        // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
-        addUserThunk(userName, firstName, lastName, address, city, state, zip, email, password)
-
-        setSubmitted(true)
-
-        // Bring back to user dashboard after
-        setTimeout(() => { navigate("../userDashboard") }, 500);
-    }
-
+    // The updateAccount will allow the user to update an existing account. 
+    // If a param userId exists the user will update that account, if not 
+    // the user will update their own account
     const updateAccount = () => {
+        // Pulling the id of the logged in user to 
+        // update their own account
         const id = users.length > 0 ? users[0].id : "";
 
+        // Structuring the data for database update submission using 
+        // local form state
         let data = {
             userName: userName,
             firstName: firstName,
@@ -195,30 +267,35 @@ function EditAccount(props) {
             userEmail: email,
             password: password
         }
+
+        // If there is not a param userId, then the logged in users 
+        // data will be updated
         if (!userId) {
             // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
             updateUserThunk(id, data)
-            // console.log("id: ", id);
-            // console.log("updating with data: ", data);
+
             // Bring back to user dashboard after
             setTimeout(() => { navigate("../userDashboard") }, 500);
         }
+        // Else the param userId's data will be updated
         else {
+            // Updating the param userId's data in the database
             updateUserThunk(userId, data);
+
+            // Deleting the user from state, they are no longer needed
             deleteUser(userId);
-            // setTimeout(() => { navigate(`/userDashboard/${userId}`) }, 500);
+
+            // Navigating the admin to that users updated userDashboard
             navigate(`/userDashboard/${userId}`)
         }
-        
-
-        // Bring back to user dashboard after
-        // setTimeout(() => { navigate("../userDashboard") }, 500);
     }
 
-    /**
-     * Depening on whether you are logged in or not will determine the type of submit button
-     * and calls the relevant save/update function.
-     */
+
+    //*************************** RENDER FUNCTIONS  *********************************/
+
+
+    // The displaySubmitButton will display the correct submit button and 
+    // associated handlers so the correct operations can be performed
     const displaySubmitButton = () => (
         <div className="d-flex justify-content-around pt-2 pb-5">
             {isEditing ? (
@@ -236,19 +313,6 @@ function EditAccount(props) {
             </Button>
         </div>
     )
-
-    const clearForm = () => {
-        setUserName("");
-        setFirstName("");
-        setLastName("");
-        setAddress("");
-        setCity("");
-        setZip("");
-        setState("");
-        setEmail("");
-        setPassword("");
-        console.log("Form cleared")
-    }
 
     return (
         <FormContainer>
@@ -396,47 +460,10 @@ const mapStateToProps = state =>
     users: [...state.users]
 });
 
-// // Mapping the state actions to props
-// const mapDispatchToProps = dispatch => 
-//     ({
-//         // This method will add a new user to users
-//         addUser(userName, firstName, lastName, 
-//             address, city, state, zip, email, password) {
-//             dispatch(addUser(userName, firstName, lastName, 
-//                 address, city, state, zip, email, password))
-//         },
-//         deleteUser(userId) {
-//             dispatch(deleteUser(userId))
-//         },
-//         deleteAllUsers() {
-//             dispatch(deleteAllUsers())
-//         },
-//         updateUser(userId, userName, firstName, lastName, 
-//             address, city, state, zip, email, password) {
-//             dispatch(updateUser(userId, userName, firstName, lastName, 
-//                 address, city, state, zip, email, password))
-//         },
-//         addFriend(userId, friendId, friendUserName) {
-//             dispatch(addFriend(userId, friendId, friendUserName))
-//         },
-//         deleteFriend(userId, friendId) {
-//             dispatch(deleteFriend(userId, friendId))
-//         },
-//         deleteAllFriends(userId) {
-//             dispatch(deleteAllFriends(userId))
-//         },
-//         login(userId) {
-//             dispatch(login(userId))
-//         },
-//         logout(userId) {
-//             dispatch(logout(userId))
-//         },
-//         updatePermission(userId, permissionId, permissionName) {
-//             dispatch(updatePermission(userId, permissionId, permissionName))
-//         }
-
-//     })
-
-
 // Exporting the connect Wrapped EditAccount Component
-export default connect(mapStateToProps, { addUserThunk, updateUserThunk, findByUserIdThunk, deleteUser })(EditAccount);
+export default connect(mapStateToProps, {
+    addUserThunk,
+    updateUserThunk,
+    findByUserIdThunk,
+    deleteUser
+})(EditAccount);
