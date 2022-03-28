@@ -7,7 +7,10 @@
 //  (DAB, 03/14/2022, Chat box now scrolls to the bottom after each message)
 //  (DAB, 03/14/2022, Chat now works with interval chat on 15 sec delay)
 //  (DAB, 03/14/2022, Added comments)
-//  (DAB, 03/15/2022, Fixed logic for interval database retrieval)F
+//  (DAB, 03/15/2022, Fixed logic for interval database retrieval)
+//  (DAB, 03/28/2022, Interval is no longer async, it was causing issues)
+//  (DAB, 3/28/2022, Updated the name for findAllAfterDateOffsetLimit 
+//  to describe its behavior of findAllByIdOffsetLimit)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -19,7 +22,7 @@ import { connect } from 'react-redux';
 import { formatTimeCalendar } from '../../helperFunction/FormatString';
 import {
     findByConversationIdOffsetLimitThunk,
-    findAllAfterDateOffsetLimitThunk,
+    findAllByIdOffsetLimitThunk,
     deleteAllMessages,
     sendMessageThunk
 } from '../../actions/messages';
@@ -37,7 +40,7 @@ function Chat(props) {
         users,
         deleteAllMessages,
         findByConversationIdOffsetLimitThunk,
-        findAllAfterDateOffsetLimitThunk,
+        findAllByIdOffsetLimitThunk,
         sendMessageThunk
     } = props;
 
@@ -66,7 +69,7 @@ function Chat(props) {
     // The loadState method will load the initial Chat state from the database
     const loadState = async () => {
         // All old messages are deleted
-        deleteAllMessages();
+        await deleteAllMessages();
 
         // New messages are queried from the database
         await findByConversationIdOffsetLimitThunk(user.id, friendId, 0, 15);
@@ -81,7 +84,7 @@ function Chat(props) {
     // The database is queried for new messages that may exist in the database, 
     // the state is only updated if data is found
     const loadNewMessages = async () => {
-        await findAllAfterDateOffsetLimitThunk(updateMessageIdRef.current, user.id, friendId, 0, 15)
+        await findAllByIdOffsetLimitThunk(updateMessageIdRef.current, user.id, friendId, 0, 15)
             .then(res => {
                 // If results were returned from the database query, isQueried is set to true to update the 
                 // newest messageId
@@ -103,9 +106,9 @@ function Chat(props) {
             loadState();
 
             // Setting an interval to query the database and retrieve new messages
-            const interval = setInterval(async () => {
+            const interval = setInterval(() => {
                 // Calling loadNewMessages to check and possibly load in new messages
-                await loadNewMessages();
+                loadNewMessages();
             }, 8000);
 
             // The interval is cleared when the component is unmounted
@@ -255,7 +258,7 @@ const mapStateToProps = state =>
 // Exporting the connect Wrapped Chat Component
 export default connect(mapStateToProps, {
     findByConversationIdOffsetLimitThunk,
-    findAllAfterDateOffsetLimitThunk,
+    findAllByIdOffsetLimitThunk,
     deleteAllMessages,
     sendMessageThunk
 })(Chat);
