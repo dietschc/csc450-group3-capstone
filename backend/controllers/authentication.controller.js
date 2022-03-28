@@ -98,17 +98,33 @@ exports.login = async (req, res) => {
             if (data) {
                 return data;
             } else {
-                return `Cannot find User with id=${id}.`;
+                // Return null if there is no matching user
+                return null;
             }
         })
         .catch(err => {
             return err;
         });
 
-    // Setup our addressId parameter (if it exists)
+    // Setup our variables for if the login is a valid user
     let addressId = 0;
+    let accessToken = 0;
+    let refreshToken = 0;
+
+    console.log("get user: ", getUser);
+
+    // If the user is valid, get addressId and generate tokens
     if (getUser) {
+        // Extract addressId 
         addressId = getUser.addressId;
+
+        // Create new Access Token, include user id
+        accessToken = jwt.sign({ id: getUser.userId }, config.secret, {
+            expiresIn: config.jwtExpiration
+        });
+
+        // Create new refresh token, pass in getUser object data as parameter
+        refreshToken = await RefreshToken.createToken(getUser);
     }
 
     // Get friend data
@@ -150,14 +166,6 @@ exports.login = async (req, res) => {
         // map friends
         friends = formatFriends(getFriends);
     }
-
-    // Create new Access Token, include user id
-    const accessToken = jwt.sign({ id: getUser.userId }, config.secret, {
-        expiresIn: config.jwtExpiration
-    });
-
-    // Create new refresh token, pass in getUser object data as parameter
-    const refreshToken = await RefreshToken.createToken(getUser);
 
     // Get address info
     Address.findByPk(addressId)
