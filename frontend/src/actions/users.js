@@ -114,15 +114,14 @@ export const deleteUserThunk = (userId) => async dispatch => {
 
 /**
  * Searches the database by user id for one matching user. 
- * All user stats are returned but no sensitive data. It will then 
- * add the results to state.
+ *  It will then add the results to state.
  * 
  * @param {*} userId
  * @returns 
  */
 export const findByUserIdThunk = (userId) => async dispatch => {
     // The user database will be queried for a user with the userId
-    await UserDataService.get(userId)
+    return await UserDataService.get(userId)
         .then(async res => {
             // If there is data in the query it is added to redux state
             if (res.data) {
@@ -149,7 +148,6 @@ export const findByUserIdThunk = (userId) => async dispatch => {
 
                 // Returning true because a user was successfully found
                 return true;
-
             }
         })
         .catch(err => {

@@ -35,6 +35,18 @@ import { deleteAllReviews, deleteReviewThunk } from '../../actions/reviews';
 import { deleteAllRestaurants } from '../../actions/restaurants';
 import { deleteUser, findByUserIdThunk } from '../../actions/users';
 
+/**
+ * The UserDashboard View will allow the user to view their account
+ * specific data. Account information, reviews written, and friends 
+ * can all be accessed here. It is the central hub for users to navigate 
+ * their personal content. The user can also access Chat through the 
+ * userDashboard so they can chat with their friends. A 'member' can 
+ * only access their userDashboard while an 'admin' can use this page 
+ * to view all users account data.
+ * 
+ * @param {*} props 
+ * @returns 
+ */
 function UserDashboard(props) {
     // Destructuring out needed state and actions
     const { users, restaurants, reviews } = props;
@@ -238,6 +250,9 @@ function UserDashboard(props) {
             navigate(`/editAccount/${userId}`);
         }
     }
+
+
+    //*************************** RENDER FUNCTIONS  *********************************/
 
 
     // These buttons will be passed into the RestaurantReviewDetail.js 
