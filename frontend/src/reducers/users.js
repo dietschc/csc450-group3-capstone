@@ -110,7 +110,8 @@ export const user = (state = {}, action) => {
                 address: address({}, action),
                 auth: auth({}, action),
                 isLoggedIn: action.isLoggedIn,
-                accessToken: action.accessToken
+                accessToken: action.accessToken,
+                refreshToken: action.refreshToken
             }
         case C.UPDATE_USER:
             return {
@@ -140,7 +141,8 @@ export const user = (state = {}, action) => {
             return {
                 ...state,
                 isLoggedIn: action.isLoggedIn,
-                accessToken: action.accessToken
+                accessToken: action.accessToken,
+                refreshToken: action.refreshToken
             }
         case C.LOGOUT:
             return {

@@ -15,7 +15,6 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import C from '../constants';
-import { v4 } from 'uuid';
 import UserDataService from "../services/user.service";
 import { formatDBUserFind } from '../helperFunction/actionHelpers';
 import AuthenticationDataService from '../services/authentication.service';
@@ -215,7 +214,7 @@ export const addUser = ({ userId, userName,
     firstName, lastName, address, addressId, authId,
     city, state, zip, userEmail, permissionId, permissionName,
     isLoggedIn, userPassword, createdAt, modifiedAt, friends, 
-    accessToken }) => ({
+    accessToken, refreshToken }) => ({
         type: C.ADD_USER,
         id: userId,
         firstName: firstName,
@@ -241,7 +240,8 @@ export const addUser = ({ userId, userName,
         email: userEmail,
         friends: friends,
         isLoggedIn: isLoggedIn || false,
-        accessToken: accessToken
+        accessToken: accessToken,
+        refreshToken: refreshToken
     })
 
 /**
@@ -390,7 +390,8 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
                 ...res.data.getAddress, 
                 ...res.data.getAuth, 
                 ...res.data.getAuth.permission,
-                accessToken: res.data.accessToken
+                accessToken: res.data.accessToken,
+                refreshToken: res.data.refreshToken
             };
             const friends = [...res.data.friends];
 
@@ -419,8 +420,8 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
             // const token = res[0].accessToken;
             // console.log("access token: ", token);
 
-            // Dispatch userId and accessToken to login state action
-            return dispatch(login(res[0].id, res[0].accessToken));
+            // Dispatch login parameters to login state action
+            return dispatch(login(res[0].id, res[0].accessToken, res[0].refreshToken));
         })
         .catch(err => {
             console.log(err)
@@ -434,11 +435,12 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
  * @param {*} userId 
  * @returns 
  */
-export const login = (userId, accessToken) => ({
+export const login = (userId, accessToken, refreshToken) => ({
     type: C.LOGIN,
     id: userId,
     isLoggedIn: true,
-    accessToken: accessToken
+    accessToken: accessToken,
+    refreshToken, refreshToken
 })
 
 /**

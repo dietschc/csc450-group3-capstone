@@ -9,11 +9,11 @@
 module.exports = {
     secret: "super-secret-key",
     // Expiration of access tokens
-    jwtExpiration: 7200,           // 2 hours
+    // jwtExpiration: 7200,           // 2 hours
     // Expiration of refresh tokens
-    jwtRefreshExpiration: 28800,   // 8 hours
+    // jwtRefreshExpiration: 28800,   // 8 hours
 
     /* For testing */
-    // jwtExpiration: 60,          // 1 minute 
-    // jwtRefreshExpiration: 120,  // 2 minutes
+    jwtExpiration: 60,          // 1 minute 
+    jwtRefreshExpiration: 120,  // 2 minutes
 };
