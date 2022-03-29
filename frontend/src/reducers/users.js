@@ -109,7 +109,8 @@ export const user = (state = {}, action) => {
                 friends: friends([], action),
                 address: address({}, action),
                 auth: auth({}, action),
-                isLoggedIn: action.isLoggedIn
+                isLoggedIn: action.isLoggedIn,
+                accessToken: action.accessToken
             }
         case C.UPDATE_USER:
             return {
@@ -138,7 +139,8 @@ export const user = (state = {}, action) => {
         case C.LOGIN:
             return {
                 ...state,
-                isLoggedIn: action.isLoggedIn
+                isLoggedIn: action.isLoggedIn,
+                accessToken: action.accessToken
             }
         case C.LOGOUT:
             return {
