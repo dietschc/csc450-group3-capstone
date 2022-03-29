@@ -184,7 +184,7 @@ export const findByUserNameThunk = (offset, limit, userName) => async (dispatch,
                 if (users.length > 0) {
                     filteredResults = res.data.filter(user => user.userId != users[0].id);
                 }
-                
+
                 // Iterating through the restaurant data
                 await filteredResults.map(user => {
                     // The user data is formatted to be added to redux state
@@ -213,7 +213,7 @@ export const findByUserNameThunk = (offset, limit, userName) => async (dispatch,
 export const addUser = ({ userId, userName,
     firstName, lastName, address, addressId, authId,
     city, state, zip, userEmail, permissionId, permissionName,
-    isLoggedIn, userPassword, createdAt, modifiedAt, friends, 
+    isLoggedIn, userPassword, createdAt, modifiedAt, friends,
     accessToken, refreshToken }) => ({
         type: C.ADD_USER,
         id: userId,
@@ -385,10 +385,10 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
             console.log("res data: ", res);
             // Delete the current users in the Users state array
             dispatch(deleteAllUsers());
-            const result = { 
-                ...res.data.getUser, 
-                ...res.data.getAddress, 
-                ...res.data.getAuth, 
+            const result = {
+                ...res.data.getUser,
+                ...res.data.getAddress,
+                ...res.data.getAuth,
                 ...res.data.getAuth.permission,
                 accessToken: res.data.accessToken,
                 refreshToken: res.data.refreshToken
@@ -469,4 +469,15 @@ export const updatePermission = (userId, permissionId, permissionName) => ({
     id: userId,
     permissionId: permissionId,
     permissionName: permissionName
+})
+
+/**
+ * Get new accessToken action. Mainly used for renewing accessTokens.
+ * 
+ * @param {*} accessToken 
+ * @returns 
+ */
+export const refreshToken = (accessToken) => ({
+    type: C.REFRESH_TOKEN,
+    accessToken: accessToken
 })

@@ -19,6 +19,7 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import MainTemplate from './components/template/MainTemplate';
 import ScrollToTop from './components/ScrollToTop';
+import setupInterceptors from "./services/setupInterceptors";
 
 // Using the storeFactory to create a store with default 
 // stateData
@@ -36,6 +37,8 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('root')
 );
+// Setup axios interceptors with our redux store
+setupInterceptors(store);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

@@ -8,13 +8,12 @@
 //  operations)
 
 import http from "../http-common";
-import authHeader from './auth-header';
 
 class UserDataService {
 
   // Gets all users
   getAll() {
-    return http.get("/users", { headers: authHeader() });
+    return http.get("/users");
   }
 
   // Gets a specific user
@@ -41,7 +40,7 @@ class UserDataService {
    * @returns - authentication data if found
    */
   findByNameOffsetLimit(offset, limit, userName) {
-    return http.get(`/authentication/search/${offset}/${limit}/${userName}`, { headers: authHeader() });
+    return http.get(`/authentication/search/${offset}/${limit}/${userName}`);
   }
 
   /**
@@ -53,7 +52,7 @@ class UserDataService {
    * @returns - user data if found
    */
    findByUserNameOffsetLimit(offset, limit, userName) {
-    return http.get(`/users/search/${offset}/${limit}/${userName}`, { headers: authHeader() });
+    return http.get(`/users/search/${offset}/${limit}/${userName}`);
   }
 
   // Updates a specific user

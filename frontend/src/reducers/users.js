@@ -55,42 +55,42 @@ export const users = (state = [], action) => {
                     return currentUser
                 }
             })
-            case C.DELETE_FRIEND:
-                return state.map((currentUser) => {
-                    if (currentUser.id === action.userId) {
-                        return user(currentUser, action)
-                    }
-                    else {
-                        return currentUser
-                    }
-                })
-            case C.LOGIN:
-                return state.map((currentUser) => {
-                    if (currentUser.id === action.id) {
-                        return user(currentUser, action)
-                    }
-                    else {
-                        return currentUser
-                    }
-                })
-            case C.LOGOUT:
-                return state.map((currentUser) => {
-                    if (currentUser.id === action.id) {
-                        return user(currentUser, action)
-                    }
-                    else {
-                        return currentUser
-                    }
-                })
-            case C.UPDATE_PERMISSION:
-                return state.map((currentUser) => {
-                    if (currentUser.id === action.id) {
-                        return user(currentUser, action)
-                    }
-                    else {
-                        return currentUser
-                    }
-                })
+        case C.DELETE_FRIEND:
+            return state.map((currentUser) => {
+                if (currentUser.id === action.userId) {
+                    return user(currentUser, action)
+                }
+                else {
+                    return currentUser
+                }
+            })
+        case C.LOGIN:
+            return state.map((currentUser) => {
+                if (currentUser.id === action.id) {
+                    return user(currentUser, action)
+                }
+                else {
+                    return currentUser
+                }
+            })
+        case C.LOGOUT:
+            return state.map((currentUser) => {
+                if (currentUser.id === action.id) {
+                    return user(currentUser, action)
+                }
+                else {
+                    return currentUser
+                }
+            })
+        case C.UPDATE_PERMISSION:
+            return state.map((currentUser) => {
+                if (currentUser.id === action.id) {
+                    return user(currentUser, action)
+                }
+                else {
+                    return currentUser
+                }
+            })
         default:
             return state;
     }
@@ -154,6 +154,11 @@ export const user = (state = {}, action) => {
                 ...state,
                 auth: auth(state.auth, action)
             }
+        case C.REFRESH_TOKEN:
+            return {
+                ...state,
+                accessToken: action.accessToken
+            }
         default:
             return state;
     }
@@ -212,7 +217,7 @@ export const permission = (state = {}, action) => {
 // altered
 export const history = (state = {}, action) => {
     switch (action.type) {
-        case C.ADD_USER: 
+        case C.ADD_USER:
             return {
                 id: action.id,
                 created: action.auth.history.created,
