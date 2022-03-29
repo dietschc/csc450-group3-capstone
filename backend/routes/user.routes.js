@@ -37,7 +37,7 @@ module.exports = app => {
 	router.get("/:id", users.findOne);
 
 	// Retrieve authentication searched by user userName with offset and limit
-	router.get("/search/:offset/:limit/:userName", users.findByNameOffsetLimit);
+	router.get("/search/:offset/:limit/:userName", [authJwt.verifyToken, authJwt.isAdmin], users.findByNameOffsetLimit);
 
 	// Add friend for user id specified in body
 	router.post("/friends/:id", users.addFriend);
