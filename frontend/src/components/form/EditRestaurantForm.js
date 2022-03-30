@@ -9,6 +9,7 @@
 //  (DAB, 3/10/2022, Added in comments and cleaned up debugs)
 //  (DAB, 3/13/2022, Both add and update restaurant are working as 
 //  fully intended with image uploads/deletes)
+//  (TJI, 03/29/2022 - Added in character limits to match database)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -117,21 +118,24 @@ function EditRestaurantForm(props) {
 
     // Change handler for the function name specific form input
     const onChangeAddress = (e) => {
-        const address = e.target.value;
+        const {value, maxLength} = e.target;
+        const address = value.slice(0, maxLength);
         setAddress(address);
     }
 
 
     // Change handler for the function name specific form input
     const onChangeCity = (e) => {
-        const city = e.target.value;
+        const {value, maxLength} = e.target;
+        const city = value.slice(0, maxLength);
         setCity(city);
     }
 
 
     // Change handler for the function name specific form input
     const onChangeDigitalContact = (e) => {
-        const digitalContact = e.target.value;
+        const {value, maxLength} = e.target;
+        const digitalContact = value.slice(0, maxLength);
         setDigitalContact(digitalContact);
     }
 
@@ -158,14 +162,16 @@ function EditRestaurantForm(props) {
 
     // Change handler for the function name specific form input
     const onChangePhone = (e) => {
-        const phone = formatPhoneNumber(e.target.value);
+        const {value, maxLength} = e.target;
+        const phone = formatPhoneNumber(value.slice(0, maxLength));
         setPhone(phone);
     }
 
 
     // Change handler for the function name specific form input
     const onChangeRestaurantName = (e) => {
-        const restaurantName = e.target.value;
+        const {value, maxLength} = e.target;
+        const restaurantName = value.slice(0, maxLength);
         setRestaurantName(restaurantName);
     }
 
@@ -179,14 +185,16 @@ function EditRestaurantForm(props) {
 
     // Change handler for the function website specific form input
     const onChangeWebsite = (e) => {
-        const website = e.target.value;
+        const {value, maxLength} = e.target;
+        const website = value.slice(0, maxLength);
         setWebsite(website);
     }
 
 
     // Change handler for the function name specific form input
     const onChangeZip = (e) => {
-        const zip = e.target.value;
+        const {value, maxLength} = e.target;
+        const zip = value.slice(0, maxLength);
         setZip(zip);
     }
 
@@ -280,13 +288,13 @@ function EditRestaurantForm(props) {
     // The EditRestaurant form will be displayed using floating labels
     return (
         <Form onSubmit={saveAccount}>
-            <FloatingRestaurantName restaurantName={restaurantName} onChangeRestaurantName={onChangeRestaurantName} />
-            <FloatingAddress address={address} onChangeAddress={onChangeAddress} />
-            <FloatingCity city={city} onChangeCity={onChangeCity} />
-            <FloatingStateZip state={state} zip={zip} onChangeState={onChangeState} onChangeZip={onChangeZip} />
-            <FloatingPhone phone={phone} onChangePhone={onChangePhone} />
-            <FloatingDigitalContact digitalContact={digitalContact} onChangeDigitalContact={onChangeDigitalContact} />
-            <FloatingWebsite website={website} onChangeWebsite={onChangeWebsite} />
+            <FloatingRestaurantName restaurantName={restaurantName} onChangeRestaurantName={onChangeRestaurantName} maxLength="64" />
+            <FloatingAddress address={address} onChangeAddress={onChangeAddress} maxLength="64" />
+            <FloatingCity city={city} onChangeCity={onChangeCity} maxLength="64" />
+            <FloatingStateZip state={state} zip={zip} onChangeState={onChangeState} onChangeZip={onChangeZip} maxLength="5" />
+            <FloatingPhone phone={phone} onChangePhone={onChangePhone} maxLength="15" />
+            <FloatingDigitalContact digitalContact={digitalContact} onChangeDigitalContact={onChangeDigitalContact} maxLength="255" />
+            <FloatingWebsite website={website} onChangeWebsite={onChangeWebsite} maxLength="255"/>
             <FloatingImageUpload onChangeFile={onChangeFile} />
             {imagePreview()}
             <EditFormButtons isUpdate={isUpdate} saveAccount={saveAccount} clearFormHandler={showClearFormHandler} />

@@ -11,6 +11,7 @@
 //  (DAB, 3/27/22, Inner authorization for reviews complete. A user can now 
 //  only review a valid restaurant and the review must be for that restaurant)
 //  (DAB, 3/27/22, Enhanced comments)
+//  (TJI, 03/29/2022 - Added in character limits for review title and text to match database)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -150,14 +151,17 @@ function Review(props) {
 
     // Handles the review text form input
     const onChangeReviewText = e => {
-        const reviewText = e.target.value
+        const {value, maxLength} = e.target;
+        const reviewText = value.slice(0, maxLength);
         setReviewText(reviewText);
     }
 
 
     // Handles the review title form input
+    // Reduces user input to maxLength of input field which copies database's limit.
     const onChangeReviewTitle = e => {
-        const reviewTitle = e.target.value
+        const {value, maxLength} = e.target;
+        const reviewTitle = value.slice(0, maxLength);
         setReviewTitle(reviewTitle);
     }
 
@@ -366,6 +370,7 @@ function Review(props) {
                                 required
                                 value={reviewTitle}
                                 onChange={onChangeReviewTitle}
+                                maxLength="64"
                             />
                         </FloatingLabel>
                     </Form.Floating>
@@ -382,6 +387,7 @@ function Review(props) {
                                 required
                                 value={reviewText}
                                 onChange={onChangeReviewText}
+                                maxLength="255"
                             />
                         </FloatingLabel>
                     </Form.Floating>

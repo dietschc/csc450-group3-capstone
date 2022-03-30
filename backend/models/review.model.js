@@ -21,10 +21,10 @@ module.exports = (sequelize, Sequelize) => {
 			type: Sequelize.INTEGER
 		},
 		reviewTitle: {
-			type: Sequelize.STRING
+			type: Sequelize.STRING(64)
 		},
 		reviewText: {
-			type: Sequelize.STRING
+			type: Sequelize.STRING(255)
 		},
 		historyId: {
 			type: Sequelize.INTEGER
