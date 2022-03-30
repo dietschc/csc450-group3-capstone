@@ -12,7 +12,7 @@ class TokenService {
 
         // Extract first user (users[0]) from array
         const [user] = store.users;
-        
+
         return user?.refreshToken;
     }
 
@@ -20,23 +20,28 @@ class TokenService {
         // Read redux store directly out of local storage
         const store = JSON.parse(localStorage.getItem('redux-store'));
 
-        // Extract first user (users[0]) from array
+        // // Extract first user (users[0]) from array
         const [user] = store.users;
-        
+
         return user?.accessToken;
     }
 
     updateLocalAccessToken(token) {
         // Read redux store directly out of local storage
-        const store = JSON.parse(localStorage.getItem('redux-store'));
+        let store = JSON.parse(localStorage.getItem('redux-store'));
 
         // Extract first user (users[0]) from array
         const [user] = store.users;
-        
+
         user.accessToken = token;
+        user.firstName = "coleman";
+
+        store.users[0] = user;
+
+        console.log("update the store: ", store);
 
         // localStorage.setItem("user", JSON.stringify(user));
-        localStorage.setItem("redux-store".users[0], JSON.stringify(user));
+        localStorage.setItem('redux-store', JSON.stringify(store));
     }
 
     getUser() {
@@ -50,13 +55,21 @@ class TokenService {
     }
 
     setUser(user) {
-        console.log(JSON.stringify(user));
-        localStorage.setItem("redux-store.users[0]", JSON.stringify(user));
+        // console.log(JSON.stringify(user));
+
+        // localStorage.setItem("redux-store.users[0]", JSON.stringify(user));
+        // Read redux store directly out of local storage
+        let store = JSON.parse(localStorage.getItem('redux-store'));
+
+        // Set first user in users array to the value of user
+        store.users[0] = user;
+
+        console.log("update the store: ", store);
+
+        // localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem('redux-store', JSON.stringify(store));
     }
 
-    removeUser() {
-        localStorage.removeItem("redux-store.users[0]");
-    }
 }
 
 export default new TokenService();

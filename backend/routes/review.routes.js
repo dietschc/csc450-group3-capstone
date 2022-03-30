@@ -10,6 +10,16 @@
 module.exports = app => {
   const review = require("../controllers/review.controller.js");
   var router = require("express").Router();
+  const { authJwt } = require("../middleware");
+
+	// Add access tokens to headers
+	router.use(function (req, res, next) {
+		res.header(
+			"Access-Control-Allow-Headers",
+			"x-access-token, Origin, Content-Type, Accept"
+		);
+		next();
+	});
 
   // Create a new review
   router.post("/", review.create);
@@ -27,7 +37,7 @@ module.exports = app => {
   router.delete("/:id", review.delete);
 
   // Retrieve review matching the author id ordered asc by review name
-  router.get("/author/:id", review.findByAuthorId);
+  router.get("/author/:id", [authJwt.verifyToken], review.findByAuthorId);
 
   // Retrieve review  matching the author id ordered asc by review name and result limit
   router.get("/author/:offset/:limit/:id", review.findByAuthorIdOffsetLimit);

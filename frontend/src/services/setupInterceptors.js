@@ -6,7 +6,7 @@
 
 import axiosInstance from "../http-common";
 import TokenService from "./token.service";
-import { refreshToken, logout } from "../actions/users";
+import { refreshToken, deleteAllUsers } from "../actions/users";
 
 const setup = (store) => {
     axiosInstance.interceptors.request.use(
@@ -33,7 +33,7 @@ const setup = (store) => {
         async (err) => {
             const originalConfig = err.config;
 
-            if (originalConfig.url !== "/auth/signin" && err.response) {
+            if (originalConfig.url !== "/login" && err.response) {
 
                 // Access Token was expired
                 if (err.response.status === 401 && !originalConfig._retry) {
@@ -62,7 +62,7 @@ const setup = (store) => {
                     console.log("refresh token expired");
 
                     // Dispatch logout action
-                    dispatch(logout());
+                    dispatch(deleteAllUsers());
 
                     // Reload windows to hide navbar
                     // window.location.reload();
