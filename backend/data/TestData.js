@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 // (CPD, 3/5/2022, Added friend test data and functions)
 //  (DAB, 03/13/2022, Added in messages and more friends)
+//  (TJI, 03/29/2022, hashing passwords as they're put in to match authentication)
 
 const db = require("../models");
 const Sequelize = require("sequelize");
@@ -21,6 +22,8 @@ const Review = db.review;
 const ReviewImage = db.reviewImage;
 const Message = db.message;
 const Conversation = db.conversation;
+
+// Sets up binary hashing using BCrypt's minor a schema for 2^10 rounds
 const bcrypt = require('bcrypt');
 const salt = bcrypt.genSaltSync(10, 'a');
 
