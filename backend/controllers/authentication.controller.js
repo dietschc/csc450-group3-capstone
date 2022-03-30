@@ -7,6 +7,7 @@
 // (CPD, 3/3/2022, Updating login function to return friends)
 // (CPD, 3/24/2022, Included creating new access token to login)
 // (CPD, 3/26/2022, Included new refresh token to login)
+// (TJI, 3/28/2022, Added password hashing)
 
 const db = require("../models");
 const Sequelize = require("sequelize");
@@ -16,6 +17,7 @@ const User = db.users;
 const Address = db.address;
 const Friend = db.friend;
 const Permission = db.permission;
+// Utility to hash passwords
 const bcrypt = require('bcrypt');
 const RefreshToken = db.refreshToken;
 const config = require("../config/auth.config");
@@ -40,13 +42,12 @@ exports.create = (req, res) => {
         // historyId: req.body.historyId,
     };
 
+    // Convert the given password to a binary hash using BCrypt's minor a form for 2^10 rounds of hashing
     if(authentication.userPassword)
     {
         const salt = bcrypt.genSaltSync(10, 'a');
         authentication.userPassword = bcrypt.hashSync(authentication.userPassword, salt);
     }
-
-    console.log(authentication);
 
     // Save Authentication in the database
     Authentication.create(authentication)
@@ -84,6 +85,7 @@ exports.login = async (req, res) => {
         }
     })
         .then(data => {
+            // Boolean to determine if hashed passwords match
             const match = bcrypt.compareSync(userPassword, data.userPassword);
 
             if (match)
@@ -303,6 +305,7 @@ exports.update = (req, res) => {
 // Update a Authentication by the id in the request
 exports.updateByUserId = (req, res) => {
     const userId = req.params.userId;
+    // As in create, hashing the password.
     const salt = bcrypt.genSaltSync(10, 'a');
     req.body.userPassword = bcrypt.hashSync(req.body.userPassword, salt);
     
