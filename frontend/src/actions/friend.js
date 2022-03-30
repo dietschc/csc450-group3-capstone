@@ -6,9 +6,7 @@
 
 // Using React library in order to build components
 // for the app and importing needed components
-import C from "../constants";
 import FriendDataService from "../services/friend.service";
-import { formatDBFriendFind } from "../helperFunction/actionHelpers";
 import { addFriend, deleteFriend } from "./users";
 
 /**
@@ -57,7 +55,6 @@ export const addFriendThunk =
 
         // Variable that will indicate if the friend was added to the database
         const isFriendDeleted = friend.data.message.includes("success") ? true : false;
-        console.log("friend data: ", isFriendDeleted);
         // If the friend was added to the database it is also added to state
         if (isFriendDeleted) {
           const userId = id;

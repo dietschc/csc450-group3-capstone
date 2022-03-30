@@ -10,6 +10,7 @@
 //  and cleaned up the code)
 //  (DAB, 3/05/2022, Added in functionality for author based restaurant 
 //  display and cleaned up the code more)
+//  (TJI, 03/29/2022 - Added alt tags for images)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -122,7 +123,8 @@ function Restaurant(props) {
                     <RestaurantHeadingCardBody restaurant={currentRestaurant} />
                     <Card.Img className="mx-auto"
                         style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }}
-                        src={currentRestaurant.images[0].imageLocation} />
+                        src={currentRestaurant.images[0].imageLocation}
+                        alt={currentRestaurant.name} />
                     <FullStarRatingCol rating={currentRestaurant.rating} />
                     <RestaurantDetail restaurant={currentRestaurant} newReviewHandler={newReviewHandler} />
                     <Container fluid>

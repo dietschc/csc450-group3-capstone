@@ -151,7 +151,6 @@ export const formatDBUserFind = (user) => {
             ...user.address,
             ...user.authentication,
             ...user.authentication.permission
-
         }
     }
     // Else it will just return the parameter

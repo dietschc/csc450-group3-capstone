@@ -8,6 +8,10 @@
 //  for messages after the createdAt date)
 //  (DAB, 3/15/2022, Altered the findAllAfterDateOffsetLimitThunk to 
 //  return results based off a messageId )
+//  (DAB, 3/28/2022, findAllAfterDateOffsetLimitThunk now checks 
+//  that the result data is not already in state before adding)
+//  (DAB, 3/28/2022, Updated the service name for findAllAfterDateOffsetLimit 
+//  to describe its behavior of findAllByIdOffsetLimit)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -67,7 +71,6 @@ export const deleteMessage = (id) => ({
 export const findByConversationIdOffsetLimitThunk =
     (userToId, userFromId, offset, limit) => async (dispatch) => {
 
-
         await MessageDataService.findByConversationIdOffsetLimit(userToId, userFromId, offset, limit)
             .then((res) => {
 
@@ -107,18 +110,36 @@ export const findByConversationIdOffsetLimitThunk =
  * @param {*} limit 
  * @returns 
  */
-export const findAllAfterDateOffsetLimitThunk =
-(messageId, userToId, userFromId, offset, limit) => async (dispatch) => {
-    return await MessageDataService.findAllAfterDateOffsetLimit(messageId, userToId, userFromId, offset, limit)
+export const findAllByIdOffsetLimitThunk =
+(messageId, userToId, userFromId, offset, limit) => async (dispatch, getState) => {
+    return await MessageDataService.findAllByIdOffsetLimit(messageId, userToId, userFromId, offset, limit)
         .then((res) => {
             // If a result was found it is ordered and added to state
             if (res.data.length > 0) {
-                // Grabbing the data part of the response
-                const messageData = res.data;
+                // Destructuring messages from state
+                const { messages } = getState();
+
+                // Assigning filteredData to the results
+                let filteredResults = res.data;
+
+                // If there are messages in the raw data will be filtered to exclude 
+                // any possible duplicate messages
+                if (messages.length > 0) {
+                    // Applying a filter to the raw data
+                    filteredResults = res.data.filter(message => {
+                        // Checking if the raw data matches any in state. If it does not match any, it 
+                        // passes the filter and will be added to state
+                        if ((messages.filter(stateMessage => stateMessage.id === message.messageId).length <= 0)) {
+                            
+                            // Returning the message raw data to be added to state
+                            return message;
+                        }
+                    });
+                }
 
                 // The data order will be reversed and then added to state one at 
                 // at time
-                messageData.reverse().forEach(e => {
+                filteredResults.reverse().forEach(e => {
                     // Prepping the data for the dispatch
                     const newMessage = {
                         ...e,
@@ -131,8 +152,6 @@ export const findAllAfterDateOffsetLimitThunk =
                 return true;
             }
             else {
-                // If no data was found it is logged in the console
-                console.log("No new messages found")
                 return false;
             }
         })

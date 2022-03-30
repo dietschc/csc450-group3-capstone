@@ -10,16 +10,20 @@
 //  (DAB, 02/06/2022, breaking up components/functionality into their own .js files)
 //  (DAB, 02/07/2022, changed buttons to buttonGroup function)
 //  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
-//  (CPD, 03/02/2022, Wiring up frontend to use parameters from backend (user, authentication, address))
-//  (CPD, 03/03/2022, Got currentUser info including friends, reviews, and restaurants loading from backend)
+//  (CPD, 03/02/2022, Wiring up frontend to use parameters from backend 
+//  (user, authentication, address))
+//  (CPD, 03/03/2022, Got currentUser info including friends, reviews, 
+//  and restaurants loading from backend)
+//  (DAB, 03/27/2022, userDashboard now functional with admin edits)
+//  (DAB, 03/27/2022, formatted the order of the functions alphabetically where 
+//  possible and finished comments)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
-// import mockStateData from "../../redux/initialState.json";
+import { Container, Row, Col, Alert, Toast } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import FriendList from '../subComponent/FriendList';
 import UserInfo from '../subComponent/UserInfo';
 import RestaurantReviewDetail from '../subComponent/RestaurantReviewDetail';
@@ -29,120 +33,227 @@ import { findByAuthorIdThunk } from '../../actions/reviewsRestaurants';
 import { deleteFriendThunk } from '../../actions/friend';
 import { deleteAllReviews, deleteReviewThunk } from '../../actions/reviews';
 import { deleteAllRestaurants } from '../../actions/restaurants';
+import { deleteUser, findByUserIdThunk } from '../../actions/users';
 
+/**
+ * The UserDashboard View will allow the user to view their account
+ * specific data. Account information, reviews written, and friends 
+ * can all be accessed here. It is the central hub for users to navigate 
+ * their personal content. The user can also access Chat through the 
+ * userDashboard so they can chat with their friends. A 'member' can 
+ * only access their userDashboard while an 'admin' can use this page 
+ * to view all users account data.
+ * 
+ * @param {*} props 
+ * @returns 
+ */
 function UserDashboard(props) {
+    // Destructuring out needed state and actions
+    const { users, restaurants, reviews } = props;
     const {
-        users,
-        restaurants,
-        reviews,
         findByAuthorIdThunk,
         deleteFriendThunk,
         deleteAllReviews,
         deleteAllRestaurants,
-        deleteReviewThunk
+        deleteReviewThunk,
+        findByUserIdThunk,
+        deleteUser
     } = props;
 
+    // Destructuring out the param if there is one
+    const { userId } = useParams();
+    // Allows for the navigation to the specified webpage
+    const navigate = useNavigate();
 
-    // *** Temporary test data, this will be replaced with Redux in the future ***
-    // const [data, setData] = useState(mockStateData);
+    // Initializing the local state variables
     const [showFriendConfirm, setShowFriendConfirm] = useState(false);
     const [showReviewConfirm, setShowReviewConfirm] = useState(false);
     const [friend, setFriend] = useState([]);
     const [currentReview, setCurrentReview] = useState([]);
+    const [user, setUser] = useState(users.length > 0 ? users[0] : []);
+    const [currentAddress, setCurrentAddress] = useState(users.length > 0 ? users[0].address : []);
+    const [friends, setFriends] = useState(users.length > 0 ? users[0].friends : []);
 
-    // Destructuring the needed data from the intitialState.json file
-    // const { messages } = data;
-    const [user = []] = users;
-    const { address: currentAddress = [] } = user;
-    const { friends = [] } = user;
-
-    const loadState = () => {
-        deleteAllReviews();
-        deleteAllRestaurants();
-        findByAuthorIdThunk(user.id);
-    }
-
+    // This useEffect renders only once on the initial page load in
     useEffect(() => {
+        // loading in the current state to start up the page
         loadState();
     }, []);
 
-    // Allows for the navigation to the specified webpage
-    const navigate = useNavigate();
 
-    // Handlers for the DeleteFriendConfirm modal
-    const showFriendHandler = () => setShowFriendConfirm(true);
+    // This useEffect will trigger a rerender every time the users state array 
+    // changes
+    useEffect(() => {
+        // If there is a param userId, that user will be added to the the current 
+        // local state
+        if (userId) {
+            // Filtering for the user that matches the param userId and assigning 
+            // their data to the local state
+            const tempUser = users.filter(user => Number(userId) === user.id)[0]
+            setUser(tempUser)
+            setCurrentAddress(tempUser?.address)
+            setFriends(tempUser?.friends || []);
+        }
+        // Else there is no userId so only friends is rerendered on the main userDashboard
+        else {
+            setFriends(users[0]?.friends)
+        }
+    }, [users])
+
+
+    // Navigates to the Chat page passing the requested friend to 
+    // chat with's ID into the URL. Used with the FriendList.js 
+    // Component. Admins cannot access users chat
+    const chatHandler = (friend) => {
+        // If there is not a userId the chat functionality will work
+        if (!userId) {
+            navigate("../chat/" + friend.id);
+        }
+    }
+
+
+    // Handlers to hide the confirmation modals
     const closeFriendHandler = () => setShowFriendConfirm(false);
+    const closeReviewHandler = () => setShowReviewConfirm(false);
+
+
+    // Deletes the friend with the returned friend.userId. Action changes 
+    // depending on if there is a param userId
+    const deleteFriend = () => {
+        // If there is not a param userId in the URL the target 
+        // will be users[0]
+        if (!userId) {
+            // Define our id parameter
+            const id = users.length > 0 ? users[0].id : "";
+            // Define our friend id parameter
+            const friendId = friend.id;
+
+            // Call thunk method and pass parameters to backend
+            deleteFriendThunk(id, friendId);
+        }
+        // Else the param userId is used to delete the friend data/state
+        else {
+            // Assigning needed parameters
+            const id = user.id;
+            const friendId = friend.id;
+
+            // Call the thunk method to delete the friend from state and 
+            // the database
+            deleteFriendThunk(id, friendId);
+        }
+    }
+
 
     // Handles the click on the delete friend button and sets 
     // the selected friend into state
     const deleteFriendHandler = (friend) => {
+        // Setting the friend from the event to local state
         setFriend(friend);
-        console.log("FRIEND IN DELETE HANDLER IS ", friend);
+
+        // Showing the confirmation modal
         showFriendHandler();
     }
 
-    // Deletes the friend with the returned friend.userId
-    const deleteFriend = () => {
-        // Define our id paramaeter
-        const id = users.length > 0 ? users[0].id : "";
-
-        // Define our friend id parameter
-        const friendId = friend.id;
-
-        // Call thunk method and pass parameters to backend
-        deleteFriendThunk(id, friendId);
-        console.log(friend.userName + " was deleted!");
-    }
-
-    // Handlers for the DeleteReviewConfirm modal
-    const showReviewHandler = () => setShowReviewConfirm(true);
-    const closeReviewHandler = () => setShowReviewConfirm(false);
 
     // Deletes the review with the returned reviewId
     const deleteReview = () => {
-        // Define our id paramaeter
+        // Define our id parameters from local state 
         const reviewId = currentReview.id;
         const imageLocation = currentReview.images[0].imageLocation ?? "";
 
-        // console.log("review id is: ", reviewId);
-
         // Call thunk method and pass parameters to backend
         deleteReviewThunk(reviewId, imageLocation);
-
-        console.log(currentReview.id + " review was deleted!");
     }
+
 
     // Handles the click on the delete review button and sets 
     // the selected review into state
     const deleteReviewHandler = (review) => {
+        // Setting the current review to delete
         setCurrentReview(review);
-        console.log("REVIEW IN DELETE HANDLER IS ", review);
+
+        // Showing a confirm modal
         showReviewHandler();
     }
 
-    // Navigates to the user editAccount page. This is used 
-    // in the UserInfo.js component to edit the current account
-    const userInfoHandler = () => {
-        navigate("../editAccount");
+
+    // The loadState function is async and it will load in the reviews/account/restaurants only 
+    // if needed for the current user
+    const loadState = async () => {
+        // Deleting all the reviews and restaurants currently in state so new fresh data 
+        // can be loaded in
+        await deleteAllReviews();
+        await deleteAllRestaurants();
+
+        // If there is a param userId, that users data will be retrieved and loaded into state
+        if (userId) {
+            // Searching the database to check if the userId exists and load their reviews/restaurants 
+            // into state
+            const result = await findByAuthorIdThunk(userId);
+            // If no user is found, since only admins can access the param userDashboard page they are 
+            // sent back to the admin page to search for another user
+            if (!result) {
+                navigate("/admin")
+            }
+            // Else a user was found so that user is freshly retrieved from the database and added to 
+            // state
+            else {
+                // If the userId does not match the admins id, the user will be deleted and re added
+                if (userId != users[0].id) {
+                    // Filtering out to check if the userId user is currently in state
+                    const tempUser = users.filter(user => Number(userId) === user.id);
+
+                    // If they are, they are deleted from state
+                    if (tempUser.length > 0) {
+                        await deleteUser(Number(userId));
+                    }
+
+                    // The users data is then fetched and freshly added to keep it up to date
+                    await findByUserIdThunk(userId)
+                }
+            }
+        }
+        // Else, there is no param userId
+        else {
+            // The current users data review/restaurant data is retrieved and added to state
+            findByAuthorIdThunk(user.id);
+        }
     }
 
-    // Navigates to the Chat page passing the requested friend to 
-    // chat with's ID into the URL. Used with the FriendList.js 
-    // Component
-    const chatHandler = (friend) => {
-        console.log("FRIEND ID FOR CHAT HANDLER IS ", friend.id);
-        navigate("../chat/" + friend.id);
-    }
 
     // Navigates to the Review page passing the requested review to 
     // Review with the review ID into the URL. Used with the 
     // RestaurantReviewDetail.js Component
     const reviewEditHandler = (review) => {
-        console.log("REVIEW IN EDIT HANDLER IS ", review.id);
         const restaurantId = review.restaurant.id;
         const reviewId = review.id;
         navigate(`../review/${restaurantId}/${reviewId}`);
     }
+
+
+    // Handlers to show the confirmation modals
+    const showFriendHandler = () => setShowFriendConfirm(true);
+    const showReviewHandler = () => setShowReviewConfirm(true);
+
+
+    // Navigates to the user editAccount page. This is used 
+    // in the UserInfo.js component to edit the current account
+    const userInfoHandler = () => {
+        // If an admin in not logged in it will navigate 
+        // to the standard editAccount page
+        if (!userId) {
+            navigate("../editAccount");
+        }
+        // If an admin is logged in it will direct them to the 
+        // edit the user with the param userId
+        else {
+            navigate(`/editAccount/${userId}`);
+        }
+    }
+
+
+    //*************************** RENDER FUNCTIONS  *********************************/
+
 
     // These buttons will be passed into the RestaurantReviewDetail.js 
     // Component to allow the desired functionality with the component. 
@@ -164,12 +275,8 @@ function UserDashboard(props) {
 
     return (
         <Container className="justify-content-center" style={{ maxWidth: "1000px" }}>
-            {/* {console.log("Test is ", users)}
-            {console.log("Current User is ", user)}
-            {console.log("Current Address is ", currentAddress)}
-            {console.log("Test Data .user is ", mockStateData.users)} */}
             <h1>
-                User Dashboard
+                {user && `${user?.auth?.userName}'s`} Dashboard
             </h1>
             <Row>
                 <Col className="pb-2" md={6}>
@@ -183,7 +290,7 @@ function UserDashboard(props) {
                         deleteFriendHandler={deleteFriendHandler} showFriendConfirm={showFriendConfirm}
                         deleteFriend={deleteFriend} closeFriendHandler={closeFriendHandler}
                         friends={friends} closeReviewHandler={closeReviewHandler}
-                        restaurant={restaurants} />
+                        restaurant={restaurants} userId={userId} />
                 </Col>
             </Row>
             <RestaurantReviewDetail reviews={reviews} restaurants={restaurants}
@@ -200,12 +307,13 @@ const mapStateToProps = state =>
     reviews: [...state.reviews]
 });
 
-// Exporting the component
-// export default UserDashboard;
+// Exporting the component after wrapping in connect
 export default connect(mapStateToProps, {
     findByAuthorIdThunk,
     deleteFriendThunk,
     deleteAllRestaurants,
     deleteAllReviews,
-    deleteReviewThunk
+    deleteReviewThunk,
+    findByUserIdThunk,
+    deleteUser
 })(UserDashboard);

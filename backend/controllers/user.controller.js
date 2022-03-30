@@ -10,6 +10,8 @@
 //  (DAB, 3/06/2022, Added in findByNameOffsetLimit that returns the needed user attributes
 //  to load a state into redux. Safe data with no passwords)
 //  (TJI, 03/28/2022 - Added in password hashing)
+//  (DAB, 3/27/2022, Added the friends table results to return with get as friendsOne)
+
 
 const { authentication } = require("../models");
 const db = require("../models");
@@ -157,18 +159,38 @@ exports.findAll = (req, res) => {
 
 // Find a single User with an id
 exports.findOne = (req, res) => {
+    // Saving the userId to params
     const id = req.params.id;
-    User.findByPk((id), { include: [Address, Authentication] })
+
+    // Querying the database for the user with the param id
+    User.findByPk((id), {
+        include: [Address, Authentication,
+            {
+                model: Friend, as: "friendOne",
+                include: [{
+                    model: User, as: "friendTwo", attributes: ["userId"],
+                    include: {
+                        model: Authentication, attributes: ["userName"]
+                    }
+                },
+                ]
+            }
+        ]
+    })
         .then(data => {
+            // If there is data, it is sent 
             if (data) {
                 res.send(data);
-            } else {
+            } 
+            // Else a 404 error message is sent
+            else {
                 res.status(404).send({
                     message: `Cannot find User with id=${id}.`
                 });
             }
         })
         .catch(err => {
+            // If there is another kind of error the requester is notified
             res.status(500).send({
                 message:
                     err.message || "Error retrieving User with id=" + id
@@ -459,8 +481,8 @@ exports.findByNameOffsetLimit = async (req, res) => {
                 model: Friend, as: 'friendOne'
             },
             {
-                model: Authentication, attributes: [ 
-                    'authId', 'userName', 'createdAt', 'updatedAt' 
+                model: Authentication, attributes: [
+                    'authId', 'userName', 'createdAt', 'updatedAt'
                 ],
                 include: {
                     model: Permission

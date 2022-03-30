@@ -13,7 +13,7 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Navbar, Button, Nav, Form, Container, FormControl } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -32,6 +32,7 @@ function MainNav(props) {
     const [basicActive, setBasicActive] = useState();
     const [searchInput, setSearchInput] = useState("");
     const navigate = useNavigate();
+    const location = useLocation();
 
     // Get user state from props
     const {
@@ -45,7 +46,6 @@ function MainNav(props) {
     // Setting the active nav element
     const setActive = (value) => {
         if (value === basicActive) return;
-        console.log("Navigating to " + value)
         setBasicActive(value);
     }
 
@@ -78,14 +78,22 @@ function MainNav(props) {
 
     // Remove everything from state on logout
     const logoutAccount = () => {
-        console.log("logout account");
+        // On logout users and user messages are always deleted 
+        // from state
         deleteAllUsers();
         deleteAllMessages();
-        deleteAllReviews();
-        deleteAllRestaurants();
-
-        // Navigate to home after logout
-        navigate("/");
+        
+        // If the user is not on the home page, all reviews and 
+        // restaurants are deleted. The home page does this 
+        // already
+        if (location.pathname !== '/') {
+            // Deleting all reviews and restaurants so fresh 
+            // ones can be loaded onto the home page
+            deleteAllReviews();
+            deleteAllRestaurants();
+           // Navigate to home after logout
+            navigate('/'); 
+        }
     }
 
     const showAdmin = () => {
@@ -120,9 +128,11 @@ function MainNav(props) {
                     </Nav.Item>
                     {showAdmin()}
                     <Nav.Item className="mx-3" onClick={logoutHandler}>
-                        <Nav.Link>
-                            Logout
-                        </Nav.Link>
+                        <LinkContainer to="login">
+                            <Nav.Link>
+                                Logout
+                            </Nav.Link>
+                        </LinkContainer>
                     </Nav.Item>
                 </>
             ) : (
@@ -160,7 +170,7 @@ function MainNav(props) {
                 <Navbar.Brand>
                     <img
                         src={window.location.origin + '/logo.gif'}
-                        width="90"
+                        width="auto"
                         height="90"
                         className="flex-begin"
                         alt="Logo"
@@ -169,7 +179,7 @@ function MainNav(props) {
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
                     <Nav fill variant="pills" bg="dark" className="mb-auto pe-3"
-                        activeKey={basicActive}
+                        activeKey={location.pathname.substring(0, location.pathname.lastIndexOf('/'))}
                         onSelect={(key) => setActive(key)}>
                         <DevelopersNav />
                         <Nav.Item className="mx-3">
@@ -179,9 +189,7 @@ function MainNav(props) {
                                 </Nav.Link>
                             </LinkContainer>
                         </Nav.Item>
-
                         {showLoginControls()}
-
                     </Nav>
                     <Form onSubmit={searchHandler} className="d-flex">
                         <FormControl
