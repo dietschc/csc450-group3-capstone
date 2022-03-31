@@ -11,6 +11,7 @@
 //  table)
 //  (DAB, 3/27/2022, Added in findByUserIdThunk that will also add in the friends of the user)
 //  (DAB, 3/28/2022, Altered findByUserNameThunk to exclude logged in user userId)
+//  (CPD, 3/29/2022, Added refresh token action)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -18,6 +19,7 @@ import C from '../constants';
 import UserDataService from "../services/user.service";
 import { formatDBUserFind } from '../helperFunction/actionHelpers';
 import AuthenticationDataService from '../services/authentication.service';
+import TokenService from "../services/token.service";
 
 /**
  * The addUser action is called from components/views/EditAccount.js in saveAccount. It passes
@@ -477,7 +479,8 @@ export const updatePermission = (userId, permissionId, permissionName) => ({
  * @param {*} accessToken 
  * @returns 
  */
-export const refreshToken = (accessToken) => ({
+export const refreshToken = (accessToken, userId) => ({
     type: C.REFRESH_TOKEN,
+    id: userId,
     accessToken: accessToken
 })

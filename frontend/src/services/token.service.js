@@ -4,7 +4,14 @@
 // March 29, 2022
 // Last Edited (Initials, Date, Edits):
 
+import http from "../http-common";
+
 class TokenService {
+
+    refreshToken(token) {
+        console.log("call refresh token service w/ token: ", token);
+        return http.post("/authentication/refreshtoken", token);
+    }
 
     getLocalRefreshToken() {
         // Read redux store directly out of local storage
@@ -31,11 +38,13 @@ class TokenService {
         let store = JSON.parse(localStorage.getItem('redux-store'));
 
         // Extract first user (users[0]) from array
-        const [user] = store.users;
+        let [user] = store.users;
 
+        // Set the the new access token
         user.accessToken = token;
         user.firstName = "coleman";
 
+        // Put the updated user object back in the store
         store.users[0] = user;
 
         console.log("update the store: ", store);

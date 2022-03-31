@@ -104,4 +104,4 @@ const mapStateToProps = (state) => ({
 });
 
 // Exporting the component
-export default connect(mapStateToProps, null)(App);
+export default connect(mapStateToProps)(App);

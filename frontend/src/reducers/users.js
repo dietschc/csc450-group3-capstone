@@ -7,6 +7,7 @@
 //  (DAB, 2/15/2022, Wrote redux reducers/actions for login, logout, friends, and remaining users)
 //  (DAB, 2/16/2022, Wrote redux reducers/actions for permissions and tested)
 //  (DAB, 3/06/2022, Added in DELETE_ADDITIONAL_USERS, took out the history state for user)
+//  (CPD, 3/30/2022, Added user and users REFRESH_TOKEN reducers)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -91,6 +92,15 @@ export const users = (state = [], action) => {
                     return currentUser
                 }
             })
+            case C.REFRESH_TOKEN:
+                return state.map((currentUser) => {
+                    if (currentUser.id === action.id) {
+                        return user(currentUser, action)
+                    }
+                    else {
+                        return currentUser
+                    }
+                })
         default:
             return state;
     }

@@ -5,10 +5,11 @@
 // Last Edited (Initials, Date, Edits):
 
 import axiosInstance from "../http-common";
-import TokenService from "./token.service";
+import TokenService from "../services/token.service";
 import { refreshToken, deleteAllUsers } from "../actions/users";
 
 const setup = (store) => {
+    // HTTP request interceptors injects access-token
     axiosInstance.interceptors.request.use(
         (config) => {
             const token = TokenService.getLocalAccessToken();
@@ -26,28 +27,39 @@ const setup = (store) => {
 
     const { dispatch } = store;
 
+    // HTTP response interceptors handles error responses 
+    // This is currently only handling errors related to tokens expiring
     axiosInstance.interceptors.response.use(
         (res) => {
             return res;
         },
+        // In the case there was an HTTP error in the response do the following
         async (err) => {
             const originalConfig = err.config;
 
+            // If this error response is not coming from the login page
             if (originalConfig.url !== "/login" && err.response) {
 
-                // Access Token was expired
+                // Error response 401 from the backend signifies access token was expired
                 if (err.response.status === 401 && !originalConfig._retry) {
                     originalConfig._retry = true;
 
                     try {
-                        // Call the refresh token endpoint
                         const rs = await axiosInstance.post("/authentication/refreshtoken", {
                             refreshToken: TokenService.getLocalRefreshToken(),
                         });
 
-                        // Attempt to refresh access token
+                        // Extract current access token
                         const { accessToken } = rs.data;
-                        dispatch(refreshToken(accessToken));
+                        // Extract current user 
+                        const user = TokenService.getUser();
+
+                        // Debug code
+                        // console.log("user data: ", user);
+                        // console.log("access token: ", accessToken);
+
+                        // Attempt to refresh access token
+                        dispatch(refreshToken(accessToken, user.id));
                         TokenService.updateLocalAccessToken(accessToken);
 
                         return axiosInstance(originalConfig);
@@ -61,14 +73,11 @@ const setup = (store) => {
                 if (err.response.status === 403 && err.response.data) {
                     console.log("refresh token expired");
 
-                    // Dispatch logout action
+                    // Dispatch logout action, or in our case delete all users to logout
                     dispatch(deleteAllUsers());
 
-                    // Reload windows to hide navbar
-                    // window.location.reload();
-
                     // Redirect to login
-                    window.location.href="/login"
+                    window.location.href = "/login"
                 }
 
                 return Promise.reject(err.response.data);
