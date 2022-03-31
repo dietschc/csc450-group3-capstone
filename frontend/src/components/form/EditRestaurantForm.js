@@ -9,7 +9,6 @@
 //  (DAB, 3/10/2022, Added in comments and cleaned up debugs)
 //  (DAB, 3/13/2022, Both add and update restaurant are working as 
 //  fully intended with image uploads/deletes)
-//  (TJI, 03/29/2022 - Added in character limits to match database)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -288,13 +287,13 @@ function EditRestaurantForm(props) {
     // The EditRestaurant form will be displayed using floating labels
     return (
         <Form onSubmit={saveAccount}>
-            <FloatingRestaurantName restaurantName={restaurantName} onChangeRestaurantName={onChangeRestaurantName} maxLength="64" />
-            <FloatingAddress address={address} onChangeAddress={onChangeAddress} maxLength="64" />
-            <FloatingCity city={city} onChangeCity={onChangeCity} maxLength="64" />
-            <FloatingStateZip state={state} zip={zip} onChangeState={onChangeState} onChangeZip={onChangeZip} maxLength="5" />
-            <FloatingPhone phone={phone} onChangePhone={onChangePhone} maxLength="15" />
-            <FloatingDigitalContact digitalContact={digitalContact} onChangeDigitalContact={onChangeDigitalContact} maxLength="255" />
-            <FloatingWebsite website={website} onChangeWebsite={onChangeWebsite} maxLength="255"/>
+            <FloatingRestaurantName restaurantName={restaurantName} onChangeRestaurantName={onChangeRestaurantName} />
+            <FloatingAddress address={address} onChangeAddress={onChangeAddress} />
+            <FloatingCity city={city} onChangeCity={onChangeCity} />
+            <FloatingStateZip state={state} zip={zip} onChangeState={onChangeState} onChangeZip={onChangeZip} />
+            <FloatingPhone phone={phone} onChangePhone={onChangePhone} />
+            <FloatingDigitalContact digitalContact={digitalContact} onChangeDigitalContact={onChangeDigitalContact} />
+            <FloatingWebsite website={website} onChangeWebsite={onChangeWebsite} />
             <FloatingImageUpload onChangeFile={onChangeFile} />
             {imagePreview()}
             <EditFormButtons isUpdate={isUpdate} saveAccount={saveAccount} clearFormHandler={showClearFormHandler} />

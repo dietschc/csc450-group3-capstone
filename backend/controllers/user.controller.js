@@ -35,7 +35,7 @@ exports.create = async (req, res) => {
 
     // Check username does not already exist
     const userName = req.body.userName;
-    const userNameAvaialble = await Authentication.findOne({
+    const userNameAvailable = await Authentication.findOne({
         where: {
             userName: userName
         }
