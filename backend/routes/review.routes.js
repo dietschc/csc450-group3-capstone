@@ -6,6 +6,7 @@
 //  (DAB, 2/27/2022, Added in some offset/limit findAll as well as search 
 //  by name and author Id)
 //  (DAB, 3/5/2022, Added in route for findByRestaurantAuthorIdOffsetLimit)
+//  (CPD, 3/28/2022, Added x-access-token header and protect "/author/:id" with verifyToken)
 
 module.exports = app => {
   const review = require("../controllers/review.controller.js");
