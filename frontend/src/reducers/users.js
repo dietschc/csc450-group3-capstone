@@ -92,15 +92,15 @@ export const users = (state = [], action) => {
                     return currentUser
                 }
             })
-            case C.REFRESH_TOKEN:
-                return state.map((currentUser) => {
-                    if (currentUser.id === action.id) {
-                        return user(currentUser, action)
-                    }
-                    else {
-                        return currentUser
-                    }
-                })
+        case C.REFRESH_TOKEN:
+            return state.map((currentUser) => {
+                if (currentUser.id === action.id) {
+                    return user(currentUser, action)
+                }
+                else {
+                    return currentUser
+                }
+            })
         default:
             return state;
     }
@@ -120,8 +120,6 @@ export const user = (state = {}, action) => {
                 address: address({}, action),
                 auth: auth({}, action),
                 isLoggedIn: action.isLoggedIn,
-                accessToken: action.accessToken,
-                refreshToken: action.refreshToken
             }
         case C.UPDATE_USER:
             return {
@@ -151,8 +149,7 @@ export const user = (state = {}, action) => {
             return {
                 ...state,
                 isLoggedIn: action.isLoggedIn,
-                accessToken: action.accessToken,
-                refreshToken: action.refreshToken
+                auth: auth(state.auth, action)
             }
         case C.LOGOUT:
             return {
@@ -167,7 +164,7 @@ export const user = (state = {}, action) => {
         case C.REFRESH_TOKEN:
             return {
                 ...state,
-                accessToken: action.accessToken
+                auth: auth(state.auth, action)
             }
         default:
             return state;
@@ -198,6 +195,17 @@ export const auth = (state = {}, action) => {
             return {
                 ...state,
                 permission: permission(state.permission, action)
+            }
+        case C.LOGIN:
+            return {
+                ...state,
+                accessToken: action.auth.accessToken,
+                refreshToken: action.auth.refreshToken
+            }
+        case C.REFRESH_TOKEN:
+            return {
+                ...state,
+                accessToken: action.auth.accessToken
             }
         default:
             return state;

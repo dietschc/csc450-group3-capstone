@@ -214,8 +214,7 @@ export const findByUserNameThunk = (offset, limit, userName) => async (dispatch,
 export const addUser = ({ userId, userName,
     firstName, lastName, address, addressId, authId,
     city, state, zip, userEmail, permissionId, permissionName,
-    isLoggedIn, userPassword, createdAt, modifiedAt, friends,
-    accessToken, refreshToken }) => ({
+    isLoggedIn, userPassword, createdAt, modifiedAt, friends }) => ({
         type: C.ADD_USER,
         id: userId,
         firstName: firstName,
@@ -240,9 +239,7 @@ export const addUser = ({ userId, userName,
         },
         email: userEmail,
         friends: friends,
-        isLoggedIn: isLoggedIn || false,
-        accessToken: accessToken,
-        refreshToken: refreshToken
+        isLoggedIn: isLoggedIn || false
     })
 
 /**
@@ -386,25 +383,33 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
             console.log("res data: ", res);
             // Delete the current users in the Users state array
             dispatch(deleteAllUsers());
+            // Will return as res[0]
             const result = {
                 ...res.data.getUser,
                 ...res.data.getAddress,
                 ...res.data.getAuth,
-                ...res.data.getAuth.permission,
+                ...res.data.getAuth.permission
+            };
+            // Will return as res[1]
+            const friends = [...res.data.friends];
+
+            // Will return as res[2]
+            const tokens = {
                 accessToken: res.data.accessToken,
                 refreshToken: res.data.refreshToken
-            };
-            const friends = [...res.data.friends];
+            }
 
             // console.log("IN USERS RESULTS", result);
             // console.log("IN USERS FRIENDS", friends)
 
             // Return an array that contains the response from addUser in res[0]
             // and a copy of the friends array in res[1]
-            return [dispatch(addUser(result)), friends];
+            return [dispatch(addUser(result)), friends, tokens];
         })
         .then(res => {
             // console.log("addfriend data: ", res[1]);
+
+            // console.log("response is: ", res);
 
             // Add each friend to state
             res[1].forEach(e => {
@@ -418,11 +423,12 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
                 dispatch(addFriend(newFriend));
             });
 
-            // const token = res[0].accessToken;
-            // console.log("access token: ", token);
+            const id = res[0].id;
+            const accessToken = res[2].accessToken;
+            const refreshToken = res[2].refreshToken
 
             // Dispatch login parameters to login state action
-            return dispatch(login(res[0].id, res[0].accessToken, res[0].refreshToken));
+            return dispatch(login(id, accessToken, refreshToken));
         })
         .catch(err => {
             console.log(err)
@@ -440,8 +446,10 @@ export const login = (userId, accessToken, refreshToken) => ({
     type: C.LOGIN,
     id: userId,
     isLoggedIn: true,
-    accessToken: accessToken,
-    refreshToken: refreshToken
+    auth: {
+        accessToken: accessToken,
+        refreshToken: refreshToken
+    }
 })
 
 /**
@@ -481,5 +489,7 @@ export const updatePermission = (userId, permissionId, permissionName) => ({
 export const refreshToken = (accessToken, userId) => ({
     type: C.REFRESH_TOKEN,
     id: userId,
-    accessToken: accessToken
+    auth: {
+        accessToken: accessToken
+    }
 })

@@ -18,7 +18,7 @@ class TokenService {
         // Extract first user (users[0]) from array
         const [user] = store.users;
 
-        return user?.refreshToken;
+        return user?.auth.refreshToken;
     }
 
     /**
@@ -33,7 +33,7 @@ class TokenService {
         // // Extract first user (users[0]) from array
         const [user] = store.users;
 
-        return user?.accessToken;
+        return user?.auth.accessToken;
     }
 
     /**
