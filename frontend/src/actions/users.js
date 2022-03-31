@@ -441,7 +441,7 @@ export const login = (userId, accessToken, refreshToken) => ({
     id: userId,
     isLoggedIn: true,
     accessToken: accessToken,
-    refreshToken, refreshToken
+    refreshToken: refreshToken
 })
 
 /**

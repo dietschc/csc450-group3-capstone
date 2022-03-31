@@ -78,7 +78,7 @@ const setup = (store) => {
                     }
                 }
 
-                // Refresh token was expired
+                // Error response 403 from the backend signifies refresh token was expired
                 if (err.response.status === 403 && err.response.data) {
                     console.log("refresh token expired");
 
