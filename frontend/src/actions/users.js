@@ -19,7 +19,6 @@ import C from '../constants';
 import UserDataService from "../services/user.service";
 import { formatDBUserFind } from '../helperFunction/actionHelpers';
 import AuthenticationDataService from '../services/authentication.service';
-import TokenService from "../services/token.service";
 
 /**
  * The addUser action is called from components/views/EditAccount.js in saveAccount. It passes

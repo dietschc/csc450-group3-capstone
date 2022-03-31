@@ -7,7 +7,13 @@
 import axiosInstance from "../http-common";
 import TokenService from "../services/token.service";
 import { refreshToken, deleteAllUsers } from "../actions/users";
+import { useNavigate } from 'react-router-dom';
 
+/**
+ * These interceptors are used in index.js with the redux-store as the argument
+ * 
+ * @param {*} store 
+ */
 const setup = (store) => {
     // HTTP request interceptors injects access-token
     axiosInstance.interceptors.request.use(
@@ -42,14 +48,16 @@ const setup = (store) => {
 
                 // Error response 401 from the backend signifies access token was expired
                 if (err.response.status === 401 && !originalConfig._retry) {
+                    // This retry code is placed here to prevent an infinite loop from failed retries
                     originalConfig._retry = true;
 
                     try {
+                        // Use our current refresh token to request a new access token from the backend
                         const rs = await axiosInstance.post("/authentication/refreshtoken", {
                             refreshToken: TokenService.getLocalRefreshToken(),
                         });
 
-                        // Extract current access token
+                        // Extract new access token from response data
                         const { accessToken } = rs.data;
                         // Extract current user 
                         const user = TokenService.getUser();
@@ -60,7 +68,8 @@ const setup = (store) => {
 
                         // Attempt to refresh access token
                         dispatch(refreshToken(accessToken, user.id));
-                        TokenService.updateLocalAccessToken(accessToken);
+
+                        // TokenService.updateLocalAccessToken(accessToken);
 
                         return axiosInstance(originalConfig);
 
@@ -76,8 +85,8 @@ const setup = (store) => {
                     // Dispatch logout action, or in our case delete all users to logout
                     dispatch(deleteAllUsers());
 
-                    // Redirect to login
-                    window.location.href = "/login"
+                    // Redirect to login after user is logged out
+                    useNavigate('/login');
                 }
 
                 return Promise.reject(err.response.data);
