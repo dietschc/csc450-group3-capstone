@@ -9,6 +9,7 @@
 //  (CPD, 2/28, Added friend methods to users controller)
 //  (DAB, 3/06/2022, Added in findByNameOffsetLimit that returns the needed user attributes
 //  to load a state into redux. Safe data with no passwords)
+//  (TJI, 03/28/2022 - Added in password hashing)
 //  (DAB, 3/27/2022, Added the friends table results to return with get as friendsOne)
 
 
@@ -20,6 +21,9 @@ const Authentication = db.authentication;
 const Permission = db.permission;
 const Address = db.address;
 const Friend = db.friend;
+
+// Password hashing utility
+const bcrypt = require('bcrypt');
 
 // Create and Save a new User
 // Asynchronous method to create a user with the parameters passed from the frontend.
@@ -109,6 +113,13 @@ exports.create = async (req, res) => {
             userName: req.body.userName,
             userPassword: req.body.userPassword,
             // historyId: null, // FK constraint with History table
+        }
+
+        // Hashes the submitted password using BCrypt's minor a modal going through 2^10 rounds
+        if(authentication.userPassword)
+        {
+            const salt = await bcrypt.genSaltSync(10, 'a');
+            authentication.userPassword = bcrypt.hashSync(authentication.userPassword, salt);
         }
 
         // Save Authentication in the database
@@ -219,6 +230,13 @@ exports.update = async (req, res) => {
         .then(status => {
             return status;
         })
+
+    // Binary hash the submitted password using BCrypt's minor A modal for 2^10 rounds
+    if(req.body.userPassword)
+    {
+        const salt = await bcrypt.genSaltSync(10, 'a');
+        req.body.userPassword = bcrypt.hashSync(req.body.userPassword, salt);
+    }
 
     // Try to update auth table
     const authUpdateStatus = await Authentication.update(req.body, {
