@@ -7,6 +7,7 @@
 //  (DAB, 2/15/2022, Wrote redux reducers/actions for login, logout, friends, and remaining users)
 //  (DAB, 2/16/2022, Wrote redux reducers/actions for permissions and tested)
 //  (DAB, 3/06/2022, Added in DELETE_ADDITIONAL_USERS, took out the history state for user)
+//  (CPD, 3/30/2022, Added user and users REFRESH_TOKEN reducers)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -55,42 +56,51 @@ export const users = (state = [], action) => {
                     return currentUser
                 }
             })
-            case C.DELETE_FRIEND:
-                return state.map((currentUser) => {
-                    if (currentUser.id === action.userId) {
-                        return user(currentUser, action)
-                    }
-                    else {
-                        return currentUser
-                    }
-                })
-            case C.LOGIN:
-                return state.map((currentUser) => {
-                    if (currentUser.id === action.id) {
-                        return user(currentUser, action)
-                    }
-                    else {
-                        return currentUser
-                    }
-                })
-            case C.LOGOUT:
-                return state.map((currentUser) => {
-                    if (currentUser.id === action.id) {
-                        return user(currentUser, action)
-                    }
-                    else {
-                        return currentUser
-                    }
-                })
-            case C.UPDATE_PERMISSION:
-                return state.map((currentUser) => {
-                    if (currentUser.id === action.id) {
-                        return user(currentUser, action)
-                    }
-                    else {
-                        return currentUser
-                    }
-                })
+        case C.DELETE_FRIEND:
+            return state.map((currentUser) => {
+                if (currentUser.id === action.userId) {
+                    return user(currentUser, action)
+                }
+                else {
+                    return currentUser
+                }
+            })
+        case C.LOGIN:
+            return state.map((currentUser) => {
+                if (currentUser.id === action.id) {
+                    return user(currentUser, action)
+                }
+                else {
+                    return currentUser
+                }
+            })
+        case C.LOGOUT:
+            return state.map((currentUser) => {
+                if (currentUser.id === action.id) {
+                    return user(currentUser, action)
+                }
+                else {
+                    return currentUser
+                }
+            })
+        case C.UPDATE_PERMISSION:
+            return state.map((currentUser) => {
+                if (currentUser.id === action.id) {
+                    return user(currentUser, action)
+                }
+                else {
+                    return currentUser
+                }
+            })
+        case C.REFRESH_TOKEN:
+            return state.map((currentUser) => {
+                if (currentUser.id === action.id) {
+                    return user(currentUser, action)
+                }
+                else {
+                    return currentUser
+                }
+            })
         default:
             return state;
     }
@@ -109,7 +119,7 @@ export const user = (state = {}, action) => {
                 friends: friends([], action),
                 address: address({}, action),
                 auth: auth({}, action),
-                isLoggedIn: action.isLoggedIn
+                isLoggedIn: action.isLoggedIn,
             }
         case C.UPDATE_USER:
             return {
@@ -138,7 +148,8 @@ export const user = (state = {}, action) => {
         case C.LOGIN:
             return {
                 ...state,
-                isLoggedIn: action.isLoggedIn
+                isLoggedIn: action.isLoggedIn,
+                auth: auth(state.auth, action)
             }
         case C.LOGOUT:
             return {
@@ -146,6 +157,11 @@ export const user = (state = {}, action) => {
                 isLoggedIn: action.isLoggedIn
             }
         case C.UPDATE_PERMISSION:
+            return {
+                ...state,
+                auth: auth(state.auth, action)
+            }
+        case C.REFRESH_TOKEN:
             return {
                 ...state,
                 auth: auth(state.auth, action)
@@ -180,6 +196,17 @@ export const auth = (state = {}, action) => {
                 ...state,
                 permission: permission(state.permission, action)
             }
+        case C.LOGIN:
+            return {
+                ...state,
+                accessToken: action.auth.accessToken,
+                refreshToken: action.auth.refreshToken
+            }
+        case C.REFRESH_TOKEN:
+            return {
+                ...state,
+                accessToken: action.auth.accessToken
+            }
         default:
             return state;
     }
@@ -208,7 +235,7 @@ export const permission = (state = {}, action) => {
 // altered
 export const history = (state = {}, action) => {
     switch (action.type) {
-        case C.ADD_USER: 
+        case C.ADD_USER:
             return {
                 id: action.id,
                 created: action.auth.history.created,
