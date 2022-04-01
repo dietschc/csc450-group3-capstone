@@ -7,6 +7,7 @@
 //  (CPD, 2/22/22, Connected frontend to backend with loginThunk)
 //  (DAB, 3/22/2022, Added in useLocation state to allow for a user to be redirected back 
 //  to the previous location after logging in)
+//  (TJI, 03/29/2022 - Added in character limits to match database)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -37,14 +38,16 @@ function Login(props) {
     const onChangeUserName = e => {
         setShowError(false);
         setShowSuccess(false);
-        const userName = e.target.value
+        const {value, maxLength} = e.target;
+        const userName = value.slice(0, maxLength);
         setUserName(userName);
     }
 
     const onChangePassword = e => {
         setShowError(false);
         setShowSuccess(false);
-        const password = e.target.value
+        const {value, maxLength} = e.target;
+        const password = value.slice(0, maxLength);
         setPassword(password);
     }
 
@@ -165,6 +168,7 @@ function Login(props) {
                                     name="username"
                                     value={userName}
                                     onChange={onChangeUserName}
+                                    maxLength="64"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -180,6 +184,7 @@ function Login(props) {
                                     name="password"
                                     value={password}
                                     onChange={onChangePassword}
+                                    maxLength="64"
                                 />
                             </FloatingLabel>
                         </Form.Floating>

@@ -10,6 +10,7 @@
 //  (DAB, 3/28/22, Admin editAccount functionality implemented)
 //  (DAB, 3/28/22, Cleaned up code and added comments)
 //  (DAB, 3/28/22, Added in clear form modal)
+//  (TJI, 03/29/2022 - Added in character limits to match database)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -165,42 +166,48 @@ function EditAccount(props) {
 
     // Handles the address form input
     const onChangeAddress = e => {
-        const address = e.target.value
+        const {value, maxLength} = e.target;
+        const address = value.slice(0, maxLength);
         setAddress(address);
     }
 
 
     // Handles the city form input
     const onChangeCity = e => {
-        const city = e.target.value
+        const {value, maxLength} = e.target;
+        const city = value.slice(0, maxLength);
         setCity(city);
     }
 
 
     // Handles the email form input
     const onChangeEmail = e => {
-        const email = e.target.value
+        const {value, maxLength} = e.target;
+        const email = value.slice(0, maxLength);
         setEmail(email);
     }
     
 
     // Handles the first name form input
     const onChangeFirstName = e => {
-        const firstName = e.target.value
+        const {value, maxLength} = e.target;
+        const firstName = value.slice(0, maxLength);
         setFirstName(firstName);
     }
 
 
     // Handles the last name form input
     const onChangeLastName = e => {
-        const lastName = e.target.value
+        const {value, maxLength} = e.target;
+        const lastName = value.slice(0, maxLength);
         setLastName(lastName);
     }
 
 
     // Handles the password form input
     const onChangePassword = e => {
-        const password = e.target.value
+        const {value, maxLength} = e.target;
+        const password = value.slice(0, maxLength);
         setPassword(password);
     }
 
@@ -214,14 +221,16 @@ function EditAccount(props) {
 
     // Handles the user name form input
     const onChangeUserName = e => {
-        const userName = e.target.value
+        const {value, maxLength} = e.target;
+        const userName = value.slice(0, maxLength);
         setUserName(userName);
     }
 
 
     // Handles the zip form input
     const onChangeZip = e => {
-        const zip = e.target.value
+        const {value, maxLength} = e.target;
+        const zip = value.slice(0, maxLength);
         setZip(zip);
     }
 
@@ -355,6 +364,7 @@ function EditAccount(props) {
                                     required
                                     value={userName}
                                     onChange={onChangeUserName}
+                                    maxLength="64"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -368,6 +378,7 @@ function EditAccount(props) {
                                     placeholder="User Name"
                                     value={firstName}
                                     onChange={onChangeFirstName}
+                                    maxLength="64"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -381,6 +392,7 @@ function EditAccount(props) {
                                     placeholder="Last Name"
                                     value={lastName}
                                     onChange={onChangeLastName}
+                                    maxLength="64"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -394,6 +406,7 @@ function EditAccount(props) {
                                     placeholder="Address"
                                     value={address}
                                     onChange={onChangeAddress}
+                                    maxLength="64"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -407,6 +420,7 @@ function EditAccount(props) {
                                     placeholder="City"
                                     value={city}
                                     onChange={onChangeCity}
+                                    maxLength="64"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -425,6 +439,7 @@ function EditAccount(props) {
                                         placeholder="Zip"
                                         value={zip}
                                         onChange={onChangeZip}
+                                        maxLength="5"
                                     />
                                 </FloatingLabel>
                             </Form.Floating>
@@ -440,6 +455,7 @@ function EditAccount(props) {
                                     required
                                     value={email}
                                     onChange={onChangeEmail}
+                                    maxLength="64"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -454,6 +470,7 @@ function EditAccount(props) {
                                     required
                                     value={password}
                                     onChange={onChangePassword}
+                                    maxLength="64"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
