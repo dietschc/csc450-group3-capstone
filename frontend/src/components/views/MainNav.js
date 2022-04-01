@@ -155,14 +155,14 @@ function MainNav(props) {
     )
 
     // Theme variables
-    const buttonTheme = "outline-primary";
-    const backgroundTheme = "light";
-    const variantTheme = "light";
+    const buttonTheme = "outline-light";
+    const backgroundTheme = "dark";
+    const variantTheme = "dark";
 
     return (
-        <Container fluid>
+        <Container fluid className="p-0">
             <Navbar
-                className="mainNav px-2"
+                className="mainNav px-2 rounded-bottom"
                 bg={backgroundTheme}
                 variant={variantTheme}
                 collapseOnSelect
@@ -172,13 +172,13 @@ function MainNav(props) {
                         src={window.location.origin + '/logo.gif'}
                         width="auto"
                         height="90"
-                        className="flex-begin"
+                        className="flex-begin rounded"
                         alt="Logo"
                     />
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
-                    <Nav fill variant="pills" bg="dark" className="mb-auto pe-3"
+                    <Nav fill className="mb-auto pe-3"
                         activeKey={location.pathname.substring(0, location.pathname.lastIndexOf('/'))}
                         onSelect={(key) => setActive(key)}>
                         <DevelopersNav />
