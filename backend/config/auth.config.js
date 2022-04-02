@@ -7,13 +7,13 @@
 
 // Access token and Refresh Access token expiration settings
 module.exports = {
-    secret: "super-secret-key",
+    secret: "NEmqXp3eRcndLeMj3ZPkU5WgALVdAwbXpzxwy5Wyf5EKnx87r5xrcM5rbrm5nKgz",
     // Expiration of access tokens
     jwtExpiration: 7200,           // 2 hours
     // Expiration of refresh tokens
     jwtRefreshExpiration: 28800,   // 8 hours
 
     /* For testing */
-    // jwtExpiration: 60,          // 1 minute 
+    // jwtExpiration: 15,          // 15 seconds 
     // jwtRefreshExpiration: 120,  // 2 minutes
 };

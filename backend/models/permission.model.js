@@ -12,7 +12,7 @@ module.exports = (sequelize, Sequelize) => {
 			autoIncrement: true
 		},
 		permissionName: {
-			type: Sequelize.STRING
+			type: Sequelize.STRING(32)
 		}
 	}, {
 		freezeTableName: true,

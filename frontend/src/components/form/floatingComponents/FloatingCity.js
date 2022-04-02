@@ -3,6 +3,7 @@
 // Restaurant Club - FloatingCity.js
 // February 3, 2022
 // Last Edited (Initials, Date, Edits):
+//  (TJI, 03/29/2022 - Added in character limits to match database)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -34,6 +35,7 @@ function FloatingCity(props) {
                         required
                         value={city}
                         onChange={onChangeCity}
+                        maxLength="64"
                     />
                 </FloatingLabel>
         </Form.Floating>

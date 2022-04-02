@@ -28,16 +28,16 @@ module.exports = (sequelize, Sequelize) => {
 			type: Sequelize.INTEGER
 		},
 		restaurantName: {
-			type: Sequelize.STRING
+			type: Sequelize.STRING(64)
 		},
 		restaurantDigiContact: {
-			type: Sequelize.STRING
+			type: Sequelize.STRING(255)
 		},
 		restaurantWebsite: {
-			type: Sequelize.STRING
+			type: Sequelize.STRING(255)
 		},
 		restaurantPhone: {
-			type: Sequelize.STRING
+			type: Sequelize.STRING(15)
 		},
 		reviewCount: {
 			type: Sequelize.INTEGER

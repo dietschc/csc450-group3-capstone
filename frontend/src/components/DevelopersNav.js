@@ -20,7 +20,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
  */
 function DevelopersNav(props) {
     return (
-        <NavDropdown as="ul" title="Dev Nav" variant="flush">
+        <NavDropdown as="ul" title="Dev Nav" variant="flush" className="p-0 m-0">
             <NavDropdown.Item as="li"  className="text-center text-muted">
                 <Link className="text-decoration-none text-reset" to="/restaurant">
                     Restaurant

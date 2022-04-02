@@ -11,6 +11,7 @@
 //  (DAB, 03/28/2022, Interval is no longer async, it was causing issues)
 //  (DAB, 3/28/2022, Updated the name for findAllAfterDateOffsetLimit 
 //  to describe its behavior of findAllByIdOffsetLimit)
+//  (TJI, 03/29/2022 - Added in character limits to match database)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -141,7 +142,8 @@ function Chat(props) {
 
     // This function will set chatMessage state with the new message
     const onChangeMessage = (e) => {
-        const chatMessage = e.target.value
+        const {value, maxLength} = e.target;
+        const chatMessage = value.slice(0, maxLength);
         setChatMessage(chatMessage);
     }
 
@@ -232,7 +234,8 @@ function Chat(props) {
                                     <Form.Control as="textarea"
                                         className="p-2" rows={3}
                                         value={chatMessage}
-                                        onChange={onChangeMessage} />
+                                        onChange={onChangeMessage}
+                                        maxLength="255" />
                                 </Form.Group>
                                 <Button type="submit"
                                     className="d-flex ms-auto justify-content-center"

@@ -19,7 +19,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 function MainTemplate() {
 
     return (
-        <div className="page">
+        <div className="page bg-light">
             <MainNav/>
             <App/>
             <Footer/>  

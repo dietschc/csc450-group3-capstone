@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 // (CPD, 3/5/2022, Added friend test data and functions)
 //  (DAB, 03/13/2022, Added in messages and more friends)
+// (TJI) Fixed a typo in a state field
 //  (TJI, 03/29/2022, hashing passwords as they're put in to match authentication)
 
 const db = require("../models");
@@ -123,7 +124,7 @@ const restaurant3Data = {
     userCreatorId: 3,
     address: "209 Radio Dr",
     city: "Woodbury",
-    state: "state",
+    state: "MN",
     zip: "55125",
     imageLocation: "/reviewImages/1/roadhouse.jpg",
     restaurantName: "Texas Roadhouse",

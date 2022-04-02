@@ -117,21 +117,24 @@ function EditRestaurantForm(props) {
 
     // Change handler for the function name specific form input
     const onChangeAddress = (e) => {
-        const address = e.target.value;
+        const {value, maxLength} = e.target;
+        const address = value.slice(0, maxLength);
         setAddress(address);
     }
 
 
     // Change handler for the function name specific form input
     const onChangeCity = (e) => {
-        const city = e.target.value;
+        const {value, maxLength} = e.target;
+        const city = value.slice(0, maxLength);
         setCity(city);
     }
 
 
     // Change handler for the function name specific form input
     const onChangeDigitalContact = (e) => {
-        const digitalContact = e.target.value;
+        const {value, maxLength} = e.target;
+        const digitalContact = value.slice(0, maxLength);
         setDigitalContact(digitalContact);
     }
 
@@ -158,14 +161,16 @@ function EditRestaurantForm(props) {
 
     // Change handler for the function name specific form input
     const onChangePhone = (e) => {
-        const phone = formatPhoneNumber(e.target.value);
+        const {value, maxLength} = e.target;
+        const phone = formatPhoneNumber(value.slice(0, maxLength));
         setPhone(phone);
     }
 
 
     // Change handler for the function name specific form input
     const onChangeRestaurantName = (e) => {
-        const restaurantName = e.target.value;
+        const {value, maxLength} = e.target;
+        const restaurantName = value.slice(0, maxLength);
         setRestaurantName(restaurantName);
     }
 
@@ -179,14 +184,16 @@ function EditRestaurantForm(props) {
 
     // Change handler for the function website specific form input
     const onChangeWebsite = (e) => {
-        const website = e.target.value;
+        const {value, maxLength} = e.target;
+        const website = value.slice(0, maxLength);
         setWebsite(website);
     }
 
 
     // Change handler for the function name specific form input
     const onChangeZip = (e) => {
-        const zip = e.target.value;
+        const {value, maxLength} = e.target;
+        const zip = value.slice(0, maxLength);
         setZip(zip);
     }
 
