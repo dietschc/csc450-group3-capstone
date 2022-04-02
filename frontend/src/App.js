@@ -31,6 +31,7 @@ import AuthAdmin from './components/auth/AuthAdmin';
 import AuthLoggedIn from './components/auth/AuthLoggedIn';
 import AuthReview from './components/auth/AuthReview';
 import AuthChat from './components/auth/AuthChat';
+import EditPassword from './components/views/EditPassword';
 
 function App(props) {
     // Authentication testing DEBUG*********
@@ -56,6 +57,7 @@ function App(props) {
                     <AuthAdmin>
                         <EditAccount />
                     </AuthAdmin>} />
+                <Route path='/editPassword' element={<EditPassword />} />
                 <Route path='/editRestaurant' element={
                     <AuthLoggedIn>
                         <EditRestaurant />
@@ -104,4 +106,4 @@ const mapStateToProps = (state) => ({
 });
 
 // Exporting the component
-export default connect(mapStateToProps, null)(App);
+export default connect(mapStateToProps)(App);

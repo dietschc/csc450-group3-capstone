@@ -10,6 +10,8 @@
 //  (DAB, 3/28/22, Admin editAccount functionality implemented)
 //  (DAB, 3/28/22, Cleaned up code and added comments)
 //  (DAB, 3/28/22, Added in clear form modal)
+//  (TJI, 03/29/2022 - Added in character limits to match database)
+//  (TJI, 04/02/2022) - Moved the update password to a new page.
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -59,7 +61,14 @@ function EditAccount(props) {
     const [zip, setZip] = useState(users.length > 0 ? users[0].address.zip : "");
     const [state, setState] = useState(users.length > 0 ? users[0].address.state : "");
     const [email, setEmail] = useState(users.length > 0 ? users[0].email : "");
-    const [password, setPassword] = useState(users.length > 0 ? users[0].auth.password : "");
+    // Password no longer stored in state so set to blank
+    const [password, setPassword] = useState("");
+
+    // Redirect for hitting the Update Password button
+    const changePasswordHandler = () =>
+    {
+        navigate("../editPassword");
+    }
 
     // Check if user is logged in
     const isEditing = checkLogin(users);
@@ -165,42 +174,48 @@ function EditAccount(props) {
 
     // Handles the address form input
     const onChangeAddress = e => {
-        const address = e.target.value
+        const {value, maxLength} = e.target;
+        const address = value.slice(0, maxLength);
         setAddress(address);
     }
 
 
     // Handles the city form input
     const onChangeCity = e => {
-        const city = e.target.value
+        const {value, maxLength} = e.target;
+        const city = value.slice(0, maxLength);
         setCity(city);
     }
 
 
     // Handles the email form input
     const onChangeEmail = e => {
-        const email = e.target.value
+        const {value, maxLength} = e.target;
+        const email = value.slice(0, maxLength);
         setEmail(email);
     }
     
 
     // Handles the first name form input
     const onChangeFirstName = e => {
-        const firstName = e.target.value
+        const {value, maxLength} = e.target;
+        const firstName = value.slice(0, maxLength);
         setFirstName(firstName);
     }
 
 
     // Handles the last name form input
     const onChangeLastName = e => {
-        const lastName = e.target.value
+        const {value, maxLength} = e.target;
+        const lastName = value.slice(0, maxLength);
         setLastName(lastName);
     }
 
 
     // Handles the password form input
     const onChangePassword = e => {
-        const password = e.target.value
+        const {value, maxLength} = e.target;
+        const password = value.slice(0, maxLength);
         setPassword(password);
     }
 
@@ -214,14 +229,16 @@ function EditAccount(props) {
 
     // Handles the user name form input
     const onChangeUserName = e => {
-        const userName = e.target.value
+        const {value, maxLength} = e.target;
+        const userName = value.slice(0, maxLength);
         setUserName(userName);
     }
 
 
     // Handles the zip form input
     const onChangeZip = e => {
-        const zip = e.target.value
+        const {value, maxLength} = e.target;
+        const zip = value.slice(0, maxLength);
         setZip(zip);
     }
 
@@ -278,7 +295,6 @@ function EditAccount(props) {
             zip: zip,
             state: state,
             userEmail: email,
-            userPassword: password
         }
 
         // If there is not a param userId, then the logged in users 
@@ -309,21 +325,34 @@ function EditAccount(props) {
 
     // The displaySubmitButton will display the correct submit button and 
     // associated handlers so the correct operations can be performed
+
+    // TJI - Moved all buttons into a container to accomodate if it is a Create or Edit action
+    //     - Also added a Change Password button on edit to navigate to a different page
     const displaySubmitButton = () => (
         <div className="d-flex justify-content-around pt-2 pb-5">
             {isEditing ? (
-                <Button type="submit" variant="outline-primary">
-                    Update
-                </Button>
+                <Container className="d-flex justify-content-around ">
+                    <Button type="submit" variant="outline-primary">
+                        Update
+                    </Button>   
+                    <Button variant="outline-primary" onClick={changePasswordHandler}>
+                        Change Password
+                    </Button>
+                    <Button variant="outline-primary" onClick={showClearFormHandler}>
+                        Clear
+                    </Button>
+                </Container>
             ) : (
-                <Button type="submit" variant="outline-primary">
-                    Submit
-                </Button>
+                <Container className="d-flex justify-content-around ">
+                    <Button type="submit" variant="outline-primary">
+                        Submit
+                    </Button>
+                    <Button variant="outline-primary" onClick={showClearFormHandler}>
+                    Clear
+                    </Button>
+                </Container>
             )}
 
-            <Button variant="outline-primary" onClick={showClearFormHandler}>
-                Clear
-            </Button>
         </div>
     )
 
@@ -355,6 +384,7 @@ function EditAccount(props) {
                                     required
                                     value={userName}
                                     onChange={onChangeUserName}
+                                    maxLength="64"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -368,6 +398,7 @@ function EditAccount(props) {
                                     placeholder="User Name"
                                     value={firstName}
                                     onChange={onChangeFirstName}
+                                    maxLength="64"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -381,6 +412,7 @@ function EditAccount(props) {
                                     placeholder="Last Name"
                                     value={lastName}
                                     onChange={onChangeLastName}
+                                    maxLength="64"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -394,6 +426,7 @@ function EditAccount(props) {
                                     placeholder="Address"
                                     value={address}
                                     onChange={onChangeAddress}
+                                    maxLength="64"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -407,6 +440,7 @@ function EditAccount(props) {
                                     placeholder="City"
                                     value={city}
                                     onChange={onChangeCity}
+                                    maxLength="64"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -425,6 +459,7 @@ function EditAccount(props) {
                                         placeholder="Zip"
                                         value={zip}
                                         onChange={onChangeZip}
+                                        maxLength="5"
                                     />
                                 </FloatingLabel>
                             </Form.Floating>
@@ -440,10 +475,11 @@ function EditAccount(props) {
                                     required
                                     value={email}
                                     onChange={onChangeEmail}
+                                    maxLength="64"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
-
+                        {!isEditing ?
                         <Form.Floating className="mb-3 justify-content-center">
                             <FloatingLabel
                                 controlId="floatingPassword"
@@ -454,9 +490,11 @@ function EditAccount(props) {
                                     required
                                     value={password}
                                     onChange={onChangePassword}
+                                    maxLength="64"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
+                        : ""}
 
                         {displaySubmitButton()}
 

@@ -11,11 +11,12 @@
 //  table)
 //  (DAB, 3/27/2022, Added in findByUserIdThunk that will also add in the friends of the user)
 //  (DAB, 3/28/2022, Altered findByUserNameThunk to exclude logged in user userId)
+//  (CPD, 3/29/2022, Added refresh token action)
+//  (TJI, 04/02/2022, Added in EditPasswordThunk, removed password from updateUserThunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import C from '../constants';
-import { v4 } from 'uuid';
 import UserDataService from "../services/user.service";
 import { formatDBUserFind } from '../helperFunction/actionHelpers';
 import AuthenticationDataService from '../services/authentication.service';
@@ -185,13 +186,13 @@ export const findByUserNameThunk = (offset, limit, userName) => async (dispatch,
                 if (users.length > 0) {
                     filteredResults = res.data.filter(user => user.userId != users[0].id);
                 }
-                
+
                 // Iterating through the restaurant data
                 await filteredResults.map(user => {
                     // The user data is formatted to be added to redux state
                     const userData = formatDBUserFind(user);
 
-                    // // Adding the user to redux state
+                    // Adding the user to redux state
                     dispatch(addUser(userData));
 
                     // Returning the user data
@@ -380,20 +381,36 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
      */
     return await UserDataService.login({ userName, userPassword })
         .then(res => {
-            // console.log("res data: ", res);
+            console.log("res data: ", res);
             // Delete the current users in the Users state array
             dispatch(deleteAllUsers());
-            const result = { ...res.data.getUser, ...res.data.getAddress, ...res.data.getAuth, ...res.data.getAuth.permission }
+            // Will return as res[0]
+            const result = {
+                ...res.data.getUser,
+                ...res.data.getAddress,
+                ...res.data.getAuth,
+                ...res.data.getAuth.permission
+            };
+            // Will return as res[1]
             const friends = [...res.data.friends];
 
-            console.log("IN USERS RESULTS", result);
-            console.log("IN USERS FRIENDS", friends)
+            // Will return as res[2]
+            const tokens = {
+                accessToken: res.data.accessToken,
+                refreshToken: res.data.refreshToken
+            }
+
+            // console.log("IN USERS RESULTS", result);
+            // console.log("IN USERS FRIENDS", friends)
+
             // Return an array that contains the response from addUser in res[0]
             // and a copy of the friends array in res[1]
-            return [dispatch(addUser(result)), friends];
+            return [dispatch(addUser(result)), friends, tokens];
         })
         .then(res => {
             // console.log("addfriend data: ", res[1]);
+
+            // console.log("response is: ", res);
 
             // Add each friend to state
             res[1].forEach(e => {
@@ -407,8 +424,43 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
                 dispatch(addFriend(newFriend));
             });
 
-            // Dispatch userId (now stored in id) to login state action
-            return dispatch(login(res[0].id));
+            const id = res[0].id;
+            const accessToken = res[2].accessToken;
+            const refreshToken = res[2].refreshToken
+
+            // Dispatch login parameters to login state action
+            return dispatch(login(id, accessToken, refreshToken));
+        })
+        .catch(err => {
+            console.log(err)
+            return err;
+        })
+}
+
+
+/**
+ * 
+ * @param {*} userName 
+ * @param {*} userPassword (old password)
+ * @param {*} newPassword
+ * @returns 
+ */
+ export const editPasswordThunk = (userName, userPassword, newPassword) => async dispatch => {
+    /**
+     * Call and await the user data service login method, passing the parameters and storing the 
+     * results in res
+     */
+    return await UserDataService.login({ userName, userPassword })
+        .then(res => {
+            // Get the auth table for the user
+            const result = res.data.getAuth;
+            // Update the stored auth table to include the new password
+            result.userPassword = newPassword;
+            // console.log("In process", result);
+            // Update the auth table in the database
+            AuthenticationDataService.update(result.authId, result);
+            
+            return [dispatch(addUser(result))];
         })
         .catch(err => {
             console.log(err)
@@ -422,10 +474,14 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
  * @param {*} userId 
  * @returns 
  */
-export const login = (userId) => ({
+export const login = (userId, accessToken, refreshToken) => ({
     type: C.LOGIN,
     id: userId,
-    isLoggedIn: true
+    isLoggedIn: true,
+    auth: {
+        accessToken: accessToken,
+        refreshToken: refreshToken
+    }
 })
 
 /**
@@ -454,4 +510,18 @@ export const updatePermission = (userId, permissionId, permissionName) => ({
     id: userId,
     permissionId: permissionId,
     permissionName: permissionName
+})
+
+/**
+ * Get new accessToken action. Mainly used for renewing accessTokens.
+ * 
+ * @param {*} accessToken 
+ * @returns 
+ */
+export const refreshToken = (accessToken, userId) => ({
+    type: C.REFRESH_TOKEN,
+    id: userId,
+    auth: {
+        accessToken: accessToken
+    }
 })
