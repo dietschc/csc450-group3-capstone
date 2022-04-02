@@ -65,8 +65,7 @@ function EditAccount(props) {
     const [password, setPassword] = useState("");
 
     // Redirect for hitting the Update Password button
-    const changePasswordHandler = () =>
-    {
+    const changePasswordHandler = () => {
         navigate("../editPassword");
     }
 
@@ -174,7 +173,7 @@ function EditAccount(props) {
 
     // Handles the address form input
     const onChangeAddress = e => {
-        const {value, maxLength} = e.target;
+        const { value, maxLength } = e.target;
         const address = value.slice(0, maxLength);
         setAddress(address);
     }
@@ -182,7 +181,7 @@ function EditAccount(props) {
 
     // Handles the city form input
     const onChangeCity = e => {
-        const {value, maxLength} = e.target;
+        const { value, maxLength } = e.target;
         const city = value.slice(0, maxLength);
         setCity(city);
     }
@@ -190,15 +189,15 @@ function EditAccount(props) {
 
     // Handles the email form input
     const onChangeEmail = e => {
-        const {value, maxLength} = e.target;
+        const { value, maxLength } = e.target;
         const email = value.slice(0, maxLength);
         setEmail(email);
     }
-    
+
 
     // Handles the first name form input
     const onChangeFirstName = e => {
-        const {value, maxLength} = e.target;
+        const { value, maxLength } = e.target;
         const firstName = value.slice(0, maxLength);
         setFirstName(firstName);
     }
@@ -206,7 +205,7 @@ function EditAccount(props) {
 
     // Handles the last name form input
     const onChangeLastName = e => {
-        const {value, maxLength} = e.target;
+        const { value, maxLength } = e.target;
         const lastName = value.slice(0, maxLength);
         setLastName(lastName);
     }
@@ -214,7 +213,7 @@ function EditAccount(props) {
 
     // Handles the password form input
     const onChangePassword = e => {
-        const {value, maxLength} = e.target;
+        const { value, maxLength } = e.target;
         const password = value.slice(0, maxLength);
         setPassword(password);
     }
@@ -229,7 +228,7 @@ function EditAccount(props) {
 
     // Handles the user name form input
     const onChangeUserName = e => {
-        const {value, maxLength} = e.target;
+        const { value, maxLength } = e.target;
         const userName = value.slice(0, maxLength);
         setUserName(userName);
     }
@@ -237,7 +236,7 @@ function EditAccount(props) {
 
     // Handles the zip form input
     const onChangeZip = e => {
-        const {value, maxLength} = e.target;
+        const { value, maxLength } = e.target;
         const zip = value.slice(0, maxLength);
         setZip(zip);
     }
@@ -325,34 +324,20 @@ function EditAccount(props) {
 
     // The displaySubmitButton will display the correct submit button and 
     // associated handlers so the correct operations can be performed
-
-    // TJI - Moved all buttons into a container to accomodate if it is a Create or Edit action
-    //     - Also added a Change Password button on edit to navigate to a different page
     const displaySubmitButton = () => (
         <div className="d-flex justify-content-around pt-2 pb-5">
             {isEditing ? (
-                <Container className="d-flex justify-content-around ">
-                    <Button type="submit" variant="outline-primary">
-                        Update
-                    </Button>   
-                    <Button variant="outline-primary" onClick={changePasswordHandler}>
-                        Change Password
-                    </Button>
-                    <Button variant="outline-primary" onClick={showClearFormHandler}>
-                        Clear
-                    </Button>
-                </Container>
+                <Button type="submit" variant="outline-primary">
+                    Update
+                </Button>
             ) : (
-                <Container className="d-flex justify-content-around ">
-                    <Button type="submit" variant="outline-primary">
-                        Submit
-                    </Button>
-                    <Button variant="outline-primary" onClick={showClearFormHandler}>
-                    Clear
-                    </Button>
-                </Container>
+                <Button type="submit" variant="outline-primary">
+                    Submit
+                </Button>
             )}
-
+            <Button variant="outline-primary" onClick={showClearFormHandler}>
+                Clear
+            </Button>
         </div>
     )
 
@@ -480,31 +465,31 @@ function EditAccount(props) {
                             </FloatingLabel>
                         </Form.Floating>
                         {!isEditing ?
-                        <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel
-                                controlId="floatingPassword"
-                                label="Password">
-                                <Form.Control
-                                    type="password"
-                                    placeholder="Password"
-                                    required
-                                    value={password}
-                                    onChange={onChangePassword}
-                                    maxLength="64"
-                                />
-                            </FloatingLabel>
-                        </Form.Floating>
-                        : ""}
+                            <Form.Floating className="mb-3 justify-content-center">
+                                <FloatingLabel
+                                    controlId="floatingPassword"
+                                    label="Password">
+                                    <Form.Control
+                                        type="password"
+                                        placeholder="Password"
+                                        required
+                                        value={password}
+                                        onChange={onChangePassword}
+                                        maxLength="64"
+                                    />
+                                </FloatingLabel>
+                            </Form.Floating>
+                            : ""}
 
                         {displaySubmitButton()}
 
                     </Form>
                 )}
             </Container>
-            <ModalConfirmation 
-            show={showClearFormConfirm} 
-            closeHandler={closeClearFormHandler} 
-            clearForm={clearForm} />
+            <ModalConfirmation
+                show={showClearFormConfirm}
+                closeHandler={closeClearFormHandler}
+                clearForm={clearForm} />
         </FormContainer>
     )
 }

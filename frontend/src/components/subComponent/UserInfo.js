@@ -111,7 +111,11 @@ function UserInfo(props) {
                             </Row>
                         </ListGroup.Item>
                     </ListGroup>
-                <Button className="mx-auto d-flex" onClick={() => userInfoHandler()}>Update</Button>
+                    <Card.Body className="d-flex">
+                        <Button className="mx-auto d-flex" onClick={() => userInfoHandler()}>Update</Button>
+                        <Button className="mx-auto d-flex" onClick={() => userInfoHandler()}>Change Password</Button>
+                    </Card.Body>
+                
             </Card.Body>
         </Card>
     )  
