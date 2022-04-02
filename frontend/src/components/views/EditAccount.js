@@ -66,7 +66,13 @@ function EditAccount(props) {
 
     // Redirect for hitting the Update Password button
     const changePasswordHandler = () => {
-        navigate("../editPassword");
+        if (userId) {
+            navigate("../editPassword");
+        }
+        else {
+            navigate(`../editPassword/${userId}`);
+        }
+        
     }
 
     // Check if user is logged in
@@ -293,7 +299,7 @@ function EditAccount(props) {
             city: city,
             zip: zip,
             state: state,
-            userEmail: email,
+            userEmail: email
         }
 
         // If there is not a param userId, then the logged in users 

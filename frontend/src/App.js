@@ -58,6 +58,7 @@ function App(props) {
                         <EditAccount />
                     </AuthAdmin>} />
                 <Route path='/editPassword' element={<EditPassword />} />
+                <Route path='/editPassword/:userId' element={<EditPassword />} />
                 <Route path='/editRestaurant' element={
                     <AuthLoggedIn>
                         <EditRestaurant />

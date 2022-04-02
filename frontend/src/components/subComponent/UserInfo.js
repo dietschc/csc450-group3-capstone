@@ -15,13 +15,13 @@ import 'bootstrap/dist/css/bootstrap.min.css'
  * list. It will allow the user to see their specific details and 
  * choose to edit them.
  * 
- * @param { currentUser, currentAddress, userInfoHandler } props 
+ * @param { currentUser, currentAddress, userInfoHandler, changePasswordHandler } props 
  * @returns 
  */
 function UserInfo(props) {
     // The form component specific props will be assigned and 
     // used to process the form element
-    const { currentUser, currentAddress, userInfoHandler } = props;
+    const { currentUser, currentAddress, userInfoHandler, changePasswordHandler } = props;
 
     return (
         <Card>
@@ -113,7 +113,7 @@ function UserInfo(props) {
                     </ListGroup>
                     <Card.Body className="d-flex">
                         <Button className="mx-auto d-flex" onClick={() => userInfoHandler()}>Update</Button>
-                        <Button className="mx-auto d-flex" onClick={() => userInfoHandler()}>Change Password</Button>
+                        <Button className="mx-auto d-flex" onClick={() => changePasswordHandler()}>Change Password</Button>
                     </Card.Body>
                 
             </Card.Body>

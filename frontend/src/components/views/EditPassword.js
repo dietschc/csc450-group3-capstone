@@ -9,7 +9,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 // Use to navigate back to the Dashboard page after successful update
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 // Various containers from bootstrap to build the form
 import { Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 // Middleware to actually update the password
@@ -20,10 +20,14 @@ function EditPassword(props)
 {
     // User array and Thunk variables.
     const { users, editPasswordThunk } = props;
+    // Destructuring out the param if there is one
+    const { userId } = useParams();
 
     // Variables for old password and new, both set to empty to state
     const [oldPassword, setOldPassword] = useState('')
     const [newPassword, setNewPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
+    const [errorMessage, setErrorMessage] = useState('');
 
     // Username to match the update pulled from the user array
     const userName = useState(users.length > 0 ? users[0].auth.userName : "");
@@ -46,21 +50,44 @@ function EditPassword(props)
         setNewPassword(newPassword);
     }
 
+    // Dynamically update the confirmPassword variable as entry typed in
+    const onChangeConfirmPassword = e =>
+    {
+        const {value, maxLength} = e.target;
+        const newPassword = value.slice(0, maxLength);
+        setConfirmPassword(newPassword);
+    }
+
     const handleSubmit = async (e) =>
     {
         e.preventDefault();
 
-        // After adjusting the password, if successful move to the Dashboard else stay on screen
-        await editPasswordThunk(userName, oldPassword, newPassword)
-        .then(res => {
-            if (res[0])
-            {
-                setTimeout(() => { navigate("../userDashboard") }, 500);
-            }
-        })
-        .catch(err => {
-            console.log(err)
-        });
+        if (passwordConfirmation()) {
+            // After adjusting the password, if successful move to the Dashboard else stay on screen
+            await editPasswordThunk(userName, oldPassword, newPassword)
+            .then(res => {
+                if (res[0])
+                {
+                    setTimeout(() => { navigate("../userDashboard") }, 500);
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            });
+        }
+
+        
+    }
+
+    const passwordConfirmation = () => {
+        if (newPassword !== confirmPassword) {
+            setErrorMessage("Passwords must match!");
+            return false;
+        }
+        else {
+            setErrorMessage("");
+            return true;
+        }
     }
 
     return(
@@ -70,7 +97,7 @@ function EditPassword(props)
             </Container>
             <Container fluid as="main" className="mt-5 justify-content-center align-center">
                 <Form onSubmit={handleSubmit}>
-                    <Form.Floating className="mb-3 justify-content-center">
+                    {!userId && (<Form.Floating className="mb-3 justify-content-center">
                         <FloatingLabel 
                             controlId="floatingOldPassword"
                             label="Old Password">
@@ -83,7 +110,7 @@ function EditPassword(props)
                                 onChange={onChangeOldPassword}
                             />
                         </FloatingLabel>
-                    </Form.Floating>
+                    </Form.Floating>)}
                     <Form.Floating className="mb-3 justify-content-center">
                         <FloatingLabel 
                             controlId="floatingNewPassword"
@@ -98,6 +125,21 @@ function EditPassword(props)
                             />
                         </FloatingLabel>
                     </Form.Floating>
+                    <Form.Floating className="mb-1 justify-content-center">
+                        <FloatingLabel 
+                            controlId="floatingConfirmPassword"
+                            label="Confirm Password">
+                            <Form.Control
+                                type="password"
+                                placeholder="New"
+                                required
+                                value={confirmPassword}
+                                maxLength="64"
+                                onChange={onChangeConfirmPassword}
+                            />
+                        </FloatingLabel>
+                    </Form.Floating>
+                    <div className="text-danger">{errorMessage}</div>
                     <Form.Floating className="mb-3 justify-content-center">
                         <div className="d-flex justify-content-around pt-2 pb-5">
                             <Button type="submit" className="w-25" variant="outline-primary">
