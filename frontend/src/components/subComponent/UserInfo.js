@@ -112,7 +112,7 @@ function UserInfo(props) {
                         </Row>
                     </ListGroup.Item>
                 </ListGroup>
-                <Card.Body className="d-flex">
+                <Card.Body className="d-flex p-0 m-0">
                     <Button className="mx-auto d-flex" onClick={() => userInfoHandler()}>
                         Update
                     </Button>

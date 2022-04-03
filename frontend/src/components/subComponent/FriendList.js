@@ -34,7 +34,7 @@ function FriendList(props) {
     } = props;
 
     return (
-        <Card style={{ height: "480px" }}>
+        <Card style={{ height: "449px" }}>
             <Card.Title className="text-center">
                 Friends
             </Card.Title>
