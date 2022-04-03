@@ -9,6 +9,8 @@
 //  (DAB, 3/06/2022, Added in DELETE_ADDITIONAL_USERS, took out the history state for user)
 //  (CPD, 3/30/2022, Added user and users REFRESH_TOKEN reducers)
 //  (TJI, 04/02/2022, Removed password from auth state)
+//  (DAB, 4/02/2022, Added the code for password in state in case it may be needed again, 
+//  but left it commented out)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -181,6 +183,7 @@ export const auth = (state = {}, action) => {
                 id: action.id,
                 userName: action.auth.userName,
                 permission: permission({}, action),
+                // password: action.auth.password,
                 createdAt: action.auth.createdAt,
                 modifiedAt: action.auth.modifiedAt
             }
@@ -188,6 +191,7 @@ export const auth = (state = {}, action) => {
             return {
                 ...state,
                 userName: action.auth.userName,
+                // password: action.auth.password,
                 modifiedAt: action.auth.modifiedAt
             }
         case C.UPDATE_PERMISSION:
