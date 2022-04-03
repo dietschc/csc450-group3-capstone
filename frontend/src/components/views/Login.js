@@ -103,10 +103,10 @@ function Login(props) {
         // Call login thunk function which tries to authenticate against the backend
         await loginThunk(userName, password)
             .then(res => {
-                console.log("Results: ", res);
+                // console.log("Results: ", res);
 
                 if (res.isLoggedIn === true) {
-                    console.log("SUCCESS");
+                    console.log("LOGIN SUCCESS");
 
                     // setSubmitted(true);
                     setShowSuccess(true);
@@ -116,7 +116,7 @@ function Login(props) {
                 } else {
                     clearForm();
                     setShowError(true);
-                    console.log("FAIL");
+                    console.log("LOGIN FAIL");
                 }
             })
             .catch(err => {

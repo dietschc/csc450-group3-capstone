@@ -3,11 +3,12 @@
 // Restaurant Club - authentication.controller.js
 // February 15, 2022
 // Last Edited (Initials, Date, Edits):
-// (CPD, 2/27/2022, Added findByNameOffsetLimit function)
-// (CPD, 3/3/2022, Updating login function to return friends)
-// (CPD, 3/24/2022, Included creating new access token to login)
-// (CPD, 3/26/2022, Included new refresh token to login)
-// (TJI, 3/28/2022, Added password hashing)
+//  (CPD, 2/27/2022, Added findByNameOffsetLimit function)
+//  (CPD, 3/3/2022, Updating login function to return friends)
+//  (CPD, 3/24/2022, Included creating new access token to login)
+//  (CPD, 3/26/2022, Included new refresh token to login)
+//  (TJI, 3/28/2022, Added password hashing)
+//  (DAB, 4/02/2022, Added in updatePassword and updatePasswordSecure)
 
 const db = require("../models");
 const Sequelize = require("sequelize");
@@ -308,7 +309,7 @@ exports.update = (req, res) => {
         });
 };
 
-// Update a Authentication by the id in the request
+// Update a users password in the database
 exports.updatePassword = async (req, res) => {
     // Validate request
     if (!req.body.newPassword) {
@@ -318,38 +319,45 @@ exports.updatePassword = async (req, res) => {
         return;
     }
 
+    // Pulling the userId from params and encrypting the new password
     const userId = req.params.userId;
     const salt = bcrypt.genSaltSync(10, 'a');
     const newPassword = await bcrypt.hashSync(req.body.newPassword, salt);
 
+    // Preparing the data to be updated in Sequelize
     const data = {
         userPassword: newPassword
     }
 
+    // Updating the user password in the database where the userId is 
+    // a match
     await Authentication.update(data, {
         where: { userId: userId }
     })
         .then(num => {
-            console.log("NUM IS", num)
+            // If there is a result then the success message is sent
             if (num == 1) {
                 res.send({
                     message: "Authentication was updated successfully."
                 });
-            } else {
+            }
+            // Else a message is sent that it was not updated
+            else {
                 res.status(500).send({
                     message: `Cannot update Authentication with id=${userId}. Maybe Authentication was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
+            // If there is an error the requester is notified
             res.status(500).send({
                 message: "Error updating Authentication with id=" + userId
             });
         });
-
 };
 
-// Update a Authentication by the id in the request
+// Update a users password in the database if the body password matches 
+// the existing password
 exports.updatePasswordSecure = async (req, res) => {
     // Validate request
     if (!req.body.userPassword || !req.body.newPassword) {
@@ -359,54 +367,61 @@ exports.updatePasswordSecure = async (req, res) => {
         return;
     }
 
+    // Pulling the userId from params and encrypting the new password. The 
+    // current password is extracted to a variable
     const userId = req.params.userId;
     const salt = bcrypt.genSaltSync(10, 'a');
-    const password = req.body.userPassword
+    const password = req.body.userPassword;
     const newPassword = await bcrypt.hashSync(req.body.newPassword, salt);
-    // const newPassword = "ham";
-    console.log(req.body);
 
+    // Checking that a user exists with the param userId and body password. 
+    // If the userId and password are valid this will hold true
     const isValid = await User.findOne({
         include: [
             Authentication
         ], where: { userId: userId }
     })
         .then(user => {
+            // If there are results the returned password is checked for validity
             if (user) {
-                // res.send(user)
-                // Boolean to determine if hashed passwords match
+                // Boolean to determine if hashed passwords match, the result is 
+                // returned
                 return bcrypt.compareSync(password, user.authentication.userPassword);
             }
+            // Else there was not a user with that userId and false is returned
             else {
                 return false;
             }
-        })
+        });
 
-    // console.log("$2a$10$XTTKtFsSJc/kj0GPy0vgTO8nRycIQfDT8UjuyG/BI1Eol5uv0zPES")
-    console.log(isValid)
-    // res.send(isValid);
-
+    // If the userId and password are valid, the password will attempt an update
     if (isValid) {
+        // Preparing the data to update the password
         const data = {
             userPassword: newPassword
         }
 
+        // Updating the user password in the database where the userId is 
+        // a match
         await Authentication.update(data, {
             where: { userId: userId }
         })
             .then(num => {
-                console.log("NUM IS", num)
+                // If there is a result then the success message is sent
                 if (num == 1) {
                     res.send({
                         message: "Authentication was updated successfully."
                     });
-                } else {
+                }
+                // Else a message is sent that it was not updated 
+                else {
                     res.status(500).send({
                         message: `Cannot update Authentication with id=${userId}. Maybe Authentication was not found or req.body is empty!`
                     });
                 }
             })
             .catch(err => {
+                // If there is an error the requester is notified
                 res.status(500).send({
                     message: "Error updating Authentication with id=" + userId
                 });
@@ -415,7 +430,7 @@ exports.updatePasswordSecure = async (req, res) => {
     else {
         res.status(404).send({
             message: `Either there was no user with that Id or the passwords did not match`
-        })
+        });
     }
 };
 
@@ -446,8 +461,6 @@ exports.updateByUserId = (req, res) => {
             });
         });
 };
-
-
 
 // Delete a Authentication with the specified id in the request
 exports.delete = (req, res) => {

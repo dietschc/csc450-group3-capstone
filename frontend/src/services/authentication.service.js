@@ -3,11 +3,12 @@
 // Restaurant Club - authentication.service.js
 // March 6, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, Added services for updatePassword and updatePasswordSecure)
+//  (DAB, Ordered routes alphabetically)
 
 import http from "../http-common";
 
 class AuthenticationDataService {
-
     /**
      * Creates a new authentication entry if one is not 
      * already in the database.
@@ -20,12 +21,13 @@ class AuthenticationDataService {
     }
 
     /**
-     * Retrieves all authentications.
+     * Deletes the authentication with the specified friendId
      * 
-     * @returns - an array of all authentications found
+     * @param { friendId } id 
+     * @returns
      */
-    getAll() {
-        return http.get("/authentication");
+    delete(id) {
+        return http.delete(`/authentication/${id}`);
     }
 
     /**
@@ -36,6 +38,15 @@ class AuthenticationDataService {
      */
     get(id) {
         return http.get(`/authentication/${id}`);
+    }
+
+    /**
+     * Retrieves all authentications.
+     * 
+     * @returns - an array of all authentications found
+     */
+    getAll() {
+        return http.get("/authentication");
     }
 
     /**
@@ -50,6 +61,17 @@ class AuthenticationDataService {
     }
 
     /**
+     * Updates a users permission via userId.
+     * 
+     * @param {*} userId 
+     * @param {*} data 
+     * @returns 
+     */
+    updateByUserId(userId, data) {
+        return http.put(`/authentication/userId/${userId}`, data);
+    }
+
+    /**
      * Updates the user password of the param userId
      * 
      * @param {*} userId 
@@ -58,7 +80,7 @@ class AuthenticationDataService {
      * } data 
      * @returns - 404
      */
-     updatePassword(userId, data) {
+    updatePassword(userId, data) {
         return http.put(`/authentication/password/${userId}`, data);
     }
 
@@ -74,29 +96,8 @@ class AuthenticationDataService {
      * } data 
      * @returns - 404
      */
-     updatePasswordSecure(userId, data) {
+    updatePasswordSecure(userId, data) {
         return http.put(`/authentication/passwordSecure/${userId}`, data);
-    }
-
-    /**
-     * Updates a users permission via userId.
-     * 
-     * @param {*} id 
-     * @param {*} data 
-     * @returns 
-     */
-     updateByUserId(userId, data) {
-        return http.put(`/authentication/userId/${userId}`, data);
-    }
-
-    /**
-     * Deletes the authentication with the specified friendId
-     * 
-     * @param { friendId } id 
-     * @returns
-     */
-    delete(id) {
-        return http.delete(`/authentication/${id}`);
     }
 }
 

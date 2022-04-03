@@ -13,15 +13,22 @@ import { connect } from 'react-redux';
 // Use to navigate back to the Dashboard page after successful update
 import { useNavigate, useParams } from 'react-router-dom';
 // Various containers from bootstrap to build the form
-import { Form, Container, Button, FloatingLabel } from 'react-bootstrap';
+import { Form, Container, Button, FloatingLabel, Alert } from 'react-bootstrap';
 // Middleware to actually update the password
-import { editPasswordThunk, updatePasswordThunk, updatePasswordSecureThunk } from '../../actions/users';
+import { updatePasswordThunk, updatePasswordSecureThunk } from '../../actions/users';
 
-
-function EditPassword(props)
-{
+/**
+ * The EditPassword Component will allow the user to edit their password. 
+ * A standard user will need to confirm they know their current password 
+ * by typing it in while an admin will be allows to change the password 
+ * without having the current password.
+ * 
+ * @param {*} props 
+ * @returns 
+ */
+function EditPassword(props) {
     // User array and Thunk variables.
-    const { users, editPasswordThunk, updatePasswordThunk, updatePasswordSecureThunk } = props;
+    const { users, updatePasswordThunk, updatePasswordSecureThunk } = props;
     // Destructuring out the param if there is one
     const { userId } = useParams();
 
@@ -30,6 +37,7 @@ function EditPassword(props)
     const [newPassword, setNewPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [errorMessage, setErrorMessage] = useState('');
+    const [updateErrorMessage, setUpdateErrorMessage] = useState('');
 
     // Username to match the update pulled from the user array
     const userName = useState(users.length > 0 ? users[0].auth.userName : "");
@@ -38,57 +46,89 @@ function EditPassword(props)
     const navigate = useNavigate();
 
     // Dynamically update the oldPassword variable as entry typed in
-    const onChangeOldPassword = e =>{
-        const {value, maxLength} = e.target;
+    const onChangeOldPassword = e => {
+        const { value, maxLength } = e.target;
         const oldPassword = value.slice(0, maxLength);
         setOldPassword(oldPassword);
     }
 
     // Dynamically update the newPassword variable as entry typed in
-    const onChangeNewPassword = e =>
-    {
-        const {value, maxLength} = e.target;
+    const onChangeNewPassword = e => {
+        const { value, maxLength } = e.target;
         const newPassword = value.slice(0, maxLength);
         setNewPassword(newPassword);
     }
 
     // Dynamically update the confirmPassword variable as entry typed in
-    const onChangeConfirmPassword = e =>
-    {
-        const {value, maxLength} = e.target;
+    const onChangeConfirmPassword = e => {
+        const { value, maxLength } = e.target;
         const newPassword = value.slice(0, maxLength);
         setConfirmPassword(newPassword);
     }
 
-    const handleSubmit = async (e) =>
-    {
+    // The handleSubmit function will verify the data is there to 
+    // update the passwords and attempt to update them
+    const handleSubmit = async (e) => {
+        // Preventing default form submission action
         e.preventDefault();
 
+        // If the password is confirmed to match, an attempt to update it in the 
+        // database will be made
         if (passwordConfirmation()) {
+            // If there is not a userId param, then the logged in user password 
+            // will be updated if they match
             if (!userId) {
-                console.log("UPDATED SECURE WAS", await updatePasswordSecureThunk(users[0].id, oldPassword, newPassword))
-            }
-            else {
-                console.log("UPDATE PASSWORD WAS", await updatePasswordThunk(userId, newPassword));
-            }
-            
-        }
+                // Attempting to update the password
+                const isPasswordUpdated = await updatePasswordSecureThunk(users[0].id, oldPassword, newPassword);
 
-        
+                if (isPasswordUpdated) {
+                    // Successful update, navigating to dashboard
+                    navigate("/userDashboard");
+                }
+                else {
+                    // do something update failed
+                    setUpdateErrorMessage("Password failed to update, check current password");
+                }
+            }
+            // Else, an admin is logged in so the password will be updated 
+            // without providing the old password
+            else {
+                // Attempting to update the password
+                const isPasswordUpdated = await updatePasswordThunk(userId, newPassword);
+
+                if (isPasswordUpdated) {
+                    // Successful update, navigating to dashboard
+                    navigate(`/userDashboard/${userId}`);
+                }
+                else {
+                    // do something, update failed
+                    setUpdateErrorMessage("Password failed to update, check userId");
+                }
+            }
+        }
     }
 
+    // The passwordConfirmation method checks to see that the two 
+    // passwords match, if they do not an error message is set and 
+    // false is returned. If they do, no message is set and true 
+    // is returned
     const passwordConfirmation = () => {
+        // If the passwords do not match and error message is set 
+        // and false is returned
         if (newPassword !== confirmPassword) {
             setErrorMessage("Passwords must match!");
             return false;
         }
+        // If the passwords match, error message is set to empty string 
+        // and true is returned
         else {
             setErrorMessage("");
             return true;
         }
     }
 
-    return(
+
+    return (
         <Container fluid className="text-muted login" style={{ maxWidth: "500px" }}>
             <Container className="mt-2" as="header">
                 <h1>Change Password</h1>
@@ -96,7 +136,7 @@ function EditPassword(props)
             <Container fluid as="main" className="mt-5 justify-content-center align-center">
                 <Form onSubmit={handleSubmit}>
                     {!userId && (<Form.Floating className="mb-3 justify-content-center">
-                        <FloatingLabel 
+                        <FloatingLabel
                             controlId="floatingOldPassword"
                             label="Old Password">
                             <Form.Control
@@ -110,7 +150,7 @@ function EditPassword(props)
                         </FloatingLabel>
                     </Form.Floating>)}
                     <Form.Floating className="mb-3 justify-content-center">
-                        <FloatingLabel 
+                        <FloatingLabel
                             controlId="floatingNewPassword"
                             label="New Password">
                             <Form.Control
@@ -124,7 +164,7 @@ function EditPassword(props)
                         </FloatingLabel>
                     </Form.Floating>
                     <Form.Floating className="mb-1 justify-content-center">
-                        <FloatingLabel 
+                        <FloatingLabel
                             controlId="floatingConfirmPassword"
                             label="Confirm Password">
                             <Form.Control
@@ -137,15 +177,17 @@ function EditPassword(props)
                             />
                         </FloatingLabel>
                     </Form.Floating>
-                    <div className="text-danger">{errorMessage}</div>
                     <Form.Floating className="mb-3 justify-content-center">
-                        <div className="d-flex justify-content-around pt-2 pb-5">
+                        <div className="d-flex justify-content-around pt-3">
                             <Button type="submit" className="w-25" variant="outline-primary">
                                 Submit
                             </Button>
                         </div>
                     </Form.Floating>
+                    {errorMessage && <Alert className="mb-0 text-center"variant="danger">{errorMessage}</Alert>}
+                    {updateErrorMessage && <Alert className="mb-0 text-center"variant="danger">{updateErrorMessage}</Alert>}
                 </Form>
+                
             </Container>
         </Container>
     )
@@ -159,4 +201,4 @@ const mapStateToProps = state =>
 
 // Exporting the component
 // export default EditPassword;
-export default connect(mapStateToProps, { editPasswordThunk, updatePasswordThunk, updatePasswordSecureThunk })(EditPassword);
+export default connect(mapStateToProps, { updatePasswordThunk, updatePasswordSecureThunk })(EditPassword);

@@ -11,14 +11,17 @@
 //  (DAB, 3/28/22, Cleaned up code and added comments)
 //  (DAB, 3/28/22, Added in clear form modal)
 //  (TJI, 03/29/2022 - Added in character limits to match database)
-//  (TJI, 04/02/2022) - Moved the update password to a new page.
+//  (TJI, 04/02/2022) - Moved the update password to a new page)
+//  (DAB, 4/02/2022, Removed update password from EditAccount and moved the 
+//  link into the userDashboard)
+//  (DAB, 4/02/2022, Added Confirm Password field to create account)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
+import { Row, Col, Form, Container, Button, FloatingLabel, Alert } from 'react-bootstrap';
 import FormContainer from '../template/FormContainer';
 import { addUserThunk, updateUserThunk, findByUserIdThunk, deleteUser } from '../../actions/users';
 import { checkLogin } from '../../helperFunction/CheckLogin'
@@ -63,17 +66,8 @@ function EditAccount(props) {
     const [email, setEmail] = useState(users.length > 0 ? users[0].email : "");
     // Password no longer stored in state so set to blank
     const [password, setPassword] = useState("");
-
-    // Redirect for hitting the Update Password button
-    const changePasswordHandler = () => {
-        if (userId) {
-            navigate("../editPassword");
-        }
-        else {
-            navigate(`../editPassword/${userId}`);
-        }
-        
-    }
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     // Check if user is logged in
     const isEditing = checkLogin(users);
@@ -193,6 +187,14 @@ function EditAccount(props) {
     }
 
 
+    // Handles the confirm password form input
+    const onChangeConfirmPassword = e => {
+        const { value, maxLength } = e.target;
+        const password = value.slice(0, maxLength);
+        setConfirmPassword(password);
+    }
+
+
     // Handles the email form input
     const onChangeEmail = e => {
         const { value, maxLength } = e.target;
@@ -248,17 +250,47 @@ function EditAccount(props) {
     }
 
 
+    // The passwordConfirmation method checks to see that the two 
+    // passwords match, if they do not an error message is set and 
+    // false is returned. If they do, no message is set and true 
+    // is returned
+    const passwordConfirmation = () => {
+        // If the passwords do not match and error message is set 
+        // and false is returned
+        if (password !== confirmPassword) {
+            setErrorMessage("Passwords must match!");
+            return false;
+        }
+        // If the passwords match, error message is set to empty string 
+        // and true is returned
+        else {
+            setErrorMessage("");
+            return true;
+        }
+    }
+
+
     // The saveAccount function will create a new user in the database and 
     // navigate to that users dashboard
-    const saveAccount = () => {
-        // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
-        addUserThunk(userName, firstName, lastName, address, city, state, zip, email, password)
+    const saveAccount = async () => {
+        // Checking that the passwords match before submitting the form
+        if (passwordConfirmation()) {
+            // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
+            const isAccountCreated = await addUserThunk(userName, firstName, lastName, address, city, state, zip, email, password)
 
-        // The form was submitted so local state is set to true
-        setSubmitted(true);
+            console.log("IS ACCOUNT CREATED", isAccountCreated)
+            if (isAccountCreated) {
+                // The form was submitted so local state is set to true
+                setSubmitted(true);
 
-        // Send the new user to their new dashboard
-        setTimeout(() => { navigate("../userDashboard") }, 500);
+                // Send the new user to their new dashboard
+                setTimeout(() => { navigate("../userDashboard") }, 500);
+            }
+            else {
+                setErrorMessage(`${userName} is already taken, try another!`)
+            }
+            
+        }
     }
 
 
@@ -331,7 +363,7 @@ function EditAccount(props) {
     // The displaySubmitButton will display the correct submit button and 
     // associated handlers so the correct operations can be performed
     const displaySubmitButton = () => (
-        <div className="d-flex justify-content-around pt-2 pb-5">
+        <div className="d-flex justify-content-around pt-2 pb-4">
             {isEditing ? (
                 <Button type="submit" variant="outline-primary">
                     Update
@@ -345,6 +377,46 @@ function EditAccount(props) {
                 Clear
             </Button>
         </div>
+    )
+
+    // The displayPasswordFields will only display the password fields when the 
+    // form is in create account mode
+    const displayPasswordFields = () => (
+        !isEditing && (
+            <div>
+                <Form.Floating className="mb-3 justify-content-center">
+                    <FloatingLabel
+                        controlId="floatingPassword"
+                        label="Password">
+                        <Form.Control
+                            type="password"
+                            placeholder="Password"
+                            required
+                            value={password}
+                            onChange={onChangePassword}
+                            maxLength="64"
+                        />
+                    </FloatingLabel>
+                </Form.Floating>
+
+                <Form.Floating className="mb-3 justify-content-center">
+                    <FloatingLabel
+                        controlId="floatingConfirmPassword"
+                        label="Confirm Password">
+                        <Form.Control
+                            type="password"
+                            placeholder="Password"
+                            required
+                            value={confirmPassword}
+                            onChange={onChangeConfirmPassword}
+                            maxLength="64"
+                        />
+                    </FloatingLabel>
+                </Form.Floating>
+                
+                {/* <div className="text-danger">{errorMessage}</div> */}
+            </div>)
+
     )
 
     return (
@@ -436,7 +508,6 @@ function EditAccount(props) {
                             </FloatingLabel>
                         </Form.Floating>
 
-
                         <Row className="justify-content-center">
 
                             <FloatingStateOptionList state={state} onChangeState={onChangeState} />
@@ -470,25 +541,11 @@ function EditAccount(props) {
                                 />
                             </FloatingLabel>
                         </Form.Floating>
-                        {!isEditing ?
-                            <Form.Floating className="mb-3 justify-content-center">
-                                <FloatingLabel
-                                    controlId="floatingPassword"
-                                    label="Password">
-                                    <Form.Control
-                                        type="password"
-                                        placeholder="Password"
-                                        required
-                                        value={password}
-                                        onChange={onChangePassword}
-                                        maxLength="64"
-                                    />
-                                </FloatingLabel>
-                            </Form.Floating>
-                            : ""}
+
+                        {displayPasswordFields()}
 
                         {displaySubmitButton()}
-
+                        {errorMessage && <Alert className="mb-0 text-center"variant="danger">{errorMessage}</Alert>}
                     </Form>
                 )}
             </Container>
