@@ -7,6 +7,8 @@
 //  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
 //  (DAB, 03/06/2022, Added redux connect, state to props, and Searches functional)
 //  (DAB, 03/07/2022, Confirm modals are added for all crit operations)
+//  (DAB, 04/03/2022, Added in unBan functionality for admins, and took out the 
+//  ability for admins to ban other admins)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -80,7 +82,9 @@ function Admin(props) {
     const showDeleteRestaurantHandler = () => setShowDeleteRestaurantConfirm(true);
     const closeDeleteRestaurantHandler = () => setShowDeleteRestaurantConfirm(false);
 
+    
     /****************************** USER METHODS ******************************************/
+
 
     // The banHandler will display a modal verifying 
     // if the user should be banned
@@ -91,6 +95,7 @@ function Admin(props) {
         showBanUserHandler();
     }
 
+
     // The banUser method will update a users permission to banned in both state 
     // and the database
     const banUser = () => {
@@ -98,6 +103,7 @@ function Admin(props) {
         // constant that holds the correct permissionId and permissionName
         updatePermissionThunk(currentUserId, C.BAN_USER_PERMISSION);
     }
+
 
     // The dashboardHandler will navigate the user to the dashboard 
     // for the selected userId
@@ -107,13 +113,15 @@ function Admin(props) {
         navigate(`../userDashboard/${userId}`);
     }
 
+
     // The deleteUser method will delete a user from both state and the database
     const deleteUser = () => {
         deleteUserThunk(currentUserId);
     }
 
-    // The banHandler will display a modal verifying 
-    // if the user should be banned
+
+    // The unBanHandler will display a modal verifying 
+    // if the user should be unBanned
     const unBanHandler = (userId) => {
         // Setting the current id and showing the modal 
         // before allowing the action
@@ -121,13 +129,15 @@ function Admin(props) {
         showUnBanUserHandler();
     }
 
-    // The banUser method will update a users permission to banned in both state 
+
+    // The unBanUser method will update a users permission to member in both state 
     // and the database
     const unBanUser = () => {
-        // Banning a user in both state and the database with the BAN_USER_PERMISSION 
+        // UnBanning a user in both state and the database with the UN_BAN_USER_PERMISSION 
         // constant that holds the correct permissionId and permissionName
         updatePermissionThunk(currentUserId, C.UN_BAN_USER_PERMISSION);
     }
+
 
     // The userDeleteHandler will display a modal verifying 
     // if the user should be deleted
@@ -137,6 +147,7 @@ function Admin(props) {
         setCurrentUserId(userId);
         showDeleteUserHandler();
     }
+
 
     // The userSearch method sets the Redux state to display search specific 
     // users
@@ -151,7 +162,9 @@ function Admin(props) {
         }
     }
 
+
     /************************** RESTAURANT METHODS **************************************/
+
 
     // The deleteRestaurant method will delete a restaurant from both state and 
     // the database
@@ -159,6 +172,7 @@ function Admin(props) {
         // Deleting the restaurant from state and the database
         deleteRestaurantThunk(currentRestaurantId);
     }
+
 
     // The deleteRestaurantHandler will display a modal verifying 
     // if the restaurant should be deleted
@@ -169,6 +183,7 @@ function Admin(props) {
         showDeleteRestaurantHandler();
     }
 
+
     // The editRestaurantHandler will navigate the user to the edit restaurant
     // view for the selected restaurantId
     const editRestaurantHandler = (restaurantId) => {
@@ -176,6 +191,7 @@ function Admin(props) {
         navigate(`../editRestaurant/${restaurantId}`);
 
     }
+
 
     // The restaurantSearch method sets the Redux state to display search specific 
     // restaurants
@@ -190,6 +206,7 @@ function Admin(props) {
         }
     }
 
+
     // The viewRestaurantHandler will navigate the user to the restaurant
     // for the selected restaurantId
     const viewRestaurantHandler = (restaurantId) => {
@@ -197,7 +214,9 @@ function Admin(props) {
         navigate(`../restaurant/${restaurantId}`);
     }
 
+
     /************************** FORM HANDLERS **************************************/
+
 
     // The onChangeHandler handles the actions of the search bar radio buttons
     const onChangeHandler = (e) => {
@@ -206,6 +225,7 @@ function Admin(props) {
         // Setting the search results not to show
         setIsShowResults(false)
     }
+
 
     // This submit handler will handle the search form when submitted and assign the 
     // search input and search type to their respective state variables
@@ -231,7 +251,9 @@ function Admin(props) {
         setSearchInput("");
     }
 
+
     /************************** RENDER METHODS **************************************/
+
 
     // The searchList method will return either the User or Restaurant EditItem component 
     // based off the search input and search criteria. If there are no matches the user 
@@ -295,7 +317,9 @@ function Admin(props) {
         
     }
 
+
     /********************************** MODALS *******************************************/
+
 
     // The modal will display before a user can be banned
     const banUserButtonModal = (
@@ -305,13 +329,15 @@ function Admin(props) {
             closeHandler={closeBanUserHandler} />
     )
 
-    // The modal will display before a user can be banned
+
+    // The modal will display before a user can be unBanned
     const unBanUserButtonModal = (
         <UnBanUserConfirm
             show={showUnBanUserConfirm}
             unBanUser={unBanUser}
             closeHandler={closeUnBanUserHandler} />
     )
+
 
     // The modal will display before a restaurant can be deleted
     const deleteRestaurantButtonModal = (
@@ -320,6 +346,7 @@ function Admin(props) {
             deleteRestaurant={deleteRestaurant}
             closeHandler={closeDeleteRestaurantHandler} />
     )
+
 
     // The modal will display before a user can be deleted
     const userDeleteButtonModal = (
