@@ -22,12 +22,37 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 function UserEditItem(props) {
     // The form component specific props will be assigned and 
     // used to process the form element
-    const { 
-        user, dashboardHandler, banHandler, 
-        userDeleteHandler, banUserButtonModal, 
-        userDashboardButtonModal 
+    const {
+        user, dashboardHandler, banHandler, unBanHandler,
+        userDeleteHandler
     } = props;
     const userId = user.id;
+    const userPermission = user?.auth?.permission?.permissionName;
+
+    const isAdmin = () => {
+        return userPermission === 'admin';
+    }
+
+    const isBanned = () => {
+        return userPermission === 'banned';
+    }
+
+    const banButtonDisplay = () => (
+        
+        !isBanned() ? (
+            <Button className="mx-1"
+                style={{ width: "7rem" }}
+                onClick={() => banHandler(userId)}>
+                Ban
+            </Button>
+        ) : (
+            <Button className="mx-1"
+                style={{ width: "7rem" }}
+                onClick={() => unBanHandler(userId)}>
+                UnBan
+            </Button>
+        )
+    )
 
     return (
         <ListGroup as="ul" className="justify-content-center px-0 mb-2">
@@ -45,11 +70,7 @@ function UserEditItem(props) {
                             onClick={() => dashboardHandler(userId)}>
                             Dashboard
                         </Button>
-                        <Button className="mx-1"
-                            style={{ width: "7rem" }}
-                            onClick={() => banHandler(userId)}>
-                            Ban
-                        </Button>
+                        {!isAdmin() && banButtonDisplay()}
                         <Button className="mx-1"
                             style={{ width: "7rem" }}
                             onClick={() => userDeleteHandler(userId)}>
@@ -58,7 +79,7 @@ function UserEditItem(props) {
                     </Col>
                 </Row>
             </ListGroup.Item>
-            
+
         </ListGroup>
     )
 }

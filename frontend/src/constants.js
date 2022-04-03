@@ -53,6 +53,10 @@ const constants = {
     BAN_USER_PERMISSION: {
         permissionId: 3,
         permissionName: "banned"
+    },
+    UN_BAN_USER_PERMISSION: {
+        permissionId: 1,
+        permissionName: "member"
     }
 }
 
