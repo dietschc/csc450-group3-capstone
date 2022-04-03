@@ -116,15 +116,6 @@ function Main(props) {
                 reviews={reviews}
                 buttonGroup={RRDButtonGroup}
             />
-
-            {/* {Developers Nav---Delete anytime} */}
-            <Container
-                fluid
-                style={{ maxWidth: "500px", fontSize: 30 }}
-                className="pt-5"
-            >
-            </Container>
-            {/* {End of Developers Nav---} */}
         </XLContainer>
     );
 }
