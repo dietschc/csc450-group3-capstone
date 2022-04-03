@@ -23,6 +23,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Row, Col, Form, Container, Button, FloatingLabel, Alert } from 'react-bootstrap';
 import FormContainer from '../template/FormContainer';
+import { formatZipCode } from '../../helperFunction/FormatString';
 import { addUserThunk, updateUserThunk, findByUserIdThunk, deleteUser } from '../../actions/users';
 import { checkLogin } from '../../helperFunction/CheckLogin'
 import FloatingStateOptionList from '../form/floatingComponents/FloatingStateOptionList';
@@ -245,7 +246,7 @@ function EditAccount(props) {
     // Handles the zip form input
     const onChangeZip = e => {
         const { value, maxLength } = e.target;
-        const zip = value.slice(0, maxLength);
+        const zip = formatZipCode(value);
         setZip(zip);
     }
 
@@ -522,6 +523,7 @@ function EditAccount(props) {
                                         value={zip}
                                         onChange={onChangeZip}
                                         maxLength="5"
+                                        pattern="[0-9]*"
                                     />
                                 </FloatingLabel>
                             </Form.Floating>
