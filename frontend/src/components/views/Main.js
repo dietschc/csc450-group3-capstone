@@ -98,14 +98,12 @@ function Main(props) {
     // The RRDButtonGroup will accept the review array and
     // construct a MainRRDetailButtonGroup Component
     const RRDButtonGroup = (review = []) => (
-        <div>
             <MainRRDetailButtonGroup
                 review={review}
                 moreHandler={moreHandler}
                 restaurantHandler={restaurantHandler}
                 friendHandler={friendHandler}
             />
-        </div>
     );
 
     return (

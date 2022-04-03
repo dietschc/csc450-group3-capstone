@@ -27,21 +27,29 @@ function MainRRDetailButtonGroup(props) {
   const { moreHandler, restaurantHandler, friendHandler, review } = props;
 
   return (
-    <div>
+    <div
+      className="d-flex 
+      flex-fill 
+      flex-column 
+      flex-sm-row 
+      flex-wrap 
+      px-0 mb-1 
+      justify-content-center 
+      justify-content-sm-center 
+      justify-content-md-end"
+      style={{ minWidth: "100%"}}>
       <Button
-        className="mx-1"
-        style={{ width: "8rem" }}
+        className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
+        style={{ minWidth: "8rem" }}
         onClick={() => {
           moreHandler(review.author.id, review.restaurant.id);
         }}
       >
         More
-        {/* DEBUG **/}
-        {/* {console.log("Review in BUTTON IS ", review)} */}
       </Button>
       <Button
-        className="mx-1"
-        style={{ width: "8rem" }}
+        className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
+        style={{ minWidth: "8rem" }}
         onClick={() => {
           restaurantHandler(review.restaurant.id);
         }}
@@ -49,8 +57,8 @@ function MainRRDetailButtonGroup(props) {
         Restaurant
       </Button>
       <Button
-        className="mx-1"
-        style={{ width: "8rem" }}
+        className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
+        style={{ minWidth: "8rem" }}
         onClick={() => {
           friendHandler(review.author.id);
         }}

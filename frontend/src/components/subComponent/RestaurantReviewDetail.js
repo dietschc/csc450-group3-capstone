@@ -35,18 +35,24 @@ function RestaurantReviewDetail(props) {
         <Container fluid>
             <Row>
                 {reviews.length > 0 && reviews.map((review, index) => (
-                    <Card className="mb-2" key={index} style={{}}>
+                    <Card className="mb-2" key={index} style={{ height: "100%", width: "100%", overflow: "hidden" }}>
                         <ReviewHeadingCardBody review={review} restaurants={restaurants} />
-                        <Card.Img className="mx-auto"
-                            style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }}
-                            src={review.images[0].imageLocation}
-                            alt={review.restaurant.name} />
+                        {review?.images[0].imageLocation &&
+                            <div
+                                className="d-flex mx-auto"
+                                style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }}>
+                                <Card.Img
+                                    style={{ width: "100%", height: "100%", overflow: "hidden" }}
+                                    src={review.images[0].imageLocation}
+                                    alt={review.restaurant.name} />
+                            </div>}
                         <Card.Text className="text-center pt-1">
                             {review.author.userName}
                         </Card.Text>
                         <FullStarRatingRow key={review.reviewId} review={review} />
                         <ReviewTextCardBody key={review.reviewId} review={review} />
-                        <Container fluid className="d-flex px-0 mb-2 justify-content-center justify-content-sm-center justify-content-md-end ">
+                        <Container
+                            fluid className="px-0">
                             {/**Buttons to add function for this Container will generate here, add the 
                                  * buttons to the container by passing them as functional props*/}
                             {buttonGroup(review)}

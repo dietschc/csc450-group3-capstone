@@ -121,10 +121,10 @@ function Restaurant(props) {
                 currentRestaurant !== undefined &&
                 <Card className="mb-2 p-2">
                     <RestaurantHeadingCardBody restaurant={currentRestaurant} />
-                    <Card.Img className="mx-auto"
+                    {currentRestaurant?.images[0].imageLocation && <Card.Img className="mx-auto"
                         style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }}
-                        src={currentRestaurant.images[0].imageLocation}
-                        alt={currentRestaurant.name} />
+                        src={currentRestaurant?.images[0].imageLocation}
+                        alt={currentRestaurant?.name} />}
                     <FullStarRatingCol rating={currentRestaurant.rating} />
                     <RestaurantDetail restaurant={currentRestaurant} newReviewHandler={newReviewHandler} />
                     <Container fluid>
