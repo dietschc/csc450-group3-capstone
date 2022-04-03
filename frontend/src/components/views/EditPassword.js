@@ -3,6 +3,8 @@
 // Restaurant Club - EditPassword.js
 // April 2, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 4/02/2022, Added in confirm password and implemented the functionality 
+//  for admins to edit passwords)
 
 // Using React library in order to build components 
 // for the app and importing needed components such as State where variables are stored
@@ -13,13 +15,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 // Various containers from bootstrap to build the form
 import { Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 // Middleware to actually update the password
-import { editPasswordThunk } from '../../actions/users';
+import { editPasswordThunk, updatePasswordThunk, updatePasswordSecureThunk } from '../../actions/users';
 
 
 function EditPassword(props)
 {
     // User array and Thunk variables.
-    const { users, editPasswordThunk } = props;
+    const { users, editPasswordThunk, updatePasswordThunk, updatePasswordSecureThunk } = props;
     // Destructuring out the param if there is one
     const { userId } = useParams();
 
@@ -63,17 +65,13 @@ function EditPassword(props)
         e.preventDefault();
 
         if (passwordConfirmation()) {
-            // After adjusting the password, if successful move to the Dashboard else stay on screen
-            await editPasswordThunk(userName, oldPassword, newPassword)
-            .then(res => {
-                if (res[0])
-                {
-                    setTimeout(() => { navigate("../userDashboard") }, 500);
-                }
-            })
-            .catch(err => {
-                console.log(err)
-            });
+            if (!userId) {
+                console.log("UPDATED SECURE WAS", await updatePasswordSecureThunk(users[0].id, oldPassword, newPassword))
+            }
+            else {
+                console.log("UPDATE PASSWORD WAS", await updatePasswordThunk(userId, newPassword));
+            }
+            
         }
 
         
@@ -161,4 +159,4 @@ const mapStateToProps = state =>
 
 // Exporting the component
 // export default EditPassword;
-export default connect(mapStateToProps, { editPasswordThunk })(EditPassword);
+export default connect(mapStateToProps, { editPasswordThunk, updatePasswordThunk, updatePasswordSecureThunk })(EditPassword);

@@ -50,7 +50,36 @@ class AuthenticationDataService {
     }
 
     /**
-     * Updates a users permission via userId
+     * Updates the user password of the param userId
+     * 
+     * @param {*} userId 
+     * @param {
+     * newPassword: the desired new user password
+     * } data 
+     * @returns - 404
+     */
+     updatePassword(userId, data) {
+        return http.put(`/authentication/password/${userId}`, data);
+    }
+
+    /**
+     * Updates the user password of the param userId. It will 
+     * only update the password if the userPassword matches the 
+     * user password in the database.
+     * 
+     * @param {*} userId 
+     * @param { 
+     * userPassword: current users password,
+     * newPassword: the desired new user password
+     * } data 
+     * @returns - 404
+     */
+     updatePasswordSecure(userId, data) {
+        return http.put(`/authentication/passwordSecure/${userId}`, data);
+    }
+
+    /**
+     * Updates a users permission via userId.
      * 
      * @param {*} id 
      * @param {*} data 

@@ -35,6 +35,12 @@ module.exports = app => {
   router.put("/:id", authentication.update);
 
   // Update a Authentication with id
+  router.put("/password/:userId", authentication.updatePassword)
+
+  // Update a Authentication with id
+  router.put("/passwordSecure/:userId", authentication.updatePasswordSecure);
+
+  // Update a Authentication with id
   router.put("/userId/:userId", authentication.updateByUserId);
 
   // Delete a Authentication with id

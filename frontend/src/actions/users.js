@@ -445,7 +445,7 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
  * @param {*} newPassword
  * @returns 
  */
- export const editPasswordThunk = (userName, userPassword, newPassword) => async dispatch => {
+export const editPasswordThunk = (userName, userPassword, newPassword) => async dispatch => {
     /**
      * Call and await the user data service login method, passing the parameters and storing the 
      * results in res
@@ -459,12 +459,85 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
             // console.log("In process", result);
             // Update the auth table in the database
             AuthenticationDataService.update(result.authId, result);
-            
+
             return [dispatch(addUser(result))];
         })
         .catch(err => {
             console.log(err)
             return err;
+        })
+}
+
+/**
+ * 
+ * @param {*} userName 
+ * @param {*} newPassword
+ * @returns 
+ */
+export const updatePasswordThunk = (userId, newPassword) => async dispatch => {
+    const data = {
+        newPassword: newPassword
+    }
+
+    return await AuthenticationDataService.updatePassword(userId, data)
+        .then(res => {
+            if (res) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            return false;
+        })
+}
+
+/**
+ * 
+ * @param {*} userName 
+ * @param {*} userPassword (old password)
+ * @param {*} newPassword
+ * @returns 
+ */
+export const updatePasswordSecureThunk = (userId, userPassword, newPassword) => async dispatch => {
+    /**
+     * Call and await the user data service login method, passing the parameters and storing the 
+     * results in res
+     */
+    // return await UserDataService.login({ userId, newPassword })
+    //     .then(res => {
+    //         // Get the auth table for the user
+    //         const result = res.data.getAuth;
+    //         // Update the stored auth table to include the new password
+    //         result.userPassword = newPassword;
+    //         // console.log("In process", result);
+    //         // Update the auth table in the database
+    //         AuthenticationDataService.update(result.authId, result);
+
+    //         return [dispatch(addUser(result))];
+    //     })
+    //     .catch(err => {
+    //         console.log(err)
+    //         return err;
+    //     })
+    const data = {
+        userPassword: userPassword,
+        newPassword: newPassword
+    }
+    return await AuthenticationDataService.updatePasswordSecure(userId, data)
+        .then(res => {
+            if (res) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            return false;
         })
 }
 

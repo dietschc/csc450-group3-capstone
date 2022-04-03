@@ -22,6 +22,7 @@ const bcrypt = require('bcrypt');
 const RefreshToken = db.refreshToken;
 const config = require("../config/auth.config");
 const jwt = require("jsonwebtoken");
+const conversationModel = require("../models/conversation.model");
 
 // Create and Save a new Authentication
 exports.create = (req, res) => {
@@ -43,8 +44,7 @@ exports.create = (req, res) => {
     };
 
     // Convert the given password to a binary hash using BCrypt's minor a form for 2^10 rounds of hashing
-    if(authentication.userPassword)
-    {
+    if (authentication.userPassword) {
         const salt = bcrypt.genSaltSync(10, 'a');
         authentication.userPassword = bcrypt.hashSync(authentication.userPassword, salt);
     }
@@ -82,16 +82,14 @@ exports.login = async (req, res) => {
             include: [Permission],
             where: {
                 userName: userName,
-        }
-    })
+            }
+        })
         .then(data => {
             // Boolean to determine if hashed passwords match
             const match = bcrypt.compareSync(userPassword, data.userPassword);
 
-            if (match)
-                { return data; }
-            else
-                { return "incorrect password";}
+            if (match) { return data; }
+            else { return "incorrect password"; }
             // if (data) {
             //     return data;
             // } else {
@@ -311,12 +309,123 @@ exports.update = (req, res) => {
 };
 
 // Update a Authentication by the id in the request
+exports.updatePassword = async (req, res) => {
+    // Validate request
+    if (!req.body.newPassword) {
+        res.status(400).send({
+            message: "You must supply a userId and new password!"
+        });
+        return;
+    }
+
+    const userId = req.params.userId;
+    const salt = bcrypt.genSaltSync(10, 'a');
+    const newPassword = await bcrypt.hashSync(req.body.newPassword, salt);
+
+    const data = {
+        userPassword: newPassword
+    }
+
+    await Authentication.update(data, {
+        where: { userId: userId }
+    })
+        .then(num => {
+            console.log("NUM IS", num)
+            if (num == 1) {
+                res.send({
+                    message: "Authentication was updated successfully."
+                });
+            } else {
+                res.status(500).send({
+                    message: `Cannot update Authentication with id=${userId}. Maybe Authentication was not found or req.body is empty!`
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error updating Authentication with id=" + userId
+            });
+        });
+
+};
+
+// Update a Authentication by the id in the request
+exports.updatePasswordSecure = async (req, res) => {
+    // Validate request
+    if (!req.body.userPassword || !req.body.newPassword) {
+        res.status(400).send({
+            message: "You must supply a user password and new password!"
+        });
+        return;
+    }
+
+    const userId = req.params.userId;
+    const salt = bcrypt.genSaltSync(10, 'a');
+    const password = req.body.userPassword
+    const newPassword = await bcrypt.hashSync(req.body.newPassword, salt);
+    // const newPassword = "ham";
+    console.log(req.body);
+
+    const isValid = await User.findOne({
+        include: [
+            Authentication
+        ], where: { userId: userId }
+    })
+        .then(user => {
+            if (user) {
+                // res.send(user)
+                // Boolean to determine if hashed passwords match
+                return bcrypt.compareSync(password, user.authentication.userPassword);
+            }
+            else {
+                return false;
+            }
+        })
+
+    // console.log("$2a$10$XTTKtFsSJc/kj0GPy0vgTO8nRycIQfDT8UjuyG/BI1Eol5uv0zPES")
+    console.log(isValid)
+    // res.send(isValid);
+
+    if (isValid) {
+        const data = {
+            userPassword: newPassword
+        }
+
+        await Authentication.update(data, {
+            where: { userId: userId }
+        })
+            .then(num => {
+                console.log("NUM IS", num)
+                if (num == 1) {
+                    res.send({
+                        message: "Authentication was updated successfully."
+                    });
+                } else {
+                    res.status(500).send({
+                        message: `Cannot update Authentication with id=${userId}. Maybe Authentication was not found or req.body is empty!`
+                    });
+                }
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: "Error updating Authentication with id=" + userId
+                });
+            });
+    }
+    else {
+        res.status(404).send({
+            message: `Either there was no user with that Id or the passwords did not match`
+        })
+    }
+};
+
+// Update a Authentication by the id in the request
 exports.updateByUserId = (req, res) => {
     const userId = req.params.userId;
     // As in create, hashing the password.
     const salt = bcrypt.genSaltSync(10, 'a');
     req.body.userPassword = bcrypt.hashSync(req.body.userPassword, salt);
-    
+
     Authentication.update(req.body, {
         where: { userId: userId }
     })
@@ -337,6 +446,8 @@ exports.updateByUserId = (req, res) => {
             });
         });
 };
+
+
 
 // Delete a Authentication with the specified id in the request
 exports.delete = (req, res) => {
