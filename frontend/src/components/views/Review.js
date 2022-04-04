@@ -397,7 +397,7 @@ function Review(props) {
                     </Form.Floating>
 
                     <div className="d-flex justify-content-around pt-2 pb-5">
-                        <Button type="submit" className="mr-1 w-25" variant="outline-primary">
+                        <Button type="submit" className="mr-1 w-25">
                             {isUpdate ? "Update" : "Submit"}
                         </Button>
 
