@@ -14,6 +14,7 @@
 //  (DAB, 3/13/2022, Both updateRestaurantThunk and addRestaurantThunk work with image 
 //  uploads and deletes. Fully functional by current models)
 //  (DAB, 3/13/2022, Added comments and arranged methods for better readability)
+//  (DAB, 4/04/2022, Organized code)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -567,6 +568,7 @@ export const addRestaurant = ({ restaurantId, userCreatorId,
         ]
     })
 
+
 /**
  * React Redux reducer that will decrement the review count in state.
  * 
@@ -578,6 +580,7 @@ export const decrementRestaurantReviewCount = (restaurantId) => ({
     id: restaurantId
 })
 
+
 /**
  * React Redux reducer that will delete all restaurants from state.
  * 
@@ -586,6 +589,7 @@ export const decrementRestaurantReviewCount = (restaurantId) => ({
 export const deleteAllRestaurants = () => ({
     type: C.DELETE_ALL_RESTAURANTS
 })
+
 
 /**
  * React Redux reducer that will delete a restaurant from state.
@@ -597,6 +601,7 @@ export const deleteRestaurant = (restaurantId) => ({
     id: restaurantId
 })
 
+
 /**
  * React Redux reducer that will increment the review count in state.
  * 
@@ -607,6 +612,7 @@ export const incrementRestaurantReviewCount = (restaurantId) => ({
     type: C.INCREMENT_RESTAURANT_REVIEW_COUNT,
     id: restaurantId
 })
+
 
 /**
  * React Redux reducer that will update a restaurant owner Id in state 
@@ -621,6 +627,7 @@ export const updateRestaurantOwner = (restaurantId, ownerId) => ({
     id: restaurantId,
     ownerId: ownerId
 })
+
 
 /**
  * React Redux reducer that will update the restaurant in state.
@@ -659,6 +666,7 @@ export const updateRestaurant = ({ restaurantId, restaurantName, userCreatorId, 
         images: imageArray
     })
 
+
 /**
  * React Redux reducer that will update the restaurant rating in state for the 
  * param id restaurant.
@@ -681,6 +689,7 @@ export const updateRestaurantRating = (restaurantId, tasteRating, serviceRating,
             overallRating: overallRating
         }
     })
+
 
 /**
  * React Redux update the restaurant review count with a new number.

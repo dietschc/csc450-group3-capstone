@@ -13,54 +13,16 @@
 //  (DAB, 3/28/2022, Updated the service name for findAllAfterDateOffsetLimit 
 //  to describe its behavior of findAllByIdOffsetLimit)
 //  (DAB, 4/04/2022, Added isLoading to findByConversationIdOffsetLimitThunk)
+//  (DAB, 4/04/2022, Organized code)
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import { v4 } from 'uuid';
 import C from '../constants';
 import MessageDataService from '../services/message.service';
 import { endLoadingMessages, startLoadingMessages } from './isLoading';
 
-/**
- * React Redux reducer that will add a new message to state.
- * 
- * @param {*} toUserId 
- * @param {*} fromUserId 
- * @param {*} message 
- * @returns 
- */
-export const addMessage = ({ userToId, userFromId, message, conversationId, createdAt, messageId }) => ({
-    type: C.ADD_MESSAGE,
-    id: messageId,
-    userMessage: {
-        id: conversationId,
-        to: userToId,
-        from: userFromId
-    },
-    message: message,
-    timeStamp: createdAt || new Date()
-})
 
-/**
- * React Redux reducer that will delete all messages from state.
- * 
- * @returns 
- */
-export const deleteAllMessages = () => ({
-    type: C.DELETE_ALL_MESSAGES
-})
-
-/**
- * React Redux reducer that will delete a message with the 
- * parameter id.
- * 
- * @param {*} id 
- * @returns 
- */
-export const deleteMessage = (id) => ({
-    type: C.DELETE_MESSAGE,
-    id: id
-})
+/************************************ REDUX THUNK ACTIONS ***********************************/
 
 
 /**
@@ -102,21 +64,21 @@ export const findByConversationIdOffsetLimitThunk =
 
         // Setting isLoadingMessages to false
         dispatch(endLoadingMessages());
-    };
+    }
 
 
 /**
- * The findAllAfterDateOffsetLimitThunk will find all messages after the messageId given 
- * the userToId and userFromId. It will then return results up to the specified offset and limit 
- * then add results to state.
- * 
- * @param {*} messageId 
- * @param {*} userToId 
- * @param {*} userFromId 
- * @param {*} offset 
- * @param {*} limit 
- * @returns 
- */
+* The findAllAfterDateOffsetLimitThunk will find all messages after the messageId given 
+* the userToId and userFromId. It will then return results up to the specified offset and limit 
+* then add results to state.
+* 
+* @param {*} messageId 
+* @param {*} userToId 
+* @param {*} userFromId 
+* @param {*} offset 
+* @param {*} limit 
+* @returns 
+*/
 export const findAllByIdOffsetLimitThunk =
     (messageId, userToId, userFromId, offset, limit) => async (dispatch, getState) => {
         // Attempting to retrieve messages from the database
@@ -171,7 +133,7 @@ export const findAllByIdOffsetLimitThunk =
 
         // Returning if the query was a success or not
         return isMessages;
-    };
+    }
 
 
 /**
@@ -203,3 +165,50 @@ export const sendMessageThunk =
                 console.log(err);
             });
     };
+
+
+/************************************ REACT REDUX ACTIONS ***********************************/
+
+
+/**
+ * React Redux reducer that will add a new message to state.
+ * 
+ * @param {*} toUserId 
+ * @param {*} fromUserId 
+ * @param {*} message 
+ * @returns 
+ */
+export const addMessage = ({ userToId, userFromId, message, conversationId, createdAt, messageId }) => ({
+    type: C.ADD_MESSAGE,
+    id: messageId,
+    userMessage: {
+        id: conversationId,
+        to: userToId,
+        from: userFromId
+    },
+    message: message,
+    timeStamp: createdAt || new Date()
+});
+
+
+/**
+ * React Redux reducer that will delete all messages from state.
+ * 
+ * @returns 
+ */
+export const deleteAllMessages = () => ({
+    type: C.DELETE_ALL_MESSAGES
+});
+
+
+/**
+ * React Redux reducer that will delete a message with the 
+ * parameter id.
+ * 
+ * @param {*} id 
+ * @returns 
+ */
+export const deleteMessage = (id) => ({
+    type: C.DELETE_MESSAGE,
+    id: id
+});
