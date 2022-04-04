@@ -10,6 +10,7 @@
 //  EditRestaurant, and Review)
 //  (DAB, 3/24/2022, Added in enhanced UX by auto directing then redirecting a user to where they 
 //  want to go)
+//  (DAB, 4/02/2022, Wrapped editPassword in the appropriate authentication wrappers)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -31,6 +32,7 @@ import AuthAdmin from './components/auth/AuthAdmin';
 import AuthLoggedIn from './components/auth/AuthLoggedIn';
 import AuthReview from './components/auth/AuthReview';
 import AuthChat from './components/auth/AuthChat';
+import EditPassword from './components/views/EditPassword';
 
 function App(props) {
     // Authentication testing DEBUG*********
@@ -56,6 +58,16 @@ function App(props) {
                     <AuthAdmin>
                         <EditAccount />
                     </AuthAdmin>} />
+                <Route path='/editPassword' element={
+                    <AuthLoggedIn>
+                        <EditPassword />
+                    </AuthLoggedIn>
+                } />
+                <Route path='/editPassword/:userId' element={
+                    <AuthAdmin>
+                        <EditPassword />
+                    </AuthAdmin>
+                } />
                 <Route path='/editRestaurant' element={
                     <AuthLoggedIn>
                         <EditRestaurant />
