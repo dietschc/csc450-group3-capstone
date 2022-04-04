@@ -23,6 +23,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Row, Col, Form, Container, Button, FloatingLabel, Alert } from 'react-bootstrap';
 import FormContainer from '../template/FormContainer';
+import { formatZipCode } from '../../helperFunction/FormatString';
 import { addUserThunk, updateUserThunk, findByUserIdThunk, deleteUser } from '../../actions/users';
 import { checkLogin } from '../../helperFunction/CheckLogin'
 import FloatingStateOptionList from '../form/floatingComponents/FloatingStateOptionList';
@@ -245,7 +246,7 @@ function EditAccount(props) {
     // Handles the zip form input
     const onChangeZip = e => {
         const { value, maxLength } = e.target;
-        const zip = value.slice(0, maxLength);
+        const zip = formatZipCode(value);
         setZip(zip);
     }
 
@@ -278,7 +279,7 @@ function EditAccount(props) {
             // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
             const isAccountCreated = await addUserThunk(userName, firstName, lastName, address, city, state, zip, email, password)
 
-            console.log("IS ACCOUNT CREATED", isAccountCreated)
+            // If the account was created the user is navigated to the dashboard
             if (isAccountCreated) {
                 // The form was submitted so local state is set to true
                 setSubmitted(true);
@@ -286,6 +287,7 @@ function EditAccount(props) {
                 // Send the new user to their new dashboard
                 setTimeout(() => { navigate("../userDashboard") }, 500);
             }
+            // If the account was not created, the user is notified in the error message
             else {
                 setErrorMessage(`${userName} is already taken, try another!`)
             }
@@ -365,15 +367,15 @@ function EditAccount(props) {
     const displaySubmitButton = () => (
         <div className="d-flex justify-content-around pt-2 pb-4">
             {isEditing ? (
-                <Button type="submit" variant="outline-primary">
+                <Button type="submit">
                     Update
                 </Button>
             ) : (
-                <Button type="submit" variant="outline-primary">
+                <Button type="submit">
                     Submit
                 </Button>
             )}
-            <Button variant="outline-primary" onClick={showClearFormHandler}>
+            <Button onClick={showClearFormHandler}>
                 Clear
             </Button>
         </div>
@@ -522,6 +524,7 @@ function EditAccount(props) {
                                         value={zip}
                                         onChange={onChangeZip}
                                         maxLength="5"
+                                        pattern="[0-9]*"
                                     />
                                 </FloatingLabel>
                             </Form.Floating>

@@ -57,18 +57,18 @@ function Login(props) {
         <div className="text-center">
             {checkLogin(users) ? (
                 <div className="d-flex justify-content-around pt-2 pb-5">
-                    <Button variant="outline-primary" onClick={logoutAccount}>
+                    <Button onClick={logoutAccount}>
                         Logout
                     </Button>
                 </div>
             ) : (
                 <div>
                     <div className="d-flex justify-content-around pt-2 pb-5">
-                        <Button type="submit" variant="outline-primary">
+                        <Button type="submit">
                             Login
                         </Button>
 
-                        <Button variant="outline-primary" onClick={createAccountHandler}>
+                        <Button onClick={createAccountHandler}>
                             Create Account
                         </Button>
                     </div>
