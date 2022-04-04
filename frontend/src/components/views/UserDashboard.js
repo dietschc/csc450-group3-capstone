@@ -17,6 +17,7 @@
 //  (DAB, 03/27/2022, userDashboard now functional with admin edits)
 //  (DAB, 03/27/2022, formatted the order of the functions alphabetically where 
 //  possible and finished comments)
+//  (DAB, 04/02/2022, Moved EditPassword Button into dashboard)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -108,6 +109,17 @@ function UserDashboard(props) {
         // If there is not a userId the chat functionality will work
         if (!userId) {
             navigate("../chat/" + friend.id);
+        }
+    }
+
+    // Redirect for hitting the Update Password button
+    const changePasswordHandler = () =>
+    {
+        if (!userId) {
+            navigate("../editPassword");
+        }
+        else {
+            navigate(`../editPassword/${userId}`); 
         }
     }
 
@@ -283,7 +295,8 @@ function UserDashboard(props) {
                     <UserInfo
                         currentUser={user}
                         currentAddress={currentAddress}
-                        userInfoHandler={userInfoHandler} />
+                        userInfoHandler={userInfoHandler} 
+                        changePasswordHandler={changePasswordHandler}/>
                 </Col>
                 <Col className="pb-2" md={6}>
                     <FriendList friend={friend} chatHandler={chatHandler}
