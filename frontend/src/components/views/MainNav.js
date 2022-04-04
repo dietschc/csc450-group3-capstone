@@ -9,6 +9,8 @@
 //  (DAB, 03/13/2022, Added in Admin link when an admin is logged in 
 //  light front end only secured)
 //  (DAB, 03/13/2022, Moved DevelopersNav into MainNav)
+//  (DAB, 04/03/2022, Fixed Logout behavior to not return to Login screen 
+//  when clicked)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -128,11 +130,9 @@ function MainNav(props) {
                     </Nav.Item>
                     {showAdmin()}
                     <Nav.Item className="mx-3" onClick={logoutHandler}>
-                        <LinkContainer to="login">
                             <Nav.Link>
                                 Logout
                             </Nav.Link>
-                        </LinkContainer>
                     </Nav.Item>
                 </>
             ) : (

@@ -387,7 +387,7 @@ function Review(props) {
                                 required
                                 value={reviewText}
                                 onChange={onChangeReviewText}
-                                maxLength="255"
+                                maxLength="5000"
                             />
                         </FloatingLabel>
                     </Form.Floating>

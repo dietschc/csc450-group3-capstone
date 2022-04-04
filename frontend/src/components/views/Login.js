@@ -8,6 +8,7 @@
 //  (DAB, 3/22/2022, Added in useLocation state to allow for a user to be redirected back 
 //  to the previous location after logging in)
 //  (TJI, 03/29/2022 - Added in character limits to match database)
+//  (TJI, 04/02/2022, Removed call to password from state)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -28,7 +29,7 @@ function Login(props) {
     const [isError, setShowError] = useState(false)
     const [isSuccess, setShowSuccess] = useState(false)
     const [userName, setUserName] = useState(users.length > 0 ? users[0].auth.userName : "");
-    const [password, setPassword] = useState(users.length > 0 ? users[0].auth.password : "");
+    const [password, setPassword] = useState("");
 
     const navigate = useNavigate();
     // Pulling state from useLocation to allow for the user to be redirected back to the page 
@@ -56,18 +57,18 @@ function Login(props) {
         <div className="text-center">
             {checkLogin(users) ? (
                 <div className="d-flex justify-content-around pt-2 pb-5">
-                    <Button variant="outline-primary" onClick={logoutAccount}>
+                    <Button onClick={logoutAccount}>
                         Logout
                     </Button>
                 </div>
             ) : (
                 <div>
                     <div className="d-flex justify-content-around pt-2 pb-5">
-                        <Button type="submit" variant="outline-primary">
+                        <Button type="submit">
                             Login
                         </Button>
 
-                        <Button variant="outline-primary" onClick={createAccountHandler}>
+                        <Button onClick={createAccountHandler}>
                             Create Account
                         </Button>
                     </div>
@@ -102,10 +103,10 @@ function Login(props) {
         // Call login thunk function which tries to authenticate against the backend
         await loginThunk(userName, password)
             .then(res => {
-                console.log("Results: ", res);
+                // console.log("Results: ", res);
 
                 if (res.isLoggedIn === true) {
-                    console.log("SUCCESS");
+                    console.log("LOGIN SUCCESS");
 
                     // setSubmitted(true);
                     setShowSuccess(true);
@@ -115,7 +116,7 @@ function Login(props) {
                 } else {
                     clearForm();
                     setShowError(true);
-                    console.log("FAIL");
+                    console.log("LOGIN FAIL");
                 }
             })
             .catch(err => {

@@ -25,11 +25,11 @@ function EditFormButtons(props) {
 
     return (
         <div className="d-flex justify-content-around pt-2 pb-5">
-            <Button className="mr-1 w-25" variant="outline-primary" type="submit">
+            <Button className="mr-1 w-25" type="submit">
                 {isUpdate ? "Update" : "Submit"}
             </Button>
 
-            <Button className="ml-1 w-25" variant="outline-primary" onClick={clearFormHandler}>
+            <Button className="ml-1 w-25" onClick={clearFormHandler}>
                 Clear
             </Button>
         </div>
