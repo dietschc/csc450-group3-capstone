@@ -16,6 +16,7 @@
 //  (CPD, 3/12/2022, Implemented user subdirectories for review images)
 //  (DAB, 4/04/2022, Added in isLoading dispatch for findReviewByAuthorRestaurantThunk and 
 //  findReviewByRestaurantThunk)
+//  (DAB, 4/04/2022, Organized code)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -25,161 +26,9 @@ import ImageDataService from "../services/image.service";
 import { formatDBReviewFind } from '../helperFunction/actionHelpers';
 import { endLoadingReviews, startLoadingReviews } from './isLoading';
 
-/**
- * This thunk will search the database and return reviews written by the specified author
- * that matches the author Id
- * 
- * @param {*} offset 
- * @param {*} limit 
- * @param {*} reviewAuthorId
- * @returns 
- */
-export const findReviewByAuthorThunk = (offset, limit, reviewAuthorId) => async dispatch => {
-    // Making a call to the database to request the reviews
-    await ReviewDataService.findByAuthorIdOffsetLimit(offset, limit, reviewAuthorId)
-        .then(async res => {
-            // If data was found in the database query it is formatted 
-            // for redux and added to state
-            if (res) {
-                // Iterating through the review data
-                await res.data.map(review => {
-                    // Formatting the database data so it matches redux
-                    const reviewData = formatDBReviewFind(review);
 
-                    // Adding the current review to state
-                    dispatch(addReview(reviewData));
+/************************************ REDUX THUNK ACTIONS ***********************************/
 
-                    // Returning the current review
-                    return review;
-                })
-            }
-        })
-        .catch(err => {
-            // If there was an error it is logged in the console
-            console.log(err)
-        })
-}
-
-/**
- * This thunk will search the database and return reviews written by the specified author
- * that matches both the review author and restaurant Id's.
- * 
- * @param {*} offset 
- * @param {*} limit 
- * @param {*} authorId
- * @param {*} restaurantId
- * @returns 
- */
-export const findReviewByAuthorRestaurantThunk = (offset, limit, authorId, restaurantId) => async dispatch => {
-    // Setting isLoadingReview to true
-    await dispatch(await startLoadingReviews());
-    
-    // Making a call to the database to request the reviews
-    const isReviews = await ReviewDataService.findByRestaurantAuthorIdOffsetLimit(offset, limit, authorId, restaurantId)
-        .then(async res => {
-            // If data was found in the database query it is formatted 
-            // for redux and added to state
-            if (res) {
-                // Iterating through the review data
-                await res.data.map(review => {
-                    // Formatting the database data so it matches redux
-                    const reviewData = formatDBReviewFind(review);
-
-                    // Adding the current review to state
-                    dispatch(addReview(reviewData));
-
-                    // Returning the current review
-                    return true;
-                })
-            }
-        })
-        .catch(err => {
-            // If there was an error it is logged in the console
-            console.log(err)
-
-            // Review failed, false is returned
-            return false;
-        })
-
-    // Setting isLoadingReviews to false
-    dispatch(endLoadingReviews);
-
-    // Returning true if reviews were found or false if otherwise
-    return isReviews;
-}
-
-/**
- * Searches the database for all reviews with up to the offset/limit. It will then 
- * add the results to state.
- * @param {*} offset 
- * @param {*} limit 
- * @returns 
- */
-export const findAllReviewsOrderedThunk = (offset, limit) => async dispatch => {
-    // Making a call to the database to request the reviews
-    await ReviewDataService.findAllOffsetLimit(offset, limit)
-        .then(async res => {
-            // If data was found in the database query it is formatted 
-            // for redux and added to state
-            if (res) {
-                // Iterating through the review data
-                await res.data.map(review => {
-                    // Formatting the database data so it matches redux
-                    const reviewData = formatDBReviewFind(review);
-
-                    // Adding the current review to state
-                    dispatch(addReview(reviewData));
-
-                    // Returning the current review
-                    return review;
-                })
-            }
-        })
-        .catch(err => {
-            // If there was an error it is logged in the console
-            console.log(err)
-        })
-}
-
-/**
- * The findReviewByRestaurantThunk will find all reviews matching the restaurantId
- * 
- * @param {*} offset 
- * @param {*} limit 
- * @param {*} restaurantId 
- * @returns 
- */
-export const findReviewByRestaurantThunk = (offset, limit, restaurantId) => async dispatch => {
-    // Setting isLoadingReview to true
-    await dispatch(await startLoadingReviews());
-
-    // Making a call to the database to request the reviews
-    await ReviewDataService.findByRestaurantIdOffsetLimit(offset, limit, restaurantId)
-        .then(async res => {
-            // If data was found in the database query it is formatted 
-            // for redux and added to state
-            if (res) {
-                // Iterating through the review data
-                await res.data.map(review => {
-                    // Formatting the database data so it matches redux
-                    const reviewData = formatDBReviewFind(review);
-
-                    // Adding the current review to state
-                    dispatch(addReview(reviewData));
-
-                    // Returning the current review
-                    return review;
-                })
-            }
-        })
-        .catch(err => {
-            // If there was an error it is logged in the console
-            console.log(err)
-        })
-
-    // Setting isLoadingReviews to false
-    dispatch(endLoadingReviews());
-}
 
 /**
  * The add review thunk takes all the parameters from the review form, including a file upload and 
@@ -255,20 +104,21 @@ export const addReviewThunk = (userId, restaurantId, reviewTitle, reviewText, ta
         }
     }
 
+
 /**
- * This function takes a single parameter, which is the reviewId of the review to be deleted.
- * 
- * @param {*} reviewId 
- * @returns 
- */
+* This function takes a single parameter, which is the reviewId of the review to be deleted.
+* 
+* @param {*} reviewId 
+* @returns 
+*/
 export const deleteReviewThunk = (reviewId, imageLocation) => async dispatch => {
 
     // Delete the image from cloud storage if it exists
     if (imageLocation !== '') {
         await ImageDataService.delete(imageLocation)
-        .catch(err => {
-            console.log(err);
-        })
+            .catch(err => {
+                console.log(err);
+            })
     }
 
     //Call and await the review data service delete method, passing the parameters
@@ -293,74 +143,164 @@ export const deleteReviewThunk = (reviewId, imageLocation) => async dispatch => 
 
 
 /**
- * React-Redux action to add a review to redux state.
- * 
- * @param {
- * @param {*} userName - User name of the user who wrote this review.
- * @param {*} reviewId - Id of the review.
- * @param {*} userId - User Id of the user who wrote this review.
- * @param {*} restaurantId - Restaurant Id of the restaurant being reviewed.
- * @param {*} restaurantName - Name of the restaurant being reviewed.
- * @param {*} tasteRating - Taste rating for the review.
- * @param {*} serviceRating - Service rating for the review.
- * @param {*} cleanlinessRating - Cleanliness rating for the review.
- * @param {*} overallRating - Overall rating for the review.
- * @param {*} reviewTitle - Title of the review.
- * @param {*} reviewText - Body review text.
- * @param {*} created - DateTime of review creation
- * @param {*} modified - DateTime of review modification.
- * @param {*} imageLocation - File location the image will be stored at.
- * } param0 
+ * Searches the database for all reviews with up to the offset/limit. It will then 
+ * add the results to state.
+ * @param {*} offset 
+ * @param {*} limit 
  * @returns 
  */
-export const addReview = ({ userName, reviewId, userId, imageId,
-    historyId, restaurantId, ratingId, restaurantName, tasteRating,
-    serviceRating, cleanlinessRating, overallRating, reviewTitle,
-    reviewText, created, modified, imageLocation }) => ({
-        type: C.ADD_REVIEW,
-        id: reviewId,
-        author: {
-            id: userId,
-            userName: userName
-        },
-        restaurant: {
-            id: restaurantId,
-            name: restaurantName
-        },
-        rating: {
-            id: ratingId,
-            tasteRating: tasteRating,
-            serviceRating: serviceRating,
-            cleanlinessRating: cleanlinessRating,
-            overallRating: overallRating
-        },
-        reviewTitle: reviewTitle,
-        reviewText: reviewText,
-        images: {
-            id: imageId,
-            imageLocation: imageLocation
-        },
-        history: {
-            id: historyId,
-            created: created,
-            modified: modified
-        }
-    })
+export const findAllReviewsOrderedThunk = (offset, limit) => async dispatch => {
+    // Making a call to the database to request the reviews
+    await ReviewDataService.findAllOffsetLimit(offset, limit)
+        .then(async res => {
+            // If data was found in the database query it is formatted 
+            // for redux and added to state
+            if (res) {
+                // Iterating through the review data
+                await res.data.map(review => {
+                    // Formatting the database data so it matches redux
+                    const reviewData = formatDBReviewFind(review);
 
-// React-Redux action to delete a review based off id from redux state
-export const deleteReview = (reviewId) => ({
-    type: C.DELETE_REVIEW,
-    id: reviewId
-})
+                    // Adding the current review to state
+                    dispatch(addReview(reviewData));
+
+                    // Returning the current review
+                    return review;
+                })
+            }
+        })
+        .catch(err => {
+            // If there was an error it is logged in the console
+            console.log(err)
+        })
+}
+
 
 /**
- * React-Redux action to delete all reviews from redux state.
+ * This thunk will search the database and return reviews written by the specified author
+ * that matches the author Id
  * 
+ * @param {*} offset 
+ * @param {*} limit 
+ * @param {*} reviewAuthorId
  * @returns 
  */
-export const deleteAllReviews = () => ({
-    type: C.DELETE_ALL_REVIEWS
-})
+export const findReviewByAuthorThunk = (offset, limit, reviewAuthorId) => async dispatch => {
+    // Making a call to the database to request the reviews
+    await ReviewDataService.findByAuthorIdOffsetLimit(offset, limit, reviewAuthorId)
+        .then(async res => {
+            // If data was found in the database query it is formatted 
+            // for redux and added to state
+            if (res) {
+                // Iterating through the review data
+                await res.data.map(review => {
+                    // Formatting the database data so it matches redux
+                    const reviewData = formatDBReviewFind(review);
+
+                    // Adding the current review to state
+                    dispatch(addReview(reviewData));
+
+                    // Returning the current review
+                    return review;
+                })
+            }
+        })
+        .catch(err => {
+            // If there was an error it is logged in the console
+            console.log(err)
+        })
+}
+
+
+/**
+ * This thunk will search the database and return reviews written by the specified author
+ * that matches both the review author and restaurant Id's.
+ * 
+ * @param {*} offset 
+ * @param {*} limit 
+ * @param {*} authorId
+ * @param {*} restaurantId
+ * @returns 
+ */
+export const findReviewByAuthorRestaurantThunk = (offset, limit, authorId, restaurantId) => async dispatch => {
+    // Setting isLoadingReview to true
+    await dispatch(await startLoadingReviews());
+
+    // Making a call to the database to request the reviews
+    const isReviews = await ReviewDataService.findByRestaurantAuthorIdOffsetLimit(offset, limit, authorId, restaurantId)
+        .then(async res => {
+            // If data was found in the database query it is formatted 
+            // for redux and added to state
+            if (res) {
+                // Iterating through the review data
+                await res.data.map(review => {
+                    // Formatting the database data so it matches redux
+                    const reviewData = formatDBReviewFind(review);
+
+                    // Adding the current review to state
+                    dispatch(addReview(reviewData));
+
+                    // Returning the current review
+                    return true;
+                })
+            }
+        })
+        .catch(err => {
+            // If there was an error it is logged in the console
+            console.log(err)
+
+            // Review failed, false is returned
+            return false;
+        })
+
+    // Setting isLoadingReviews to false
+    dispatch(endLoadingReviews);
+
+    // Returning true if reviews were found or false if otherwise
+    return isReviews;
+}
+
+
+/**
+ * The findReviewByRestaurantThunk will find all reviews matching the restaurantId
+ * 
+ * @param {*} offset 
+ * @param {*} limit 
+ * @param {*} restaurantId 
+ * @returns 
+ */
+export const findReviewByRestaurantThunk = (offset, limit, restaurantId) => async dispatch => {
+    // Setting isLoadingReview to true
+    await dispatch(await startLoadingReviews());
+
+    // Making a call to the database to request the reviews
+    await ReviewDataService.findByRestaurantIdOffsetLimit(offset, limit, restaurantId)
+        .then(async res => {
+            // If data was found in the database query it is formatted 
+            // for redux and added to state
+            if (res) {
+                // Iterating through the review data
+                await res.data.map(review => {
+                    // Formatting the database data so it matches redux
+                    const reviewData = formatDBReviewFind(review);
+
+                    // Adding the current review to state
+                    dispatch(addReview(reviewData));
+
+                    // Returning the current review
+                    return review;
+                })
+            }
+        })
+        .catch(err => {
+            // If there was an error it is logged in the console
+            console.log(err)
+        })
+
+    // Setting isLoadingReviews to false
+    dispatch(endLoadingReviews());
+}
+
 
 /**
  * The update review thunk will update the parameters, including a new file if it was uploaded. This 
@@ -439,6 +379,83 @@ export const updateReviewThunk = (reviewId, userId, reviewTitle, reviewText, tas
         }
     }
 
+
+/************************************ REACT REDUX ACTIONS ***********************************/
+
+
+/**
+ * React-Redux action to add a review to redux state.
+ * 
+ * @param {
+ * @param {*} userName - User name of the user who wrote this review.
+ * @param {*} reviewId - Id of the review.
+ * @param {*} userId - User Id of the user who wrote this review.
+ * @param {*} restaurantId - Restaurant Id of the restaurant being reviewed.
+ * @param {*} restaurantName - Name of the restaurant being reviewed.
+ * @param {*} tasteRating - Taste rating for the review.
+ * @param {*} serviceRating - Service rating for the review.
+ * @param {*} cleanlinessRating - Cleanliness rating for the review.
+ * @param {*} overallRating - Overall rating for the review.
+ * @param {*} reviewTitle - Title of the review.
+ * @param {*} reviewText - Body review text.
+ * @param {*} created - DateTime of review creation
+ * @param {*} modified - DateTime of review modification.
+ * @param {*} imageLocation - File location the image will be stored at.
+ * } param0 
+ * @returns 
+ */
+export const addReview = ({ userName, reviewId, userId, imageId,
+    historyId, restaurantId, ratingId, restaurantName, tasteRating,
+    serviceRating, cleanlinessRating, overallRating, reviewTitle,
+    reviewText, created, modified, imageLocation }) => ({
+        type: C.ADD_REVIEW,
+        id: reviewId,
+        author: {
+            id: userId,
+            userName: userName
+        },
+        restaurant: {
+            id: restaurantId,
+            name: restaurantName
+        },
+        rating: {
+            id: ratingId,
+            tasteRating: tasteRating,
+            serviceRating: serviceRating,
+            cleanlinessRating: cleanlinessRating,
+            overallRating: overallRating
+        },
+        reviewTitle: reviewTitle,
+        reviewText: reviewText,
+        images: {
+            id: imageId,
+            imageLocation: imageLocation
+        },
+        history: {
+            id: historyId,
+            created: created,
+            modified: modified
+        }
+    });
+
+
+// React-Redux action to delete a review based off id from redux state
+export const deleteReview = (reviewId) => ({
+    type: C.DELETE_REVIEW,
+    id: reviewId
+});
+
+
+/**
+ * React-Redux action to delete all reviews from redux state.
+ * 
+ * @returns 
+ */
+export const deleteAllReviews = () => ({
+    type: C.DELETE_ALL_REVIEWS
+});
+
+
 /**
  * React-Redux action to update redux state.
  * 
@@ -473,4 +490,4 @@ export const updateReview = ({ reviewId, tasteRating,
         history: {
             modified: modified
         }
-    })
+    });

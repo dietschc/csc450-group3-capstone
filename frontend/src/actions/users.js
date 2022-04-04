@@ -19,13 +19,14 @@
 //  (DAB, 4/02/2022, addUserThunk now returns true on success and false on failure to add to 
 //  the database)
 //  (DAB, 4/04/2022, Added in isLoading dispatch for findByUserNameThunk, findByUserIdThunk)
+//  (DAB, 4/04/2022, Organized code)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import C from '../constants';
 import UserDataService from "../services/user.service";
-import { formatDBUserFind } from '../helperFunction/actionHelpers';
 import AuthenticationDataService from '../services/authentication.service';
+import { formatDBUserFind } from '../helperFunction/actionHelpers';
 import { endLoadingUsers, startLoadingUsers } from './isLoading';
 
 
@@ -67,7 +68,7 @@ export const addUserThunk = (
 
                     // Adding the created user to state
                     dispatch(addUser(result));
-                    
+
                     // User added, returning true
                     return true;
                 }
@@ -157,10 +158,10 @@ export const findByUserIdThunk = (userId) => async dispatch => {
             return false;
         });
 
-        // Setting isLoadingUsers to false
-        dispatch(endLoadingUsers());
+    // Setting isLoadingUsers to false
+    dispatch(endLoadingUsers());
 
-        return isUser;
+    return isUser;
 }
 
 
@@ -404,7 +405,7 @@ export const updateUserThunk = (id, data) => async dispatch => {
     await UserDataService.update(id, data)
         .then(res => {
             const result = { id, ...data }
-            
+
             dispatch(updateUser(result))
         })
         .catch(err => {
