@@ -2,5 +2,11 @@
     "users": [],
     "restaurants": [],
     "reviews": [],
-    "messages": []
+    "messages": [],
+    "isLoading": {
+        "isLoadingUsers": false,
+        "isLoadingRestaurants": false,
+        "isLoadingReviews": false,
+        "isLoadingMessages": false
+    }
 }

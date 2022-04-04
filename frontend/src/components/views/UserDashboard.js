@@ -18,10 +18,11 @@
 //  (DAB, 03/27/2022, formatted the order of the functions alphabetically where 
 //  possible and finished comments)
 //  (DAB, 04/02/2022, Moved EditPassword Button into dashboard)
+//  (DAB, 04/04/2022, Added Spinners for database load in)
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { Container, Row, Col, Alert, Toast } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -35,6 +36,7 @@ import { deleteFriendThunk } from '../../actions/friend';
 import { deleteAllReviews, deleteReviewThunk } from '../../actions/reviews';
 import { deleteAllRestaurants } from '../../actions/restaurants';
 import { deleteUser, findByUserIdThunk } from '../../actions/users';
+import ThemedSpinner from '../subComponent/ThemedSpinner';
 
 /**
  * The UserDashboard View will allow the user to view their account
@@ -50,7 +52,7 @@ import { deleteUser, findByUserIdThunk } from '../../actions/users';
  */
 function UserDashboard(props) {
     // Destructuring out needed state and actions
-    const { users, restaurants, reviews } = props;
+    const { users, restaurants, reviews, isLoading } = props;
     const {
         findByAuthorIdThunk,
         deleteFriendThunk,
@@ -74,6 +76,13 @@ function UserDashboard(props) {
     const [user, setUser] = useState(users.length > 0 ? users[0] : []);
     const [currentAddress, setCurrentAddress] = useState(users.length > 0 ? users[0].address : []);
     const [friends, setFriends] = useState(users.length > 0 ? users[0].friends : []);
+
+    // Deleting old state before the DOM is painted
+    useLayoutEffect(() => {
+        // Deleting the state in redux
+        deleteAllReviews();
+        deleteAllRestaurants();
+    }, [])
 
     // This useEffect renders only once on the initial page load in
     useEffect(() => {
@@ -113,13 +122,12 @@ function UserDashboard(props) {
     }
 
     // Redirect for hitting the Update Password button
-    const changePasswordHandler = () =>
-    {
+    const changePasswordHandler = () => {
         if (!userId) {
             navigate("../editPassword");
         }
         else {
-            navigate(`../editPassword/${userId}`); 
+            navigate(`../editPassword/${userId}`);
         }
     }
 
@@ -192,11 +200,6 @@ function UserDashboard(props) {
     // The loadState function is async and it will load in the reviews/account/restaurants only 
     // if needed for the current user
     const loadState = async () => {
-        // Deleting all the reviews and restaurants currently in state so new fresh data 
-        // can be loaded in
-        await deleteAllReviews();
-        await deleteAllRestaurants();
-
         // If there is a param userId, that users data will be retrieved and loaded into state
         if (userId) {
             // Searching the database to check if the userId exists and load their reviews/restaurants 
@@ -290,24 +293,45 @@ function UserDashboard(props) {
             <h1>
                 {user && `${user?.auth?.userName}'s`} Dashboard
             </h1>
-            <Row>
-                <Col className="pb-2" md={6}>
-                    <UserInfo
-                        currentUser={user}
-                        currentAddress={currentAddress}
-                        userInfoHandler={userInfoHandler} 
-                        changePasswordHandler={changePasswordHandler}/>
-                </Col>
-                <Col className="pb-2" md={6}>
-                    <FriendList friend={friend} chatHandler={chatHandler}
-                        deleteFriendHandler={deleteFriendHandler} showFriendConfirm={showFriendConfirm}
-                        deleteFriend={deleteFriend} closeFriendHandler={closeFriendHandler}
-                        friends={friends} closeReviewHandler={closeReviewHandler}
-                        restaurant={restaurants} userId={userId} />
-                </Col>
-            </Row>
-            <RestaurantReviewDetail reviews={reviews} restaurants={restaurants}
-                buttonGroup={buttonGroup} modal={deleteButtonModal} />
+            {isLoading?.isLoadingUsers ?
+                (
+                    <ThemedSpinner />
+                ) : (
+                    <Row>
+                        <Col className="pb-2" md={6}>
+                            <UserInfo
+                                currentUser={user}
+                                currentAddress={currentAddress}
+                                userInfoHandler={userInfoHandler}
+                                changePasswordHandler={changePasswordHandler} />
+                        </Col>
+                        <Col className="pb-2" md={6}>
+                            <FriendList
+                                friend={friend}
+                                chatHandler={chatHandler}
+                                deleteFriendHandler={deleteFriendHandler}
+                                showFriendConfirm={showFriendConfirm}
+                                deleteFriend={deleteFriend}
+                                closeFriendHandler={closeFriendHandler}
+                                friends={friends}
+                                closeReviewHandler={closeReviewHandler}
+                                restaurant={restaurants}
+                                userId={userId} />
+                        </Col>
+                    </Row>
+                )
+            }
+            {isLoading?.isLoadingRestaurants ?
+                (
+                    <ThemedSpinner />
+                ) : (
+                    <RestaurantReviewDetail
+                        reviews={reviews}
+                        restaurants={restaurants}
+                        buttonGroup={buttonGroup}
+                        modal={deleteButtonModal} />
+                )
+            }
         </Container>
     )
 }
@@ -317,7 +341,8 @@ const mapStateToProps = state =>
 ({
     users: [...state.users],
     restaurants: [...state.restaurants],
-    reviews: [...state.reviews]
+    reviews: [...state.reviews],
+    isLoading: { ...state.isLoading }
 });
 
 // Exporting the component after wrapping in connect

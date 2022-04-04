@@ -6,11 +6,12 @@
 //  (CPD, 02/7/22, Search View Layout - Implemented layout, style and search cards)
 //  (DAB, 03/05/2022, Added in functionality for the search view  and added 
 //  some comments)
+//  (DAB, 04/04/2022, Added Spinners for database load in)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useEffect } from 'react';
-import { Container, Button } from 'react-bootstrap';
+import { Container, Button, Spinner } from 'react-bootstrap';
 import { useParams } from "react-router-dom";
 import XLContainer from '../template/XLContainer';
 import SearchCard from '../subComponent/SearchCard';
@@ -20,6 +21,7 @@ import {
     findByRestaurantNameThunk
 } from "../../actions/restaurants";
 import { useNavigate } from 'react-router-dom';
+import ThemedSpinner from '../subComponent/ThemedSpinner';
 
 /**
  * The Search View works in conjunction with the search bar on the MainNav view. It 
@@ -31,7 +33,7 @@ import { useNavigate } from 'react-router-dom';
  */
 function Search(props) {
     // Pulling the needed methods/variables from props and params
-    const { restaurants } = props;
+    const { restaurants, isLoading } = props;
     const { deleteAllRestaurants, findByRestaurantNameThunk } = props;
     const { restaurantName, authorId, restaurantId } = useParams();
     // Creating a navigate instance to navigate the application to new routes
@@ -47,7 +49,6 @@ function Search(props) {
         // and the result is displayed
         if (restaurantName) {
             findByRestaurantNameThunk(0, 25, restaurantName);
-            console.log(restaurantName);
         }
     }
 
@@ -63,12 +64,21 @@ function Search(props) {
                     <h1>Search Results</h1>
                 </div>
             </Container>
-            <Container fluid as="main" className="pb-3">
-                {restaurants.length > 0 ? restaurants.map((restaurant, index) => (
-                    <SearchCard restaurant={restaurant} key={index} />
-                )) :
-                    <h3 className="text-center mt-4">No Restaurants Found!</h3>}
-            </Container>
+            {isLoading?.isLoadingRestaurants ?
+                (
+                    <ThemedSpinner />
+                ) : (
+                    <Container fluid as="main" className="pb-3">
+                        {restaurants.length > 0 ?
+                            restaurants.map((restaurant, index) => (
+                                <SearchCard restaurant={restaurant} key={index} />)
+                            ) : (
+                                <h3 className="text-center mt-4">No Restaurants Found!</h3>
+                            )
+                        }
+                    </Container>
+                )
+            }
             <Container fluid className="d-flex justify-content-center">
                 <Button onClick={() => navigate('../editRestaurant')}>
                     Add Restaurant
@@ -80,11 +90,12 @@ function Search(props) {
 
 // Mapping the redux store states to props
 const mapStateToProps = (state) => ({
-    restaurants: [...state.restaurants]
+    restaurants: [...state.restaurants],
+    isLoading: { ...state.isLoading }
 });
 
 // Exporting the component
 export default connect(mapStateToProps, {
-    deleteAllRestaurants, 
+    deleteAllRestaurants,
     findByRestaurantNameThunk
 })(Search);

@@ -25,6 +25,7 @@ import C from '../constants';
 import UserDataService from "../services/user.service";
 import { formatDBUserFind } from '../helperFunction/actionHelpers';
 import AuthenticationDataService from '../services/authentication.service';
+import { endLoadingUsers, startLoadingUsers } from './isLoading';
 
 
 /************************************ REDUX THUNK ACTIONS ***********************************/
@@ -116,6 +117,9 @@ export const deleteUserThunk = (userId) => async dispatch => {
  * @returns 
  */
 export const findByUserIdThunk = (userId) => async dispatch => {
+    // Setting the isLoadingUsers to true
+    await dispatch(await startLoadingUsers());
+
     // The user database will be queried for a user with the userId
     return await UserDataService.get(userId)
         .then(async res => {
@@ -142,6 +146,9 @@ export const findByUserIdThunk = (userId) => async dispatch => {
                     dispatch(addFriend(newFriend));
                 });
 
+                // Setting isLoadingUsers to false
+                dispatch(endLoadingUsers());
+
                 // Returning true because a user was successfully found
                 return true;
             }
@@ -149,6 +156,9 @@ export const findByUserIdThunk = (userId) => async dispatch => {
         .catch(err => {
             // If there is an error it will be logged
             console.log(err)
+
+            // Setting isLoadingUsers to false
+            dispatch(endLoadingUsers());
             return false;
         })
 }

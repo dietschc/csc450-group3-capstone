@@ -35,17 +35,6 @@ function SearchCard(props) {
                         <ListGroup.Item className="border-0 text-muted">{formatPhoneNumber(restaurant.phone)}</ListGroup.Item>
                     </ListGroup>
                 </Card.Body>
-                {/* <Card.Body className="text-center">
-                    <Card.Title>{props.restaurantName}</Card.Title>
-                    <ListGroup variant="horizontal" className="justify-content-center">
-                        <ListGroup.Item className="border-0 text-muted">
-                            {props.averageRating} Star
-                            <span style={starFont}> {printStarTotal(props.averageRating)}</span>
-                        </ListGroup.Item>
-                        <ListGroup.Item className="border-0 text-muted">{props.address}</ListGroup.Item>
-                        <ListGroup.Item className="border-0 text-muted">{props.phone}</ListGroup.Item>
-                    </ListGroup>
-                </Card.Body> */}
             </Card>
         </Link>
     )
