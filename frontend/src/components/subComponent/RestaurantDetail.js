@@ -3,6 +3,8 @@
 // Restaurant Club - RestaurantDetail.js
 // March 4, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 4/03/2022, Added in phone number for Restaurant 
+//  info)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -10,6 +12,7 @@
 // for the app and importing needed components
 import React from 'react';
 import { ListGroup, Button } from 'react-bootstrap';
+import { formatPhoneNumber } from '../../helperFunction/FormatString';
 
 /**
  * The RestaurantDetail component will display the restaurant specific details in a 
@@ -63,6 +66,16 @@ function RestaurantDetail(props) {
                 </div>
                 <div className="mr-auto">
                     {restaurant.address.zip}
+                </div>
+            </ListGroup.Item>
+            <ListGroup.Item as="li"
+                className="d-flex justify-content-start align-items-start pt-1 pb-0 mb-0 border-bottom-0"
+            >
+                <div className="pe-2" style={{ minWidth: "7.5rem" }}>
+                    Phone:
+                </div>
+                <div className="mr-auto">
+                    <a href={`tel:${formatPhoneNumber(restaurant?.phone)}`}>{formatPhoneNumber(restaurant.phone)}</a>
                 </div>
             </ListGroup.Item>
 
