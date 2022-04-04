@@ -37,10 +37,7 @@ module.exports = app => {
 	);
 
 	// Retrieve a single User with id
-	router.get("/:id",
-		[authJwt.verifyToken],
-		users.findOne
-	);
+	router.get("/:id", users.findOne);
 
 	// Retrieve authentication searched by user userName with offset and limit
 	router.get("/search/:offset/:limit/:userName",
