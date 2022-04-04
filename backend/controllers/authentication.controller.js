@@ -439,8 +439,11 @@ exports.updateByUserId = (req, res) => {
     const userId = req.params.userId;
     // As in create, hashing the password.
     const salt = bcrypt.genSaltSync(10, 'a');
-    req.body.userPassword = bcrypt.hashSync(req.body.userPassword, salt);
-
+    // If there is a userPassword field, it will be hashed
+    if (req.body.password) {
+        req.body.userPassword = bcrypt.hashSync(req.body.userPassword, salt);
+    }
+    
     Authentication.update(req.body, {
         where: { userId: userId }
     })
