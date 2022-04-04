@@ -15,7 +15,7 @@ function ModalConfirmation() {
 
 	return (
 		<>
-			<Button className="ml-1 w-25" variant="outline-primary" onClick={handleShowConfirmation}>
+			<Button className="ml-1 w-25"  onClick={handleShowConfirmation}>
 				Clear
 			</Button>
 

@@ -179,7 +179,7 @@ function EditPassword(props) {
                     </Form.Floating>
                     <Form.Floating className="mb-3 justify-content-center">
                         <div className="d-flex justify-content-around pt-3">
-                            <Button type="submit" className="w-25" variant="outline-primary">
+                            <Button type="submit" className="w-25">
                                 Submit
                             </Button>
                         </div>
