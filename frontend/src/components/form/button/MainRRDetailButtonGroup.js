@@ -28,7 +28,8 @@ function MainRRDetailButtonGroup(props) {
 
   return (
     <div
-      className="d-flex 
+      className="
+      d-flex 
       flex-fill 
       flex-column 
       flex-sm-row 
@@ -37,7 +38,7 @@ function MainRRDetailButtonGroup(props) {
       justify-content-center 
       justify-content-sm-center 
       justify-content-md-end"
-      style={{ minWidth: "100%"}}>
+      style={{ minWidth: "100%" }}>
       <Button
         className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
         style={{ minWidth: "8rem" }}
