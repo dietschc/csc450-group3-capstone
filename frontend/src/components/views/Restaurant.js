@@ -11,6 +11,7 @@
 //  (DAB, 3/05/2022, Added in functionality for author based restaurant 
 //  display and cleaned up the code more)
 //  (TJI, 03/29/2022 - Added alt tags for images)
+//  (DAB, 04/04/2022, Added Spinners for database load in)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -22,13 +23,14 @@ import { useParams } from "react-router-dom";
 import RestaurantHeadingCardBody from '../subComponent/RestaurantHeadingCardBody';
 import FullStarRatingCol from '../subComponent/FullStarRatingCol';
 import { connect } from 'react-redux';
-import { 
-    deleteAllReviews, 
-    findReviewByAuthorRestaurantThunk, 
-    findReviewByRestaurantThunk 
+import {
+    deleteAllReviews,
+    findReviewByAuthorRestaurantThunk,
+    findReviewByRestaurantThunk
 } from '../../actions/reviews';
 import RestaurantDetail from '../subComponent/RestaurantDetail';
 import ReviewCard from '../subComponent/ReviewCard';
+import ThemedSpinner from '../subComponent/ThemedSpinner';
 
 /**
  * The Restaurant Component will display the Restaurant details and 
@@ -40,12 +42,11 @@ import ReviewCard from '../subComponent/ReviewCard';
 function Restaurant(props) {
     // Pulling all needed data/methods from params and props
     const { authorId, restaurantId } = useParams();
+    const { restaurants, reviews, isLoading } = props;
     const {
-        restaurants,
-        reviews,
         deleteAllReviews,
         findReviewByAuthorRestaurantThunk,
-        findReviewByRestaurantThunk
+        findReviewByRestaurantThunk 
     } = props;
     const navigate = useNavigate();
 
@@ -113,7 +114,7 @@ function Restaurant(props) {
                 <h2 className="text-center">
                     Sorry, no restaurants found!
                 </h2>
-            ) : 
+            ) :
             // If a restaurant was found it will be displayed on the screen. 
             // The data is protected from crashing via a check that there is 
             // a current restaurant 
@@ -121,30 +122,41 @@ function Restaurant(props) {
                 currentRestaurant !== undefined &&
                 <Card className="mb-2 p-2">
                     <RestaurantHeadingCardBody restaurant={currentRestaurant} />
-                    {currentRestaurant?.images[0].imageLocation && <Card.Img className="mx-auto"
-                        style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }}
-                        src={currentRestaurant?.images[0].imageLocation}
-                        alt={currentRestaurant?.name} />}
+                    {currentRestaurant?.images[0].imageLocation &&
+                        <Card.Img className="mx-auto"
+                            style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }}
+                            src={currentRestaurant?.images[0].imageLocation}
+                            alt={currentRestaurant?.name} />
+                    }
                     <FullStarRatingCol rating={currentRestaurant.rating} />
                     <RestaurantDetail restaurant={currentRestaurant} newReviewHandler={newReviewHandler} />
                     <Container fluid>
                         <Row>
-                            {reviews.length > 0 && reviews.map((review, index) => ((review.restaurant.id === currentRestaurant.id) &&
-                            // If reviews were found for the restaurant they will be displayed here
-                                (
-                                    <ReviewCard review={review} restaurant={currentRestaurant} key={index} />
-                                )
-                            ))}
+                            {reviews.length > 0 &&
+                                reviews.map((review, index) => (
+                                    (review.restaurant.id === currentRestaurant.id) &&
+                                    // If reviews were found for the restaurant they will be displayed here
+                                    (
+                                        <ReviewCard review={review} restaurant={currentRestaurant} key={index} />
+                                    )
+                                ))
+                            }
                         </Row>
                     </Container>
                 </Card>
             )
     );
-    
+
     return (
         <XLContainer>
             {displayHeader}
-            {displayBody}
+            {isLoading?.isLoadingRestaurants || isLoading?.isLoadingReviews ?
+                (
+                    <ThemedSpinner />
+                ) : (
+                    displayBody
+                )
+            }
         </XLContainer>
     )
 }
@@ -153,7 +165,8 @@ function Restaurant(props) {
 const mapStateToProps = state =>
 ({
     reviews: [...state.reviews],
-    restaurants: [...state.restaurants]
+    restaurants: [...state.restaurants],
+    isLoading: { ...state.isLoading }
 });
 
 // Exporting the connect Wrapped Restaurant Component

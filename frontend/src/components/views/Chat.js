@@ -12,10 +12,12 @@
 //  (DAB, 3/28/2022, Updated the name for findAllAfterDateOffsetLimit 
 //  to describe its behavior of findAllByIdOffsetLimit)
 //  (TJI, 03/29/2022 - Added in character limits to match database)
+//  (DAB, 04/04/2022, Added Spinners for database load in, fixed some 
+//  button styling issues. Buttons now expand on smaller screen sizes)
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Row, Col, Form, Button, Card } from 'react-bootstrap';
 import FormContainer from '../template/XLContainer';
@@ -27,6 +29,7 @@ import {
     deleteAllMessages,
     sendMessageThunk
 } from '../../actions/messages';
+import ThemedSpinner from '../subComponent/ThemedSpinner';
 
 /**
  * The Chat View will allow friends to talk to one another via text 
@@ -39,6 +42,7 @@ function Chat(props) {
     const {
         messages,
         users,
+        isLoading,
         deleteAllMessages,
         findByConversationIdOffsetLimitThunk,
         findAllByIdOffsetLimitThunk,
@@ -66,12 +70,15 @@ function Chat(props) {
     const userName = user?.auth?.userName;
     const friendName = paramFriend?.userName;
 
+    // Deleting old state before the DOM is painted
+    useLayoutEffect(() => {
+        // All old messages are deleted
+        deleteAllMessages();
+    }, [])
+
 
     // The loadState method will load the initial Chat state from the database
     const loadState = async () => {
-        // All old messages are deleted
-        await deleteAllMessages();
-
         // New messages are queried from the database
         await findByConversationIdOffsetLimitThunk(user.id, friendId, 0, 15);
 
@@ -142,7 +149,7 @@ function Chat(props) {
 
     // This function will set chatMessage state with the new message
     const onChangeMessage = (e) => {
-        const {value, maxLength} = e.target;
+        const { value, maxLength } = e.target;
         const chatMessage = value.slice(0, maxLength);
         setChatMessage(chatMessage);
     }
@@ -185,6 +192,46 @@ function Chat(props) {
         messageScrollTo.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
     }
 
+    // The messageUI displays the UI for the Chat page
+    const messageUI = () => (
+        <Card>
+            <Card.Title className="text-center mt-2 mb-0">
+                {userName} chatting with {friendName}
+            </Card.Title>
+            <Card.Text
+                className="border m-3 p-2 "
+                style={{ minHeight: "10rem", maxHeight: "15rem", overflow: "auto" }}>
+                {formatMessages()}
+                <span className="p-0 m-0" ref={messageScrollTo} />
+            </Card.Text>
+            <Card.Body>
+                <Form onSubmit={sendMessageHandler} className="">
+                    <Row>
+                        <Col></Col>
+                        <Col sm={6}>
+                            <Form.Group className="mb-3" controlId="formMessageInput" >
+                                <Form.Label className="visually-hidden">Message</Form.Label>
+                                <Form.Control as="textarea"
+                                    className="p-2" rows={3}
+                                    value={chatMessage}
+                                    onChange={onChangeMessage}
+                                    maxLength="255" />
+                            </Form.Group>
+                            <div className="d-flex">
+                                <Button
+                                    type="submit"
+                                    className="d-flex flex-grow-1 flex-sm-grow-0 ms-auto justify-content-center"
+                                    style={{ minWidth: "5rem" }}>
+                                    Send
+                                </Button>
+                            </div>
+                        </Col>
+                    </Row>
+                </Form>
+            </Card.Body>
+        </Card>
+    )
+
 
     // The formatMessages method will format all the new messages to display based off to or from users. 
     // The result will be an easy to read text display
@@ -216,35 +263,13 @@ function Chat(props) {
             <h1>
                 Chat
             </h1>
-            <Card className="" style={{}}>
-                <Card.Title className="text-center mt-2 mb-0">
-                    {userName} chatting with {friendName}
-                </Card.Title>
-                <Card.Text className="border m-3 p-2 " style={{ minHeight: "10rem", maxHeight: "15rem", overflow: "auto" }}>
-                    {formatMessages()}
-                    <span className="p-0 m-0" ref={messageScrollTo} />
-                </Card.Text>
-                <Card.Body>
-                    <Form onSubmit={sendMessageHandler} className="">
-                        <Row>
-                            <Col></Col>
-                            <Col sm={12} md={6}>
-                                <Form.Group className="mb-3" controlId="formMessageInput" >
-                                    <Form.Label className="visually-hidden">Message</Form.Label>
-                                    <Form.Control as="textarea"
-                                        className="p-2" rows={3}
-                                        value={chatMessage}
-                                        onChange={onChangeMessage}
-                                        maxLength="255" />
-                                </Form.Group>
-                                <Button type="submit"
-                                    className="d-flex ms-auto justify-content-center"
-                                    style={{ width: "5rem" }}>Send</Button>
-                            </Col>
-                        </Row>
-                    </Form>
-                </Card.Body>
-            </Card>
+            {isLoading?.isLoadingMessages ?
+                (
+                    <ThemedSpinner />
+                ) : (
+                    messageUI()
+                )
+            }
         </FormContainer>
     )
 }
@@ -254,7 +279,8 @@ const mapStateToProps = state =>
 ({
     reviews: [...state.reviews],
     users: [...state.users],
-    messages: [...state.messages]
+    messages: [...state.messages],
+    isLoading: { ...state.isLoading }
 });
 
 

@@ -18,12 +18,12 @@
 //  (DAB, 03/27/2022, formatted the order of the functions alphabetically where 
 //  possible and finished comments)
 //  (DAB, 04/02/2022, Moved EditPassword Button into dashboard)
-//  (DAB, 04/04/2022, Added Spinners for database load in)
+//  (DAB, 04/04/2022, Added Spinners for database load in and layoutEffect)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { Container, Row, Col, Alert, Toast } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import FriendList from '../subComponent/FriendList';

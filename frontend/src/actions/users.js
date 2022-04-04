@@ -18,6 +18,7 @@
 //  (DAB, 4/02/2022, Cleaned up code/ Organized file into Thunk and standard Redux actions)
 //  (DAB, 4/02/2022, addUserThunk now returns true on success and false on failure to add to 
 //  the database)
+//  (DAB, 4/04/2022, Added in isLoading dispatch for findByUserNameThunk, findByUserIdThunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -121,7 +122,7 @@ export const findByUserIdThunk = (userId) => async dispatch => {
     await dispatch(await startLoadingUsers());
 
     // The user database will be queried for a user with the userId
-    return await UserDataService.get(userId)
+    const isUser = await UserDataService.get(userId)
         .then(async res => {
             // If there is data in the query it is added to redux state
             if (res.data) {
@@ -146,9 +147,6 @@ export const findByUserIdThunk = (userId) => async dispatch => {
                     dispatch(addFriend(newFriend));
                 });
 
-                // Setting isLoadingUsers to false
-                dispatch(endLoadingUsers());
-
                 // Returning true because a user was successfully found
                 return true;
             }
@@ -156,11 +154,13 @@ export const findByUserIdThunk = (userId) => async dispatch => {
         .catch(err => {
             // If there is an error it will be logged
             console.log(err)
-
-            // Setting isLoadingUsers to false
-            dispatch(endLoadingUsers());
             return false;
-        })
+        });
+
+        // Setting isLoadingUsers to false
+        dispatch(endLoadingUsers());
+
+        return isUser;
 }
 
 
@@ -175,6 +175,9 @@ export const findByUserIdThunk = (userId) => async dispatch => {
  * @returns 
  */
 export const findByUserNameThunk = (offset, limit, userName) => async (dispatch, getState) => {
+    // Setting the isLoadingUsers to true
+    await dispatch(await startLoadingUsers());
+
     // The user database will be queried for all users within the 
     // parameter offset/limit that are like the userName
     await UserDataService.findByUserNameOffsetLimit(offset, limit, userName)
@@ -209,6 +212,9 @@ export const findByUserNameThunk = (offset, limit, userName) => async (dispatch,
             // If there is an error it will be logged
             console.log(err)
         })
+
+    // Setting isLoadingUsers to false
+    await dispatch(endLoadingUsers());
 }
 
 
