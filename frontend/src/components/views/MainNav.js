@@ -160,8 +160,8 @@ function MainNav(props) {
     const variantTheme = "dark";
 
     return (
-        <Container fluid className="p-0">
             <Navbar
+                sticky="top"
                 className="mainNav px-2 rounded-bottom"
                 bg={backgroundTheme}
                 variant={variantTheme}
@@ -207,7 +207,6 @@ function MainNav(props) {
                     </Form>
                 </Navbar.Collapse>
             </Navbar>
-        </Container>
     )
 }
 
