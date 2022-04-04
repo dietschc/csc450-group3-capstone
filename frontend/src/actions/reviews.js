@@ -254,7 +254,7 @@ export const findReviewByAuthorRestaurantThunk = (offset, limit, authorId, resta
         })
 
     // Setting isLoadingReviews to false
-    dispatch(endLoadingReviews);
+    dispatch(endLoadingReviews());
 
     // Returning true if reviews were found or false if otherwise
     return isReviews;
