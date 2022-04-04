@@ -259,6 +259,7 @@ function Review(props) {
                                     max={5}
                                     step={1}
                                     value={tasteRating}
+                                    aria-label="Taste Slider"
                                     onChange={onChangeTasteRating}
                                 />
 
@@ -269,6 +270,7 @@ function Review(props) {
                                     max={5}
                                     step={1}
                                     value={serviceRating}
+                                    aria-label="Service Slider"
                                     onChange={onChangeServiceRating}
                                 />
 
@@ -279,6 +281,7 @@ function Review(props) {
                                     max={5}
                                     step={1}
                                     value={cleanRating}
+                                    aria-label="Cleanliness Slider"
                                     onChange={onChangeCleanRating}
                                 />
 
@@ -288,6 +291,7 @@ function Review(props) {
                                     max={5}
                                     step={1}
                                     value={overallRating}
+                                    aria-label="Overall Slider"
                                     onChange={onChangeOverallRating}
                                 />
                             </Form.Group>

@@ -170,8 +170,8 @@ function MainNav(props) {
                 <Navbar.Brand>
                     <img
                         src={window.location.origin + '/logo.gif'}
-                        width="auto"
-                        height="90"
+                        width="124px"
+                        height="90px"
                         className="flex-begin rounded"
                         alt="Logo"
                     />

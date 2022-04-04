@@ -30,11 +30,12 @@ function FloatingImageUpload(props) {
     return (
         <Form.Floating className="mb-3 justify-content-center">
             <FloatingLabel 
-            controlId="floatingImageInput" 
-            aria-label="Image Upload"> 
+            controlId="floatingImageInput"
+            > 
                     <Form.Control
                     className="pt-3"
                     type="file"
+                    aria-label="file upload"
                     onChange={onChangeFile}
                     accept=".jpg,.png,.jpeg,.gif"
                     />

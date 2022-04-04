@@ -27,10 +27,15 @@ function ReviewCard(props) {
     return (
         <Card className="mb-2" style={{}}>
             <RestaurantHeadingCardBody restaurant={restaurant} />
-            <Card.Img className="mx-auto"
-                style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }}
-                src={review.images[0].imageLocation}
-                alt={restaurant.name} />
+            {review.images[0].imageLocation &&
+                <div
+                    className="d-flex mx-auto"
+                    style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }}>
+                    <Card.Img className="mx-auto"
+                        style={{ width: "100%", height: "100%", overflow: "hidden" }}
+                        src={review.images[0].imageLocation}
+                        alt={restaurant.name} />
+                </div>}
             <Card.Text className="text-center pt-1">
                 {review.author.userName}
             </Card.Text>
