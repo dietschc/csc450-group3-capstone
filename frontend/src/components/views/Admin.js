@@ -9,6 +9,8 @@
 //  (DAB, 03/07/2022, Confirm modals are added for all crit operations)
 //  (DAB, 04/03/2022, Added in unBan functionality for admins, and took out the 
 //  ability for admins to ban other admins)
+//  (DAB, 04/04/2022, Added Spinners for database load in and changed it so that 
+//  search button does not activate if there is already an html request in)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -35,6 +37,7 @@ import UnBanUserConfirm from '../modal/UnBanUserConfirm';
 import DeleteUserConfirm from '../modal/DeleteUserConfirm';
 import DeleteRestaurantConfirm from '../modal/DeleteRestaurantConfirm';
 import AdminSearchForm from '../form/AdminSearchForm';
+import ThemedSpinner from '../subComponent/ThemedSpinner';
 
 /**
  * The Admin View allows users with admin permission to perform CRUD 
@@ -46,7 +49,7 @@ import AdminSearchForm from '../form/AdminSearchForm';
  */
 function Admin(props) {
     // Destructuring the data and functions to be used in the search
-    const { users, restaurants } = props;
+    const { users, restaurants, isLoading } = props;
     const {
         findByRestaurantNameThunk, deleteAllRestaurants,
         deleteRestaurantThunk, findByUserNameThunk,
@@ -82,7 +85,7 @@ function Admin(props) {
     const showDeleteRestaurantHandler = () => setShowDeleteRestaurantConfirm(true);
     const closeDeleteRestaurantHandler = () => setShowDeleteRestaurantConfirm(false);
 
-    
+
     /****************************** USER METHODS ******************************************/
 
 
@@ -152,12 +155,13 @@ function Admin(props) {
     // The userSearch method sets the Redux state to display search specific 
     // users
     const userSearch = async () => {
-        // All except the logged in user is deleted from state
-        await deleteAdditionalUsers();
-
         // If search input is not an empty string the database will be 
         // queried for users matching the searchInput
         if (searchInput !== "") {
+            // All except the logged in user is deleted from state
+            await deleteAdditionalUsers();
+
+            // Searching the database for the user name
             await findByUserNameThunk(0, 25, searchInput);
         }
     }
@@ -196,12 +200,13 @@ function Admin(props) {
     // The restaurantSearch method sets the Redux state to display search specific 
     // restaurants
     const restaurantSearch = async () => {
-        // Current restaurants are deleted from state
-        await deleteAllRestaurants();
-
         // If search input is not an empty string the database will be 
         // queried for restaurants matching the searchInput
         if (searchInput !== "") {
+            // Current restaurants are deleted from state
+            await deleteAllRestaurants();
+
+            // Searching the database for the restaurant name
             await findByRestaurantNameThunk(0, 25, searchInput);
         }
     }
@@ -237,18 +242,21 @@ function Admin(props) {
         setSearchInput(e.target.search.value)
         setIsShowResults(true);
 
-        // If the searchType is user the userSearch method 
-        // will be called
-        if (searchType === "user") {
-            userSearch(searchInput)
-        }
-        // Else the restaurantSearch method will be called
-        else {
-            restaurantSearch(searchInput)
-        }
+        // If there is already a search running the user has to wait
+        if (!isLoading?.isLoadingRestaurants && !isLoading?.isLoadingUsers) {
+            // If the searchType is user the userSearch method  
+            // will be called
+            if (searchType === "user") {
+                userSearch(searchInput)
+            }
+            // Else the restaurantSearch method will be called
+            else {
+                restaurantSearch(searchInput)
+            }
 
-        // Clearing the search input for added UX
-        setSearchInput("");
+            // Clearing the search input for added UX
+            setSearchInput("");
+        }
     }
 
 
@@ -314,7 +322,7 @@ function Admin(props) {
                 )
             }
         }
-        
+
     }
 
 
@@ -366,7 +374,14 @@ function Admin(props) {
                 setSearchInput={setSearchInput}
                 onChangeHandler={onChangeHandler}
                 searchInput={searchInput} />
-            {searchList()}
+            {isLoading?.isLoadingRestaurants || isLoading?.isLoadingUsers ?
+                (
+                    <ThemedSpinner />
+                ) :
+                (
+                    searchList()
+                )
+            }
             {banUserButtonModal}
             {unBanUserButtonModal}
             {userDeleteButtonModal}
@@ -379,6 +394,7 @@ function Admin(props) {
 const mapStateToProps = (state) => ({
     restaurants: [...state.restaurants],
     users: [...state.users],
+    isLoading: { ...state.isLoading }
 });
 
 // Exporting the component

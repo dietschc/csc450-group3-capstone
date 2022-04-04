@@ -14,6 +14,8 @@
 //  (CPD, 3/10/2022, Worked on getting review edit/update working, including updating image)
 //  (CPD, 3/12/2022, Added image delete code to updateReviewThunk)
 //  (CPD, 3/12/2022, Implemented user subdirectories for review images)
+//  (DAB, 4/04/2022, Added in isLoading dispatch for findReviewByAuthorRestaurantThunk and 
+//  findReviewByRestaurantThunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -21,6 +23,7 @@ import C from '../constants';
 import ReviewDataService from "../services/review.service";
 import ImageDataService from "../services/image.service";
 import { formatDBReviewFind } from '../helperFunction/actionHelpers';
+import { endLoadingReviews, startLoadingReviews } from './isLoading';
 
 /**
  * This thunk will search the database and return reviews written by the specified author
@@ -68,8 +71,11 @@ export const findReviewByAuthorThunk = (offset, limit, reviewAuthorId) => async 
  * @returns 
  */
 export const findReviewByAuthorRestaurantThunk = (offset, limit, authorId, restaurantId) => async dispatch => {
+    // Setting isLoadingReview to true
+    await dispatch(await startLoadingReviews());
+    
     // Making a call to the database to request the reviews
-    await ReviewDataService.findByRestaurantAuthorIdOffsetLimit(offset, limit, authorId, restaurantId)
+    const isReviews = await ReviewDataService.findByRestaurantAuthorIdOffsetLimit(offset, limit, authorId, restaurantId)
         .then(async res => {
             // If data was found in the database query it is formatted 
             // for redux and added to state
@@ -83,14 +89,23 @@ export const findReviewByAuthorRestaurantThunk = (offset, limit, authorId, resta
                     dispatch(addReview(reviewData));
 
                     // Returning the current review
-                    return review;
+                    return true;
                 })
             }
         })
         .catch(err => {
             // If there was an error it is logged in the console
             console.log(err)
+
+            // Review failed, false is returned
+            return false;
         })
+
+    // Setting isLoadingReviews to false
+    dispatch(endLoadingReviews);
+
+    // Returning true if reviews were found or false if otherwise
+    return isReviews;
 }
 
 /**
@@ -135,6 +150,9 @@ export const findAllReviewsOrderedThunk = (offset, limit) => async dispatch => {
  * @returns 
  */
 export const findReviewByRestaurantThunk = (offset, limit, restaurantId) => async dispatch => {
+    // Setting isLoadingReview to true
+    await dispatch(await startLoadingReviews());
+
     // Making a call to the database to request the reviews
     await ReviewDataService.findByRestaurantIdOffsetLimit(offset, limit, restaurantId)
         .then(async res => {
@@ -158,6 +176,9 @@ export const findReviewByRestaurantThunk = (offset, limit, restaurantId) => asyn
             // If there was an error it is logged in the console
             console.log(err)
         })
+
+    // Setting isLoadingReviews to false
+    dispatch(endLoadingReviews());
 }
 
 /**

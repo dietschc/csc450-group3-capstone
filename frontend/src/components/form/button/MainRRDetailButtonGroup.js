@@ -4,6 +4,8 @@
 // February 7, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 3/05/2022, Fixed moreHandler to return author.id)
+//  (DAB, 4/04/2022, Friend button is not rendered if a user is 
+//  not logged in)
 
 // Using React library in order to build components
 // for the app and importing needed components
@@ -18,17 +20,17 @@ import "bootstrap/dist/css/bootstrap.min.css";
  * Restaurant View referencing that review to be opened, and the
  * ability to add the review author as a friend.
  *
- * @param { moreHandler, restaurantHandler, friendHandler, review } props
+ * @param { moreHandler, restaurantHandler, friendHandler, review, users } props
  * @returns
  */
 function MainRRDetailButtonGroup(props) {
-  // The form component specific props will be assigned and
-  // used to process the form element
-  const { moreHandler, restaurantHandler, friendHandler, review } = props;
+    // The form component specific props will be assigned and
+    // used to process the form element
+    const { moreHandler, restaurantHandler, friendHandler, review, users } = props;
 
-  return (
-    <div
-      className="
+    return (
+        <div
+            className="
       d-flex 
       flex-fill 
       flex-column 
@@ -38,36 +40,36 @@ function MainRRDetailButtonGroup(props) {
       justify-content-center 
       justify-content-sm-center 
       justify-content-md-end"
-      style={{ minWidth: "100%" }}>
-      <Button
-        className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
-        style={{ minWidth: "8rem" }}
-        onClick={() => {
-          moreHandler(review.author.id, review.restaurant.id);
-        }}
-      >
-        More
-      </Button>
-      <Button
-        className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
-        style={{ minWidth: "8rem" }}
-        onClick={() => {
-          restaurantHandler(review.restaurant.id);
-        }}
-      >
-        Restaurant
-      </Button>
-      <Button
-        className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
-        style={{ minWidth: "8rem" }}
-        onClick={() => {
-          friendHandler(review.author.id);
-        }}
-      >
-        Friend
-      </Button>
-    </div>
-  );
+            style={{ minWidth: "100%" }}>
+            <Button
+                className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
+                style={{ minWidth: "8rem" }}
+                onClick={() => {
+                    moreHandler(review.author.id, review.restaurant.id);
+                }}
+            >
+                More
+            </Button>
+            <Button
+                className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
+                style={{ minWidth: "8rem" }}
+                onClick={() => {
+                    restaurantHandler(review.restaurant.id);
+                }}
+            >
+                Restaurant
+            </Button>
+            {users?.length > 0 && <Button
+                className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
+                style={{ minWidth: "8rem" }}
+                onClick={() => {
+                    friendHandler(review.author.id);
+                }}
+            >
+                Friend
+            </Button>}
+        </div>
+    );
 }
 
 // Exporting the component

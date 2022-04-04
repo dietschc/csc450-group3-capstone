@@ -21,6 +21,7 @@ import C from '../constants';
 import RestaurantDataService from "../services/restaurant.service";
 import ImageDataService from "../services/image.service";
 import { formatDBRestaurantFind, formatDBRestaurantCreate } from '../helperFunction/actionHelpers';
+import { endLoadingRestaurants, startLoadingRestaurants } from './isLoading';
 
 
 /************************************ REDUX THUNK ACTIONS ***********************************/
@@ -260,11 +261,13 @@ export const findByRestaurantIdThunk = (restaurantId) => async dispatch => {
  * @returns 
  */
 export const findByRestaurantNameThunk = (offset, limit, restaurantName) => async dispatch => {
+    // Dispatching to set isLoadingRestaurants to true
+    await dispatch(await startLoadingRestaurants());
+
     // The restaurant database will be queried for all restaurants within the 
     // parameter offset/limit that are like the restaurantName
     await RestaurantDataService.findByNameOffsetLimit(offset, limit, restaurantName)
         .then(async res => {
-            console.log(res);
             // If there is data in the query it is added to redux state
             if (res) {
                 // Iterating through the restaurant data
@@ -284,6 +287,9 @@ export const findByRestaurantNameThunk = (offset, limit, restaurantName) => asyn
             // If there is an error it will be logged
             console.log(err)
         })
+
+    // Dispatching to set isLoading Restaurants to false
+    dispatch(endLoadingRestaurants());
 }
 
 

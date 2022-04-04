@@ -8,6 +8,7 @@
 //  (DAB, 3/27/2022, Altered findByAuthorIdThunk to check for a user before 
 //  searching for review and restaurant data. It is in reaction to admin 
 //  needs in the userDashboard)
+//  (DAB, 4/04/2022, Added in isLoading dispatch for findAllReviewsRestaurantsOrderedThunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -17,6 +18,7 @@ import UserDataService from "../services/user.service";
 import { addRestaurant } from './restaurants';
 import { addReview } from './reviews';
 import { formatDBRestaurantFind, formatDBReviewFind } from '../helperFunction/actionHelpers';
+import { endLoadingRestaurants, startLoadingRestaurants } from "./isLoading";
 
 /**
  * Adds the specified offset and limit of reviews with their id referenced restaurants to 
@@ -29,6 +31,9 @@ import { formatDBRestaurantFind, formatDBReviewFind } from '../helperFunction/ac
 export const findAllReviewsRestaurantsOrderedThunk = (offset, limit) => async dispatch => {
     // Creating a Set to hold unique restaurant id's
     const restaurantIdSet = new Set();
+
+    // Setting isLoading to true for database request
+    await dispatch(await startLoadingRestaurants());
     
     // Making a call to the database to request the reviews
     await ReviewDataService.findAllOffsetLimit(offset, limit)
@@ -80,6 +85,9 @@ export const findAllReviewsRestaurantsOrderedThunk = (offset, limit) => async di
         // If there was an error it is logged in the console
         console.log(err);
     })
+
+    // Setting isLoading to false
+    dispatch(endLoadingRestaurants());
 }
 
 /**
@@ -113,6 +121,9 @@ export const findAllReviewsRestaurantsOrderedThunk = (offset, limit) => async di
     if (!isUser) {
         return false;
     }
+
+    // Setting isLoadingRestaurants to true
+    await dispatch(await startLoadingRestaurants());
     
     // Making a call to the database to request the reviews
     await ReviewDataService.findByAuthorId(userId)
@@ -166,6 +177,9 @@ export const findAllReviewsRestaurantsOrderedThunk = (offset, limit) => async di
         // If there was an error it is logged in the console
         console.log(err);
     })
+
+    // Before returning, setting isLoadingRestaurants to false
+    dispatch(endLoadingRestaurants());
 
     return true;
 }

@@ -12,12 +12,14 @@
 //  that the result data is not already in state before adding)
 //  (DAB, 3/28/2022, Updated the service name for findAllAfterDateOffsetLimit 
 //  to describe its behavior of findAllByIdOffsetLimit)
+//  (DAB, 4/04/2022, Added isLoading to findByConversationIdOffsetLimitThunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import { v4 } from 'uuid';
 import C from '../constants';
 import MessageDataService from '../services/message.service';
+import { endLoadingMessages, startLoadingMessages } from './isLoading';
 
 /**
  * React Redux reducer that will add a new message to state.
@@ -70,6 +72,8 @@ export const deleteMessage = (id) => ({
  */
 export const findByConversationIdOffsetLimitThunk =
     (userToId, userFromId, offset, limit) => async (dispatch) => {
+        // Setting isLoadingMessages to true
+        await dispatch(await startLoadingMessages());
 
         await MessageDataService.findByConversationIdOffsetLimit(userToId, userFromId, offset, limit)
             .then((res) => {
@@ -95,6 +99,9 @@ export const findByConversationIdOffsetLimitThunk =
                 // Errors will be logged
                 console.log(err);
             });
+
+        // Setting isLoadingMessages to false
+        dispatch(endLoadingMessages());
     };
 
 
@@ -111,56 +118,60 @@ export const findByConversationIdOffsetLimitThunk =
  * @returns 
  */
 export const findAllByIdOffsetLimitThunk =
-(messageId, userToId, userFromId, offset, limit) => async (dispatch, getState) => {
-    return await MessageDataService.findAllByIdOffsetLimit(messageId, userToId, userFromId, offset, limit)
-        .then((res) => {
-            // If a result was found it is ordered and added to state
-            if (res.data.length > 0) {
-                // Destructuring messages from state
-                const { messages } = getState();
+    (messageId, userToId, userFromId, offset, limit) => async (dispatch, getState) => {
+        // Attempting to retrieve messages from the database
+        const isMessages = await MessageDataService.findAllByIdOffsetLimit(messageId, userToId, userFromId, offset, limit)
+            .then((res) => {
+                // If a result was found it is ordered and added to state
+                if (res.data.length > 0) {
+                    // Destructuring messages from state
+                    const { messages } = getState();
 
-                // Assigning filteredData to the results
-                let filteredResults = res.data;
+                    // Assigning filteredData to the results
+                    let filteredResults = res.data;
 
-                // If there are messages in the raw data will be filtered to exclude 
-                // any possible duplicate messages
-                if (messages.length > 0) {
-                    // Applying a filter to the raw data
-                    filteredResults = res.data.filter(message => {
-                        // Checking if the raw data matches any in state. If it does not match any, it 
-                        // passes the filter and will be added to state
-                        if ((messages.filter(stateMessage => stateMessage.id === message.messageId).length <= 0)) {
-                            
-                            // Returning the message raw data to be added to state
-                            return message;
-                        }
-                    });
-                }
+                    // If there are messages in the raw data will be filtered to exclude 
+                    // any possible duplicate messages
+                    if (messages.length > 0) {
+                        // Applying a filter to the raw data
+                        filteredResults = res.data.filter(message => {
+                            // Checking if the raw data matches any in state. If it does not match any, it 
+                            // passes the filter and will be added to state
+                            if ((messages.filter(stateMessage => stateMessage.id === message.messageId).length <= 0)) {
 
-                // The data order will be reversed and then added to state one at 
-                // at time
-                filteredResults.reverse().forEach(e => {
-                    // Prepping the data for the dispatch
-                    const newMessage = {
-                        ...e,
-                        ...e.conversation
+                                // Returning the message raw data to be added to state
+                                return message;
+                            }
+                        });
                     }
 
-                    // Dispatch to add each message to state
-                    dispatch(addMessage(newMessage));
-                });
-                return true;
-            }
-            else {
+                    // The data order will be reversed and then added to state one at 
+                    // at time
+                    filteredResults.reverse().forEach(e => {
+                        // Prepping the data for the dispatch
+                        const newMessage = {
+                            ...e,
+                            ...e.conversation
+                        }
+
+                        // Dispatch to add each message to state
+                        dispatch(addMessage(newMessage));
+                    });
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            })
+            .catch((err) => {
+                // Errors will be logged
+                console.log(err);
                 return false;
-            }
-        })
-        .catch((err) => {
-            // Errors will be logged
-            console.log(err);
-            return false;
-        });
-};
+            });
+
+        // Returning if the query was a success or not
+        return isMessages;
+    };
 
 
 /**
