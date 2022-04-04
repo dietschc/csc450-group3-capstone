@@ -4,6 +4,7 @@
 // February 10, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 3/06/2022, Added functionality for the component buttons)
+//  (DAB, 4/03/2022, Added in responsive ban/unBan user functionality)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -14,7 +15,8 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 /**
  * The UserEditItem Component allows the manipulation of user data 
  * by the admin. The admin can be redirected to the user dashboard, 
- * change the user privileges to banned, or delete the user completely.
+ * change the user privileges to banned/unBanned, or delete the 
+ * user completely.
  * 
  * @param { user } props 
  * @returns 
@@ -22,12 +24,52 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 function UserEditItem(props) {
     // The form component specific props will be assigned and 
     // used to process the form element
-    const { 
-        user, dashboardHandler, banHandler, 
-        userDeleteHandler, banUserButtonModal, 
-        userDashboardButtonModal 
+    const {
+        user
     } = props;
+    const {
+        dashboardHandler,
+        banHandler,
+        unBanHandler,
+        userDeleteHandler
+    } = props;
+
+    // Assigning the userId and userPermission to variables for easy 
+    // reference
     const userId = user.id;
+    const userPermission = user?.auth?.permission?.permissionName;
+
+
+    // Checking if the user is an admin
+    const isAdmin = () => {
+        return userPermission === 'admin';
+    }
+
+
+    // Checking if the user if banned
+    const isBanned = () => {
+        return userPermission === 'banned';
+    }
+
+
+    // The banButtonDisplay render function will allow and 
+    // display either the Ban or UnBan button along with all 
+    // functionality
+    const banButtonDisplay = () => (
+        !isBanned() ? (
+            <Button className="mx-1"
+                style={{ width: "7rem" }}
+                onClick={() => banHandler(userId)}>
+                Ban
+            </Button>
+        ) : (
+            <Button className="mx-1"
+                style={{ width: "7rem" }}
+                onClick={() => unBanHandler(userId)}>
+                UnBan
+            </Button>
+        )
+    )
 
     return (
         <ListGroup as="ul" className="justify-content-center px-0 mb-2">
@@ -45,11 +87,7 @@ function UserEditItem(props) {
                             onClick={() => dashboardHandler(userId)}>
                             Dashboard
                         </Button>
-                        <Button className="mx-1"
-                            style={{ width: "7rem" }}
-                            onClick={() => banHandler(userId)}>
-                            Ban
-                        </Button>
+                        {!isAdmin() && banButtonDisplay()}
                         <Button className="mx-1"
                             style={{ width: "7rem" }}
                             onClick={() => userDeleteHandler(userId)}>
@@ -58,7 +96,7 @@ function UserEditItem(props) {
                     </Col>
                 </Row>
             </ListGroup.Item>
-            
+
         </ListGroup>
     )
 }

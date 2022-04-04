@@ -10,6 +10,8 @@
 //  EditRestaurant, and Review)
 //  (DAB, 3/24/2022, Added in enhanced UX by auto directing then redirecting a user to where they 
 //  want to go)
+//  (DAB, 4/02/2022, Wrapped editPassword in the appropriate authentication wrappers)
+//  (DAB, 4/03/2022, Removed connect wrapper from App)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -26,16 +28,13 @@ import Review from './components/views/Review';
 import Search from './components/views/Search';
 import UserDashboard from './components/views/UserDashboard';
 import Admin from './components/views/Admin';
-import { connect } from "react-redux";
 import AuthAdmin from './components/auth/AuthAdmin';
 import AuthLoggedIn from './components/auth/AuthLoggedIn';
 import AuthReview from './components/auth/AuthReview';
 import AuthChat from './components/auth/AuthChat';
+import EditPassword from './components/views/EditPassword';
 
 function App(props) {
-    // Authentication testing DEBUG*********
-    // const { users } = props;
-    // const [ user=[] ] = users
 
     return (
         <div className="App pb-5">
@@ -56,6 +55,16 @@ function App(props) {
                     <AuthAdmin>
                         <EditAccount />
                     </AuthAdmin>} />
+                <Route path='/editPassword' element={
+                    <AuthLoggedIn>
+                        <EditPassword />
+                    </AuthLoggedIn>
+                } />
+                <Route path='/editPassword/:userId' element={
+                    <AuthAdmin>
+                        <EditPassword />
+                    </AuthAdmin>
+                } />
                 <Route path='/editRestaurant' element={
                     <AuthLoggedIn>
                         <EditRestaurant />
@@ -97,11 +106,5 @@ function App(props) {
     );
 }
 
-
-// Mapping the redux store states to props
-const mapStateToProps = (state) => ({
-    // users: [...state.users]
-});
-
 // Exporting the component
-export default connect(mapStateToProps)(App);
+export default App;

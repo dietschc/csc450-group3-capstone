@@ -3,11 +3,12 @@
 // Restaurant Club - authentication.service.js
 // March 6, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, Added services for updatePassword and updatePasswordSecure)
+//  (DAB, Ordered routes alphabetically)
 
 import http from "../http-common";
 
 class AuthenticationDataService {
-
     /**
      * Creates a new authentication entry if one is not 
      * already in the database.
@@ -20,12 +21,13 @@ class AuthenticationDataService {
     }
 
     /**
-     * Retrieves all authentications.
+     * Deletes the authentication with the specified friendId
      * 
-     * @returns - an array of all authentications found
+     * @param { friendId } id 
+     * @returns
      */
-    getAll() {
-        return http.get("/authentication");
+    delete(id) {
+        return http.delete(`/authentication/${id}`);
     }
 
     /**
@@ -36,6 +38,15 @@ class AuthenticationDataService {
      */
     get(id) {
         return http.get(`/authentication/${id}`);
+    }
+
+    /**
+     * Retrieves all authentications.
+     * 
+     * @returns - an array of all authentications found
+     */
+    getAll() {
+        return http.get("/authentication");
     }
 
     /**
@@ -50,24 +61,43 @@ class AuthenticationDataService {
     }
 
     /**
-     * Updates a users permission via userId
+     * Updates a users permission via userId.
      * 
-     * @param {*} id 
+     * @param {*} userId 
      * @param {*} data 
      * @returns 
      */
-     updateByUserId(userId, data) {
+    updateByUserId(userId, data) {
         return http.put(`/authentication/userId/${userId}`, data);
     }
 
     /**
-     * Deletes the authentication with the specified friendId
+     * Updates the user password of the param userId
      * 
-     * @param { friendId } id 
-     * @returns
+     * @param {*} userId 
+     * @param {
+     * newPassword: the desired new user password
+     * } data 
+     * @returns - 404
      */
-    delete(id) {
-        return http.delete(`/authentication/${id}`);
+    updatePassword(userId, data) {
+        return http.put(`/authentication/password/${userId}`, data);
+    }
+
+    /**
+     * Updates the user password of the param userId. It will 
+     * only update the password if the userPassword matches the 
+     * user password in the database.
+     * 
+     * @param {*} userId 
+     * @param { 
+     * userPassword: current users password,
+     * newPassword: the desired new user password
+     * } data 
+     * @returns - 404
+     */
+    updatePasswordSecure(userId, data) {
+        return http.put(`/authentication/passwordSecure/${userId}`, data);
     }
 }
 

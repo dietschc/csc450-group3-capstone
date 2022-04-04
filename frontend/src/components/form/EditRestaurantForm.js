@@ -26,7 +26,7 @@ import FloatingImageUpload from './floatingComponents/FloatingImageUpload';
 import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { addRestaurantThunk, updateRestaurantThunk } from '../../actions/restaurants';
-import { formatPhoneNumber, unformatPhoneNumber } from '../../helperFunction/FormatString';
+import { formatPhoneNumber, unformatPhoneNumber, formatZipCode } from '../../helperFunction/FormatString';
 import ModalConfirmation from '../modal/ModalCancelConfirm';
 
 /**
@@ -174,8 +174,8 @@ function EditRestaurantForm(props) {
 
     // Change handler for the function name specific form input
     const onChangePhone = (e) => {
-        const { value, maxLength } = e.target;
-        const phone = formatPhoneNumber(value.slice(0, maxLength));
+        const {value, maxLength} = e.target;
+        const phone = formatPhoneNumber(value);
         setPhone(phone);
     }
 
@@ -205,8 +205,8 @@ function EditRestaurantForm(props) {
 
     // Change handler for the function name specific form input
     const onChangeZip = (e) => {
-        const { value, maxLength } = e.target;
-        const zip = value.slice(0, maxLength);
+        const {value, maxLength} = e.target;
+        const zip = formatZipCode(value);
         setZip(zip);
     }
 

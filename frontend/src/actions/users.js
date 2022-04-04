@@ -12,6 +12,12 @@
 //  (DAB, 3/27/2022, Added in findByUserIdThunk that will also add in the friends of the user)
 //  (DAB, 3/28/2022, Altered findByUserNameThunk to exclude logged in user userId)
 //  (CPD, 3/29/2022, Added refresh token action)
+//  (TJI, 04/02/2022, Added in EditPasswordThunk, removed password from updateUserThunk)
+//  (DAB, 4/02/2022, Updated EditPasswordThunk into updatePasswordThunk and 
+//  updatePasswordSecureThunk)
+//  (DAB, 4/02/2022, Cleaned up code/ Organized file into Thunk and standard Redux actions)
+//  (DAB, 4/02/2022, addUserThunk now returns true on success and false on failure to add to 
+//  the database)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -19,6 +25,10 @@ import C from '../constants';
 import UserDataService from "../services/user.service";
 import { formatDBUserFind } from '../helperFunction/actionHelpers';
 import AuthenticationDataService from '../services/authentication.service';
+
+
+/************************************ REDUX THUNK ACTIONS ***********************************/
+
 
 /**
  * The addUser action is called from components/views/EditAccount.js in saveAccount. It passes
@@ -43,58 +53,43 @@ export const addUserThunk = (
          * Call and await the user data service create method, passing the parameters and storing the 
          * results in a constant.
          */
-        await UserDataService.create({
+        return await UserDataService.create({
             userName, firstName, lastName, address, city, state, zip, userEmail, userPassword
         })
             .then(res => {
                 // console.log("data: ", res.data);
 
-                // This combines the 3 JSON objects into a single object
-                const result = { ...res.data.newUser, ...res.data.newAddress, ...res.data.newAuth }
-                dispatch(addUser(result))
+                if (res.data) {
+                    // This combines the 3 JSON objects into a single object
+                    const result = { ...res.data.newUser, ...res.data.newAddress, ...res.data.newAuth }
+
+                    // Adding the created user to state
+                    dispatch(addUser(result));
+                    
+                    // User added, returning true
+                    return true;
+                }
+                // User was not created, false is returned
+                else {
+                    return false;
+                }
+
             })
             .catch(err => {
-                console.log(err)
+                // There is an error, it is logged and false is returned
+                console.log(err);
+                return false;
             })
     }
 
-/**
- * The updatePermissionThunk will update a users permission to the specified 
- * settings. It will update it both in state and the database.
- * 
- * @param {*} userId 
- * @param {*} data 
- * @returns 
- */
-export const updatePermissionThunk = (userId, data) => async dispatch => {
-    // Making the call to the service to request an update to the database
-    await AuthenticationDataService.updateByUserId(userId, data)
-        .then(res => {
-            // If there is a response the state will be updated
-            if (res) {
-                // Destructuring out permissionId and permission name from the data
-                const { permissionId, permissionName } = data;
-
-                // Dispatching the action to update state permission
-                dispatch(updatePermission(userId, permissionId, permissionName))
-            }
-            else {
-                console.log("Permission was not updated")
-            }
-        })
-        .catch(err => {
-            // If there is an error it will be logged
-            console.log(err)
-        })
-}
 
 /**
- * The deleteUserThunk will delete a user from both the database 
- * and state by referencing the userId.
- * 
- * @param {*} userId 
- * @returns 
- */
+* The deleteUserThunk will delete a user from both the database 
+* and state by referencing the userId.
+* 
+* @param {*} userId 
+* @returns 
+*/
 export const deleteUserThunk = (userId) => async dispatch => {
     // Making the call to the service to request the deletion of the user
     await UserDataService.delete(userId)
@@ -158,6 +153,7 @@ export const findByUserIdThunk = (userId) => async dispatch => {
         })
 }
 
+
 /**
  * Searches the database by user name for all matching users up to the 
  * offset/limit. It will then add the results to state. 
@@ -205,169 +201,11 @@ export const findByUserNameThunk = (offset, limit, userName) => async (dispatch,
         })
 }
 
-/**
- * React Redux action will add a new user to state.
- * 
- * @param {*} param0 
- * @returns 
- */
-export const addUser = ({ userId, userName,
-    firstName, lastName, address, addressId, authId,
-    city, state, zip, userEmail, permissionId, permissionName,
-    isLoggedIn, userPassword, createdAt, modifiedAt, friends }) => ({
-        type: C.ADD_USER,
-        id: userId,
-        firstName: firstName,
-        lastName: lastName,
-        address: {
-            id: addressId,
-            address: address,
-            city: city,
-            state: state,
-            zip: zip,
-        },
-        auth: {
-            id: authId,
-            userName: userName,
-            permission: {
-                id: permissionId || 1,
-                permissionName: permissionName || "member"
-            },
-            password: userPassword,
-            createdAt: createdAt || new Date(),
-            modifiedAt: modifiedAt || new Date()
-        },
-        email: userEmail,
-        friends: friends,
-        isLoggedIn: isLoggedIn || false
-    })
 
 /**
- * React Redux action that will delete a user from state 
- * by user Id.
- * 
- * @param {*} userId 
- * @returns 
- */
-export const deleteUser = (userId) => ({
-    type: C.DELETE_USER,
-    id: userId
-})
-
-/**
- * React Redux action that will delete all users from state.
- * 
- * @returns 
- */
-export const deleteAllUsers = () => ({
-    type: C.DELETE_ALL_USERS
-})
-
-/**
- * React Redux action that will delete all users but the main user 
- * at index 0
- * 
- * @returns 
- */
-export const deleteAdditionalUsers = () => ({
-    type: C.DELETE_ADDITIONAL_USERS
-})
-
-export const updateUserThunk = (id, data) => async dispatch => {
-    /**
-     * Call and await the user data service update method, passing the id and data
-     */
-    await UserDataService.update(id, data)
-        .then(res => {
-            const result = { id, ...data }
-            console.log("result: ", result);
-            dispatch(updateUser(result))
-        })
-        .catch(err => {
-            console.log(err)
-        })
-}
-
-/**
- * React Redux action that will update a user in state with 
- * the matching userId.
- * 
- * @param {*} userId 
- * @param {*} userName 
- * @param {*} firstName 
- * @param {*} lastName 
- * @param {*} address 
- * @param {*} city 
- * @param {*} state 
- * @param {*} zip 
- * @param {*} email 
- * @param {*} password 
- * @returns 
- */
-export const updateUser = ({ id, userName, firstName, lastName,
-    address, city, state, zip, userEmail, password }) => ({
-        type: C.UPDATE_USER,
-        id: id,
-        firstName: firstName,
-        lastName: lastName,
-        email: userEmail,
-        address: {
-            address: address,
-            city: city,
-            state: state,
-            zip: zip
-        },
-        auth: {
-            userName: userName,
-            password: password,
-            modifiedAt: new Date()
-
-        }
-    })
-
-/**
- * React Redux action that add a friend for a user with 
- * the matching userId.
- * 
- * @param {*} userId 
- * @param {*} friendId 
- * @param {*} friendUserName 
- * @returns 
- */
-export const addFriend = ({ friendOneId, friendTwoId, userName }) => ({
-    type: C.ADD_FRIEND,
-    userId: friendOneId,
-    id: friendTwoId,
-    userName: userName
-})
-
-/**
- * React Redux action that will delete a friend from a 
- * users friends state with matching user and friend Id's.
- * 
- * @param {*} userId 
- * @param {*} friendId 
- * @returns 
- */
-export const deleteFriend = (userId, friendId) => ({
-    type: C.DELETE_FRIEND,
-    userId: userId,
-    id: friendId
-})
-
-/**
- * React Redux action that will delete all friends from a 
- * user state by user Id.
- * 
- * @param {*} userId 
- * @returns 
- */
-export const deleteAllFriends = (userId) => ({
-    type: C.DELETE_ALL_FRIENDS,
-    id: userId
-})
-
-/**
+ * The loginThunk will attempt to log a user into Restaurant Club by 
+ * checking if the userName and passwords match those stored in 
+ * the database.
  * 
  * @param {*} userName 
  * @param {*} userPassword 
@@ -380,7 +218,6 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
      */
     return await UserDataService.login({ userName, userPassword })
         .then(res => {
-            console.log("res data: ", res);
             // Delete the current users in the Users state array
             dispatch(deleteAllUsers());
             // Will return as res[0]
@@ -436,6 +273,288 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
         })
 }
 
+
+/**
+ * The updatePasswordThunk will update a users password in the database 
+ * if the userId matches.
+ * 
+ * @param {*} userId
+ * @param {*} newPassword
+ * @returns 
+ */
+export const updatePasswordThunk = (userId, newPassword) => async dispatch => {
+    // Packaging the password in data to be used in the request body
+    const data = {
+        newPassword: newPassword
+    }
+
+    // Sending a request to update the password in the database. Will 
+    // return true if successful and false if not
+    return await AuthenticationDataService.updatePassword(userId, data)
+        .then(res => {
+            // If there is a result, the password is updated and 
+            // true is returned
+            if (res) {
+                return true;
+            }
+            // If there is not a result, the password was not updated 
+            // and false is returned
+            else {
+                return false;
+            }
+        })
+        .catch(err => {
+            // Errors will be caught, logged, and false is returned
+            console.log(err)
+            return false;
+        })
+}
+
+
+/**
+ * The updatePasswordSecureThunk will update a users password in the database 
+ * if both the userId and userPassword matches.
+ * 
+ * @param {*} userName 
+ * @param {*} userPassword
+ * @param {*} newPassword
+ * @returns 
+ */
+export const updatePasswordSecureThunk = (userId, userPassword, newPassword) => async dispatch => {
+    // Packaging the password in data to be used in the request body
+    const data = {
+        userPassword: userPassword,
+        newPassword: newPassword
+    }
+
+    // Sending a request to update the password in the database. Will 
+    // return true if successful and false if not
+    return await AuthenticationDataService.updatePasswordSecure(userId, data)
+        .then(res => {
+            // If there is a result, the password is updated and 
+            // true is returned
+            if (res) {
+                return true;
+            }
+            // If there is not a result, the password was not updated 
+            // and false is returned
+            else {
+                return false;
+            }
+        })
+        .catch(err => {
+            // Errors will be caught, logged, and false is returned
+            console.log(err)
+            return false;
+        })
+}
+
+
+/**
+ * The updatePermissionThunk will update a users permission to the specified 
+ * settings. It will update it both in state and the database.
+ * 
+ * @param {*} userId 
+ * @param {*} data 
+ * @returns 
+ */
+export const updatePermissionThunk = (userId, data) => async dispatch => {
+    // Making the call to the service to request an update to the database
+    await AuthenticationDataService.updateByUserId(userId, data)
+        .then(res => {
+            // If there is a response the state will be updated
+            if (res) {
+                // Destructuring out permissionId and permission name from the data
+                const { permissionId, permissionName } = data;
+
+                // Dispatching the action to update state permission
+                dispatch(updatePermission(userId, permissionId, permissionName))
+            }
+            else {
+                console.log("Permission was not updated")
+            }
+        })
+        .catch(err => {
+            // If there is an error it will be logged
+            console.log(err)
+        })
+}
+
+
+export const updateUserThunk = (id, data) => async dispatch => {
+    /**
+     * Call and await the user data service update method, passing the id and data
+     */
+    await UserDataService.update(id, data)
+        .then(res => {
+            const result = { id, ...data }
+            
+            dispatch(updateUser(result))
+        })
+        .catch(err => {
+            console.log(err)
+        })
+}
+
+
+/************************************ REACT REDUX ACTIONS ***********************************/
+
+
+/**
+ * React Redux action will add a new user to state.
+ * 
+ * @param {*} param0 
+ * @returns 
+ */
+export const addUser = ({ userId, userName,
+    firstName, lastName, address, addressId, authId,
+    city, state, zip, userEmail, permissionId, permissionName,
+    isLoggedIn, userPassword, createdAt, modifiedAt, friends }) => ({
+        type: C.ADD_USER,
+        id: userId,
+        firstName: firstName,
+        lastName: lastName,
+        address: {
+            id: addressId,
+            address: address,
+            city: city,
+            state: state,
+            zip: zip,
+        },
+        auth: {
+            id: authId,
+            userName: userName,
+            permission: {
+                id: permissionId || 1,
+                permissionName: permissionName || "member"
+            },
+            password: userPassword,
+            createdAt: createdAt || new Date(),
+            modifiedAt: modifiedAt || new Date()
+        },
+        email: userEmail,
+        friends: friends,
+        isLoggedIn: isLoggedIn || false
+    })
+
+
+/**
+ * React Redux action that will delete a user from state 
+ * by user Id.
+ * 
+ * @param {*} userId 
+ * @returns 
+ */
+export const deleteUser = (userId) => ({
+    type: C.DELETE_USER,
+    id: userId
+})
+
+
+/**
+ * React Redux action that will delete all users from state.
+ * 
+ * @returns 
+ */
+export const deleteAllUsers = () => ({
+    type: C.DELETE_ALL_USERS
+})
+
+
+/**
+ * React Redux action that will delete all users but the main user 
+ * at index 0
+ * 
+ * @returns 
+ */
+export const deleteAdditionalUsers = () => ({
+    type: C.DELETE_ADDITIONAL_USERS
+})
+
+
+/**
+ * React Redux action that will update a user in state with 
+ * the matching userId.
+ * 
+ * @param {*} userId 
+ * @param {*} userName 
+ * @param {*} firstName 
+ * @param {*} lastName 
+ * @param {*} address 
+ * @param {*} city 
+ * @param {*} state 
+ * @param {*} zip 
+ * @param {*} email 
+ * @param {*} password 
+ * @returns 
+ */
+export const updateUser = ({ id, userName, firstName, lastName,
+    address, city, state, zip, userEmail, password }) => ({
+        type: C.UPDATE_USER,
+        id: id,
+        firstName: firstName,
+        lastName: lastName,
+        email: userEmail,
+        address: {
+            address: address,
+            city: city,
+            state: state,
+            zip: zip
+        },
+        auth: {
+            userName: userName,
+            password: password,
+            modifiedAt: new Date()
+
+        }
+    })
+
+
+/**
+ * React Redux action that add a friend for a user with 
+ * the matching userId.
+ * 
+ * @param {*} userId 
+ * @param {*} friendId 
+ * @param {*} friendUserName 
+ * @returns 
+ */
+export const addFriend = ({ friendOneId, friendTwoId, userName }) => ({
+    type: C.ADD_FRIEND,
+    userId: friendOneId,
+    id: friendTwoId,
+    userName: userName
+})
+
+
+/**
+ * React Redux action that will delete a friend from a 
+ * users friends state with matching user and friend Id's.
+ * 
+ * @param {*} userId 
+ * @param {*} friendId 
+ * @returns 
+ */
+export const deleteFriend = (userId, friendId) => ({
+    type: C.DELETE_FRIEND,
+    userId: userId,
+    id: friendId
+})
+
+
+/**
+ * React Redux action that will delete all friends from a 
+ * user state by user Id.
+ * 
+ * @param {*} userId 
+ * @returns 
+ */
+export const deleteAllFriends = (userId) => ({
+    type: C.DELETE_ALL_FRIENDS,
+    id: userId
+})
+
+
 /**
  * React Redux action that log in a user with matching user Id.
  * 
@@ -452,6 +571,7 @@ export const login = (userId, accessToken, refreshToken) => ({
     }
 })
 
+
 /**
  * React Redux action that log out a user with matching user Id.
  * 
@@ -463,6 +583,7 @@ export const logout = (userId) => ({
     id: userId,
     isLoggedIn: false
 })
+
 
 /**
  * React Redux action that will update a users permission based off 
@@ -479,6 +600,7 @@ export const updatePermission = (userId, permissionId, permissionName) => ({
     permissionId: permissionId,
     permissionName: permissionName
 })
+
 
 /**
  * Get new accessToken action. Mainly used for renewing accessTokens.
