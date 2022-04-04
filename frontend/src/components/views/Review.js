@@ -18,7 +18,7 @@
 import React, { useState, useEffect } from 'react'
 import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 import FloatingImageUpload from '../form/floatingComponents/FloatingImageUpload';
-import ModalCancelConfirm from '../form/modal/ModalCancelConfirm';
+import ModalConfirmation from '../modal/ModalCancelConfirm';
 import { useParams, useNavigate } from "react-router-dom";
 import { printStarTotal } from '../../helperFunction/StringGenerator';
 import { connect } from 'react-redux';
@@ -47,6 +47,9 @@ function Review(props) {
 
     // Display restaurant name
     const restaurantName = paramRestaurant.name;
+
+    // Confirm modal local state
+    const [showClearFormConfirm, setShowClearFormConfirm] = useState(false);
 
     // If the params review id > 0, this implies you are editing a review 
     const [isUpdate, setIsUpdate] = useState(paramReview?.id > 0 ? true : false);
@@ -151,7 +154,7 @@ function Review(props) {
 
     // Handles the review text form input
     const onChangeReviewText = e => {
-        const {value, maxLength} = e.target;
+        const { value, maxLength } = e.target;
         const reviewText = value.slice(0, maxLength);
         setReviewText(reviewText);
     }
@@ -160,7 +163,7 @@ function Review(props) {
     // Handles the review title form input
     // Reduces user input to maxLength of input field which copies database's limit.
     const onChangeReviewTitle = e => {
-        const {value, maxLength} = e.target;
+        const { value, maxLength } = e.target;
         const reviewTitle = value.slice(0, maxLength);
         setReviewTitle(reviewTitle);
     }
@@ -198,7 +201,7 @@ function Review(props) {
     const updateReview = async () => {
         // Set user id
         const userId = users[0].id;
-        const imageLocation = paramReview.images[0].imageLocation;
+        const imageLocation = paramReview.images[0].imageLocation || '';
 
         // Pass parameters to add review thunk action
         await updateReviewThunk(reviewId, userId, reviewTitle, reviewText,
@@ -234,6 +237,27 @@ function Review(props) {
             alt="Upload preview"
         />
     )
+
+    // The clearForm function will clear the form data
+    const clearForm = () => {
+        setTasteRating("1");
+        setServiceRating("1");
+        setCleanRating("1");
+        setOverallRating("1");
+        setReviewTitle("");
+        setReviewText("");
+
+        // We are not allowing to replace review photos at this time
+        // The review must be deleted to delete the current photo
+        // setFile("cleared");
+        // setTempFileUrl(window.location.origin + '/reviewImages/3/stock-illustration-retro-diner.jpg');
+    }
+
+    // The close handler will close the clear form modal
+    const closeClearFormHandler = () => setShowClearFormConfirm(false);
+
+    // The show handler will show the close form modal
+    const showClearFormHandler = () => setShowClearFormConfirm(true);
 
 
     return (
@@ -401,8 +425,14 @@ function Review(props) {
                             {isUpdate ? "Update" : "Submit"}
                         </Button>
 
-                        <ModalCancelConfirm />
+                        <Button onClick={showClearFormHandler} className="mr-1 w-25">
+                            Clear
+                        </Button>
                     </div>
+                    <ModalConfirmation
+                        show={showClearFormConfirm}
+                        closeHandler={closeClearFormHandler}
+                        clearForm={clearForm} />
                 </Form>
             </Container>
         </Container>
