@@ -14,11 +14,12 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Navbar, Button, Nav, Form, Container, FormControl } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 import { connect } from 'react-redux';
 import { deleteAllUsers } from '../../actions/users';
 import { deleteAllMessages } from '../../actions/messages';
@@ -33,6 +34,27 @@ function MainNav(props) {
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const [basicActive, setBasicActive] = useState();
     const [searchInput, setSearchInput] = useState("");
+
+
+    // const [showNav, setShowNav] = useState(true);
+
+    // const hideNavbar = () => {
+    //     if (window.scrollY > 100) {
+    //         setShowNav(false);
+    //     }
+    //     else {
+    //         setShowNav(true);
+    //     }
+    // }
+
+    // useEffect(() => {
+    //     window.addEventListener('scroll', hideNavbar);
+    //     return () => {
+    //         window.removeEventListener('scroll', hideNavbar);
+    //     }
+    // })
+
+
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -161,8 +183,7 @@ function MainNav(props) {
 
     return (
             <Navbar
-                sticky="top"
-                className="mainNav px-2 rounded-bottom"
+                className={`mainNav px-2 rounded-bottom`}
                 bg={backgroundTheme}
                 variant={variantTheme}
                 collapseOnSelect

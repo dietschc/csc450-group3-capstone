@@ -6,25 +6,25 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React from 'react';
+import React, {useState, useEffect, useRef, useLayoutEffect} from 'react';
 import MainNav from '../views/MainNav';
 import Footer from '../views/Footer';
 import App from '../../App';
+import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
+import Main from '../views/Main';
 
 // This function will build a page template that accepts 
 // children sandwiched between the main navigation and 
 // the footer
-function MainTemplate() {
-
+function NavTemplate() {
     return (
         <div className="page bg-light">
-            <MainNav />
-            <App/>
-            <Footer/>
+            <MainNav/>
+            <Main />
         </div>
     )
 }
 
 // Exporting the PageTemplate component
-export default MainTemplate;
+export default NavTemplate;
