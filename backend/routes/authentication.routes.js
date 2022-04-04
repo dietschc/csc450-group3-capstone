@@ -47,6 +47,7 @@ module.exports = app => {
 
   // Retrieve authentication searched by user userName with offset and limit
   router.get("/search/:offset/:limit/:userName",
+    [authJwt.verifyToken, authJwt.isAdmin],
     authentication.findByNameOffsetLimit
   );
 
