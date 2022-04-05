@@ -14,10 +14,11 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Navbar, Button, Nav, Form, Container, FormControl } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import './MainNav.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { connect } from 'react-redux';
@@ -36,23 +37,45 @@ function MainNav(props) {
     const [searchInput, setSearchInput] = useState("");
 
 
-    // const [showNav, setShowNav] = useState(true);
+    const showNav = useRef(true);
+    const windowY = useRef(window?.scrollY);
+    const [test, setTest] = useState(true);
 
-    // const hideNavbar = () => {
-    //     if (window.scrollY > 100) {
-    //         setShowNav(false);
-    //     }
-    //     else {
-    //         setShowNav(true);
-    //     }
-    // }
+    const hideNavbar = () => {
+        if (window.scrollY > windowY.current) {
+            showNav.current = false;
+            console.log(showNav.current)
+            console.log(window.scrollY)
+            console.log("WINDOWY IS", windowY.current)
+            setTest(false)
+                windowY.current = window.scrollY;
+            
+        }
+        else {
+            showNav.current = true
+            console.log("WINDOWY IS", windowY.current)
+            
+            console.log(window.scrollY)
+                windowY.current = window.scrollY;
+                console.log(showNav.current)
+            
+        }
+        console.log("TEST IN HIDE NAV", test)
+        
+    }
 
-    // useEffect(() => {
-    //     window.addEventListener('scroll', hideNavbar);
-    //     return () => {
-    //         window.removeEventListener('scroll', hideNavbar);
-    //     }
-    // })
+    useEffect(() => {
+        window.addEventListener('scroll', hideNavbar);
+        return () => {
+            window.removeEventListener('scroll', hideNavbar);
+        }
+    }, [])
+
+    useEffect(() => {
+        setTest(showNav.current)
+        console.log("SET TEST")
+        console.log(test)
+    })
 
 
     const navigate = useNavigate();
@@ -183,7 +206,8 @@ function MainNav(props) {
 
     return (
             <Navbar
-                className={`mainNav px-2 rounded-bottom`}
+                className={`${showNav.current ? 'mainNav' : 'mainNav2'} px-2 rounded-bottom`}
+                style={{ }}
                 bg={backgroundTheme}
                 variant={variantTheme}
                 collapseOnSelect

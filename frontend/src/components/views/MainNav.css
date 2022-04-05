@@ -1,4 +1,15 @@
 .mainNav {
-    /* transition-timing-function: ease-in;
-    transition: 0.5s; */
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    overflow: hidden;
+}
+
+.mainNav2 {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    overflow: hidden;
 }
