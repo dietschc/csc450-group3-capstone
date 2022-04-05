@@ -7,6 +7,7 @@
 //  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
 //  (DAB, 03/13/2022, Moved DevelopersNav into MainNav)
 //  (DAB, 04/04/2022, Added Spinners for database load in)
+//  (DAB, 04/05/2022, Users can no longer friend themselves)
 
 // Using React library in order to build components
 // for the app and importing needed components
@@ -56,7 +57,7 @@ function Main(props) {
         // Deleting the state in redux
         deleteAllReviews();
         deleteAllRestaurants();
-    }, [])
+    }, []);
 
 
     // Loading the database data into state on page load
@@ -76,32 +77,35 @@ function Main(props) {
             // grabbing the userId(friendOneId)
             const friendOneId = currentUser.id;
 
-            // Attempting to add the new friend to the database and then to state. Only 
-            // friends not in the database/state will be added
-            addFriendThunk(friendOneId, friendTwoId);
+            // Making sure that a user cannot friend themselves
+            if (friendOneId !== friendTwoId) {
+                // Attempting to add the new friend to the database and then to state. Only 
+                // friends not in the database/state will be added
+                addFriendThunk(friendOneId, friendTwoId);
+            } 
         }
-    };
+    }
 
 
     // Loading the database data into state and clearing the old state
     const loadState = async () => {
         // Grabbing the data from the database and adding it to state
         await findAllReviewsRestaurantsOrderedThunk(0, 25);
-    };
+    }
 
 
     // The moreHandler will load in the Search View with the
     // needed URL parameters for the desired search
     const moreHandler = (authorId, restaurantId) => {
         navigate(`restaurant/${restaurantId}/${authorId}`);
-    };
+    }
 
 
     // The restaurantHandler will load in the restaurant page
     // with the restaurant id as a URL parameter
     const restaurantHandler = (restaurantId) => {
         navigate(`restaurant/${restaurantId}`);
-    };
+    }
 
 
     // The RRDButtonGroup will accept the review array and
