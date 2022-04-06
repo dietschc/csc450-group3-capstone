@@ -29,6 +29,7 @@ import {
 import { findAllReviewsRestaurantsOrderedThunk } from "../../actions/reviewsRestaurants";
 import { addFriendThunk } from "../../actions/friend";
 import ThemedSpinner from "../subComponent/ThemedSpinner";
+import MainNav from "./MainNav";
 
 /**
  * The Main Component will be the starting point of the application.

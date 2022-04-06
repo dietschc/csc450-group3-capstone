@@ -6,11 +6,10 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, {useState, useEffect, useRef, useLayoutEffect} from 'react';
+import React from 'react';
 import MainNav from '../views/MainNav';
 import Footer from '../views/Footer';
 import App from '../../App';
-import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 // This function will build a page template that accepts 
@@ -20,9 +19,9 @@ function MainTemplate() {
 
     return (
         <div className="page bg-light">
-            <MainNav/>
+            <MainNav />
             <App/>
-            <Footer/>  
+            <Footer/>
         </div>
     )
 }
