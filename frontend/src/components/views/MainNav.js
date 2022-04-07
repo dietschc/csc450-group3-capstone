@@ -18,7 +18,7 @@
 // for the app and importing needed components
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Navbar, Button, Nav, Form, Container, FormControl } from 'react-bootstrap';
+import { Navbar, Button, Nav, Form, FormControl } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
@@ -182,6 +182,11 @@ function MainNav(props) {
 
     // Handles the click to show the modal windows when the logout button is pressed
     const logoutHandler = () => {
+        // Closing the nav if open
+        if (navExpanded) {
+            setToggle();
+        }
+        
         // console.log("logout button pressed");
         showLogoutHandler();
     }
