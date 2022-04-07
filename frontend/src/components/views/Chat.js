@@ -14,6 +14,8 @@
 //  (TJI, 03/29/2022 - Added in character limits to match database)
 //  (DAB, 04/04/2022, Added Spinners for database load in, fixed some 
 //  button styling issues. Buttons now expand on smaller screen sizes)
+//  (DAB, 4/07/2022, Chat Text will now show white space)
+//  (DAB, 4/07/2022, Organized code)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -39,9 +41,9 @@ import ThemedSpinner from '../subComponent/ThemedSpinner';
  * @returns 
  */
 function Chat(props) {
+    // Destructuring state and functions from props
+    const { messages, users } = props;
     const {
-        messages,
-        users,
         isLoading,
         deleteAllMessages,
         findByConversationIdOffsetLimitThunk,
@@ -74,33 +76,7 @@ function Chat(props) {
     useLayoutEffect(() => {
         // All old messages are deleted
         deleteAllMessages();
-    }, [])
-
-
-    // The loadState method will load the initial Chat state from the database
-    const loadState = async () => {
-        // New messages are queried from the database
-        await findByConversationIdOffsetLimitThunk(user.id, friendId, 0, 15);
-
-        // If there are messages found, the most recent messageId is filtered from messages
-        if (messages && messages.length > 0) {
-            updateMessageIdRef.current = messagesRef.current.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0);
-        }
-    }
-
-
-    // The database is queried for new messages that may exist in the database, 
-    // the state is only updated if data is found
-    const loadNewMessages = async () => {
-        await findAllByIdOffsetLimitThunk(updateMessageIdRef.current, user.id, friendId, 0, 15)
-            .then(res => {
-                // If results were returned from the database query, isQueried is set to true to update the 
-                // newest messageId
-                if (res) {
-                    isQueriedRef.current = true;
-                }
-            })
-    }
+    }, []);
 
 
     // The use effect will rerender only once initially and will only load state 
@@ -147,6 +123,48 @@ function Chat(props) {
     }, [messages]);
 
 
+    // Clears the chatMessage text input after each new chat message
+    const clearForm = () => {
+        setChatMessage("");
+    }
+
+
+    // The database is queried for new messages that may exist in the database, 
+    // the state is only updated if data is found
+    const loadNewMessages = async () => {
+        await findAllByIdOffsetLimitThunk(updateMessageIdRef.current, user.id, friendId, 0, 15)
+            .then(res => {
+                // If results were returned from the database query, isQueried is set to true to update the 
+                // newest messageId
+                if (res) {
+                    isQueriedRef.current = true;
+                }
+            })
+    }
+
+
+    // The loadState method will load the initial Chat state from the database
+    const loadState = async () => {
+        // New messages are queried from the database
+        await findByConversationIdOffsetLimitThunk(user.id, friendId, 0, 15);
+
+        // If there are messages found, the most recent messageId is filtered from messages
+        if (messages && messages.length > 0) {
+            updateMessageIdRef.current = messagesRef.current.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0);
+        }
+    }
+
+
+    // This function will scroll the message window to the bottom to read the newest message
+    const messageEndScroll = () => {
+        // If the page is not rendered nothing is done
+        if (!messageScrollTo.current) return;
+
+        // If the page is rendered the message box will be scrolled to the bottom
+        messageScrollTo.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+    }
+
+
     // This function will set chatMessage state with the new message
     const onChangeMessage = (e) => {
         const { value, maxLength } = e.target;
@@ -177,20 +195,8 @@ function Chat(props) {
     }
 
 
-    // Clears the chatMessage text input after each new chat message
-    const clearForm = () => {
-        setChatMessage("");
-    }
+    /*********************************** RENDER FUNCTIONS **************************************/
 
-
-    // This function will scroll the message window to the bottom to read the newest message
-    const messageEndScroll = () => {
-        // If the page is not rendered nothing is done
-        if (!messageScrollTo.current) return;
-
-        // If the page is rendered the message box will be scrolled to the bottom
-        messageScrollTo.current.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
-    }
 
     // The messageUI displays the UI for the Chat page
     const messageUI = () => (
@@ -240,13 +246,13 @@ function Chat(props) {
             {messages.map((message, index) => (
                 (message.userMessage.from === user.id)
                     ? (
-                        <span key={index} style={{ color: "darkblue" }}>
+                        <span key={index} style={{ color: "darkblue", whiteSpace: "pre-wrap" }}>
                             {`${userName}[${formatTimeCalendar(message.timeStamp)}]: `}
                             <span style={{ color: "blue" }}>
                                 {message.message}
                             </span><br /><br /></span>
                     ) : (
-                        <span key={index} style={{ color: "darkred" }}>
+                        <span key={index} style={{ color: "darkred", whiteSpace: "pre-wrap" }}>
                             {`${friendName}[${formatTimeCalendar(message.timeStamp)}]: `}
                             <span style={{ color: "red" }}>
                                 {message.message + "\n"}

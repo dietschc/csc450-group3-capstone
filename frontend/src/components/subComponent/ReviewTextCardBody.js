@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 4/03/2022, Added in a "showMore/showLess" button for when the 
 //  review is over 250 characters only)
+//  (DAB, 4/07/2022, Review Text will now show white space)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -89,7 +90,7 @@ function ReviewTextCardBody(props) {
     // will be shown unless showMore... is selected
     const reviewText = () => (
         showMore ? (
-            <Card.Text>
+            <Card.Text style={{whiteSpace: "pre-wrap"}}>
                 {review?.reviewText}
                 {review?.reviewText.length > 250 &&
                     <Button
@@ -101,7 +102,7 @@ function ReviewTextCardBody(props) {
                     </Button>}
             </Card.Text>
         ) : (
-            <Card.Text>
+            <Card.Text style={{whiteSpace: "pre-wrap"}}>
                 {reviewSlice()}
                 {review?.reviewText.length > 250 &&
                     <Button
