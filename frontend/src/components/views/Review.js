@@ -379,7 +379,7 @@ function Review(props) {
                             </Form.Floating>
                         </Col>
 
-                        <Col md="3" className="text-center">
+                        <Col md="3" className="d-flex flex-wrap text-center">
 
                             {displayReviewImage()}
 
