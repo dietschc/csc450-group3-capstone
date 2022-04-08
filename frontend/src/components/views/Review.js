@@ -12,6 +12,7 @@
 //  only review a valid restaurant and the review must be for that restaurant)
 //  (DAB, 3/27/22, Enhanced comments)
 //  (TJI, 03/29/2022 - Added in character limits for review title and text to match database)
+//  (DAB, 04/07/2022, Review is now more responsive and works on mobile)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -226,16 +227,17 @@ function Review(props) {
      * @returns 
      */
     const displayReviewImage = () => (
-        <img
-            src={isUpdate && paramReview.images[0].imageLocation !== ''
-                ? tempFileUrl || paramReview.images[0].imageLocation
-                : tempFileUrl || window.location.origin + '/reviewImages/3/stock-illustration-retro-diner.jpg'
-            }
-            width="300"
-            height="200"
-            className="p-3 flex-begin"
-            alt="Upload preview"
-        />
+        <div className="d-flex flex-shrink-1  mx-auto" style={{ maxWidth: "300px", maxHeight: "200px", minWidth: "200px", minHeight: "67px" }}>
+            <img
+                src={isUpdate && paramReview.images[0].imageLocation !== ''
+                    ? tempFileUrl || paramReview.images[0].imageLocation
+                    : tempFileUrl || window.location.origin + '/reviewImages/3/stock-illustration-retro-diner.jpg'
+                }
+                style={{ width: "100%", height: "100%", overflow: "hidden" }}
+                className="p-3 d-flex justify-content-center"
+                alt="Upload preview"
+            />
+        </div>
     )
 
     // The clearForm function will clear the form data
@@ -274,7 +276,7 @@ function Review(props) {
 
                 <Form onSubmit={handleSubmit}>
                     <Row className="justify-content-center justify-content-md-start">
-                        <Col xs="7" md="6">
+                        <Col xs="7" md="5">
                             <Form.Group>
                                 <Form.Label>Taste</Form.Label>
                                 <Form.Range
@@ -379,12 +381,9 @@ function Review(props) {
                             </Form.Floating>
                         </Col>
 
-                        <Col md="3" className="d-flex flex-wrap text-center">
-
+                        <Col className=" flex-wrap text-center" style={{ width: "100%", height: "100%" }}>
                             {displayReviewImage()}
-
                             <FloatingImageUpload as={Row} onChangeFile={onChangeFile} />
-
                         </Col>
                     </Row>
 
