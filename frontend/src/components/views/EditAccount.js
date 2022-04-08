@@ -15,6 +15,7 @@
 //  (DAB, 4/02/2022, Removed update password from EditAccount and moved the 
 //  link into the userDashboard)
 //  (DAB, 4/02/2022, Added Confirm Password field to create account)
+//  (TJI, 04/07/2022 - Added in Cancel button)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -28,6 +29,7 @@ import { addUserThunk, updateUserThunk, findByUserIdThunk, deleteUser } from '..
 import { checkLogin } from '../../helperFunction/CheckLogin'
 import FloatingStateOptionList from '../form/floatingComponents/FloatingStateOptionList';
 import ModalConfirmation from '../modal/ModalCancelConfirm';
+import CancelFormButton from '../form/button/CancelFormButton';
 
 /**
  * The EditAccount View will allow a users account information to be 
@@ -378,6 +380,7 @@ function EditAccount(props) {
             <Button onClick={showClearFormHandler}>
                 Clear
             </Button>
+            <CancelFormButton />
         </div>
     )
 
@@ -549,6 +552,7 @@ function EditAccount(props) {
 
                         {displaySubmitButton()}
                         {errorMessage && <Alert className="mb-0 text-center"variant="danger">{errorMessage}</Alert>}
+
                     </Form>
                 )}
             </Container>

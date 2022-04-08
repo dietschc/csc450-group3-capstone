@@ -4,12 +4,14 @@
 // February 3, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 3/09/2022, Added in a clearFormHandler for modal support)
+//  (TJI, 04/07/2022 - Added in Cancel button)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React from 'react'
 import { Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
+import CancelFormButton from './CancelFormButton';
 
 /**
  * A React-Bootstrap Button is returned that will work with both Edit Views. 
@@ -32,6 +34,7 @@ function EditFormButtons(props) {
             <Button className="ml-1 w-25" onClick={clearFormHandler}>
                 Clear
             </Button>
+            <CancelFormButton />
         </div>
     )
 }

@@ -3,12 +3,14 @@
 // Restaurant Club - DeleteFriendConfirm.js
 // February 6, 2022
 // Last Edited (Initials, Date, Edits):
+//  (TJI, 04/07/2022) - Added in Cancel Button
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React from 'react'
 import { Modal, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import CancelFormButton from '../form/button/CancelFormButton';
 
 /**
  * A React Bootstrap formatted confirmation modal that will ask 
@@ -45,6 +47,7 @@ function ModalConfirmation(props) {
                 <Button variant="primary" onClick={closeHandler}>
                     No
                 </Button>
+                <CancelFormButton />
             </Modal.Footer>
         </Modal>
     )  

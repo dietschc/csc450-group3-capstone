@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 4/02/2022, Added in confirm password and implemented the functionality 
 //  for admins to edit passwords)
+//  (TJI, 04/07/2022 - Added in Cancel button)
 
 // Using React library in order to build components 
 // for the app and importing needed components such as State where variables are stored
@@ -16,6 +17,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Form, Container, Button, FloatingLabel, Alert } from 'react-bootstrap';
 // Middleware to actually update the password
 import { updatePasswordThunk, updatePasswordSecureThunk } from '../../actions/users';
+import CancelFormButton from '../form/button/CancelFormButton';
 
 /**
  * The EditPassword Component will allow the user to edit their password. 
@@ -182,6 +184,7 @@ function EditPassword(props) {
                             <Button type="submit" className="w-25">
                                 Submit
                             </Button>
+                            <CancelFormButton />
                         </div>
                     </Form.Floating>
                     {errorMessage && <Alert className="mb-0 text-center"variant="danger">{errorMessage}</Alert>}

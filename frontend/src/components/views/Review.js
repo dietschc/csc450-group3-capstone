@@ -12,6 +12,7 @@
 //  only review a valid restaurant and the review must be for that restaurant)
 //  (DAB, 3/27/22, Enhanced comments)
 //  (TJI, 03/29/2022 - Added in character limits for review title and text to match database)
+//  (TJI, 04/07/2022 - Added in Cancel button)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -24,6 +25,7 @@ import { printStarTotal } from '../../helperFunction/StringGenerator';
 import { connect } from 'react-redux';
 import { addReviewThunk, updateReviewThunk } from '../../actions/reviews';
 import { findByRestaurantIdThunk } from '../../actions/restaurants';
+import CancelFormButton from '../form/button/CancelFormButton';
 
 /**
  * The Review View will allow a user to create and edit restaurant reviews. The 
@@ -428,6 +430,8 @@ function Review(props) {
                         <Button onClick={showClearFormHandler} className="mr-1 w-25">
                             Clear
                         </Button>
+
+                        <CancelFormButton />
                     </div>
                     <ModalConfirmation
                         show={showClearFormConfirm}
