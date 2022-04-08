@@ -14,7 +14,7 @@ const checkEnv = () => {
 
         // Else no NODE_ENV defined implies the default development environment
     } else {
-        console.log("running in development mode: ");
+        // console.log("running in development mode: ");
         return false;
     }
 };

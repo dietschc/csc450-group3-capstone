@@ -29,7 +29,6 @@ ReactDOM.render(
   // Provider allows the state to be accessed from any component 
   // wrapped in connect()
   <Provider store={store}>
-    {console.log(store.getState())}
     <BrowserRouter>
       <ScrollToTop />
       <MainTemplate />
