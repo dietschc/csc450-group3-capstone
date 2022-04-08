@@ -5,10 +5,16 @@
 // Last Edited (Initials, Date, Edits):
 
 const aws = require('aws-sdk');
+const checkEnv = require("../helperFunction/checkEnvironment")
+
+// Check if we are on the prod environment
+const isProd = checkEnv();
 
 // Set S3 endpoint to DigitalOcean Spaces
 const spacesEndpoint = new aws.Endpoint('nyc3.digitaloceanspaces.com');
 const s3 = new aws.S3({
+    accessKeyId: isProd ? process.env.S3_KEY : process.env.aws_access_key_id,
+    secretAccessKey: isProd ? process.env.S3_SECRET : process.env.aws_secret_access_key,
     endpoint: spacesEndpoint
 });
 

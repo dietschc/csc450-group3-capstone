@@ -489,7 +489,7 @@ exports.findByNameOffsetLimit = async (req, res) => {
                 }
             }
         ],
-        where: { '$Authentication.userName$': { [Op.like]: `%${searchName}%` } },
+        where: { '$authentication.userName$': { [Op.like]: `%${searchName}%` } },
         order: [[Authentication, 'userName', 'ASC']],
         offset: searchOffset,
         limit: searchLimit
