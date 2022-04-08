@@ -8,11 +8,18 @@
 // (CPD, 2/28/2022, Added RefreshToken and Authentication associations)
 
 const dbConfig = require("../config/db.config.js");
+const fs = require('fs');
+const path = require("path");
 const Sequelize = require("sequelize");
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     host: dbConfig.HOST,
     dialect: dbConfig.dialect,
+    port: dbConfig.PORT,
     operatorsAliases: false,
+    ssl: {
+        ca: dbConfig.ssl.ca,
+        rejectUnauthorized: dbConfig.ssl.rejectUnauthorized
+    },
     pool: {
         max: dbConfig.pool.max,
         min: dbConfig.pool.min,
