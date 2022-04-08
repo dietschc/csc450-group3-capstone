@@ -274,7 +274,7 @@ function Review(props) {
 
                 <Form onSubmit={handleSubmit}>
                     <Row className="justify-content-center">
-                        <Col xs="6">
+                        <Col xs="7">
                             <Form.Group>
                                 <Form.Label>Taste</Form.Label>
                                 <Form.Range
@@ -321,7 +321,7 @@ function Review(props) {
                             </Form.Group>
                         </Col>
 
-                        <Col xs="3" style={{ maxWidth: "120px" }}>
+                        <Col className="d-flex flex-column pe-0 justify-content-center align-content-center" xs="5" style={{ maxWidth: "120px" }}>
                             <Form.Floating className="mb-1 p-0">
                                 <FloatingLabel
                                     controlId="floatingTasteRating"
