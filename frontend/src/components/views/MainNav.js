@@ -18,7 +18,7 @@
 // for the app and importing needed components
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Navbar, Button, Nav, Form, FormControl } from 'react-bootstrap';
+import { Navbar, Button, Nav, Form, Container, FormControl } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
@@ -29,6 +29,10 @@ import { deleteAllRestaurants } from '../../actions/restaurants';
 import { checkLogin } from '../../helperFunction/CheckLogin';
 import ModalLogoutConfirm from '../modal/LogoutConfirm';
 import DevelopersNav from '../DevelopersNav';
+import checkEnv from "../../helperFunction/checkEnvironment";
+
+// Check if we are on the prod environment
+const isProd = checkEnv();
 
 /**
  * The MainNav component will allow the user to navigate the 
@@ -285,7 +289,10 @@ function MainNav(props) {
                 <Nav fill className="mb-auto pe-3"
                     activeKey={location.pathname.substring(0, location.pathname.lastIndexOf('/'))}
                     onSelect={(key) => setActive(key)}>
-                    <DevelopersNav />
+
+                    {/* Show dev nav if we are not on prod env */}
+                    {(isProd === false) && <DevelopersNav />}
+
                     <Nav.Item className="mx-3">
                         <LinkContainer to="/">
                             <Nav.Link>

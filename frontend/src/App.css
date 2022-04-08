@@ -57,6 +57,7 @@ h1 {
 h1 {
   padding: 20px 20px 20px 0px;
   font-style: italic;
+  text-Transform: capitalize;
 }
 
 h1, h2 {
