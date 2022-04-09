@@ -28,6 +28,26 @@ function MainRRDetailButtonGroup(props) {
     // used to process the form element
     const { moreHandler, restaurantHandler, friendHandler, review, users } = props;
 
+    const isFriend = () => {
+        const [currentUser, ...rest] = users;
+        const friendId = review?.author.id;
+        const userFriendList = currentUser?.friends;
+
+        if (userFriendList) {
+            console.log("friendId", friendId)
+            const test = userFriendList.filter((friend) => {
+                console.log("Friend ID in friend list", friend.id);
+                console.log("Friend Id both number", friend.id === friendId)
+                return friend.id === friendId
+            })
+            console.log("IS FRIEND", test)
+            return test.length > 0;
+        }
+
+        return false;
+
+    }
+
     return (
         <div
             className="
@@ -41,6 +61,17 @@ function MainRRDetailButtonGroup(props) {
       justify-content-sm-center 
       justify-content-md-end"
             style={{ minWidth: "100%" }}>
+            {console.log(isFriend())}
+            {users?.length > 0 && !isFriend() && <Button
+                className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
+                style={{ minWidth: "8rem" }}
+                onClick={() => {
+                    friendHandler(review.author.id);
+                }}
+            >
+                Friend
+            </Button>}
+
             <Button
                 className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
                 style={{ minWidth: "8rem" }}
@@ -59,15 +90,7 @@ function MainRRDetailButtonGroup(props) {
             >
                 Restaurant
             </Button>
-            {users?.length > 0 && <Button
-                className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
-                style={{ minWidth: "8rem" }}
-                onClick={() => {
-                    friendHandler(review.author.id);
-                }}
-            >
-                Friend
-            </Button>}
+
         </div>
     );
 }
