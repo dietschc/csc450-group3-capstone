@@ -6,6 +6,8 @@
 //  (DAB, 3/05/2022, Fixed moreHandler to return author.id)
 //  (DAB, 4/04/2022, Friend button is not rendered if a user is 
 //  not logged in)
+//  (DAB, 4/09/2022, Friend button will not render if a user is 
+//  already friends with the author)
 
 // Using React library in order to build components
 // for the app and importing needed components
@@ -28,24 +30,26 @@ function MainRRDetailButtonGroup(props) {
     // used to process the form element
     const { moreHandler, restaurantHandler, friendHandler, review, users } = props;
 
+    // This isFriend function will check the users friend list and return if they 
+    // are friends with the review author or not
     const isFriend = () => {
+        // Destructuring the needed data from the available arrays
         const [currentUser, ...rest] = users;
         const friendId = review?.author.id;
         const userFriendList = currentUser?.friends;
 
+        // If the user has friends, the current friendId will be checked to see 
+        // if it exists in the users friend list
         if (userFriendList) {
-            console.log("friendId", friendId)
-            const test = userFriendList.filter((friend) => {
-                console.log("Friend ID in friend list", friend.id);
-                console.log("Friend Id both number", friend.id === friendId)
-                return friend.id === friendId
-            })
-            console.log("IS FRIEND", test)
-            return test.length > 0;
+            // Filtering out the friend based off the current friendId
+            const currentFriend = userFriendList.filter((friend) => friend.id === friendId);
+
+            // Returning if the friend is in the friend list or not
+            return currentFriend.length > 0;
         }
 
+        // Since the user does not have friends, false is returned
         return false;
-
     }
 
     return (
@@ -61,7 +65,7 @@ function MainRRDetailButtonGroup(props) {
       justify-content-sm-center 
       justify-content-md-end"
             style={{ minWidth: "100%" }}>
-            {console.log(isFriend())}
+            
             {users?.length > 0 && !isFriend() && <Button
                 className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
                 style={{ minWidth: "8rem" }}
@@ -71,7 +75,6 @@ function MainRRDetailButtonGroup(props) {
             >
                 Friend
             </Button>}
-
             <Button
                 className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
                 style={{ minWidth: "8rem" }}
@@ -92,7 +95,7 @@ function MainRRDetailButtonGroup(props) {
             </Button>
 
         </div>
-    );
+    )
 }
 
 // Exporting the component
