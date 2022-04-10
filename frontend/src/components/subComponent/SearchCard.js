@@ -19,8 +19,6 @@ function SearchCard(props) {
   // used to process the form element
   const { restaurant } = props;
 
-  const starFont = {};
-
   return (
     <Link
       className="text-decoration-none text-reset"
@@ -34,7 +32,7 @@ function SearchCard(props) {
             className="d-flex flex-column flex-sm-row flex-wrap align-content-center justify-content-center"
           >
             <ListGroup.Item className="px-1 border-0 text-muted">
-              <span style={starFont}>
+              <span>
                 {printStarTotal(restaurant.rating.overallRating)}
               </span>
             </ListGroup.Item>
