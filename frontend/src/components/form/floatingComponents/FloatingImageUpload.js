@@ -31,6 +31,7 @@ function FloatingImageUpload(props) {
         <Form.Floating className="mb-3 justify-content-center">
             <Form.Control
                 id="floatingImageUpload"
+                aria-label="Image Upload"
                 className="pt-3"
                 type="file"
                 onChange={onChangeFile}
