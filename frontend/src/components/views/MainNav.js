@@ -13,12 +13,14 @@
 //  when clicked)
 //  (DAB, 04/05/2022, Added in sticky nav bar functionality and cleaned up 
 //  code)
+//  (DAB, 4/09/2022, Changed MainNav so that Search Input does not get 
+//  cut off on smaller devices)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Navbar, Button, Nav, Form, Container, FormControl } from 'react-bootstrap';
+import { Navbar, Button, Nav, Form, FormControl } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
@@ -211,7 +213,7 @@ function MainNav(props) {
                 currentUser.auth.permission.permissionName === "admin") {
                 // The Admin button is returned
                 return (
-                    <Nav.Item className="mx-3">
+                    <Nav.Item className="mx-1">
                         <LinkContainer to="/admin">
                             <Nav.Link>
                                 Admin
@@ -231,7 +233,7 @@ function MainNav(props) {
             {checkLogin(users) ?
                 (
                     <>
-                        <Nav.Item className="mx-3">
+                        <Nav.Item className="mx-1">
                             <LinkContainer to="/userDashboard">
                                 <Nav.Link>
                                     Dashboard
@@ -239,7 +241,7 @@ function MainNav(props) {
                             </LinkContainer>
                         </Nav.Item>
                         {showAdmin()}
-                        <Nav.Item className="mx-3" onClick={logoutHandler}>
+                        <Nav.Item className="ms-1 me-3" onClick={logoutHandler}>
                             <Nav.Link>
                                 Logout
                             </Nav.Link>
@@ -247,7 +249,7 @@ function MainNav(props) {
                     </>
                 ) : (
                     <>
-                        <Nav.Item className="mx-3">
+                        <Nav.Item className="ms-1 me-3">
                             <LinkContainer to="/login">
                                 <Nav.Link>
                                     Login
@@ -285,15 +287,15 @@ function MainNav(props) {
                 />
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-            <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end" >
-                <Nav fill className="mb-auto pe-3"
+            <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end flex-shrink-1" >
+                <Nav fill className="mb-auto"
                     activeKey={location.pathname.substring(0, location.pathname.lastIndexOf('/'))}
                     onSelect={(key) => setActive(key)}>
 
                     {/* Show dev nav if we are not on prod env */}
                     {(isProd === false) && <DevelopersNav />}
 
-                    <Nav.Item className="mx-3">
+                    <Nav.Item className="mx-1">
                         <LinkContainer to="/">
                             <Nav.Link>
                                 Home
@@ -302,7 +304,7 @@ function MainNav(props) {
                     </Nav.Item>
                     {showLoginControls()}
                 </Nav>
-                <Form onSubmit={searchHandler} className="d-flex">
+                <Form onSubmit={searchHandler} className="d-flex" style={{ minWidth: "10rem"}}>
                     <FormControl
                         type="search"
                         name="searchInput"

@@ -16,6 +16,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Form, Container, Button, FloatingLabel, Alert } from 'react-bootstrap';
 // Middleware to actually update the password
 import { updatePasswordThunk, updatePasswordSecureThunk } from '../../actions/users';
+import FormContainer from '../template/FormContainer';
 
 /**
  * The EditPassword Component will allow the user to edit their password. 
@@ -129,7 +130,7 @@ function EditPassword(props) {
 
 
     return (
-        <Container fluid className="text-muted login" style={{ maxWidth: "500px" }}>
+        <FormContainer>
             <Container className="mt-2" as="header">
                 <h1>Change Password</h1>
             </Container>
@@ -178,8 +179,8 @@ function EditPassword(props) {
                         </FloatingLabel>
                     </Form.Floating>
                     <Form.Floating className="mb-3 justify-content-center">
-                        <div className="d-flex justify-content-around pt-3">
-                            <Button type="submit" className="w-25">
+                        <div className="d-flex flex-column flex-sm-row justify-content-center pt-3">
+                            <Button type="submit">
                                 Submit
                             </Button>
                         </div>
@@ -189,7 +190,7 @@ function EditPassword(props) {
                 </Form>
                 
             </Container>
-        </Container>
+        </FormContainer>
     )
 }
 

@@ -12,7 +12,15 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { Container, ListGroup } from 'react-bootstrap';
 
+/**
+ * The footer will display the creating group and date edited of the Restaurant
+ * Club project. 
+ * 
+ * @param {*} props 
+ * @returns 
+ */
 function Footer(props) {
+    // Setting the current year to display
     const currentYear = new Date().getFullYear();
 
     return (

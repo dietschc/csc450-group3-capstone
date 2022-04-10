@@ -12,11 +12,14 @@ import Footer from '../views/Footer';
 import App from '../../App';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-// This function will build a page template that accepts 
-// children sandwiched between the main navigation and 
-// the footer
+/**
+ * This function will build a page template that accepts 
+ * children sandwiched between the main navigation and 
+ * the footer.
+ * 
+ * @returns 
+ */
 function MainTemplate() {
-
     return (
         <div className="page bg-light">
             <MainNav />

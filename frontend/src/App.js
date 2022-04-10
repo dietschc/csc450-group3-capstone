@@ -35,8 +35,15 @@ import AuthReview from './components/auth/AuthReview';
 import AuthChat from './components/auth/AuthChat';
 import EditPassword from './components/views/EditPassword';
 
+/**
+ * The App Component handles all the navigation and security for the 
+ * front end Components. They will load via the URL route at the 
+ * time.
+ * 
+ * @param {*} props 
+ * @returns 
+ */
 function App(props) {
-
     return (
         <div className="App" style={{ paddingBottom: "4rem"}}>
             <Routes>

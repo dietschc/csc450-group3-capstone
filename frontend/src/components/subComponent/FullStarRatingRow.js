@@ -3,6 +3,7 @@
 // Restaurant Club - FullStarRatingRow.js
 // February 7, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 4/09/2022, Removed "visited" from "Date visited:")
 
 // Using React library in order to build components 
 // for the app and importing needed components

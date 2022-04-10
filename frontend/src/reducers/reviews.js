@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 2/14/2022, Started writing basic redux reducers)
 //  (DAB, 2/15/2022, Finished writing basic redux reducers)
+//  (DAB, 4/09/2022, Fixed bug in reviewRatings where there were two overallRatings)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -104,7 +105,7 @@ export const reviewRating = (state = {}, action) => {
                 tasteRating: action.rating.tasteRating,
                 serviceRating: action.rating.serviceRating,
                 cleanlinessRating: action.rating.cleanlinessRating,
-                overallRating: action.rating.cleanlinessRating
+                overallRating: action.rating.overallRating
             }
         case C.UPDATE_REVIEW:
             return {
