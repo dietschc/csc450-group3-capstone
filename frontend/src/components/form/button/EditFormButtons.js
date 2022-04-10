@@ -4,6 +4,7 @@
 // February 3, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 3/09/2022, Added in a clearFormHandler for modal support)
+//  (DAB, 4/10/2022, Buttons now are uniform size and responsive)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -24,12 +25,18 @@ function EditFormButtons(props) {
     const { isUpdate, clearFormHandler } = props;
 
     return (
-        <div className="d-flex justify-content-around pt-2 pb-5">
-            <Button className="mr-1 w-25" type="submit">
+        <div className="d-flex flex-column flex-sm-row justify-content-around pt-2">
+            <Button 
+            className="my-1" 
+            type="submit"
+            style={{ minWidth: "10rem" }}>
                 {isUpdate ? "Update" : "Submit"}
             </Button>
 
-            <Button className="ml-1 w-25" onClick={clearFormHandler}>
+            <Button 
+            className="my-1" 
+            onClick={clearFormHandler}
+            style={{ minWidth: "10rem" }}>
                 Clear
             </Button>
         </div>

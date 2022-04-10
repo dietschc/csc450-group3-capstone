@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 3/06/2022, Added functionality for the component buttons)
 //  (DAB, 4/03/2022, Added in responsive ban/unBan user functionality)
+//  (DAB, 4/10/2022, Buttons now are uniform size and responsive)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -57,14 +58,14 @@ function UserEditItem(props) {
     // functionality
     const banButtonDisplay = () => (
         !isBanned() ? (
-            <Button className="mx-1"
-                style={{ width: "7rem" }}
+            <Button className="m-1"
+                style={{ minWidth: "7rem" }}
                 onClick={() => banHandler(userId)}>
                 Ban
             </Button>
         ) : (
-            <Button className="mx-1"
-                style={{ width: "7rem" }}
+            <Button className="m-1"
+                style={{ minWidth: "7rem" }}
                 onClick={() => unBanHandler(userId)}>
                 UnBan
             </Button>
@@ -75,21 +76,21 @@ function UserEditItem(props) {
         <ListGroup as="ul" className="justify-content-center px-0 mb-2">
             <ListGroup.Item as="li" className="border-3" style={{ minHeight: "3rem" }} action>
                 <Row className="d-flex justify-content-between align-items-center">
-                    <Col sm={6} className="d-flex justify-content-center justify-content-sm-start align-content-center pe-0">
+                    <Col sm={4} md={6} className="d-flex justify-content-center justify-content-sm-start align-content-center pe-0">
                         <div className="pb-1">
                             {user.auth.userName}
                         </div>
                     </Col>
-                    <Col sm={6} className="d-flex justify-content-between">
+                    <Col sm={8} md={6} className="d-flex flex-column flex-sm-row justify-content-between">
                         <Button
-                            className="mx-1"
-                            style={{ width: "7rem" }}
+                            className="m-1"
+                            style={{ minWidth: "7rem" }}
                             onClick={() => dashboardHandler(userId)}>
                             Dashboard
                         </Button>
                         {!isAdmin() && banButtonDisplay()}
-                        <Button className="mx-1"
-                            style={{ width: "7rem" }}
+                        <Button className="m-1"
+                            style={{ minWidth: "7rem" }}
                             onClick={() => userDeleteHandler(userId)}>
                             Delete
                         </Button>
