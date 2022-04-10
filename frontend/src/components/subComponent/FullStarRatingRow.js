@@ -31,7 +31,7 @@ function FullStarRatingRow(props) {
             <FullStarRatingCol rating={review.rating} />
             <Col className="d-flex justify-content-center justify-content-sm-end align-items-end">
                 <span className="text-center" style={{ minWidth: "12rem" }}>
-                    Date Of Visit: {formatTimeMMddYYYY(review.history.created)}
+                    Date: {formatTimeMMddYYYY(review.history.created)}
                 </span>
             </Col>
         </Row>

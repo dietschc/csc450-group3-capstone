@@ -19,7 +19,7 @@ function SearchCard(props) {
   // used to process the form element
   const { restaurant } = props;
 
-  const starFont = { color: "gold" };
+  const starFont = {};
 
   return (
     <Link
