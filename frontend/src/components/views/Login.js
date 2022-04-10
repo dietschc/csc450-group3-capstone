@@ -10,6 +10,7 @@
 //  (TJI, 03/29/2022 - Added in character limits to match database)
 //  (TJI, 04/02/2022, Removed call to password from state)
 //  (DAB, 4/10/2022, Added comments)
+//  (DAB, 4/10/2022, Button are now responsive and follow expanding theme)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -51,7 +52,7 @@ function Login(props) {
     const onChangeUserName = e => {
         setShowError(false);
         setShowSuccess(false);
-        const {value, maxLength} = e.target;
+        const { value, maxLength } = e.target;
         const userName = value.slice(0, maxLength);
         setUserName(userName);
     }
@@ -59,7 +60,7 @@ function Login(props) {
     const onChangePassword = e => {
         setShowError(false);
         setShowSuccess(false);
-        const {value, maxLength} = e.target;
+        const { value, maxLength } = e.target;
         const password = value.slice(0, maxLength);
         setPassword(password);
     }
@@ -67,33 +68,41 @@ function Login(props) {
     // Check if user is logged in
     const showLoginButtons = () => (
         <div className="text-center">
-            {checkLogin(users) ? (
-                <div className="d-flex justify-content-around pt-2 pb-5">
-                    <Button onClick={logoutAccount}>
-                        Logout
-                    </Button>
-                </div>
-            ) : (
-                <div>
-                    <div className="d-flex justify-content-around pt-2 pb-5">
-                        <Button type="submit">
-                            Login
-                        </Button>
-
-                        <Button onClick={createAccountHandler}>
-                            Create Account
+            {checkLogin(users) ?
+                (
+                    <div className="d-flex flex-column flex-sm-row justify-content-center pt-2 pb-5">
+                        <Button
+                            style={{ minWidth: "10rem" }}
+                            onClick={logoutAccount}>
+                            Logout
                         </Button>
                     </div>
-
-                    <div>
-                        {isError &&
-                            <Alert variant="danger" className="text-center">
-                                Incorrect user name or password!
-                            </Alert>
-                        }
+                ) : (
+                    <div className="p-0 m-0">
+                        <div className="d-flex flex-column flex-sm-row justify-content-around p-0 m-0">
+                            <Button
+                                className="my-1"
+                                style={{ minWidth: "10rem" }}
+                                type="submit">
+                                Login
+                            </Button>
+                            <Button
+                                className="my-1"
+                                style={{ minWidth: "10rem" }}
+                                onClick={createAccountHandler}>
+                                Create Account
+                            </Button>
+                        </div>
+                        <div>
+                            {isError &&
+                                <Alert variant="danger" className="text-center">
+                                    Incorrect user name or password!
+                                </Alert>
+                            }
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
             <div>
                 {isSuccess &&
                     <Alert variant="success" className="text-center">
@@ -158,7 +167,7 @@ function Login(props) {
             <Container className="mt-2" as="header">
                 <h1>Login</h1>
             </Container>
-            <Container fluid as="main" className="mt-5 justify-content-center align-center">
+            <Container fluid as="main" className="justify-content-center align-center">
                 {isSubmitted ? (
                     <div className="text-center">
                         <h4>Account logged in successfully!</h4>

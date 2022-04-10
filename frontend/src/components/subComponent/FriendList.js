@@ -43,23 +43,42 @@ function FriendList(props) {
                 <ListGroup className="">
                     {friends.map((friend, index) => (
                         <ListGroup.Item className="mb-1 p-2 border-1" key={index} id={friend.userId}>
-                            <Row className="d-flex flex-row flex-nowrap align-content-center">
+                            <Row className="d-flex flex-row align-content-center">
                                 <div className="d-flex flex-column flex-sm-row m-0 p-0">
                                     <div
-                                        className="d-flex flex-fill justify-content-center justify-content-sm-start align-self-center m-0 px-2">
+                                        className="
+                                        d-flex 
+                                        flex-fill 
+                                        justify-content-center 
+                                        justify-content-sm-start 
+                                        align-self-center 
+                                        m-0 
+                                        px-2"
+                                    >
                                         {friend.userName}
                                     </div>
                                     <div
-                                        className="d-flex flex-column flex-sm-row m-0 p-0 px-1">
+                                        className="
+                                        d-flex 
+                                        flex-column 
+                                        flex-wrap 
+                                        justify-content-end 
+                                        flex-sm-row 
+                                        m-0 
+                                        p-0 
+                                        px-1"
+                                    >
                                         {!userId &&
                                             <Button
                                                 className="m-1"
+                                                style={{ minWidth: "4.3rem" }}
                                                 onClick={() => chatHandler(friend)}>
                                                 Chat
                                             </Button>
                                         }
                                         <Button
                                             className="m-1"
+                                            style={{ minWidth: "4.3rem" }}
                                             onClick={() => deleteFriendHandler(friend)}>
                                             Delete
                                         </Button>

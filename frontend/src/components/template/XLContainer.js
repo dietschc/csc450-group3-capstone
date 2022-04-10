@@ -21,7 +21,7 @@ function FormContainer(props) {
     const children = props.children;
     
     return (
-        <Container fluid className="justify-content-center" style={{maxWidth: "1000px"}}>
+        <Container fluid className="justify-content-center pb-2" style={{maxWidth: "1000px"}}>
             {children}
         </Container>
     )  
