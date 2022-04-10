@@ -9,6 +9,7 @@
 //  to the previous location after logging in)
 //  (TJI, 03/29/2022 - Added in character limits to match database)
 //  (TJI, 04/02/2022, Removed call to password from state)
+//  (DAB, 4/10/2022, Added comments)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -20,17 +21,28 @@ import { connect } from 'react-redux';
 import { loginThunk, deleteAllUsers } from '../../actions/users';
 import { Link } from 'react-router-dom';
 import { checkLogin } from '../../helperFunction/CheckLogin'
+import FormContainer from '../template/FormContainer';
 
+/**
+ * The Login Component will allow a user to either login to their 
+ * account or move on to create a new account. 
+ * 
+ * @param {*} props 
+ * @returns 
+ */
 function Login(props) {
+    // Destructuring needed state and functions from props
+    const { users } = props;
+    const { loginThunk, deleteAllUsers } = props;
 
-    const { loginThunk, deleteAllUsers, users } = props;
-
+    // Setting local state variables
     const [isSubmitted, setSubmitted] = useState(false)
     const [isError, setShowError] = useState(false)
     const [isSuccess, setShowSuccess] = useState(false)
     const [userName, setUserName] = useState(users.length > 0 ? users[0].auth.userName : "");
     const [password, setPassword] = useState("");
 
+    // Creating a navigate instance that will allow for traversal through the app
     const navigate = useNavigate();
     // Pulling state from useLocation to allow for the user to be redirected back to the page 
     // they were previously on before redirect
@@ -142,8 +154,7 @@ function Login(props) {
     }
 
     return (
-        <Container fluid className="text-muted login" style={{ maxWidth: "500px" }}>
-
+        <FormContainer>
             <Container className="mt-2" as="header">
                 <h1>Login</h1>
             </Container>
@@ -195,7 +206,7 @@ function Login(props) {
                     </Form>
                 )}
             </Container>
-        </Container>
+        </FormContainer>
     )
 }
 

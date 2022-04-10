@@ -1,4 +1,5 @@
 body {
+  margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -14,4 +15,6 @@ code {
 #root {
   position: relative;
   min-height: 100vh;
+  background-color: rgba(248,249,250); /* bg-light */
+  opacity: 1; /* bg-light */
 }

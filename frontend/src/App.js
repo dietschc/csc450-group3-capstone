@@ -45,7 +45,7 @@ import EditPassword from './components/views/EditPassword';
  */
 function App(props) {
     return (
-        <div className="App" style={{ paddingBottom: "4rem"}}>
+        <div className="App" style={{ paddingBottom: "4rem" }}>
             <Routes>
                 <Route exact path='/' element={<Main />} />
                 <Route path='/restaurant' element={<Navigate replace to='/search' />} />

@@ -4,6 +4,7 @@
 // February 6, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 4/02/2022, Added Edit Password Button)
+//  (DAB, 4/10/2022, Buttons now are uniform size and responsive)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -29,7 +30,7 @@ function UserInfo(props) {
             <Card.Title className="text-center">
                 User Information
             </Card.Title>
-            <Card.Body className="border-0">
+            <Card.Body className="border-0 p-2">
                 <ListGroup className="mb-3">
                     <ListGroup.Item>
                         <Row>
@@ -112,11 +113,17 @@ function UserInfo(props) {
                         </Row>
                     </ListGroup.Item>
                 </ListGroup>
-                <Card.Body className="d-flex p-0 m-0">
-                    <Button className="mx-auto d-flex" onClick={() => userInfoHandler()}>
+                <Card.Body className="d-flex flex-column flex-sm-row justify-content-around p-0 m-0">
+                    <Button
+                        className="m-1"
+                        style={{ minWidth: "10rem" }}
+                        onClick={() => userInfoHandler()}>
                         Update
                     </Button>
-                    <Button className="mx-auto d-flex" onClick={() => changePasswordHandler()}>
+                    <Button
+                        className="m-1"
+                        style={{ minWidth: "10rem" }}
+                        onClick={() => changePasswordHandler()}>
                         Change Password
                     </Button>
                 </Card.Body>
