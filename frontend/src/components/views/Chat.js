@@ -252,9 +252,9 @@ function Chat(props) {
                                 {message.message}
                             </span><br /><br /></span>
                     ) : (
-                        <span key={index} style={{ color: "darkred", whiteSpace: "pre-wrap" }}>
+                        <span key={index} style={{ color: "#5c1010", whiteSpace: "pre-wrap" }}>
                             {`${friendName}[${formatTimeCalendar(message.timeStamp)}]: `}
-                            <span style={{ color: "red" }}>
+                            <span style={{ color: "#B30505" }}>
                                 {message.message + "\n"}
                             </span><br /><br /></span>
                     )

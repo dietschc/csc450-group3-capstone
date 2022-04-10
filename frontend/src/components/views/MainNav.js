@@ -283,7 +283,7 @@ function MainNav(props) {
                     width="124px"
                     height="90px"
                     className="flex-begin rounded"
-                    alt="Logo"
+                    alt="Main Logo"
                 />
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />

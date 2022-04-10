@@ -74,7 +74,11 @@ function Search(props) {
                             restaurants.map((restaurant, index) => (
                                 <SearchCard restaurant={restaurant} key={index} />)
                             ) : (
-                                <h3 className="text-center mt-4">No Restaurants Found!</h3>
+                                <h2
+                                    className="text-center"
+                                    style={{ fontSize: "1.6rem" }}>
+                                    No Restaurants Found!
+                                </h2>
                             )
                         }
                     </Container>
