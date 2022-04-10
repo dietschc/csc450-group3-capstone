@@ -15,6 +15,7 @@
 //  (DAB, 4/02/2022, Removed update password from EditAccount and moved the 
 //  link into the userDashboard)
 //  (DAB, 4/02/2022, Added Confirm Password field to create account)
+//  (DAB, 4/10/2022, Button are now responsive and follow expanding theme)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -365,17 +366,17 @@ function EditAccount(props) {
     // The displaySubmitButton will display the correct submit button and 
     // associated handlers so the correct operations can be performed
     const displaySubmitButton = () => (
-        <div className="d-flex justify-content-around pt-2 pb-4">
+        <div className="d-flex flex-column flex-sm-row justify-content-around pt-2">
             {isEditing ? (
-                <Button type="submit">
+                <Button className="m-1" style={{ minWidth: "4.4rem" }} type="submit">
                     Update
                 </Button>
             ) : (
-                <Button type="submit">
+                <Button className="m-1" style={{ minWidth: "4.4rem" }} type="submit">
                     Submit
                 </Button>
             )}
-            <Button onClick={showClearFormHandler}>
+            <Button className="m-1" style={{ minWidth: "4.4rem" }} onClick={showClearFormHandler}>
                 Clear
             </Button>
         </div>
@@ -428,7 +429,7 @@ function EditAccount(props) {
                     <h1>{isEditing ? "Edit" : "Create"} Account</h1>
                 </div>
             </Container>
-            <Container fluid as="main" className="p-4 justify-content-center">
+            <Container fluid as="main" className="justify-content-center">
                 {submitted ? (
                     <div className="text-center">
                         <h4>Account information submitted successfully</h4>

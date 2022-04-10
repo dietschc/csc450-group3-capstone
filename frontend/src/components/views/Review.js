@@ -13,6 +13,7 @@
 //  (DAB, 3/27/22, Enhanced comments)
 //  (TJI, 03/29/2022 - Added in character limits for review title and text to match database)
 //  (DAB, 04/07/2022, Review is now more responsive and works on mobile)
+//  (DAB, 4/10/2022, Buttons now are uniform size and responsive)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -25,6 +26,7 @@ import { printStarTotal } from '../../helperFunction/StringGenerator';
 import { connect } from 'react-redux';
 import { addReviewThunk, updateReviewThunk } from '../../actions/reviews';
 import { findByRestaurantIdThunk } from '../../actions/restaurants';
+import XLContainer from '../template/XLContainer';
 
 /**
  * The Review View will allow a user to create and edit restaurant reviews. The 
@@ -263,13 +265,13 @@ function Review(props) {
 
 
     return (
-        <Container fluid className="text-muted" style={{ maxWidth: "1000px" }}>
+        <XLContainer>
             <Container as="header">
                 <div className="text-center p-1">
                     <h1>{restaurantName} Review</h1>
                 </div>
             </Container>
-            <Container fluid as="main" className="pb-5 justify-content-center">
+            <Container fluid as="main" className="justify-content-center">
                 <div className="text-center pb-3">
                     <strong>Please rate your visit!</strong>
                 </div>
@@ -419,12 +421,17 @@ function Review(props) {
                         </FloatingLabel>
                     </Form.Floating>
 
-                    <div className="d-flex justify-content-around pt-2 pb-5">
-                        <Button type="submit" className="mr-1 w-25">
+                    <div className="d-flex flex-column flex-sm-row justify-content-around pt-2">
+                        <Button
+                            type="submit"
+                            className="m-1"
+                            style={{ minWidth: "10rem" }}>
                             {isUpdate ? "Update" : "Submit"}
                         </Button>
-
-                        <Button onClick={showClearFormHandler} className="mr-1 w-25">
+                        <Button
+                            className="m-1"
+                            onClick={showClearFormHandler}
+                            style={{ minWidth: "10rem" }} >
                             Clear
                         </Button>
                     </div>
@@ -434,7 +441,7 @@ function Review(props) {
                         clearForm={clearForm} />
                 </Form>
             </Container>
-        </Container>
+        </XLContainer>
     )
 }
 

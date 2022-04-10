@@ -4,6 +4,7 @@
 // February 6, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 3/27/2022, Took out admins ability to view private chat)
+//  (DAB, 4/10/2022, Style changes to allow for greater responsiveness)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -38,23 +39,52 @@ function FriendList(props) {
             <Card.Title className="text-center">
                 Friends
             </Card.Title>
-            <Card.Body style={{ overflow: "auto" }}>
-                <ListGroup className="mb-3">
-                    {friends.map((friend, index) => (  
-                        <ListGroup.Item key={index} id={friend.userId}>
-                            <Row>
-                                <Col className="d-flex align-items-center my-1 me-0 pe-0 flex-shrink-1">
-                                    {friend.userName}
-                                </Col>
-                                <Col className="d-flex justify-content-end my-1 px-0 flex-shrink-1">
-                                    {!userId && <Button onClick={() => chatHandler(friend)}>Chat</Button>}
-                                </Col>
-                                <Col className="d-flex justify-content-center my-1 px-0 flex-shrink-1">
-                                    <Button onClick={() => deleteFriendHandler(friend)}>
-                                        Delete
-                                    </Button>
+            <Card.Body className="p-2 m-0" style={{ overflow: "auto" }}>
+                <ListGroup className="">
+                    {friends.map((friend, index) => (
+                        <ListGroup.Item className="mb-1 p-2 border-1" key={index} id={friend.userId}>
+                            <Row className="d-flex flex-row align-content-center">
+                                <div className="d-flex flex-column flex-sm-row m-0 p-0">
+                                    <div
+                                        className="
+                                        d-flex 
+                                        flex-fill 
+                                        justify-content-center 
+                                        justify-content-sm-start 
+                                        align-self-center 
+                                        m-0 
+                                        px-2"
+                                    >
+                                        {friend.userName}
+                                    </div>
+                                    <div
+                                        className="
+                                        d-flex 
+                                        flex-column 
+                                        flex-wrap 
+                                        justify-content-end 
+                                        flex-sm-row 
+                                        m-0 
+                                        p-0 
+                                        px-1"
+                                    >
+                                        {!userId &&
+                                            <Button
+                                                className="m-1"
+                                                style={{ minWidth: "4.3rem" }}
+                                                onClick={() => chatHandler(friend)}>
+                                                Chat
+                                            </Button>
+                                        }
+                                        <Button
+                                            className="m-1"
+                                            style={{ minWidth: "4.3rem" }}
+                                            onClick={() => deleteFriendHandler(friend)}>
+                                            Delete
+                                        </Button>
+                                    </div>
+                                </div>
 
-                                </Col>
                             </Row>
                         </ListGroup.Item>
                     ))}

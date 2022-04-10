@@ -28,10 +28,10 @@ function FullStarRatingCol(props) {
     const { rating, key } = props;
 
     return (
-        <Col className="d-flex justify-content-center justify-content-sm-start pt-2">
+        <Col className="d-flex justify-content-center justify-content-sm-start pt-2 mb-1">
             <ListGroup as="ul" key={key}>
                 <ListGroup.Item as="li"
-                className="d-flex justify-content-between align-items-start pt-1 pb-0 mb-0 border-bottom-0" 
+                    className="d-flex justify-content-between align-items-start pt-1 pb-0 mb-0 border-bottom-0" 
                 style={{ maxWidth: "13rem"}}>
                     <div className="pe-2">
                         Taste
@@ -61,7 +61,7 @@ function FullStarRatingCol(props) {
                     </div>
                 </ListGroup.Item>
                 <ListGroup.Item as="li"
-                className="d-flex justify-content-between align-items-start pt-1 pb-0 mb-0" 
+                    className="d-flex justify-content-between align-items-start pt-1 pb-0 mb-0" 
                 style={{ maxWidth: "13rem"}}>
                     <div className="pe-2">
                         Overall 

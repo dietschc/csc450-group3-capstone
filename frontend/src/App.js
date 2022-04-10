@@ -12,6 +12,7 @@
 //  want to go)
 //  (DAB, 4/02/2022, Wrapped editPassword in the appropriate authentication wrappers)
 //  (DAB, 4/03/2022, Removed connect wrapper from App)
+//  (DAB, 4/09/2022, Adjusted content for footer to hug bottom of page)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -34,10 +35,17 @@ import AuthReview from './components/auth/AuthReview';
 import AuthChat from './components/auth/AuthChat';
 import EditPassword from './components/views/EditPassword';
 
+/**
+ * The App Component handles all the navigation and security for the 
+ * front end Components. They will load via the URL route at the 
+ * time.
+ * 
+ * @param {*} props 
+ * @returns 
+ */
 function App(props) {
-
     return (
-        <div className="App pb-5">
+        <div className="App" style={{ paddingBottom: "4rem" }}>
             <Routes>
                 <Route exact path='/' element={<Main />} />
                 <Route path='/restaurant' element={<Navigate replace to='/search' />} />

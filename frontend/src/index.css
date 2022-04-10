@@ -11,3 +11,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+#root {
+  position: relative;
+  min-height: 100vh;
+  background-color: rgba(248,249,250); /* bg-light */
+  opacity: 1; /* bg-light */
+}

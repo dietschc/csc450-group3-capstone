@@ -7,6 +7,7 @@
 //  (DAB, 03/05/2022, Added in functionality for the search view  and added 
 //  some comments)
 //  (DAB, 04/04/2022, Added Spinners for database load in)
+//  (DAB, 4/10/2022, Button is now responsive and follows expanding theme)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -79,7 +80,7 @@ function Search(props) {
                     </Container>
                 )
             }
-            <Container fluid className="d-flex justify-content-center">
+            <Container fluid className="d-flex flex-column flex-sm-row justify-content-center">
                 <Button onClick={() => navigate('../editRestaurant')}>
                     Add Restaurant
                 </Button>
