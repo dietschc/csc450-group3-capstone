@@ -22,7 +22,7 @@ function FormContainer(props) {
     const children = props.children;
     
     return (
-        <Container fluid className="text-muted pb-2" style={{ maxWidth: "500px" }}>
+        <Container fluid className="pb-2" style={{ maxWidth: "500px" }}>
             {children}
         </Container>
     )  

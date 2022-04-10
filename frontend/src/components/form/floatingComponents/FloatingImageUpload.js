@@ -10,7 +10,7 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import React from 'react'
-import { Form, FloatingLabel } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 /**
@@ -29,19 +29,19 @@ function FloatingImageUpload(props) {
 
     return (
         <Form.Floating className="mb-3 justify-content-center">
-            <FloatingLabel 
-            controlId="floatingImageInput"
-            > 
-                    <Form.Control
-                    className="pt-3"
-                    type="file"
-                    aria-label="file upload"
-                    onChange={onChangeFile}
-                    accept=".jpg,.png,.jpeg,.gif"
-                    />
-            </FloatingLabel> 
+            <Form.Control
+                id="floatingImageUpload"
+                aria-label="Image Upload"
+                className="pt-3"
+                type="file"
+                onChange={onChangeFile}
+                accept=".jpg,.png,.jpeg,.gif"
+            />
+            <label htmlFor="floatingImageUpload" hidden>
+                Image Upload
+            </label>
         </Form.Floating>
-    )  
+    )
 }
 
 // Exporting the component

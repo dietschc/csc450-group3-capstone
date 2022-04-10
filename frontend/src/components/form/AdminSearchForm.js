@@ -53,13 +53,19 @@ function AdminSearchForm(props) {
                         defaultChecked
                         id="searchOptionRadio1"
                     />
+                    {/* <label htmlFor="searchOptionRadio1">
+                        User Select
+                    </label> */}
                     <Form.Check
                         label="Restaurant"
                         name="searchOption"
                         type="radio"
                         value="restaurant"
-                        id="searchOptionRadio1"
+                        id="searchOptionRadio2"
                     />
+                    {/* <label htmlFor="searchOptionRadio2" hidden>
+                        User Select
+                    </label> */}
                 </ButtonGroup>
             </Row>
         </Form>
