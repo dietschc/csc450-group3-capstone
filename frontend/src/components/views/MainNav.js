@@ -241,7 +241,7 @@ function MainNav(props) {
                             </LinkContainer>
                         </Nav.Item>
                         {showAdmin()}
-                        <Nav.Item className="ms-1 me-3" onClick={logoutHandler}>
+                        <Nav.Item className="mx-1" onClick={logoutHandler}>
                             <Nav.Link>
                                 Logout
                             </Nav.Link>
@@ -249,7 +249,7 @@ function MainNav(props) {
                     </>
                 ) : (
                     <>
-                        <Nav.Item className="ms-1 me-3">
+                        <Nav.Item className="mx-1">
                             <LinkContainer to="/login">
                                 <Nav.Link>
                                     Login

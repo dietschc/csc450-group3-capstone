@@ -74,14 +74,35 @@ function UserEditItem(props) {
 
     return (
         <ListGroup as="ul" className="justify-content-center px-0 mb-2">
-            <ListGroup.Item as="li" className="border-3" style={{ minHeight: "3rem" }} action>
-                <Row className="d-flex justify-content-between align-items-center">
-                    <Col sm={4} md={6} className="d-flex justify-content-center justify-content-sm-start align-content-center pe-0">
+            <ListGroup.Item
+                as="li"
+                className="border-3"
+                style={{ minHeight: "3rem" }}
+                action>
+                <Row
+                    className="d-flex justify-content-between align-items-center">
+                    <Col
+                        sm={4}
+                        md={6}
+                        className="
+                    d-flex 
+                    justify-content-center 
+                    justify-content-sm-start 
+                    align-content-center 
+                    px-0 
+                    mx-0">
                         <div className="pb-1">
                             {user.auth.userName}
                         </div>
                     </Col>
-                    <Col sm={8} md={6} className="d-flex flex-column flex-sm-row justify-content-between">
+                    <Col
+                        sm={8}
+                        md={6}
+                        className="
+                    d-flex 
+                    flex-column 
+                    flex-sm-row 
+                    justify-content-between px-0">
                         <Button
                             className="m-1"
                             style={{ minWidth: "7rem" }}

@@ -366,7 +366,7 @@ function EditAccount(props) {
     // The displaySubmitButton will display the correct submit button and 
     // associated handlers so the correct operations can be performed
     const displaySubmitButton = () => (
-        <div className="d-flex flex-column flex-sm-row justify-content-around pt-2 pb-3">
+        <div className="d-flex flex-column flex-sm-row justify-content-around pt-2">
             {isEditing ? (
                 <Button className="m-1" style={{ minWidth: "4.4rem" }} type="submit">
                     Update
