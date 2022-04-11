@@ -54,6 +54,7 @@ function FriendList(props) {
                                         align-self-center 
                                         m-0 
                                         px-2"
+                                        style={{wordBreak: "break-all"}}
                                     >
                                         {friend.userName}
                                     </div>
@@ -61,7 +62,6 @@ function FriendList(props) {
                                         className="
                                         d-flex 
                                         flex-column 
-                                        flex-wrap 
                                         justify-content-end 
                                         flex-sm-row 
                                         m-0 

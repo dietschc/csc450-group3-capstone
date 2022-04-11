@@ -35,7 +35,7 @@ function FloatingCity(props) {
                         required
                         value={city}
                         onChange={onChangeCity}
-                        maxLength="64"
+                        maxLength="20"
                     />
                 </FloatingLabel>
         </Form.Floating>

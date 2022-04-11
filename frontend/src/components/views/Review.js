@@ -325,7 +325,16 @@ function Review(props) {
                             </Form.Group>
                         </Col>
 
-                        <Col className="d-flex flex-column pe-0 justify-content-center align-content-center" xs="5" md="3" style={{ maxWidth: "120px" }}>
+                        <Col
+                            className="
+                            d-flex 
+                            flex-column 
+                            pe-0 
+                            justify-content-center 
+                            align-content-center"
+                            xs="5"
+                            md="3"
+                            style={{ maxWidth: "120px" }}>
                             <Form.Floating className="mb-1 p-0">
                                 <FloatingLabel
                                     controlId="floatingTasteRating"
@@ -383,7 +392,9 @@ function Review(props) {
                             </Form.Floating>
                         </Col>
 
-                        <Col className=" flex-wrap text-center" style={{ width: "100%", height: "100%" }}>
+                        <Col
+                            className=" flex-wrap text-center"
+                            style={{ width: "100%", height: "100%" }}>
                             {displayReviewImage()}
                             <FloatingImageUpload as={Row} onChangeFile={onChangeFile} />
                         </Col>

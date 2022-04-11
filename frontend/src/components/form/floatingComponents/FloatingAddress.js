@@ -36,7 +36,7 @@ function FloatingAddress(props) {
                 required
                 value={address}
                 onChange={onChangeAddress}
-                maxLength="64"
+                maxLength="38"
                 />
             </FloatingLabel>
         </Form.Floating>

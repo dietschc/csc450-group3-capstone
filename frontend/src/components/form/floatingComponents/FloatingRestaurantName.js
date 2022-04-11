@@ -35,7 +35,7 @@ function FloatingRestaurantName(props) {
                         required
                         value={restaurantName}
                         onChange={onChangeRestaurantName}
-                        maxLength="64"
+                        maxLength="35"
                     />
                 </FloatingLabel>
         </Form.Floating>
