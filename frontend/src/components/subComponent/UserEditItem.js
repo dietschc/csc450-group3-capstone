@@ -69,7 +69,7 @@ function UserEditItem(props) {
             <Button className="m-1"
                 style={{ minWidth: "7rem" }}
                 onClick={() => unAdminHandler(userId)}>
-                UnAdmin
+                Member
             </Button>
         )
     )
