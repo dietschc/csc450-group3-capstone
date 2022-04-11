@@ -1,7 +1,7 @@
 // Initially Created by: Devin Brueberg
 // CSC450 Capstone
-// Restaurant Club - BanUserConfirm.js
-// March 6, 2022
+// Restaurant Club - UnAdminUserConfirm.js
+// April 11, 2022
 // Last Edited (Initials, Date, Edits):
 
 // Using React library in order to build components 
@@ -12,31 +12,31 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 /**
  * A React Bootstrap formatted confirmation modal that will ask 
- * a user if they wish to ban a user. If the confirmation 
- * is accepted the banUser function will handle the 
- * banning of that user.
+ * a user if they wish to remove and admins privileges. If the 
+ * confirmation is accepted the unAdminUser function will handle the 
+ * removal of that users admin permissions.
  * 
- * @param { show, banUser, closeHandler } props 
+ * @param { show, unAdminUser, closeHandler } props 
  * @returns 
  */
-function BanUserConfirm(props) {
+function UnAdminUserConfirm(props) {
     // Destructuring the needed functions and variables from props
-    const { show, banUser, closeHandler } = props;
+    const { show, unAdminUser, closeHandler } = props;
 
-    // The yesHandler will call both the banUser and closeHandler 
-    // functions in order to ban the user
+    // The yesHandler will call both the unAdminUser and closeHandler 
+    // functions in order to remove an admins permissions
     const yesHandler = () => {
-        banUser();
+        unAdminUser();
         closeHandler();
     }
     
     return (
         <Modal show={show} onHide={closeHandler}>
             <Modal.Header closeButton>
-                <Modal.Title>Ban User</Modal.Title>
+                <Modal.Title>UnAdmin User</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                Are you sure you want to ban this user?
+                Are you sure you want to remove this users admin permissions?
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={yesHandler}>
@@ -51,4 +51,4 @@ function BanUserConfirm(props) {
 }
 
 // Exporting the component
-export default BanUserConfirm;
+export default UnAdminUserConfirm;

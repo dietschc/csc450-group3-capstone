@@ -6,6 +6,7 @@
 //  (DAB, 3/06/2022, Added in DELETE_ADDITIONAL_USERS and 
 //  BAN_USER_PERMISSION)
 //  (DAB, 4/03/2022, Added in UN_BAN_USER_PERMISSION)
+//  (DAB, 4/11/2022, Added in UN_ADMIN_USER_PERMISSION and ADMIN_USER_PERMISSION)
 
 // These constants ensure that there will be no 
 // spelling errors when working with static variables
@@ -66,6 +67,14 @@ const constants = {
         permissionName: "banned"
     },
     UN_BAN_USER_PERMISSION: {
+        permissionId: 1,
+        permissionName: "member"
+    },
+    ADMIN_USER_PERMISSION: {
+        permissionId: 4,
+        permissionName: "admin"
+    },
+    UN_ADMIN_USER_PERMISSION: {
         permissionId: 1,
         permissionName: "member"
     }

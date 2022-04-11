@@ -1,6 +1,6 @@
 // Initially Created by: Devin Brueberg
 // CSC450 Capstone
-// Restaurant Club - BanUserConfirm.js
+// Restaurant Club - UnBanUserConfirm.js
 // April 3, 2022
 // Last Edited (Initials, Date, Edits):
 
@@ -33,7 +33,7 @@ function UnBanUserConfirm(props) {
     return (
         <Modal show={show} onHide={closeHandler}>
             <Modal.Header closeButton>
-                <Modal.Title>UnBan user</Modal.Title>
+                <Modal.Title>UnBan User</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 Are you sure you want to unBan this user?
