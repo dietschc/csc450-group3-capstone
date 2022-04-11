@@ -16,6 +16,7 @@
 //  link into the userDashboard)
 //  (DAB, 4/02/2022, Added Confirm Password field to create account)
 //  (DAB, 4/10/2022, Button are now responsive and follow expanding theme)
+//  (DAB, 4/10/2022, Adjusted form Char limits to googles maximum values)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -450,7 +451,7 @@ function EditAccount(props) {
                                     required
                                     value={userName}
                                     onChange={onChangeUserName}
-                                    maxLength="64"
+                                    maxLength="40"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -464,7 +465,7 @@ function EditAccount(props) {
                                     placeholder="User Name"
                                     value={firstName}
                                     onChange={onChangeFirstName}
-                                    maxLength="64"
+                                    maxLength="35"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -478,7 +479,7 @@ function EditAccount(props) {
                                     placeholder="Last Name"
                                     value={lastName}
                                     onChange={onChangeLastName}
-                                    maxLength="64"
+                                    maxLength="35"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -492,7 +493,7 @@ function EditAccount(props) {
                                     placeholder="Address"
                                     value={address}
                                     onChange={onChangeAddress}
-                                    maxLength="64"
+                                    maxLength="38"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -506,7 +507,7 @@ function EditAccount(props) {
                                     placeholder="City"
                                     value={city}
                                     onChange={onChangeCity}
-                                    maxLength="64"
+                                    maxLength="20"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
@@ -541,7 +542,7 @@ function EditAccount(props) {
                                     required
                                     value={email}
                                     onChange={onChangeEmail}
-                                    maxLength="64"
+                                    maxLength="40"
                                 />
                             </FloatingLabel>
                         </Form.Floating>

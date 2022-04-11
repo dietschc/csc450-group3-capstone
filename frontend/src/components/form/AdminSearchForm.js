@@ -3,6 +3,7 @@
 // Restaurant Club - AdminSearchForm.js
 // March 6, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 4/10/2022, Fixed WAVE label errors in radio buttons)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -53,9 +54,6 @@ function AdminSearchForm(props) {
                         defaultChecked
                         id="searchOptionRadio1"
                     />
-                    {/* <label htmlFor="searchOptionRadio1">
-                        User Select
-                    </label> */}
                     <Form.Check
                         label="Restaurant"
                         name="searchOption"
@@ -63,9 +61,6 @@ function AdminSearchForm(props) {
                         value="restaurant"
                         id="searchOptionRadio2"
                     />
-                    {/* <label htmlFor="searchOptionRadio2" hidden>
-                        User Select
-                    </label> */}
                 </ButtonGroup>
             </Row>
         </Form>

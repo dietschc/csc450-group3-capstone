@@ -45,7 +45,7 @@ function RestaurantEditItem(props) {
                             align-content-center 
                             px-0 
                             mx-0">
-                                <div className="pb-1" style={{ whiteSpace: "nowrap" }}>
+                                <div className="pb-1" style={{ wordBreak: "break-all" }}>
                                     {restaurant?.name}
                                 </div>
                             </Col>

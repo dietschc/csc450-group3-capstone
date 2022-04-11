@@ -16,6 +16,7 @@
 //  button styling issues. Buttons now expand on smaller screen sizes)
 //  (DAB, 4/07/2022, Chat Text will now show white space)
 //  (DAB, 4/07/2022, Organized code)
+//  (DAB, 4/10/2022, Fixed WAVE error of message chat contrast)
 
 // Using React library in order to build components 
 // for the app and importing needed components
