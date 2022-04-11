@@ -298,14 +298,14 @@ function UserDashboard(props) {
                     <ThemedSpinner />
                 ) : (
                     <Row>
-                        <Col className="pb-2" md={6}>
+                        <Col className="pb-2 px-1" md={6}>
                             <UserInfo
                                 currentUser={user}
                                 currentAddress={currentAddress}
                                 userInfoHandler={userInfoHandler}
                                 changePasswordHandler={changePasswordHandler} />
                         </Col>
-                        <Col className="pb-2" md={6}>
+                        <Col className="pb-2 px-1" md={6}>
                             <FriendList
                                 friend={friend}
                                 chatHandler={chatHandler}

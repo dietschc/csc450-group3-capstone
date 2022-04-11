@@ -35,7 +35,7 @@ function FriendList(props) {
     } = props;
 
     return (
-        <Card style={{ height: "449px" }}>
+        <Card style={{ height: "441px" }}>
             <Card.Title className="text-center">
                 Friends
             </Card.Title>
@@ -70,15 +70,15 @@ function FriendList(props) {
                                     >
                                         {!userId &&
                                             <Button
-                                                className="m-1"
-                                                style={{ minWidth: "4.3rem" }}
+                                                className="m-1 align-self-sm-center"
+                                                style={{ minWidth: "4.3rem", height: "38px" }}
                                                 onClick={() => chatHandler(friend)}>
                                                 Chat
                                             </Button>
                                         }
                                         <Button
-                                            className="m-1"
-                                            style={{ minWidth: "4.3rem" }}
+                                            className="m-1 align-self-sm-center"
+                                            style={{ minWidth: "4.3rem", height: "38px" }}
                                             onClick={() => deleteFriendHandler(friend)}>
                                             Delete
                                         </Button>
