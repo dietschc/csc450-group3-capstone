@@ -9,11 +9,12 @@
 //  (DAB, 3/10/2022, Added in comments and cleaned up debugs)
 //  (DAB, 3/13/2022, Both add and update restaurant are working as 
 //  fully intended with image uploads/deletes)
+//  (TJI, 04/10/2022 - Added Tooltip for DigiContact)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useEffect, useState } from 'react';
-import { Form, Image } from 'react-bootstrap';
+import { Form, Image, Tooltip } from 'react-bootstrap';
 import FloatingAddress from './floatingComponents/FloatingAddress';
 import FloatingStateZip from './floatingComponents/FloatingStateZip';
 import FloatingCity from './floatingComponents/FloatingCity';
@@ -305,7 +306,9 @@ function EditRestaurantForm(props) {
             <FloatingCity city={city} onChangeCity={onChangeCity} />
             <FloatingStateZip state={state} zip={zip} onChangeState={onChangeState} onChangeZip={onChangeZip} />
             <FloatingPhone phone={phone} onChangePhone={onChangePhone} />
-            <FloatingDigitalContact digitalContact={digitalContact} onChangeDigitalContact={onChangeDigitalContact} />
+            <Tooltip title="Company Website Contact URL">
+                <FloatingDigitalContact digitalContact={digitalContact} onChangeDigitalContact={onChangeDigitalContact} />
+            </Tooltip>
             <FloatingWebsite website={website} onChangeWebsite={onChangeWebsite} />
             <FloatingImageUpload onChangeFile={onChangeFile} />
             {imagePreview()}
