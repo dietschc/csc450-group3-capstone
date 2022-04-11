@@ -85,12 +85,13 @@ function UserEditItem(props) {
                         sm={4}
                         md={6}
                         className="
-                    d-flex 
-                    justify-content-center 
-                    justify-content-sm-start 
-                    align-content-center 
-                    px-0 
-                    mx-0">
+                        d-flex 
+                        justify-content-center 
+                        justify-content-sm-start 
+                        align-content-center 
+                        px-0 
+                        mx-0"
+                        style={{wordBreak: "break-all"}}>
                         <div className="pb-1">
                             {user.auth.userName}
                         </div>
@@ -99,10 +100,10 @@ function UserEditItem(props) {
                         sm={8}
                         md={6}
                         className="
-                    d-flex 
-                    flex-column 
-                    flex-sm-row 
-                    justify-content-between px-0">
+                        d-flex 
+                        flex-column 
+                        flex-sm-row 
+                        justify-content-between px-0">
                         <Button
                             className="m-1"
                             style={{ minWidth: "7rem" }}
