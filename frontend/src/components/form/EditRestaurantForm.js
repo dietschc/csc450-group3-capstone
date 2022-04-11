@@ -97,7 +97,7 @@ function EditRestaurantForm(props) {
         setImageLocationName("");
         setTempFileUrl("");
         setFile(null);
-        document.getElementById('floatingImageInput').value = null;
+        document.getElementById('floatingImageUpload').value = null;
     }
 
 
@@ -241,7 +241,7 @@ function EditRestaurantForm(props) {
                     imageLocation: imageLocationName || "",
                     address: address,
                     city: city,
-                    state: state,
+                    state: state || "",
                     zip: zip,
                     file: file
                 }
