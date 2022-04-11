@@ -14,7 +14,7 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useEffect, useState } from 'react';
-import { Form, Image, Tooltip } from 'react-bootstrap';
+import { Form, Image } from 'react-bootstrap';
 import FloatingAddress from './floatingComponents/FloatingAddress';
 import FloatingStateZip from './floatingComponents/FloatingStateZip';
 import FloatingCity from './floatingComponents/FloatingCity';
@@ -175,7 +175,7 @@ function EditRestaurantForm(props) {
 
     // Change handler for the function name specific form input
     const onChangePhone = (e) => {
-        const {value, maxLength} = e.target;
+        const { value, maxLength } = e.target;
         const phone = formatPhoneNumber(value);
         setPhone(phone);
     }
@@ -206,7 +206,7 @@ function EditRestaurantForm(props) {
 
     // Change handler for the function name specific form input
     const onChangeZip = (e) => {
-        const {value, maxLength} = e.target;
+        const { value, maxLength } = e.target;
         const zip = formatZipCode(value);
         setZip(zip);
     }
@@ -306,9 +306,7 @@ function EditRestaurantForm(props) {
             <FloatingCity city={city} onChangeCity={onChangeCity} />
             <FloatingStateZip state={state} zip={zip} onChangeState={onChangeState} onChangeZip={onChangeZip} />
             <FloatingPhone phone={phone} onChangePhone={onChangePhone} />
-            <Tooltip title="Company Website Contact URL">
-                <FloatingDigitalContact digitalContact={digitalContact} onChangeDigitalContact={onChangeDigitalContact} />
-            </Tooltip>
+            <FloatingDigitalContact digitalContact={digitalContact} onChangeDigitalContact={onChangeDigitalContact} />
             <FloatingWebsite website={website} onChangeWebsite={onChangeWebsite} />
             <FloatingImageUpload onChangeFile={onChangeFile} />
             {imagePreview()}
