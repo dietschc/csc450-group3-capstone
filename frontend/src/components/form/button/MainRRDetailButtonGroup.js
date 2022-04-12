@@ -8,6 +8,8 @@
 //  not logged in)
 //  (DAB, 4/09/2022, Friend button will not render if a user is 
 //  already friends with the author)
+//  (DAB, 4/10/2022, Current user will not have friend buttons on
+//  either)
 
 // Using React library in order to build components
 // for the app and importing needed components
@@ -44,8 +46,9 @@ function MainRRDetailButtonGroup(props) {
             // Filtering out the friend based off the current friendId
             const currentFriend = userFriendList.filter((friend) => friend.id === friendId);
 
-            // Returning if the friend is in the friend list or not
-            return currentFriend.length > 0;
+            // Returning if the friend is in the friend list or not, or if the friendId is 
+            // the currentUser
+            return currentFriend.length > 0 || friendId === currentUser?.id;
         }
 
         // Since the user does not have friends, false is returned

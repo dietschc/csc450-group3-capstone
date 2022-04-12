@@ -32,10 +32,10 @@ function RestaurantReviewDetail(props) {
     const { reviews, restaurants, buttonGroup, modal } = props;
 
     return (
-        <Container fluid>
+        <Container fluid className="px-1">
             <Row>
                 {reviews.length > 0 && reviews.map((review, index) => (
-                    <Card className="mb-2" key={index} style={{ height: "100%", width: "100%", overflow: "hidden" }}>
+                    <Card className="mb-2 px-0" key={index} style={{ height: "100%", width: "100%", overflow: "hidden" }}>
                         <ReviewHeadingCardBody review={review} restaurants={restaurants} />
                         {review?.images[0].imageLocation &&
                             <div
