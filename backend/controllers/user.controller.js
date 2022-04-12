@@ -11,6 +11,8 @@
 //  to load a state into redux. Safe data with no passwords)
 //  (TJI, 03/28/2022 - Added in password hashing)
 //  (DAB, 3/27/2022, Added the friends table results to return with get as friendsOne)
+//  (DAB, 4/12/2022, Error Handling Audit - failed)
+//  (DAB, 4/12/2022, Double checked and added error handling to every query)
 
 
 const { authentication } = require("../models");
@@ -30,7 +32,7 @@ const bcrypt = require('bcrypt');
 // Alters the user, address, and authentication tables (and eventually history)
 exports.create = async (req, res) => {
     // Validate request
-    if ((!req.body.userEmail) || (!req.body.userName)) {
+    if ((!req.body.userEmail) || (!req.body.userName) || !req.body.userPassword) {
         res.status(400).send({
             message: "Required fields are userEmail, address, and userName"
         });
@@ -111,15 +113,22 @@ exports.create = async (req, res) => {
             // Default permissionId level is 1 for members
             permissionId: 1, // FK constraint with Permission table
             userName: req.body.userName,
-            userPassword: req.body.userPassword,
-            // historyId: null, // FK constraint with History table
+            userPassword: req.body.userPassword
         }
 
         // Hashes the submitted password using BCrypt's minor a modal going through 2^10 rounds
         if(authentication.userPassword)
         {
-            const salt = await bcrypt.genSaltSync(10, 'a');
-            authentication.userPassword = bcrypt.hashSync(authentication.userPassword, salt);
+            // Attempting to encrypt the password
+            try {
+                const salt = await bcrypt.genSaltSync(10, 'a');
+                authentication.userPassword = bcrypt.hashSync(authentication.userPassword, salt);
+            }
+            // Password was not encrypted so a console message is sent
+            catch(err) {
+                console.log("Password not encrypted");
+            }
+            
         }
 
         // Save Authentication in the database
@@ -222,6 +231,9 @@ exports.update = async (req, res) => {
                 return -1
             }
         })
+        .catch(err => {
+            return -1;
+        });
 
     // Try to update users table
     const userUpdateStatus = await User.update(req.body, {
@@ -230,6 +242,9 @@ exports.update = async (req, res) => {
         .then(status => {
             return status;
         })
+        .catch(err => {
+            return -1;
+        });
 
     // Binary hash the submitted password using BCrypt's minor A modal for 2^10 rounds
     if(req.body.userPassword)
@@ -245,6 +260,9 @@ exports.update = async (req, res) => {
         .then(status => {
             return status;
         })
+        .catch(err => {
+            return -1;
+        });
 
     // Try to update address table
     const addressUpdateStatus = await Address.update(req.body, {
@@ -253,6 +271,9 @@ exports.update = async (req, res) => {
         .then(status => {
             return status;
         })
+        .catch(err => {
+            return -1;
+        });
 
     // Any one of these values being equal to 1 indicates success updating a row
     if (userUpdateStatus == 1 ||
@@ -266,8 +287,6 @@ exports.update = async (req, res) => {
             message: `Cannot update user. Maybe user was not found!`
         });
     }
-
-
 };
 
 // Delete a User with the specified id in the request
@@ -283,9 +302,12 @@ exports.delete = async (req, res) => {
                 const { addressId } = user;
                 return addressId
             } else {
-                return "User not found"
+                return "User not found";
             }
         })
+        .catch(err => {
+            return "User not found";
+        });
 
     // console.log("address id: ", addressId);
 
@@ -295,6 +317,10 @@ exports.delete = async (req, res) => {
         .then(deletedStatus => {
             return deletedStatus;
         })
+        .catch(err => {
+            return "User not found";
+        });
+        
 
     // console.log("deleted user: ", deletedUserStatus);
 
@@ -357,6 +383,9 @@ exports.addFriend = async (req, res) => {
             friendTwoId: friendTwoId
         }
     })
+    .catch(err => {
+        return false;
+    });
 
     // console.log("already friend!", alreadyFriends);
 

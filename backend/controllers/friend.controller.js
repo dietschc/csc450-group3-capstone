@@ -4,6 +4,7 @@
 // March 3, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 3/4/2022, Fine tuned friend create and added comments)
+//  (DAB, 4/12/2022, Error Handling Audit - Passed)
 
 const db = require("../models");
 const { Op } = db.Sequelize;

@@ -9,6 +9,8 @@
 //  (CPD, 3/26/2022, Included new refresh token to login)
 //  (TJI, 3/28/2022, Added password hashing)
 //  (DAB, 4/02/2022, Added in updatePassword and updatePasswordSecure)
+//  (DAB, 4/12/2022, Error Handling Audit - failed)
+//  (DAB, 4/12/2022, Double checked and added error handling to every query)
 
 const db = require("../models");
 const Sequelize = require("sequelize");
@@ -28,9 +30,9 @@ const conversationModel = require("../models/conversation.model");
 // Create and Save a new Authentication
 exports.create = (req, res) => {
     // Validate request
-    if (!req.body.userId) {
+    if (!req.body.userId || !req.body.userPassword) {
         res.status(400).send({
-            message: "You must supply a user ID!"
+            message: "You must supply a user ID and password!"
         });
         return;
     }
@@ -40,14 +42,24 @@ exports.create = (req, res) => {
         userId: req.body.userId,
         permissionId: req.body.permissionId,
         userName: req.body.userName,
-        userPassword: req.body.userPassword,
-        // historyId: req.body.historyId,
+        userPassword: req.body.userPassword
     };
 
     // Convert the given password to a binary hash using BCrypt's minor a form for 2^10 rounds of hashing
     if (authentication.userPassword) {
-        const salt = bcrypt.genSaltSync(10, 'a');
-        authentication.userPassword = bcrypt.hashSync(authentication.userPassword, salt);
+        // Attempting to encrypt the password
+        try {
+            const salt = bcrypt.genSaltSync(10, 'a');
+            authentication.userPassword = bcrypt.hashSync(authentication.userPassword, salt);
+        }
+        // Password not encrypted, logging error
+        catch (err) {
+            res.status(400).send({
+                message: "Error encrypting the password!"
+            });
+            return;
+        }
+        
     }
 
     // Save Authentication in the database
@@ -126,20 +138,26 @@ exports.login = async (req, res) => {
     let accessToken = 0;
     let refreshToken = 0;
 
-    console.log("get user: ", getUser);
+    // console.log("get user: ", getUser);
 
     // If the user is valid, get addressId and generate tokens
     if (getUser) {
         // Extract addressId 
         addressId = getUser.addressId;
+        // Attempting to sign in with the access token
+        try {
+            // Create new Access Token, include user id
+            accessToken = jwt.sign({ id: getUser.userId }, config.secret, {
+                expiresIn: config.jwtExpiration
+            });
 
-        // Create new Access Token, include user id
-        accessToken = jwt.sign({ id: getUser.userId }, config.secret, {
-            expiresIn: config.jwtExpiration
-        });
-
-        // Create new refresh token, pass in getUser object data as parameter
-        refreshToken = await RefreshToken.createToken(getUser);
+            // Create new refresh token, pass in getUser object data as parameter
+            refreshToken = await RefreshToken.createToken(getUser);
+        }
+        // Token access failed, returning message
+        catch (err) {
+            console.log("Error creating token")
+        } 
     }
 
     // Get friend data
@@ -173,13 +191,21 @@ exports.login = async (req, res) => {
 
     let friends = [];
     if (getFriends.length > 0) {
-        const formatFriends = (getFriends) => getFriends.map(friend => {
-            const userId = friend.friendTwo.userId;
-            const userName = friend.friendTwo.authentication.userName;
-            return { userId, userName };
-        });
-        // map friends
-        friends = formatFriends(getFriends);
+        // Attempting to iterate through the friends list
+        try {
+            const formatFriends = (getFriends) => getFriends.map(friend => {
+                const userId = friend.friendTwo.userId;
+                const userName = friend.friendTwo.authentication.userName;
+                return { userId, userName };
+            });
+            // map friends
+            friends = formatFriends(getFriends);
+        }
+        // There was an error so the message is logged
+        catch (err) {
+            console.log("Error getting friends!");
+        }
+        
     }
 
     // Get address info
@@ -202,8 +228,6 @@ exports.login = async (req, res) => {
                 message: "Error retrieving User with id"
             });
         });
-
-
 };
 
 // Authentication checkUsername callback function
@@ -392,7 +416,10 @@ exports.updatePasswordSecure = async (req, res) => {
             else {
                 return false;
             }
-        });
+        })
+        .catch(err => {
+            return false;
+        })
 
     // If the userId and password are valid, the password will attempt an update
     if (isValid) {
@@ -441,7 +468,14 @@ exports.updateByUserId = (req, res) => {
     const salt = bcrypt.genSaltSync(10, 'a');
     // If there is a userPassword field, it will be hashed
     if (req.body.password) {
-        req.body.userPassword = bcrypt.hashSync(req.body.userPassword, salt);
+        // Attempting to encrypt password
+        try {
+            req.body.userPassword = bcrypt.hashSync(req.body.userPassword, salt);
+        }
+        // Error encrypting password
+        catch (err) {
+            console.log("Error encrypting password");
+        }
     }
     
     Authentication.update(req.body, {
