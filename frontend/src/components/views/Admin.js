@@ -11,6 +11,8 @@
 //  ability for admins to ban other admins)
 //  (DAB, 04/04/2022, Added Spinners for database load in and changed it so that 
 //  search button does not activate if there is already an html request in)
+//  (DAB, 04/11/2022, Adding the ability for an admin to grant and remove admin 
+//  privileges to other admins)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -34,6 +36,8 @@ import {
 import C from '../../constants';
 import BanUserConfirm from '../modal/BanUserConfirm';
 import UnBanUserConfirm from '../modal/UnBanUserConfirm';
+import AdminUserConfirm from '../modal/AdminUserConfirm';
+import UnAdminUserConfirm from '../modal/UnAdminUserConfirm';
 import DeleteUserConfirm from '../modal/DeleteUserConfirm';
 import DeleteRestaurantConfirm from '../modal/DeleteRestaurantConfirm';
 import AdminSearchForm from '../form/AdminSearchForm';
@@ -65,6 +69,8 @@ function Admin(props) {
     // Modal specific states that allow the the modals to be hidden or displayed as 
     // well as the data in the modal to be stored in temp state for CRUD operations
     const [showDeleteUserConfirm, setShowDeleteUserConfirm] = useState(false);
+    const [showAdminUserConfirm, setShowAdminUserConfirm] = useState(false);
+    const [showUnAdminUserConfirm, setShowUnAdminUserConfirm] = useState(false);
     const [showBanUserConfirm, setShowBanUserConfirm] = useState(false);
     const [showUnBanUserConfirm, setShowUnBanUserConfirm] = useState(false);
     const [showDeleteRestaurantConfirm, setShowDeleteRestaurantConfirm] = useState(false);
@@ -78,6 +84,10 @@ function Admin(props) {
     // modals
     const showDeleteUserHandler = () => setShowDeleteUserConfirm(true);
     const closeDeleteUserHandler = () => setShowDeleteUserConfirm(false);
+    const showAdminUserHandler = () => setShowAdminUserConfirm(true);
+    const showUnAdminUserHandler = () => setShowUnAdminUserConfirm(true);
+    const closeAdminUserHandler = () => setShowAdminUserConfirm(false);
+    const closeUnAdminUserHandler = () => setShowUnAdminUserConfirm(false);
     const showBanUserHandler = () => setShowBanUserConfirm(true);
     const showUnBanUserHandler = () => setShowUnBanUserConfirm(true);
     const closeBanUserHandler = () => setShowBanUserConfirm(false);
@@ -87,6 +97,26 @@ function Admin(props) {
 
 
     /****************************** USER METHODS ******************************************/
+
+
+    // The adminHandler will display a modal verifying 
+    // if the user should get admin privileges
+    const adminHandler = (userId) => {
+        // Setting the current id and showing the modal 
+        // before allowing the action
+        setCurrentUserId(userId);
+        showAdminUserHandler();
+    }
+
+
+    // The adminUser method will update a users permission to admin in both state 
+    // and the database
+    const adminUser = () => {
+        // Giving the user admin permissions in both state and the database with the 
+        // ADMIN_USER_PERMISSION constant that holds the correct permissionId and 
+        // permissionName
+        updatePermissionThunk(currentUserId, C.ADMIN_USER_PERMISSION);
+    }
 
 
     // The banHandler will display a modal verifying 
@@ -120,6 +150,26 @@ function Admin(props) {
     // The deleteUser method will delete a user from both state and the database
     const deleteUser = () => {
         deleteUserThunk(currentUserId);
+    }
+
+
+    // The unAdminHandler will display a modal verifying 
+    // if the user should have their admin privileges removed
+    const unAdminHandler = (userId) => {
+        // Setting the current id and showing the modal 
+        // before allowing the action
+        setCurrentUserId(userId);
+        showUnAdminUserHandler();
+    }
+
+
+    // The unAdminUser method will update a users permission to member in both state 
+    // and the database
+    const unAdminUser = () => {
+        // Removing a users admin permission in both state and the database 
+        // with the UN_ADMIN_USER_PERMISSION constant that holds the correct \
+        // permissionId and permissionName
+        updatePermissionThunk(currentUserId, C.UN_ADMIN_USER_PERMISSION);
     }
 
 
@@ -289,6 +339,8 @@ function Admin(props) {
                             key={user.id}
                             user={user}
                             dashboardHandler={dashboardHandler}
+                            adminHandler={adminHandler}
+                            unAdminHandler={unAdminHandler}
                             banHandler={banHandler}
                             unBanHandler={unBanHandler}
                             userDeleteHandler={userDeleteHandler} />
@@ -329,6 +381,24 @@ function Admin(props) {
     /********************************** MODALS *******************************************/
 
 
+    // The modal will display before a user can be given admin privileges
+    const adminUserButtonModal = (
+        <AdminUserConfirm
+            show={showAdminUserConfirm}
+            adminUser={adminUser}
+            closeHandler={closeAdminUserHandler} />
+    )
+
+
+    // The modal will display before a user can have admin privileges removed
+    const unAdminUserButtonModal = (
+        <UnAdminUserConfirm
+            show={showUnAdminUserConfirm}
+            unAdminUser={unAdminUser}
+            closeHandler={closeUnAdminUserHandler} />
+    )
+
+
     // The modal will display before a user can be banned
     const banUserButtonModal = (
         <BanUserConfirm
@@ -364,6 +434,7 @@ function Admin(props) {
             closeHandler={closeDeleteUserHandler} />
     )
 
+
     return (
         <XLContainer>
             <h1>
@@ -382,6 +453,8 @@ function Admin(props) {
                     searchList()
                 )
             }
+            {adminUserButtonModal}
+            {unAdminUserButtonModal}
             {banUserButtonModal}
             {unBanUserButtonModal}
             {userDeleteButtonModal}

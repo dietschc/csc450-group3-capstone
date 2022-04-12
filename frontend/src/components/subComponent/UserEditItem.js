@@ -32,6 +32,8 @@ function UserEditItem(props) {
         dashboardHandler,
         banHandler,
         unBanHandler,
+        adminHandler,
+        unAdminHandler,
         userDeleteHandler
     } = props;
 
@@ -51,6 +53,26 @@ function UserEditItem(props) {
     const isBanned = () => {
         return userPermission === 'banned';
     }
+
+
+    // The adminButtonDisplay render function will allow and 
+    // display either the Admin or UnAdmin button along with all 
+    // functionality
+    const adminButtonDisplay = () => (
+        !isAdmin() ? (
+            <Button className="m-1"
+                style={{ minWidth: "7rem" }}
+                onClick={() => adminHandler(userId)}>
+                Admin
+            </Button>
+        ) : (
+            <Button className="m-1"
+                style={{ minWidth: "7rem" }}
+                onClick={() => unAdminHandler(userId)}>
+                Member
+            </Button>
+        )
+    )
 
 
     // The banButtonDisplay render function will allow and 
@@ -83,7 +105,7 @@ function UserEditItem(props) {
                     className="d-flex justify-content-between align-items-center">
                     <Col
                         sm={4}
-                        md={6}
+                        md={4}
                         className="
                         d-flex 
                         justify-content-center 
@@ -91,31 +113,38 @@ function UserEditItem(props) {
                         align-content-center 
                         px-0 
                         mx-0"
-                        style={{wordBreak: "break-all"}}>
+                        style={{ wordBreak: "break-all" }}>
                         <div className="pb-1">
                             {user.auth.userName}
                         </div>
                     </Col>
                     <Col
                         sm={8}
-                        md={6}
+                        md={8}
                         className="
                         d-flex 
+                        flex-wrap
                         flex-column 
                         flex-sm-row 
                         justify-content-between px-0">
-                        <Button
-                            className="m-1"
-                            style={{ minWidth: "7rem" }}
-                            onClick={() => dashboardHandler(userId)}>
-                            Dashboard
-                        </Button>
-                        {!isAdmin() && banButtonDisplay()}
-                        <Button className="m-1"
-                            style={{ minWidth: "7rem" }}
-                            onClick={() => userDeleteHandler(userId)}>
-                            Delete
-                        </Button>
+                        <div className="d-flex flex-column flex-sm-row justify-content-sm-around flex-fill">
+                            <Button
+                                className="m-1"
+                                style={{ minWidth: "7rem" }}
+                                onClick={() => dashboardHandler(userId)}>
+                                Dashboard
+                            </Button>
+                            {banButtonDisplay()}
+                        </div>
+                        <div className="d-flex flex-column flex-sm-row justify-content-sm-around flex-fill">
+                            {adminButtonDisplay()}
+                            <Button className="m-1"
+                                style={{ minWidth: "7rem" }}
+                                onClick={() => userDeleteHandler(userId)}>
+                                Delete
+                            </Button>
+                        </div>
+
                     </Col>
                 </Row>
             </ListGroup.Item>
