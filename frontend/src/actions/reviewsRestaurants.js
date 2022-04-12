@@ -64,7 +64,7 @@ export const findAllReviewsRestaurantsOrderedThunk = (offset, limit) => async di
         })
         .catch(err => {
             // If there was an error it is logged in the console
-            console.log(err)
+            console.log(err);
         })
 
     // If there are restaurant id's in the set the database is queried to return all matching

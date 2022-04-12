@@ -327,7 +327,7 @@ export const updateReviewThunk = (reviewId, userId, reviewTitle, reviewText, tas
             // Delete old image from cloud if it exists
             if (imageLocation !== '') {
                 const oldLocation = imageLocation;
-                console.log("old location: ", oldLocation);
+                // console.log("old location: ", oldLocation);
                 await ImageDataService.delete(oldLocation);
             }
 
