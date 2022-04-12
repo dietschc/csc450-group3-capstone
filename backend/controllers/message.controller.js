@@ -8,6 +8,7 @@
 //  query all post createdAt times)
 //  (DAB, 3/28/2022, Updated the service name for findAllAfterDateOffsetLimit 
 //  to describe its behavior of findAllByIdOffsetLimit)
+//  (DAB, 4/12/2022, Error Handling Audit - Passed)
 
 const db = require("../models");
 const { Op } = db.Sequelize;

@@ -9,6 +9,7 @@
 //  (CPD, 3/26/2022, Included new refresh token to login)
 //  (TJI, 3/28/2022, Added password hashing)
 //  (DAB, 4/02/2022, Added in updatePassword and updatePasswordSecure)
+//  (DAB, 4/12/2022, Error Handling Audit - failed/ fixed some STILL NEEDS MORE DONE)
 
 const db = require("../models");
 const Sequelize = require("sequelize");
@@ -126,7 +127,7 @@ exports.login = async (req, res) => {
     let accessToken = 0;
     let refreshToken = 0;
 
-    console.log("get user: ", getUser);
+    // console.log("get user: ", getUser);
 
     // If the user is valid, get addressId and generate tokens
     if (getUser) {
@@ -392,7 +393,10 @@ exports.updatePasswordSecure = async (req, res) => {
             else {
                 return false;
             }
-        });
+        })
+        .catch(err => {
+            return false;
+        })
 
     // If the userId and password are valid, the password will attempt an update
     if (isValid) {

@@ -11,6 +11,7 @@
 //  restaurant name. Also beautified the format)
 //  (DAB, 3/5/2022, findByRestaurantAuthorIdOffsetLimit added to allow for 
 //  retrieval of reviews using both the author and restaurant Ids)
+//  (DAB, 4/12/2022, Error Handling Audit - Passed)
 
 const db = require("../models");
 const { Op } = db.Sequelize;

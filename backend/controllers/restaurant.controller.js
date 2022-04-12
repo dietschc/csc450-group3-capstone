@@ -9,6 +9,8 @@
 //  (DAB, 3/05/2022, Beautified the code formatting)
 //  (DAB, 3/07/2022, Added in a user validation for create so there are no 
 //  foreign key errors when creating a restaurant)
+//  (DAB, 4/12/2022, Error Handling Audit - failed)
+//  (DAB, 4/12/2022, Double checked and added error handling to every query
 
 const { authentication } = require("../models");
 const db = require("../models");
@@ -38,7 +40,14 @@ exports.create = async (req, res) => {
         attributes: ['userName'],
         where: { userId: req.body.userCreatorId }
     })
-        .then(res => res);
+        .then(res => res)
+        .catch(err => {
+            // If there is an error, a response is sent to notify the requester
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while creating the User."
+            });
+        });
 
     // If there is a user in the database the query will run
     const isUser = userAuthData ? true : false;

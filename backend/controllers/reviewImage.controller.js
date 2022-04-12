@@ -3,6 +3,7 @@
 // Restaurant Club - reviewImage.controller.js
 // February 20, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 4/12/2022, Error Handling Audit - Passed)
 
 const db = require("../models");
 const ReviewImage = db.reviewImage;

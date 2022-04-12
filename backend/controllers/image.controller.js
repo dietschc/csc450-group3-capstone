@@ -7,6 +7,7 @@
 // 	(CPD, 3/11/2022, Created delete image function to remove images from cloud)
 //	(DAB, 3/13/2022, Added in a deleteRestaurantsDirectory which will delete all 
 //	restaurant images in that directory from the cloud)
+//  (DAB, 4/12/2022, Error Handling Audit - Passed)
 
 const db = require("../models");
 const Image = db.image;

@@ -11,6 +11,9 @@
 //  to load a state into redux. Safe data with no passwords)
 //  (TJI, 03/28/2022 - Added in password hashing)
 //  (DAB, 3/27/2022, Added the friends table results to return with get as friendsOne)
+//  (DAB, 4/12/2022, Error Handling Audit - failed)
+//  (DAB, 4/12/2022, Double checked and added error handling to every query. Did not 
+//  include "salt" error handling, NEEDS MORE WORK)
 
 
 const { authentication } = require("../models");
@@ -222,6 +225,9 @@ exports.update = async (req, res) => {
                 return -1
             }
         })
+        .catch(err => {
+            return -1;
+        });
 
     // Try to update users table
     const userUpdateStatus = await User.update(req.body, {
@@ -230,6 +236,9 @@ exports.update = async (req, res) => {
         .then(status => {
             return status;
         })
+        .catch(err => {
+            return -1;
+        });
 
     // Binary hash the submitted password using BCrypt's minor A modal for 2^10 rounds
     if(req.body.userPassword)
@@ -245,6 +254,9 @@ exports.update = async (req, res) => {
         .then(status => {
             return status;
         })
+        .catch(err => {
+            return -1;
+        });
 
     // Try to update address table
     const addressUpdateStatus = await Address.update(req.body, {
@@ -253,6 +265,9 @@ exports.update = async (req, res) => {
         .then(status => {
             return status;
         })
+        .catch(err => {
+            return -1;
+        });
 
     // Any one of these values being equal to 1 indicates success updating a row
     if (userUpdateStatus == 1 ||
@@ -266,8 +281,6 @@ exports.update = async (req, res) => {
             message: `Cannot update user. Maybe user was not found!`
         });
     }
-
-
 };
 
 // Delete a User with the specified id in the request
@@ -283,9 +296,12 @@ exports.delete = async (req, res) => {
                 const { addressId } = user;
                 return addressId
             } else {
-                return "User not found"
+                return "User not found";
             }
         })
+        .catch(err => {
+            return "User not found";
+        });
 
     // console.log("address id: ", addressId);
 
@@ -295,6 +311,10 @@ exports.delete = async (req, res) => {
         .then(deletedStatus => {
             return deletedStatus;
         })
+        .catch(err => {
+            return "User not found";
+        });
+        
 
     // console.log("deleted user: ", deletedUserStatus);
 
@@ -357,6 +377,9 @@ exports.addFriend = async (req, res) => {
             friendTwoId: friendTwoId
         }
     })
+    .catch(err => {
+        return false;
+    });
 
     // console.log("already friend!", alreadyFriends);
 
