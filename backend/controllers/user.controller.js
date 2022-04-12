@@ -12,8 +12,7 @@
 //  (TJI, 03/28/2022 - Added in password hashing)
 //  (DAB, 3/27/2022, Added the friends table results to return with get as friendsOne)
 //  (DAB, 4/12/2022, Error Handling Audit - failed)
-//  (DAB, 4/12/2022, Double checked and added error handling to every query. Did not 
-//  include "salt" error handling, NEEDS MORE WORK)
+//  (DAB, 4/12/2022, Double checked and added error handling to every query)
 
 
 const { authentication } = require("../models");
@@ -33,7 +32,7 @@ const bcrypt = require('bcrypt');
 // Alters the user, address, and authentication tables (and eventually history)
 exports.create = async (req, res) => {
     // Validate request
-    if ((!req.body.userEmail) || (!req.body.userName)) {
+    if ((!req.body.userEmail) || (!req.body.userName) || !req.body.userPassword) {
         res.status(400).send({
             message: "Required fields are userEmail, address, and userName"
         });
@@ -114,15 +113,22 @@ exports.create = async (req, res) => {
             // Default permissionId level is 1 for members
             permissionId: 1, // FK constraint with Permission table
             userName: req.body.userName,
-            userPassword: req.body.userPassword,
-            // historyId: null, // FK constraint with History table
+            userPassword: req.body.userPassword
         }
 
         // Hashes the submitted password using BCrypt's minor a modal going through 2^10 rounds
         if(authentication.userPassword)
         {
-            const salt = await bcrypt.genSaltSync(10, 'a');
-            authentication.userPassword = bcrypt.hashSync(authentication.userPassword, salt);
+            // Attempting to encrypt the password
+            try {
+                const salt = await bcrypt.genSaltSync(10, 'a');
+                authentication.userPassword = bcrypt.hashSync(authentication.userPassword, salt);
+            }
+            // Password was not encrypted so a console message is sent
+            catch(err) {
+                console.log("Password not encrypted");
+            }
+            
         }
 
         // Save Authentication in the database
