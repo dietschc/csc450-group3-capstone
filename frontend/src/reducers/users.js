@@ -286,7 +286,6 @@ export const friends = (state = [], action) => {
         case C.ADD_USER:
             return []
         case C.ADD_FRIEND:
-            console.log("STATE IN FRIEND", state)
             return [
                 ...state,
                 friend({}, action)

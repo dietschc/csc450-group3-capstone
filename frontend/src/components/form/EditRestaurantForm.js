@@ -110,22 +110,12 @@ function EditRestaurantForm(props) {
     // submitted to the database
     const imagePreview = () => (
         (tempFileUrl || (restaurant.length > 0 && imageLocationName)) &&
-        // <div >
-
-        //     <Image className="p-3 d-flex mx-auto"
-        //     src={tempFileUrl !== "" ? tempFileUrl : imageLocationName}
-        //     alt={tempFileUrl !== "" ? tempFileUrl : imageLocationName}
-        //     width="300px" height="200px" alt="Upload Preview" />
-        // </div>
-
         <div
             className="d-flex mx-auto"
             style={{ maxHeight: "40rem", maxWidth: "40rem", overflow: "hidden" }}>
-
             <Image className="p-3" style={{ width: "100%", height: "100%", overflow: "hidden" }}
                 src={tempFileUrl !== "" ? tempFileUrl : imageLocationName} alt="Upload Preview" />
         </div>
-
     )
 
 
