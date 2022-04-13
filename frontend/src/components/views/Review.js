@@ -27,6 +27,7 @@ import { connect } from 'react-redux';
 import { addReviewThunk, updateReviewThunk } from '../../actions/reviews';
 import { findByRestaurantIdThunk } from '../../actions/restaurants';
 import XLContainer from '../template/XLContainer';
+import C from '../../constants';
 
 /**
  * The Review View will allow a user to create and edit restaurant reviews. The 
@@ -205,6 +206,13 @@ function Review(props) {
         // Set user id
         const userId = users[0].id;
         const imageLocation = paramReview.images[0].imageLocation || '';
+
+        const [currentUser, ...otherUsers] = users;
+        const isAdmin = currentUser.auth.permission.permissionName === C.ADMIN_USER_PERMISSION;
+        console.log("ISADMIN EDITREVIEW", isAdmin);
+
+        
+
 
         // Pass parameters to add review thunk action
         await updateReviewThunk(reviewId, userId, reviewTitle, reviewText,
