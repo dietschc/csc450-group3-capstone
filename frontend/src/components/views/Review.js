@@ -242,7 +242,7 @@ function Review(props) {
                 Number(overallRating), file, imageLocation);
 
             // Bring back to user dashboard after
-            setTimeout(() => { navigate("../userDashboard") }, 500);
+            navigate("../userDashboard");
         }
     }
 
