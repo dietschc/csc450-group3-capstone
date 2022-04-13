@@ -127,7 +127,7 @@ function Login(props) {
                 // console.log("Results: ", res);
 
                 if (res.isLoggedIn === true) {
-                    console.log("LOGIN SUCCESS");
+                    // console.log("LOGIN SUCCESS");
 
                     // setSubmitted(true);
                     setShowSuccess(true);
@@ -137,7 +137,7 @@ function Login(props) {
                 } else {
                     clearForm();
                     setShowError(true);
-                    console.log("LOGIN FAIL");
+                    // console.log("LOGIN FAIL");
                 }
             })
             .catch(err => {
