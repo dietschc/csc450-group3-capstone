@@ -14,11 +14,12 @@
 //  (TJI, 03/29/2022 - Added in character limits for review title and text to match database)
 //  (DAB, 04/07/2022, Review is now more responsive and works on mobile)
 //  (DAB, 4/10/2022, Buttons now are uniform size and responsive)
+//  (DAB, 4/12/2022, More layout fine tuning)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState, useEffect } from 'react'
-import { Row, Col, Form, Container, Button, FloatingLabel } from 'react-bootstrap';
+import { Form, Container, Button, FloatingLabel } from 'react-bootstrap';
 import FloatingImageUpload from '../form/floatingComponents/FloatingImageUpload';
 import ModalConfirmation from '../modal/ModalCancelConfirm';
 import { useParams, useNavigate } from "react-router-dom";
@@ -229,14 +230,14 @@ function Review(props) {
      * @returns 
      */
     const displayReviewImage = () => (
-        <div className="d-flex flex-shrink-1  mx-auto" style={{ maxWidth: "300px", maxHeight: "200px", minWidth: "200px", minHeight: "67px" }}>
+        <div className="d-flex flex-row justify-content-center mx-auto flex-fill mb-2" style={{ maxWidth: "300px", maxHeight: "200px", overflow: "hidden" }}>
             <img
                 src={isUpdate && paramReview.images[0].imageLocation !== ''
                     ? tempFileUrl || paramReview.images[0].imageLocation
                     : tempFileUrl || window.location.origin + '/reviewImages/3/stock-illustration-retro-diner.jpg'
                 }
-                style={{ width: "100%", height: "100%", overflow: "hidden" }}
-                className="p-3 d-flex justify-content-center"
+                style={{ overflow: "hidden", width: "100%", height: "100%" }}
+                className="d-flex justify-items-center"
                 alt="Upload preview"
             />
         </div>
@@ -276,131 +277,133 @@ function Review(props) {
                     <strong>Please rate your visit!</strong>
                 </div>
 
-                <Form onSubmit={handleSubmit}>
-                    <Row className="justify-content-center justify-content-md-start">
-                        <Col xs="7" md="5">
-                            <Form.Group>
-                                <Form.Label>Taste</Form.Label>
-                                <Form.Range
-                                    className="mb-2"
-                                    min={1}
-                                    max={5}
-                                    step={1}
-                                    value={tasteRating}
-                                    aria-label="Taste Slider"
-                                    onChange={onChangeTasteRating}
-                                />
+                <Form className="p-0 m-0" onSubmit={handleSubmit}>
+                    <div className="d-flex flex-column flex-sm-row p-0 m-0">
+                        <div className="d-flex flex-row flex-fill mb-2">
+                            <div className="d-flex flex-fill m-1">
+                                <Form.Group className="d-flex flex-column justify-content-between flex-fill">
+                                    <div>
+                                        <Form.Label>Taste</Form.Label>
+                                        <Form.Range
+                                            className="mb-2"
+                                            min={1}
+                                            max={5}
+                                            step={1}
+                                            value={tasteRating}
+                                            aria-label="Taste Slider"
+                                            onChange={onChangeTasteRating}
+                                        />
+                                    </div>
 
-                                <Form.Label>Service</Form.Label>
-                                <Form.Range
-                                    className="mb-2"
-                                    min={1}
-                                    max={5}
-                                    step={1}
-                                    value={serviceRating}
-                                    aria-label="Service Slider"
-                                    onChange={onChangeServiceRating}
-                                />
+                                    <div>
+                                        <Form.Label>Service</Form.Label>
+                                        <Form.Range
+                                            className="mb-2"
+                                            min={1}
+                                            max={5}
+                                            step={1}
+                                            value={serviceRating}
+                                            aria-label="Service Slider"
+                                            onChange={onChangeServiceRating}
+                                        />
+                                    </div>
 
-                                <Form.Label>Cleanliness</Form.Label>
-                                <Form.Range
-                                    className="mb-2"
-                                    min={1}
-                                    max={5}
-                                    step={1}
-                                    value={cleanRating}
-                                    aria-label="Cleanliness Slider"
-                                    onChange={onChangeCleanRating}
-                                />
+                                    <div>
+                                        <Form.Label>Cleanliness</Form.Label>
+                                        <Form.Range
+                                            className="mb-2"
+                                            min={1}
+                                            max={5}
+                                            step={1}
+                                            value={cleanRating}
+                                            aria-label="Cleanliness Slider"
+                                            onChange={onChangeCleanRating}
+                                        />
+                                    </div>
 
-                                <Form.Label>Overall</Form.Label>
-                                <Form.Range
-                                    min={1}
-                                    max={5}
-                                    step={1}
-                                    value={overallRating}
-                                    aria-label="Overall Slider"
-                                    onChange={onChangeOverallRating}
-                                />
-                            </Form.Group>
-                        </Col>
+                                    <div>
+                                        <Form.Label>Overall</Form.Label>
+                                        <Form.Range
+                                            min={1}
+                                            max={5}
+                                            step={1}
+                                            value={overallRating}
+                                            aria-label="Overall Slider"
+                                            onChange={onChangeOverallRating}
+                                        />
+                                    </div>
+                                </Form.Group>
+                            </div>
 
-                        <Col
-                            className="
-                            d-flex 
-                            flex-column 
-                            pe-0 
-                            justify-content-center 
-                            align-content-center"
-                            xs="5"
-                            md="3"
-                            style={{ maxWidth: "120px" }}>
-                            <Form.Floating className="mb-1 p-0">
-                                <FloatingLabel
-                                    controlId="floatingTasteRating"
-                                    label="Taste">
-                                    <Form.Control
-                                        disabled
-                                        style={starFont}
-                                        className="text-center bg-white"
-                                        value={printStarTotal(tasteRating)}
-                                        onChange={onChangeTasteRating}
-                                    />
-                                </FloatingLabel>
-                            </Form.Floating>
+                            <div className="d-flex flex-shrink-0 flex-column justify-content-between m-1" style={{ maxWidth: "5.5rem" }}>
+                                <Form.Floating className="mb-1 p-0">
+                                    <FloatingLabel
+                                        controlId="floatingTasteRating"
+                                        label="Taste">
+                                        <Form.Control
+                                            disabled
+                                            style={starFont}
+                                            className="text-center bg-white"
+                                            value={printStarTotal(tasteRating)}
+                                            onChange={onChangeTasteRating}
+                                        />
+                                    </FloatingLabel>
+                                </Form.Floating>
 
-                            <Form.Floating className="mb-1">
-                                <FloatingLabel
-                                    controlId="floatingServiceRating"
-                                    label="Service">
-                                    <Form.Control
-                                        disabled
-                                        style={starFont}
-                                        className="text-center bg-white"
-                                        value={printStarTotal(serviceRating)}
-                                        onChange={onChangeServiceRating}
-                                    />
-                                </FloatingLabel>
-                            </Form.Floating>
+                                <Form.Floating className="mb-1">
+                                    <FloatingLabel
+                                        controlId="floatingServiceRating"
+                                        label="Service">
+                                        <Form.Control
+                                            disabled
+                                            style={starFont}
+                                            className="text-center bg-white"
+                                            value={printStarTotal(serviceRating)}
+                                            onChange={onChangeServiceRating}
+                                        />
+                                    </FloatingLabel>
+                                </Form.Floating>
 
-                            <Form.Floating className="mb-1">
-                                <FloatingLabel
-                                    controlId="floatingCleanRating}"
-                                    label="Clean">
-                                    <Form.Control
-                                        disabled
-                                        style={starFont}
-                                        className="text-center bg-white"
-                                        value={printStarTotal(cleanRating)}
-                                        onChange={onChangeCleanRating}
-                                    />
-                                </FloatingLabel>
-                            </Form.Floating>
+                                <Form.Floating className="mb-1">
+                                    <FloatingLabel
+                                        controlId="floatingCleanRating}"
+                                        label="Clean">
+                                        <Form.Control
+                                            disabled
+                                            style={starFont}
+                                            className="text-center bg-white"
+                                            value={printStarTotal(cleanRating)}
+                                            onChange={onChangeCleanRating}
+                                        />
+                                    </FloatingLabel>
+                                </Form.Floating>
 
-                            <Form.Floating className="mb-1">
-                                <FloatingLabel
-                                    controlId="floatingOverallRating"
-                                    label="Overall">
-                                    <Form.Control
-                                        disabled
-                                        style={starFont}
-                                        className="text-center bg-white"
-                                        value={printStarTotal(overallRating)}
-                                        onChange={onChangeOverallRating}
-                                    />
-                                </FloatingLabel>
-                            </Form.Floating>
-                        </Col>
+                                <Form.Floating className="mb-1">
+                                    <FloatingLabel
+                                        controlId="floatingOverallRating"
+                                        label="Overall">
+                                        <Form.Control
+                                            disabled
+                                            style={starFont}
+                                            className="text-center bg-white"
+                                            value={printStarTotal(overallRating)}
+                                            onChange={onChangeOverallRating}
+                                        />
+                                    </FloatingLabel>
+                                </Form.Floating>
+                            </div>
+                        </div>
 
-                        <Col
-                            className=" flex-wrap text-center"
-                            style={{ width: "100%", height: "100%" }}>
+                        <div className="d-flex flex-column justify-content-between flex-fill mx-1" style={{ overflow: "hidden" }}>
                             {displayReviewImage()}
-                            <FloatingImageUpload as={Row} onChangeFile={onChangeFile} />
-                        </Col>
-                    </Row>
 
-                    <Form.Floating className="mb-3 justify-content-center">
+                            <div className="mt-1">
+                                <FloatingImageUpload onChangeFile={onChangeFile} />
+                            </div>
+                        </div>
+                    </div>
+
+                    <Form.Floating className="mb-3 mx-1 justify-content-center">
                         <FloatingLabel
                             controlId="floatingReviewTitle"
                             label="Review Title">
@@ -415,7 +418,7 @@ function Review(props) {
                         </FloatingLabel>
                     </Form.Floating>
 
-                    <Form.Floating className="mb-3 justify-content-center">
+                    <Form.Floating className="mb-3 mx-1 justify-content-center">
                         <FloatingLabel
                             controlId="floatingReviewText"
                             label="Review Text">
