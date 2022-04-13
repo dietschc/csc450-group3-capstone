@@ -14,6 +14,8 @@
 //  (TJI, 03/29/2022 - Added in character limits for review title and text to match database)
 //  (DAB, 04/07/2022, Review is now more responsive and works on mobile)
 //  (DAB, 4/10/2022, Buttons now are uniform size and responsive)
+//  (DAB, 4/12/2022, BUG FIX --- Now when an admin updates a review that they are not the author 
+//  of, the original author will not change)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -27,6 +29,7 @@ import { connect } from 'react-redux';
 import { addReviewThunk, updateReviewThunk } from '../../actions/reviews';
 import { findByRestaurantIdThunk } from '../../actions/restaurants';
 import XLContainer from '../template/XLContainer';
+import C from '../../constants';
 
 /**
  * The Review View will allow a user to create and edit restaurant reviews. The 
@@ -198,23 +201,49 @@ function Review(props) {
             Number(overallRating), file);
 
         // Bring back to user dashboard after
-        setTimeout(() => { navigate("../userDashboard") }, 500);
+        navigate("../userDashboard");
     }
 
+
+    // The updateReview function will update an existing review. It if 
+    // functional with both admin and non admin users. If an admin 
+    // updates the review, the original author will not change
     const updateReview = async () => {
-        // Set user id
-        const userId = users[0].id;
+        // Setting the image location, currentUser, isAdmin, isAuthor to 
+        // variables to use in the user add
         const imageLocation = paramReview.images[0].imageLocation || '';
+        const [currentUser, ...otherUsers] = users;
+        const isAdmin = currentUser?.auth?.permission?.permissionName === C.ADMIN_USER_PERMISSION.permissionName;
+        const isAuthor = paramReview?.author?.id === currentUser?.id;
 
-        // Pass parameters to add review thunk action
-        await updateReviewThunk(reviewId, userId, reviewTitle, reviewText,
-            Number(tasteRating), Number(serviceRating), Number(cleanRating),
-            Number(overallRating), file, imageLocation);
+        // If the user accessing the site is the admin and not the original author of the
+        // review, the original authorId will be used
+        if (isAdmin && !isAuthor) {
+            // Setting the userId to use in the review update
+            const userId = paramReview?.author?.id;
 
-        // console.log("update new image? ", file);
+            // Pass parameters to add review thunk action
+            await updateReviewThunk(reviewId, userId, reviewTitle, reviewText,
+                Number(tasteRating), Number(serviceRating), Number(cleanRating),
+                Number(overallRating), file, imageLocation);
 
-        // Bring back to user dashboard after
-        setTimeout(() => { navigate("../userDashboard") }, 500);
+            // Bring admin back to the users dashboard they are editing
+            navigate(`../userDashboard/${userId}`);
+        }
+        // In any other case it is the original author who is updating the review 
+        // so the current users userId is used
+        else {
+            // Setting the userId to use in the review update
+            const userId = currentUser?.id;
+
+            // Pass parameters to add review thunk action
+            await updateReviewThunk(reviewId, userId, reviewTitle, reviewText,
+                Number(tasteRating), Number(serviceRating), Number(cleanRating),
+                Number(overallRating), file, imageLocation);
+
+            // Bring back to user dashboard after
+            navigate("../userDashboard");
+        }
     }
 
 

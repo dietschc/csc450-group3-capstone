@@ -74,7 +74,7 @@ function EditRestaurant(props) {
     // is not found, an empty array is passed back
     const getData = () => {
         // Filtering to see if the restaurant is in state
-        const paramRestaurant = restaurants.filter((restaurant) => (restaurant.id) == restaurantId);
+        const paramRestaurant = restaurants.filter((restaurant) => (restaurant.id === Number(restaurantId)));
 
         // If restaurants were found the data is returned to the caller
         if (paramRestaurant.length > 0) {
