@@ -12,6 +12,7 @@
 //  display and cleaned up the code more)
 //  (TJI, 03/29/2022 - Added alt tags for images)
 //  (DAB, 04/04/2022, Added Spinners for database load in)
+//  (DAB, 04/12/2022, Adjusted layout and set fixed WxH for images)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -46,7 +47,7 @@ function Restaurant(props) {
     const {
         deleteAllReviews,
         findReviewByAuthorRestaurantThunk,
-        findReviewByRestaurantThunk 
+        findReviewByRestaurantThunk
     } = props;
     const navigate = useNavigate();
 
@@ -123,10 +124,12 @@ function Restaurant(props) {
                 <Card className="mb-2 p-2">
                     <RestaurantHeadingCardBody restaurant={currentRestaurant} />
                     {currentRestaurant?.images[0].imageLocation &&
-                        <Card.Img className="mx-auto"
-                            style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }}
-                            src={currentRestaurant?.images[0].imageLocation}
-                            alt={currentRestaurant?.name} />
+                        <div className="mx-auto" style={{ maxHeight: "20rem", maxWidth: "20rem", overflow: "hidden" }}>
+                            <Card.Img
+                                style={{ height: "100%", width: "100%", overflow: "hidden" }}
+                                src={currentRestaurant?.images[0].imageLocation}
+                                alt={currentRestaurant?.name} />
+                        </div>
                     }
                     <FullStarRatingCol rating={currentRestaurant.rating} />
                     <RestaurantDetail restaurant={currentRestaurant} newReviewHandler={newReviewHandler} />
