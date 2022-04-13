@@ -15,6 +15,8 @@
 //  uploads and deletes. Fully functional by current models)
 //  (DAB, 3/13/2022, Added comments and arranged methods for better readability)
 //  (DAB, 4/04/2022, Organized code)
+//  (DAB, 4/13/2022, Added isLoading tracking to addRestaurant 
+//  and deleteRestaurant Thunks)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -48,6 +50,12 @@ export const addRestaurantThunk = (
     userCreatorId, restaurantName, address, city, state,
     zip, restaurantPhone, restaurantDigiContact, restaurantWebsite,
     file) => async dispatch => {
+        // Setting isLoadingReview to true
+        await dispatch(await startLoadingRestaurants());
+
+        // Variable will hold if the update was a success or not
+        let isSuccess = false;
+
         // Defining imageLocation as an empty string for default
         let imageLocation = "";
 
@@ -58,7 +66,7 @@ export const addRestaurantThunk = (
             const type = "restaurants";
 
             // Call and await the image data service upload method, passing the file as a parameter
-            return await ImageDataService.upload(file, directory, type)
+            isSuccess = await ImageDataService.upload(file, directory, type)
                 .then(async res => {
                     // Upon result, either the newly created cloud server location or an empty 
                     // string will be used
@@ -108,13 +116,13 @@ export const addRestaurantThunk = (
 
                     // Failed to add/upload, false is returned
                     return false;
-                })
+                });
         }
         // Else there is not image to upload so the data is only updated in the database
         else {
             // Call and await the user data service create method, passing the parameters and storing the 
             // results in a constant
-            return await RestaurantDataService.create({
+            isSuccess = await RestaurantDataService.create({
                 userCreatorId, restaurantName, address, city, state,
                 zip, restaurantPhone, restaurantDigiContact, restaurantWebsite,
                 imageLocation
@@ -148,8 +156,14 @@ export const addRestaurantThunk = (
 
                     // Failed to update/upload, false is returned
                     return false;
-                })
+                });
         }
+
+        // Dispatching to set isLoading Restaurants to false
+        dispatch(endLoadingRestaurants());
+            
+        // Returning weather or not the create was a success
+        return isSuccess;
     }
 
 
@@ -161,6 +175,9 @@ export const addRestaurantThunk = (
  * @returns 
  */
 export const deleteRestaurantThunk = (restaurantId) => async dispatch => {
+    // Setting isLoadingReview to true
+    await dispatch(await startLoadingRestaurants());
+
     // Making the call to the service to request the deletion of the restaurant
     await RestaurantDataService.delete(restaurantId)
         .then(res => {
@@ -175,6 +192,9 @@ export const deleteRestaurantThunk = (restaurantId) => async dispatch => {
             // If there is an error it will be logged
             console.log(err)
         })
+
+        // Dispatching to set isLoading Restaurants to false
+        dispatch(endLoadingRestaurants());
 }
 
 
@@ -332,6 +352,12 @@ export const updateRestaurantThunk = (restaurantId,
         zip,
         file
     }) => async dispatch => {
+        // Setting isLoadingReview to true
+        await dispatch(await startLoadingRestaurants());
+
+        // Variable will hold if the update was a success or not
+        let isSuccess = false;
+
         // If file exists, upload to cloud and add location to the new review
         if (file && file.size > 0) {
             // The default directory and type to be used with restaurant image uploads
@@ -347,7 +373,7 @@ export const updateRestaurantThunk = (restaurantId,
                 });
 
             // Call and await the image data service upload method, passing the file as a parameter
-            return await ImageDataService.upload(file, directory, type)
+            isSuccess = await ImageDataService.upload(file, directory, type)
                 .then(async res => {
                     // Upon result, either the newly created cloud server location or an empty 
                     // string will be used
@@ -428,7 +454,7 @@ export const updateRestaurantThunk = (restaurantId,
         }
         else {
             // Making the call to the service to request an update to the database
-            return await RestaurantDataService.update(restaurantId,
+            isSuccess = await RestaurantDataService.update(restaurantId,
                 {
                     restaurantName,
                     restaurantDigiContact,
@@ -492,6 +518,12 @@ export const updateRestaurantThunk = (restaurantId,
                     return false;
                 })
         }
+
+        // Dispatching to set isLoading Restaurants to false
+        dispatch(endLoadingRestaurants());
+            
+        // Returning weather or not the create was a success
+        return isSuccess;
     }
 
 

@@ -28,7 +28,9 @@ import ImageDataService from "../services/image.service";
 import { formatDBReviewFind } from "../helperFunction/actionHelpers";
 import { endLoadingReviews, startLoadingReviews } from "./isLoading";
 
+
 /************************************ REDUX THUNK ACTIONS ***********************************/
+
 
 /**
  * The add review thunk takes all the parameters from the review form, including a file upload and
@@ -60,87 +62,88 @@ export const addReviewThunk =
         overallRating,
         file
     ) =>
-    async (dispatch) => {
-        // Setting isLoadingReview to true
-        await dispatch(await startLoadingReviews());
+        async (dispatch) => {
+            // Setting isLoadingReview to true
+            await dispatch(await startLoadingReviews());
 
-        // This variable will return true if create was successful and false if not
-        let isSuccess = false;
+            // This variable will return true if create was successful and false if not
+            let isSuccess = false;
 
-        // If file exists, upload to cloud and add location to the new review
-        if (file.size > 0) {
-            // Parameters for user subdirectories
-            const id = userId;
-            const type = "users";
+            // If file exists, upload to cloud and add location to the new review
+            if (file.size > 0) {
+                // Parameters for user subdirectories
+                const id = userId;
+                const type = "users";
 
-            // Call and await the image data service upload method, passing the file as a parameter
-            await ImageDataService.upload(file, id, type)
-                .then(async (res) => {
-                    // console.log("location: ", res.data.location);
+                // Call and await the image data service upload method, passing the file as a parameter
+                await ImageDataService.upload(file, id, type)
+                    .then(async (res) => {
+                        // console.log("location: ", res.data.location);
 
-                    // Set the image location from the response data
-                    const imageLocation = res.data.location;
+                        // Set the image location from the response data
+                        const imageLocation = res.data.location;
 
-                    // If the imageLocation exists, this implies success uploading
-                    if (imageLocation) {
-                        // Call the review data service create method, passing the form data parameters
-                        await ReviewDataService.create({
-                            userId,
-                            restaurantId,
-                            reviewTitle,
-                            reviewText,
-                            tasteRating,
-                            serviceRating,
-                            cleanlinessRating,
-                            overallRating,
-                            imageLocation,
-                        })
-                        .then((res) => {
-                            // If the result was successful true is set to isSuccess
-                            if (res) {
-                                isSuccess = true;
-                            }
-                        })
-                    }
+                        // If the imageLocation exists, this implies success uploading
+                        if (imageLocation) {
+                            // Call the review data service create method, passing the form data parameters
+                            await ReviewDataService.create({
+                                userId,
+                                restaurantId,
+                                reviewTitle,
+                                reviewText,
+                                tasteRating,
+                                serviceRating,
+                                cleanlinessRating,
+                                overallRating,
+                                imageLocation,
+                            })
+                                .then((res) => {
+                                    // If the result was successful true is set to isSuccess
+                                    if (res) {
+                                        isSuccess = true;
+                                    }
+                                })
+                        }
+                    })
+                    .catch((err) => {
+                        // Errors will be logged in the console
+                        console.log(err);
+                    });
+
+                // Otherwise use an empty string for the location when creating the new review
+            } else {
+                const imageLocation = "";
+
+                // Call the create review data data service, passing parameters
+                await ReviewDataService.create({
+                    userId,
+                    restaurantId,
+                    reviewTitle,
+                    reviewText,
+                    tasteRating,
+                    serviceRating,
+                    cleanlinessRating,
+                    overallRating,
+                    imageLocation,
                 })
-                .catch((err) => {
-                    // Errors will be logged in the console
-                    console.log(err);
-                });
+                    .then((res) => {
+                        // If the result was successful true is set to isSuccess
+                        if (res) {
+                            isSuccess = true;
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            }
 
-            // Otherwise use an empty string for the location when creating the new review
-        } else {
-            const imageLocation = "";
+            // Setting isLoadingReviews to false
+            dispatch(endLoadingReviews());
 
-            // Call the create review data data service, passing parameters
-            await ReviewDataService.create({
-                userId,
-                restaurantId,
-                reviewTitle,
-                reviewText,
-                tasteRating,
-                serviceRating,
-                cleanlinessRating,
-                overallRating,
-                imageLocation,
-            })
-                .then((res) => {
-                    // If the result was successful true is set to isSuccess
-                    if (res) {
-                        isSuccess = true;
-                    }
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        }
+            // Returning weather or not this request was successful
+            return isSuccess;
+        };
 
-        // Setting isLoadingReviews to false
-        dispatch(endLoadingReviews());
-
-        // Returning weather or not this request was successful
-        return isSuccess;
-    };
 
 /**
  * This function takes a single parameter, which is the reviewId of the review to be deleted.
@@ -176,6 +179,7 @@ export const deleteReviewThunk =
             });
     };
 
+
 /**
  * Searches the database for all reviews with up to the offset/limit. It will then
  * add the results to state.
@@ -209,6 +213,7 @@ export const findAllReviewsOrderedThunk =
                 console.log(err);
             });
     };
+
 
 /**
  * This thunk will search the database and return reviews written by the specified author
@@ -249,6 +254,7 @@ export const findReviewByAuthorThunk =
                 console.log(err);
             });
     };
+
 
 /**
  * This thunk will search the database and return reviews written by the specified author
@@ -305,6 +311,7 @@ export const findReviewByAuthorRestaurantThunk =
         return isReviews;
     };
 
+
 /**
  * The findReviewByRestaurantThunk will find all reviews matching the restaurantId
  *
@@ -350,6 +357,7 @@ export const findReviewByRestaurantThunk =
         dispatch(endLoadingReviews());
     };
 
+
 /**
  * The update review thunk will update the parameters, including a new file if it was uploaded. This
  * function will also delete the old cloud image if a new one is uploaded.
@@ -379,97 +387,99 @@ export const updateReviewThunk =
         file,
         imageLocation
     ) =>
-    async (dispatch) => {
-        // Setting isLoadingReview to true
-        await dispatch(await startLoadingReviews());
-        
-        // This variable will return true if update was successful and false if not
-        let isSuccess = false;
+        async (dispatch) => {
+            // Setting isLoadingReview to true
+            await dispatch(await startLoadingReviews());
 
-        // If input file exists, upload to cloud and add location to the new review
-        if (file.size > 0) {
-            // Delete old image from cloud if it exists
-            if (imageLocation !== "") {
-                const oldLocation = imageLocation;
-                // console.log("old location: ", oldLocation);
-                await ImageDataService.delete(oldLocation)
-                .catch((err) => {
-                    console.log("Error deleting the image")
+            // This variable will return true if update was successful and false if not
+            let isSuccess = false;
+
+            // If input file exists, upload to cloud and add location to the new review
+            if (file.size > 0) {
+                // Delete old image from cloud if it exists
+                if (imageLocation !== "") {
+                    const oldLocation = imageLocation;
+                    // console.log("old location: ", oldLocation);
+                    await ImageDataService.delete(oldLocation)
+                        .catch((err) => {
+                            console.log("Error deleting the image")
+                        })
+                }
+
+                // Parameters for user subdirectories
+                const id = userId;
+                const type = "users";
+
+                // Call and await the image data service upload method, passing the file as a parameter
+                await ImageDataService.upload(file, id, type)
+                    .then(async (res) => {
+                        // console.log("location: ", res.data.location);
+
+                        // Set the image location from the response data
+                        const imageLocation = res.data.location;
+
+                        // If the imageLocation exists, this implies success uploading
+                        if (imageLocation) {
+                            // Call the review data service create method, passing the form data parameters
+                            await ReviewDataService.update(reviewId, {
+                                userId,
+                                reviewTitle,
+                                reviewText,
+                                tasteRating,
+                                serviceRating,
+                                cleanlinessRating,
+                                overallRating,
+                                imageLocation,
+                            })
+                                .then((res) => {
+                                    // If the result was successful true is set to isSuccess
+                                    if (res) {
+                                        isSuccess = true;
+                                    }
+                                })
+                        }
+
+                        // It is not necessary to add the review to state since visiting the homepage or dashboard
+                        // will automatically refresh all the reviews in state
+                    })
+                    .catch((err) => {
+                        console.log(err.message);
+                    });
+
+                // Otherwise use existing imageLocation
+            } else {
+                // Call the create review data data service, passing parameters
+                await ReviewDataService.update(reviewId, {
+                    userId,
+                    reviewTitle,
+                    reviewText,
+                    tasteRating,
+                    serviceRating,
+                    cleanlinessRating,
+                    overallRating,
+                    imageLocation,
                 })
+                    .then((res) => {
+                        // If the result was successful true is set to isSuccess
+                        if (res) {
+                            isSuccess = true;
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
             }
 
-            // Parameters for user subdirectories
-            const id = userId;
-            const type = "users";
+            // Setting isLoadingReviews to false
+            dispatch(endLoadingReviews());
 
-            // Call and await the image data service upload method, passing the file as a parameter
-            await ImageDataService.upload(file, id, type)
-                .then(async (res) => {
-                    // console.log("location: ", res.data.location);
+            // Returning result of the request
+            return isSuccess;
+        };
 
-                    // Set the image location from the response data
-                    const imageLocation = res.data.location;
-
-                    // If the imageLocation exists, this implies success uploading
-                    if (imageLocation) {
-                        // Call the review data service create method, passing the form data parameters
-                        await ReviewDataService.update(reviewId, {
-                            userId,
-                            reviewTitle,
-                            reviewText,
-                            tasteRating,
-                            serviceRating,
-                            cleanlinessRating,
-                            overallRating,
-                            imageLocation,
-                        })
-                        .then((res) => {
-                            // If the result was successful true is set to isSuccess
-                            if (res) {
-                                isSuccess = true;
-                            }
-                        })
-                    }
-
-                    // It is not necessary to add the review to state since visiting the homepage or dashboard
-                    // will automatically refresh all the reviews in state
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-
-            // Otherwise use existing imageLocation
-        } else {
-            // Call the create review data data service, passing parameters
-            await ReviewDataService.update(reviewId, {
-                userId,
-                reviewTitle,
-                reviewText,
-                tasteRating,
-                serviceRating,
-                cleanlinessRating,
-                overallRating,
-                imageLocation,
-            })
-                .then((res) => {
-                    // If the result was successful true is set to isSuccess
-                    if (res) {
-                        isSuccess = true;
-                    }
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        }
-
-        // Setting isLoadingReviews to false
-        dispatch(endLoadingReviews());
-
-        // Returning result of the request
-        return isSuccess;
-    };
 
 /************************************ REACT REDUX ACTIONS ***********************************/
+
 
 /**
  * React-Redux action to add a review to redux state.
@@ -541,11 +551,13 @@ export const addReview = ({
     },
 });
 
+
 // React-Redux action to delete a review based off id from redux state
 export const deleteReview = (reviewId) => ({
     type: C.DELETE_REVIEW,
     id: reviewId,
 });
+
 
 /**
  * React-Redux action to delete all reviews from redux state.
@@ -555,6 +567,7 @@ export const deleteReview = (reviewId) => ({
 export const deleteAllReviews = () => ({
     type: C.DELETE_ALL_REVIEWS,
 });
+
 
 /**
  * React-Redux action to update redux state.

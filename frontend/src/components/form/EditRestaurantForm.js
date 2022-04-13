@@ -10,6 +10,8 @@
 //  (DAB, 3/13/2022, Both add and update restaurant are working as 
 //  fully intended with image uploads/deletes)
 //  (TJI, 04/10/2022 - Added Tooltip for DigiContact)
+//  (DAB, 04/13/2022, Added multiple request protection and spinner for adding
+//  restaurants)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -35,12 +37,19 @@ import ModalConfirmation from '../modal/ModalCancelConfirm';
  * create and/or update a restaurant depending on if a user is logged in and 
  * that isUpdate is true (edit) or false(create).
  * 
- * @param { isUpdate, restaurant, users, addRestaurantThunk, updateRestaurantThunk } props 
+ * @param { 
+ * isUpdate, 
+ * isLoading, 
+ * restaurant, 
+ * users, 
+ * addRestaurantThunk, 
+ * updateRestaurantThunk 
+ * } props 
  * @returns 
  */
 function EditRestaurantForm(props) {
     // Destructuring needed redux store state and functions
-    const { isUpdate, restaurant, users } = props;
+    const { isUpdate, restaurant, users, isLoading } = props;
     // Redux store functions
     const { addRestaurantThunk, updateRestaurantThunk } = props;
 
@@ -209,76 +218,82 @@ function EditRestaurantForm(props) {
         // Preventing the default submit form action
         e.preventDefault();
 
-        // If the form is in update view
-        if (isUpdate) {
-            // If there is a user in state
-            if (users && users.length > 0) {
-                // The user information is destructured from the state
-                const [currentUser] = users;
-                const [currentRestaurant] = restaurant;
-                const userCreatorId = currentUser.id;
-                const userName = currentUser.auth.userName;
+        if (!isLoading.isLoadingRestaurants) {
+            // If the form is in update view
+            if (isUpdate) {
+                // If there is a user in state
+                if (users && users.length > 0) {
+                    // The user information is destructured from the state
+                    const [currentUser] = users;
+                    const [currentRestaurant] = restaurant;
+                    const userCreatorId = currentUser.id;
+                    const userName = currentUser.auth.userName;
 
-                // The updateData variable will hold the needed data to 
-                // update the restaurant in the correct format
-                const updateData = {
-                    restaurantName: restaurantName,
-                    restaurantDigiContact: digitalContact,
-                    restaurantPhone: unformatPhoneNumber(phone),
-                    userCreatorId: userCreatorId,
-                    restaurantWebsite: website,
-                    userName: userName,
-                    imageId: imageId,
-                    imageLocation: imageLocationName || "",
-                    address: address,
-                    city: city,
-                    state: state || "",
-                    zip: zip,
-                    file: file
-                }
-
-                // The update Thunk is called and if the update is successful the user is redirected 
-                // to the updated restaurant page
-                await updateRestaurantThunk(currentRestaurant.id, updateData).then(isUpdated => {
-                    // If the entry was updated the user is redirected
-                    if (isUpdated) {
-                        // Navigating the user to the restaurant view for the updated restaurant
-                        navigate(`../restaurant/${currentRestaurant.id}`);
+                    // The updateData variable will hold the needed data to 
+                    // update the restaurant in the correct format
+                    const updateData = {
+                        restaurantName: restaurantName,
+                        restaurantDigiContact: digitalContact,
+                        restaurantPhone: unformatPhoneNumber(phone),
+                        userCreatorId: userCreatorId,
+                        restaurantWebsite: website,
+                        userName: userName,
+                        imageId: imageId,
+                        imageLocation: imageLocationName || "",
+                        address: address,
+                        city: city,
+                        state: state || "",
+                        zip: zip,
+                        file: file
                     }
-                    // If no update occurs a log is sent
-                    else {
-                        console.log("Restaurant was not updated.")
-                    }
-                });
-            }
-        }
-        // Else there is no restaurant and a new one will be created
-        else {
-            // If a user is logged in
-            if (users && users.length > 0) {
-                // The users id is destructured from state
-                const userCreatorId = users[0].id;
 
-                // The form phone number is unformatted to be saved in the database
-                const rawPhone = unformatPhoneNumber(phone);
-
-                // The restaurant is added to the database and state by calling the addRestaurantThunk
-                await addRestaurantThunk(
-                    userCreatorId, restaurantName, address,
-                    city, state, zip, rawPhone, digitalContact,
-                    website, file)
-                    .then(restaurantData => {
-                        // If data is returned the update is successful and the user is navigated to the 
-                        // id of the newly stored restaurant
-                        if (restaurantData) {
+                    // The update Thunk is called and if the 
+                    // update is successful the user is redirected 
+                    // to the updated restaurant page
+                    await updateRestaurantThunk(currentRestaurant.id, updateData).then(isUpdated => {
+                        // If the entry was updated the user is redirected
+                        if (isUpdated) {
                             clearForm();
-                            navigate(`../restaurant/${restaurantData.restaurantId}`);
+                            // Navigating the user to the restaurant view for the updated restaurant
+                            navigate(`../restaurant/${currentRestaurant.id}`);
                         }
-                        // Else the restaurant was not updated and the user remains on the page to fix errors
+                        // If no update occurs a log is sent
                         else {
-                            console.log("There was an issue creating restaurant")
+                            console.log("Restaurant was not updated.")
                         }
                     });
+                }
+            }
+            // Else there is no restaurant and a new one will be created
+            else {
+                // If a user is logged in
+                if (users && users.length > 0) {
+                    // The users id is destructured from state
+                    const userCreatorId = users[0].id;
+
+                    // The form phone number is unformatted to be saved in the database
+                    const rawPhone = unformatPhoneNumber(phone);
+
+                    // The restaurant is added to the database and state by 
+                    // calling the addRestaurantThunk
+                    await addRestaurantThunk(
+                        userCreatorId, restaurantName, address,
+                        city, state, zip, rawPhone, digitalContact,
+                        website, file)
+                        .then(restaurantData => {
+                            // If data is returned the update is successful and the user 
+                            // is navigated to the id of the newly stored restaurant
+                            if (restaurantData) {
+                                clearForm();
+                                navigate(`../restaurant/${restaurantData.restaurantId}`);
+                            }
+                            // Else the restaurant was not updated and the user remains 
+                            // on the page to fix errors
+                            else {
+                                console.log("There was an issue creating restaurant")
+                            }
+                        });
+                }
             }
         }
     }
@@ -300,7 +315,7 @@ function EditRestaurantForm(props) {
             <FloatingWebsite website={website} onChangeWebsite={onChangeWebsite} />
             <FloatingImageUpload onChangeFile={onChangeFile} />
             {imagePreview()}
-            <EditFormButtons isUpdate={isUpdate} saveAccount={saveAccount} clearFormHandler={showClearFormHandler} />
+            <EditFormButtons isUpdate={isUpdate} isLoading={isLoading} saveAccount={saveAccount} clearFormHandler={showClearFormHandler} />
             <ModalConfirmation show={showClearFormConfirm} closeHandler={closeClearFormHandler} clearForm={clearForm} />
         </Form>
     )
@@ -309,7 +324,8 @@ function EditRestaurantForm(props) {
 // Mapping the redux store states to props
 const mapStateToProps = state =>
 ({
-    users: [...state.users]
+    users: [...state.users],
+    isLoading: { ...state.isLoading }
 });
 
 // Exporting the connect Wrapped EditRestaurantForm Component
