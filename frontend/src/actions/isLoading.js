@@ -97,3 +97,25 @@ export const endLoadingMessages = () => ({
     type: C.END_LOADING_MESSAGES,
     isLoadingMessages: false
 });
+
+
+/**
+ * Sets referenced state to loading true.
+ * 
+ * @returns 
+ */
+ export const startLoadingFriends = () => ({
+    type: C.START_LOADING_FRIENDS,
+    isLoadingFriends: true
+});
+
+
+/**
+ * Sets referenced state to loading false.
+ * 
+ * @returns 
+ */
+export const endLoadingFriends = () => ({
+    type: C.END_LOADING_FRIENDS,
+    isLoadingFriends: false
+});

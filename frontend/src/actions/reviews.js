@@ -17,8 +17,9 @@
 //  (DAB, 4/04/2022, Added in isLoading dispatch for findReviewByAuthorRestaurantThunk and
 //  findReviewByRestaurantThunk)
 //  (DAB, 4/04/2022, Organized code)
-//  (DAB, 4/13/2022, addReview and updateReview Thunks now have success true/false return 
-//  value as well as isLoadingReview dispatch actions to monitor request process)
+//  (DAB, 4/13/2022, addReview, updateReview, deleteReview Thunks now have 
+//  success true/false return value as well as isLoadingReview dispatch 
+//  actions to monitor request process)
 
 // Using React library in order to build components
 // for the app and importing needed components
@@ -153,6 +154,9 @@ export const addReviewThunk =
  */
 export const deleteReviewThunk =
     (reviewId, imageLocation) => async (dispatch) => {
+        // Setting isLoadingReview to true
+        await dispatch(await startLoadingReviews());
+
         // Delete the image from cloud storage if it exists
         if (imageLocation !== "") {
             await ImageDataService.delete(imageLocation).catch((err) => {
@@ -177,6 +181,9 @@ export const deleteReviewThunk =
             .catch((err) => {
                 console.log(err);
             });
+
+        // Setting isLoadingReviews to false
+        dispatch(endLoadingReviews());
     };
 
 

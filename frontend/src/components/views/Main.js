@@ -8,6 +8,8 @@
 //  (DAB, 03/13/2022, Moved DevelopersNav into MainNav)
 //  (DAB, 04/04/2022, Added Spinners for database load in)
 //  (DAB, 04/05/2022, Users can no longer friend themselves)
+//  (DAB, 04/13/2022, isLoading monitoring added to add friend. Only one 
+//  friend html request can be made at a time to prevent duplicates)
 
 // Using React library in order to build components
 // for the app and importing needed components
@@ -68,9 +70,9 @@ function Main(props) {
 
     // FriendHandler will add the review author id to the users
     // friend list
-    const friendHandler = (friendTwoId) => {
+    const friendHandler = async (friendTwoId) => {
         // If there is a user and they are logged in a friend can be added
-        if (users.length > 0 && users[0].isLoggedIn === true) {
+        if (users.length > 0 && users[0].isLoggedIn === true && !isLoading.isLoadingFriends) {
             // Destructuring the first element in the users array
             const [currentUser] = users;
 
@@ -81,7 +83,7 @@ function Main(props) {
             if (friendOneId !== friendTwoId) {
                 // Attempting to add the new friend to the database and then to state. Only 
                 // friends not in the database/state will be added
-                addFriendThunk(friendOneId, friendTwoId);
+                await addFriendThunk(friendOneId, friendTwoId);
             } 
         }
     }

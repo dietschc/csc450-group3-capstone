@@ -3,6 +3,7 @@
 // Restaurant Club - isLoading.js
 // April 4, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 4/13/2022, Added in Friends isLoading reducer)
 
 // Importing constants so there is no mistype
 import C from '../constants';
@@ -50,6 +51,16 @@ export const isLoading = (state = {}, action) => {
             return {
                 ...state,
                 isLoadingMessages: action.isLoadingMessages
+            }
+        case C.START_LOADING_FRIENDS:
+            return {
+                ...state,
+                isLoadingFriends: action.isLoadingFriends
+            }
+        case C.END_LOADING_FRIENDS:
+            return {
+                ...state,
+                isLoadingFriends: action.isLoadingFriends
             }
         default:
             return state;

@@ -19,6 +19,9 @@
 //  possible and finished comments)
 //  (DAB, 04/02/2022, Moved EditPassword Button into dashboard)
 //  (DAB, 04/04/2022, Added Spinners for database load in and layoutEffect)
+//  (DAB, 04/13/2022, isLoading state control added to delete friend and review. 
+//  users can only send one of each corresponding request in at a time to 
+//  prevent duplicate requests)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -139,7 +142,7 @@ function UserDashboard(props) {
 
     // Deletes the friend with the returned friend.userId. Action changes 
     // depending on if there is a param userId
-    const deleteFriend = () => {
+    const deleteFriend = async () => {
         // If there is not a param userId in the URL the target 
         // will be users[0]
         if (!userId) {
@@ -149,7 +152,7 @@ function UserDashboard(props) {
             const friendId = friend.id;
 
             // Call thunk method and pass parameters to backend
-            deleteFriendThunk(id, friendId);
+            await deleteFriendThunk(id, friendId);
         }
         // Else the param userId is used to delete the friend data/state
         else {
@@ -159,7 +162,7 @@ function UserDashboard(props) {
 
             // Call the thunk method to delete the friend from state and 
             // the database
-            deleteFriendThunk(id, friendId);
+            await deleteFriendThunk(id, friendId);
         }
     }
 
@@ -167,33 +170,40 @@ function UserDashboard(props) {
     // Handles the click on the delete friend button and sets 
     // the selected friend into state
     const deleteFriendHandler = (friend) => {
-        // Setting the friend from the event to local state
-        setFriend(friend);
+        // This will allow only one request at a time so duplicates are not 
+        // made
+        if (!isLoading.isLoadingFriends) {
+            // Setting the friend from the event to local state
+            setFriend(friend);
 
-        // Showing the confirmation modal
-        showFriendHandler();
+            // Showing the confirmation modal
+            showFriendHandler();
+        }
     }
 
 
     // Deletes the review with the returned reviewId
-    const deleteReview = () => {
+    const deleteReview = async () => {
         // Define our id parameters from local state 
         const reviewId = currentReview.id;
         const imageLocation = currentReview.images[0].imageLocation ?? "";
 
         // Call thunk method and pass parameters to backend
-        deleteReviewThunk(reviewId, imageLocation);
+        await deleteReviewThunk(reviewId, imageLocation);
     }
 
 
     // Handles the click on the delete review button and sets 
     // the selected review into state
     const deleteReviewHandler = (review) => {
-        // Setting the current review to delete
-        setCurrentReview(review);
+        // Only one review can be deleted at a time
+        if (!isLoading.isLoadingReviews) {
+            // Setting the current review to delete
+            setCurrentReview(review);
 
-        // Showing a confirm modal
-        showReviewHandler();
+            // Showing a confirm modal
+            showReviewHandler();
+        }
     }
 
 

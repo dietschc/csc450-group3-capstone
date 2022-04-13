@@ -24,11 +24,11 @@ import { formatPhoneNumber } from '../../helperFunction/FormatString';
 function RestaurantEditItem(props) {
     // The form component specific props will be assigned and 
     // used to process the form element
-    const {
-        restaurant,
+    const { restaurant } = props;
+    const { 
         viewRestaurantHandler,
         editRestaurantHandler,
-        deleteRestaurantHandler
+        deleteRestaurantHandler 
     } = props;
     const restaurantId = restaurant.id;
 

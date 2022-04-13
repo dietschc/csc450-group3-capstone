@@ -4,11 +4,13 @@
 // March 3, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 4/04/2022, Organized code)
+//  (DAB, 4/13/2022, Adding isLoading state to add/delete friends)
 
 // Using React library in order to build components
 // for the app and importing needed components
 import FriendDataService from "../services/friend.service";
 import { addFriend, deleteFriend } from "./users";
+import { startLoadingFriends, endLoadingFriends } from "./isLoading";
 
 
 /************************************ REDUX THUNK ACTIONS ***********************************/
@@ -23,6 +25,9 @@ import { addFriend, deleteFriend } from "./users";
  */
 export const addFriendThunk =
     (friendOneId, friendTwoId) => async (dispatch) => {
+        // Setting isLoadingFriends to true
+        await dispatch(await startLoadingFriends());
+
         /**
          * Call and await the user data service create method, passing the parameters and storing the
          * results in a constant.
@@ -45,6 +50,9 @@ export const addFriendThunk =
                 // Errors will be logged
                 console.log(err);
             });
+
+        // Dispatching to set isLoading Friends to false
+        dispatch(endLoadingFriends());
     };
 
 
@@ -57,11 +65,11 @@ export const addFriendThunk =
  */
 export const deleteFriendThunk =
     (id, friendId) => async dispatch => {
-        /**
-         * Call and await the user data service create method, passing the parameters and storing the
-         * results in a constant.
-         */
-        //  console.log("from thunk: ", data);
+        // Setting isLoadingFriends to true
+        await dispatch(await startLoadingFriends());
+
+        // Call and await the user data service create method, passing the parameters and storing the
+        // results in a constant.
         await FriendDataService.delete(id, friendId)
             .then((friend) => {
                 // console.log("friend return: ", friend);
@@ -82,4 +90,7 @@ export const deleteFriendThunk =
                 // Errors will be logged
                 console.log(err);
             });
+
+        // Dispatching to set isLoading Friends to false
+        dispatch(endLoadingFriends());
     };
