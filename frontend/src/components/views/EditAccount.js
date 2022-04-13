@@ -17,6 +17,7 @@
 //  (DAB, 4/02/2022, Added Confirm Password field to create account)
 //  (DAB, 4/10/2022, Button are now responsive and follow expanding theme)
 //  (DAB, 4/10/2022, Adjusted form Char limits to googles maximum values)
+//  (CPD, 4/12/2022, Modified updateAccount to handle duplicate username error from backend)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -293,7 +294,7 @@ function EditAccount(props) {
             else {
                 setErrorMessage(`${userName} is already taken, try another!`)
             }
-            
+
         }
     }
 
@@ -320,7 +321,7 @@ function EditAccount(props) {
     // The updateAccount will allow the user to update an existing account. 
     // If a param userId exists the user will update that account, if not 
     // the user will update their own account
-    const updateAccount = () => {
+    const updateAccount = async () => {
         // Pulling the id of the logged in user to 
         // update their own account
         const id = users.length > 0 ? users[0].id : "";
@@ -338,25 +339,22 @@ function EditAccount(props) {
             userEmail: email
         }
 
-        // If there is not a param userId, then the logged in users 
-        // data will be updated
-        if (!userId) {
-            // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
-            updateUserThunk(id, data)
+        // Use id if param userId is null
+        const isAccountUpdated = await updateUserThunk(userId ?? id, data);
 
-            // Bring back to user dashboard after
+        // console.log("Is account updated? ", isAccountUpdated)
+
+        // If the account was updated without errors the user is navigated to the dashboard
+        if (isAccountUpdated) {
+            // The form was submitted so local state is set to true
+            setSubmitted(true);
+
+            // Send the user back to their dashboard
             setTimeout(() => { navigate("../userDashboard") }, 500);
         }
-        // Else the param userId's data will be updated
+        // If the account was not created, the user is notified in the error message
         else {
-            // Updating the param userId's data in the database
-            updateUserThunk(userId, data);
-
-            // Deleting the user from state, they are no longer needed
-            deleteUser(userId);
-
-            // Navigating the admin to that users updated userDashboard
-            navigate(`/userDashboard/${userId}`)
+            setErrorMessage(`${userName} is already taken, try another!`)
         }
     }
 
@@ -417,7 +415,7 @@ function EditAccount(props) {
                         />
                     </FloatingLabel>
                 </Form.Floating>
-                
+
                 {/* <div className="text-danger">{errorMessage}</div> */}
             </div>)
 
@@ -550,7 +548,7 @@ function EditAccount(props) {
                         {displayPasswordFields()}
 
                         {displaySubmitButton()}
-                        {errorMessage && <Alert className="mb-0 text-center"variant="danger">{errorMessage}</Alert>}
+                        {errorMessage && <Alert className="mb-0 text-center" variant="danger">{errorMessage}</Alert>}
                     </Form>
                 )}
             </Container>
