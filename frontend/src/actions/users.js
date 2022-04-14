@@ -339,6 +339,11 @@ export const updatePasswordThunk = (userId, newPassword) => async dispatch => {
  * @returns 
  */
 export const updatePasswordSecureThunk = (userId, userPassword, newPassword) => async dispatch => {
+    // Setting isLoadingUsers state to true
+    await dispatch(await startLoadingUsers());
+    // This variable will return true if update was successful and false if not
+    let isSuccess = false;
+
     // Packaging the password in data to be used in the request body
     const data = {
         userPassword: userPassword,
@@ -347,24 +352,30 @@ export const updatePasswordSecureThunk = (userId, userPassword, newPassword) => 
 
     // Sending a request to update the password in the database. Will 
     // return true if successful and false if not
-    return await AuthenticationDataService.updatePasswordSecure(userId, data)
+    await AuthenticationDataService.updatePasswordSecure(userId, data)
         .then(res => {
             // If there is a result, the password is updated and 
             // true is returned
             if (res) {
-                return true;
+                isSuccess = true;
             }
             // If there is not a result, the password was not updated 
             // and false is returned
             else {
-                return false;
+                isSuccess = false;
             }
         })
         .catch(err => {
             // Errors will be caught, logged, and false is returned
             console.log(err)
-            return false;
+            isSuccess = false;
         })
+
+    // Setting isLoadingUsers to false
+    dispatch(endLoadingUsers());
+
+    // Returning result of the request
+    return isSuccess;
 }
 
 

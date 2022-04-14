@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 // Use to navigate back to the Dashboard page after successful update
 import { useNavigate, useParams } from 'react-router-dom';
 // Various containers from bootstrap to build the form
-import { Form, Container, Button, FloatingLabel, Alert } from 'react-bootstrap';
+import { Form, Container, Button, FloatingLabel, Alert, Spinner } from 'react-bootstrap';
 // Middleware to actually update the password
 import { updatePasswordThunk, updatePasswordSecureThunk } from '../../actions/users';
 import FormContainer from '../template/FormContainer';
@@ -29,7 +29,7 @@ import FormContainer from '../template/FormContainer';
  */
 function EditPassword(props) {
     // User array and Thunk variables.
-    const { users, updatePasswordThunk, updatePasswordSecureThunk } = props;
+    const { users, updatePasswordThunk, updatePasswordSecureThunk, isLoading } = props;
     // Destructuring out the param if there is one
     const { userId } = useParams();
 
@@ -73,37 +73,40 @@ function EditPassword(props) {
         // Preventing default form submission action
         e.preventDefault();
 
-        // If the password is confirmed to match, an attempt to update it in the 
-        // database will be made
-        if (passwordConfirmation()) {
-            // If there is not a userId param, then the logged in user password 
-            // will be updated if they match
-            if (!userId) {
-                // Attempting to update the password
-                const isPasswordUpdated = await updatePasswordSecureThunk(users[0].id, oldPassword, newPassword);
+        // If there is not a current submission request loading
+        if (!isLoading.isLoadingUsers) {
+            // If the password is confirmed to match, an attempt to update it in the 
+            // database will be made
+            if (passwordConfirmation()) {
+                // If there is not a userId param, then the logged in user password 
+                // will be updated if they match
+                if (!userId) {
+                    // Attempting to update the password
+                    const isPasswordUpdated = await updatePasswordSecureThunk(users[0].id, oldPassword, newPassword);
 
-                if (isPasswordUpdated) {
-                    // Successful update, navigating to dashboard
-                    navigate("/userDashboard");
+                    if (isPasswordUpdated) {
+                        // Successful update, navigating to dashboard
+                        navigate("/userDashboard");
+                    }
+                    else {
+                        // do something update failed
+                        setUpdateErrorMessage("Password failed to update, check current password");
+                    }
                 }
+                // Else, an admin is logged in so the password will be updated 
+                // without providing the old password
                 else {
-                    // do something update failed
-                    setUpdateErrorMessage("Password failed to update, check current password");
-                }
-            }
-            // Else, an admin is logged in so the password will be updated 
-            // without providing the old password
-            else {
-                // Attempting to update the password
-                const isPasswordUpdated = await updatePasswordThunk(userId, newPassword);
+                    // Attempting to update the password
+                    const isPasswordUpdated = await updatePasswordThunk(userId, newPassword);
 
-                if (isPasswordUpdated) {
-                    // Successful update, navigating to dashboard
-                    navigate(`/userDashboard/${userId}`);
-                }
-                else {
-                    // do something, update failed
-                    setUpdateErrorMessage("Password failed to update, check userId");
+                    if (isPasswordUpdated) {
+                        // Successful update, navigating to dashboard
+                        navigate(`/userDashboard/${userId}`);
+                    }
+                    else {
+                        // do something, update failed
+                        setUpdateErrorMessage("Password failed to update, check userId");
+                    }
                 }
             }
         }
@@ -181,14 +184,24 @@ function EditPassword(props) {
                     <Form.Floating className="mb-3 justify-content-center">
                         <div className="d-flex flex-column flex-sm-row justify-content-center pt-3">
                             <Button type="submit">
-                                Submit
+                            {isLoading.isLoadingUsers ? (
+                                <Spinner
+                                as="span"
+                                variant="light"
+                                size="sm"
+                                role="status"
+                                aria-hidden="true"
+                                animation="border"/>
+                            ) : (
+                                "Submit"
+                            )}
                             </Button>
                         </div>
                     </Form.Floating>
-                    {errorMessage && <Alert className="mb-0 text-center"variant="danger">{errorMessage}</Alert>}
-                    {updateErrorMessage && <Alert className="mb-0 text-center"variant="danger">{updateErrorMessage}</Alert>}
+                    {errorMessage && <Alert className="mb-0 text-center" variant="danger">{errorMessage}</Alert>}
+                    {updateErrorMessage && <Alert className="mb-0 text-center" variant="danger">{updateErrorMessage}</Alert>}
                 </Form>
-                
+
             </Container>
         </FormContainer>
     )
@@ -197,7 +210,8 @@ function EditPassword(props) {
 // Mapping the redux store states to props
 const mapStateToProps = state =>
 ({
-    users: [...state.users]
+    users: [...state.users],
+    isLoading: { ...state.isLoading }
 });
 
 // Exporting the component
