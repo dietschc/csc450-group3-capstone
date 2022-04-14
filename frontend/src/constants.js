@@ -8,6 +8,7 @@
 //  (DAB, 4/03/2022, Added in UN_BAN_USER_PERMISSION)
 //  (DAB, 4/11/2022, Added in UN_ADMIN_USER_PERMISSION and ADMIN_USER_PERMISSION)
 //  (DAB, 4/13/2022, Added friends to isLoggedIn constants)
+//  (DAB, 4/14/2022, Added MAX_UPLOAD_SIZE)
 
 // These constants ensure that there will be no 
 // spelling errors when working with static variables
@@ -19,6 +20,8 @@ const constants = {
         "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC",  
         "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY"
     ],
+
+    MAX_UPLOAD_SIZE: 5 * 1024 * 1024,
 
     ADD_USER: "ADD_USER",
     UPDATE_USER: "UPDATE_USER",
