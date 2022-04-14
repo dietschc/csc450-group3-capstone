@@ -13,6 +13,8 @@
 //  (TJI, 03/29/2022 - Added alt tags for images)
 //  (DAB, 04/04/2022, Added Spinners for database load in)
 //  (DAB, 04/12/2022, Adjusted layout and set fixed WxH for images)
+//  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
+//  up any skipped load ins)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -32,6 +34,7 @@ import {
 import RestaurantDetail from '../subComponent/RestaurantDetail';
 import ReviewCard from '../subComponent/ReviewCard';
 import ThemedSpinner from '../subComponent/ThemedSpinner';
+import { endLoadingAll } from '../../actions/isLoading';
 
 /**
  * The Restaurant Component will display the Restaurant details and 
@@ -47,7 +50,8 @@ function Restaurant(props) {
     const {
         deleteAllReviews,
         findReviewByAuthorRestaurantThunk,
-        findReviewByRestaurantThunk
+        findReviewByRestaurantThunk,
+        endLoadingAll
     } = props;
     const navigate = useNavigate();
 
@@ -76,7 +80,10 @@ function Restaurant(props) {
     // Loading in the initial restaurant data and restaurant 
     // specific reviews once on page load
     useEffect(() => {
+        // Load initial data
         loadData();
+        // Ending any unfinished load ins
+        endLoadingAll();
     }, []);
 
     // The reviewHandler will take the restaurantId as a param and pass it 
@@ -173,4 +180,9 @@ const mapStateToProps = state =>
 });
 
 // Exporting the connect Wrapped Restaurant Component
-export default connect(mapStateToProps, { deleteAllReviews, findReviewByAuthorRestaurantThunk, findReviewByRestaurantThunk })(Restaurant);
+export default connect(mapStateToProps, { 
+    deleteAllReviews, 
+    findReviewByAuthorRestaurantThunk, 
+    findReviewByRestaurantThunk, 
+    endLoadingAll 
+})(Restaurant);

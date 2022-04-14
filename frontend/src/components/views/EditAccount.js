@@ -20,6 +20,8 @@
 //  (CPD, 4/12/2022, Modified updateAccount to handle duplicate username error from backend)
 //  (CPD, 4/13/2022, Re-added logic for admin redirect and remove edited user from state) 
 //  (CPD, 4/14/2022, Added isLoading state and spinner code to the submit buttons)
+//  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
+//  up any skipped load ins)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -33,6 +35,7 @@ import { addUserThunk, updateUserThunk, findByUserIdThunk, deleteUser } from '..
 import { checkLogin } from '../../helperFunction/CheckLogin'
 import FloatingStateOptionList from '../form/floatingComponents/FloatingStateOptionList';
 import ModalConfirmation from '../modal/ModalCancelConfirm';
+import { endLoadingAll } from '../../actions/isLoading';
 
 /**
  * The EditAccount View will allow a users account information to be 
@@ -53,7 +56,8 @@ function EditAccount(props) {
         deleteUser,
         addUserThunk,
         updateUserThunk,
-        isLoading
+        isLoading,
+        endLoadingAll
     } = props;
 
     // Destructuring out the param if there is one
@@ -109,6 +113,9 @@ function EditAccount(props) {
         if (users.length > 0) {
             loadData();
         }
+        
+        // Ending any unfinished load ins
+        endLoadingAll(); 
     }, [])
 
 
@@ -700,5 +707,6 @@ export default connect(mapStateToProps, {
     addUserThunk,
     updateUserThunk,
     findByUserIdThunk,
-    deleteUser
+    deleteUser,
+    endLoadingAll
 })(EditAccount);

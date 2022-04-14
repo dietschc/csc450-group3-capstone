@@ -8,6 +8,8 @@
 //  some comments)
 //  (DAB, 04/04/2022, Added Spinners for database load in)
 //  (DAB, 4/10/2022, Button is now responsive and follows expanding theme)
+//  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
+//  up any skipped load ins)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -21,6 +23,7 @@ import {
     deleteAllRestaurants,
     findByRestaurantNameThunk
 } from "../../actions/restaurants";
+import { endLoadingAll } from '../../actions/isLoading';
 import { useNavigate } from 'react-router-dom';
 import ThemedSpinner from '../subComponent/ThemedSpinner';
 
@@ -35,7 +38,11 @@ import ThemedSpinner from '../subComponent/ThemedSpinner';
 function Search(props) {
     // Pulling the needed methods/variables from props and params
     const { restaurants, isLoading } = props;
-    const { deleteAllRestaurants, findByRestaurantNameThunk } = props;
+    const { 
+        deleteAllRestaurants, 
+        findByRestaurantNameThunk, 
+        endLoadingAll 
+    } = props;
     const { restaurantName, authorId, restaurantId } = useParams();
     // Creating a navigate instance to navigate the application to new routes
     const navigate = useNavigate();
@@ -56,6 +63,8 @@ function Search(props) {
     // Loading the database data into state when params are updated on params
     useEffect(() => {
         loadState();
+        // Ending any unfinished load ins
+        endLoadingAll();
     }, [restaurantName, authorId, restaurantId]);
 
     return (
@@ -102,5 +111,6 @@ const mapStateToProps = (state) => ({
 // Exporting the component
 export default connect(mapStateToProps, {
     deleteAllRestaurants,
-    findByRestaurantNameThunk
+    findByRestaurantNameThunk,
+    endLoadingAll
 })(Search);

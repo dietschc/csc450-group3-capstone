@@ -7,10 +7,12 @@
 //  for admins to edit passwords)
 //  (CPD, 4/14/2022, Added isLoading state and spinner code to the submit button)
 //  (DAB, 4/14/2022, Added form validation)
+//  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
+//  up any skipped load ins)
 
 // Using React library in order to build components
 // for the app and importing needed components such as State where variables are stored
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 // Use to navigate back to the Dashboard page after successful update
 import { useNavigate, useParams } from "react-router-dom";
@@ -28,7 +30,9 @@ import {
     updatePasswordThunk,
     updatePasswordSecureThunk,
 } from "../../actions/users";
+import { endLoadingAll } from "../../actions/isLoading";
 import FormContainer from "../template/FormContainer";
+
 
 /**
  * The EditPassword Component will allow the user to edit their password.
@@ -41,8 +45,13 @@ import FormContainer from "../template/FormContainer";
  */
 function EditPassword(props) {
     // User array and Thunk variables.
-    const { users, updatePasswordThunk, updatePasswordSecureThunk, isLoading } =
-        props;
+    const { users } = props;
+    const { 
+        updatePasswordThunk, 
+        updatePasswordSecureThunk, 
+        isLoading, 
+        endLoadingAll 
+    } = props;
     // Destructuring out the param if there is one
     const { userId } = useParams();
 
@@ -54,9 +63,16 @@ function EditPassword(props) {
     // The formError local state will hold any errors found in the
     // form and their error message
     const [formError, setFormError] = useState({});
-
     // Navigate command for shorthand
     const navigate = useNavigate();
+
+
+    // Loading the database data into state on page load
+    useEffect(() => {
+        // Ending any unfinished load ins
+        endLoadingAll();
+    }, []);
+
 
     // The formErrorCheck will hold the logic for checking the
     // form for errors and return them as an object
@@ -321,4 +337,5 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
     updatePasswordThunk,
     updatePasswordSecureThunk,
+    endLoadingAll
 })(EditPassword);

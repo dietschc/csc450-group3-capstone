@@ -22,6 +22,8 @@
 //  form until the request is complete)
 //  (DAB, 4/14/2022, Adjusted form star layout to fit flex box)
 //  (DAB, 4/14/2022, Added in better form validation)
+//  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
+//  up any skipped load ins)
 
 // Using React library in order to build components
 // for the app and importing needed components
@@ -42,6 +44,7 @@ import { addReviewThunk, updateReviewThunk } from "../../actions/reviews";
 import { findByRestaurantIdThunk } from "../../actions/restaurants";
 import XLContainer from "../template/XLContainer";
 import C from "../../constants";
+import { endLoadingAll } from "../../actions/isLoading";
 
 /**
  * The Review View will allow a user to create and edit restaurant reviews. The
@@ -54,8 +57,12 @@ import C from "../../constants";
 function Review(props) {
     // Destructuring the needed arrays and data functions from props
     const { users, reviews, restaurants, isLoading } = props;
-    const { addReviewThunk, updateReviewThunk, findByRestaurantIdThunk } =
-        props;
+    const { 
+        addReviewThunk, 
+        updateReviewThunk, 
+        findByRestaurantIdThunk, 
+        endLoadingAll 
+    } = props;
     const starFont = { color: "gold" };
 
     // Extract IDs from URL as parameters
@@ -116,6 +123,9 @@ function Review(props) {
                 getRestaurant();
             }
         }
+
+        // Ending any unfinished load ins
+        endLoadingAll();
     }, []);
 
 
@@ -655,4 +665,5 @@ export default connect(mapStateToProps, {
     addReviewThunk,
     updateReviewThunk,
     findByRestaurantIdThunk,
+    endLoadingAll
 })(Review);
