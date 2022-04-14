@@ -17,6 +17,8 @@
 //  (DAB, 4/02/2022, Added Confirm Password field to create account)
 //  (DAB, 4/10/2022, Button are now responsive and follow expanding theme)
 //  (DAB, 4/10/2022, Adjusted form Char limits to googles maximum values)
+//  (CPD, 4/12/2022, Modified updateAccount to handle duplicate username error from backend)
+//  (CPD, 4/12/2022, Re-added logic for admin redirect and remove edited user from state) 
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -124,18 +126,23 @@ function EditAccount(props) {
     // save account depending on if the account is being edited 
     // or created
     const handleSubmit = (e) => {
-        // Preventing default form submission
-        e.preventDefault();
+        // As long as submitted is still false
+        if (!submitted) {
+            // Preventing default form submission
+            e.preventDefault();
 
-        // If editing the account is updated in 
-        // the database
-        if (isEditing) {
-            updateAccount();
-        }
-        // If not updating the account is saved 
-        // to the database
-        else {
-            saveAccount();
+            // If editing the account is updated in 
+            // the database
+            if (isEditing) {
+                updateAccount();
+            }
+            // If not updating the account is saved 
+            // to the database
+            else {
+                saveAccount();
+            }
+        } else {
+            setErrorMessage(`Submit button already pressed!`)
         }
     }
 
@@ -279,7 +286,17 @@ function EditAccount(props) {
         // Checking that the passwords match before submitting the form
         if (passwordConfirmation()) {
             // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
-            const isAccountCreated = await addUserThunk(userName, firstName, lastName, address, city, state, zip, email, password)
+            const isAccountCreated = await addUserThunk(
+                userName,
+                firstName,
+                lastName,
+                address,
+                city,
+                state,
+                zip,
+                email,
+                password
+            )
 
             // If the account was created the user is navigated to the dashboard
             if (isAccountCreated) {
@@ -287,13 +304,14 @@ function EditAccount(props) {
                 setSubmitted(true);
 
                 // Send the new user to their new dashboard
-                setTimeout(() => { navigate("../userDashboard") }, 500);
+                navigate("../userDashboard");
             }
             // If the account was not created, the user is notified in the error message
             else {
+
                 setErrorMessage(`${userName} is already taken, try another!`)
             }
-            
+
         }
     }
 
@@ -318,9 +336,9 @@ function EditAccount(props) {
 
 
     // The updateAccount will allow the user to update an existing account. 
-    // If a param userId exists the user will update that account, if not 
+    // If a param userId exists the admin user will update that account, if not 
     // the user will update their own account
-    const updateAccount = () => {
+    const updateAccount = async () => {
         // Pulling the id of the logged in user to 
         // update their own account
         const id = users.length > 0 ? users[0].id : "";
@@ -338,25 +356,32 @@ function EditAccount(props) {
             userEmail: email
         }
 
-        // If there is not a param userId, then the logged in users 
-        // data will be updated
-        if (!userId) {
-            // Call to redux-thunk action -> call to service class -> call to backend -> call to DB
-            updateUserThunk(id, data)
+        // If the admin is editing userId will be true, use the userId to update
+        // else the regular user is editing, use the id to update
+        const isAccountUpdated = await updateUserThunk(userId ?? id, data);
 
-            // Bring back to user dashboard after
-            setTimeout(() => { navigate("../userDashboard") }, 500);
+        // console.log("Is account updated? ", isAccountUpdated)
+
+        // If the account was updated without errors the user is navigated to the dashboard
+        if (isAccountUpdated) {
+            // The form was submitted so local state is set to true
+            setSubmitted(true);
+
+            // After update, navigate admin to the users updated userDashboard
+            if (userId) {
+                navigate(`/userDashboard/${userId}`);
+                // The updated user does need to be deleted from state or it will be 
+                // displayed on the Admin page with all the wrong information.
+                deleteUser(userId);
+
+                // Or navigates regular user back to their userDashboard   
+            } else {
+                navigate("../userDashboard");
+            }
         }
-        // Else the param userId's data will be updated
+        // If the account was not created, the user is notified in the error message
         else {
-            // Updating the param userId's data in the database
-            updateUserThunk(userId, data);
-
-            // Deleting the user from state, they are no longer needed
-            deleteUser(userId);
-
-            // Navigating the admin to that users updated userDashboard
-            navigate(`/userDashboard/${userId}`)
+            setErrorMessage(`${userName} is already taken, try another!`)
         }
     }
 
@@ -417,7 +442,7 @@ function EditAccount(props) {
                         />
                     </FloatingLabel>
                 </Form.Floating>
-                
+
                 {/* <div className="text-danger">{errorMessage}</div> */}
             </div>)
 
@@ -431,128 +456,119 @@ function EditAccount(props) {
                 </div>
             </Container>
             <Container fluid as="main" className="justify-content-center">
-                {submitted ? (
-                    <div className="text-center">
-                        <h4>Account information submitted successfully</h4>
-                        <Link to={"/"}>
-                            Back to Dashboard
-                        </Link>
-                    </div>
+                <Form onSubmit={handleSubmit}>
+                    <Form.Floating className="mb-3 justify-content-center">
+                        <FloatingLabel
+                            controlId="floatingUserId"
+                            label="User Name">
+                            <Form.Control
+                                type="text"
+                                placeholder="User Name"
+                                required
+                                value={userName}
+                                onChange={onChangeUserName}
+                                maxLength="40"
+                            />
+                        </FloatingLabel>
+                    </Form.Floating>
 
-                ) : (
-                    <Form onSubmit={handleSubmit}>
-                        <Form.Floating className="mb-3 justify-content-center">
+                    <Form.Floating className="mb-3 justify-content-center">
+                        <FloatingLabel
+                            controlId="floatingFirstName"
+                            label="First Name">
+                            <Form.Control
+                                type="text"
+                                placeholder="User Name"
+                                value={firstName}
+                                onChange={onChangeFirstName}
+                                maxLength="35"
+                            />
+                        </FloatingLabel>
+                    </Form.Floating>
+
+                    <Form.Floating className="mb-3 justify-content-center">
+                        <FloatingLabel
+                            controlId="floatingLastName"
+                            label="Last Name">
+                            <Form.Control
+                                type="text"
+                                placeholder="Last Name"
+                                value={lastName}
+                                onChange={onChangeLastName}
+                                maxLength="35"
+                            />
+                        </FloatingLabel>
+                    </Form.Floating>
+
+                    <Form.Floating className="mb-3 justify-content-center">
+                        <FloatingLabel
+                            controlId="floatingAddress"
+                            label="Address">
+                            <Form.Control
+                                type="text"
+                                placeholder="Address"
+                                value={address}
+                                onChange={onChangeAddress}
+                                maxLength="38"
+                            />
+                        </FloatingLabel>
+                    </Form.Floating>
+
+                    <Form.Floating className="mb-3 justify-content-center">
+                        <FloatingLabel
+                            controlId="floatingCity"
+                            label="City">
+                            <Form.Control
+                                type="text"
+                                placeholder="City"
+                                value={city}
+                                onChange={onChangeCity}
+                                maxLength="20"
+                            />
+                        </FloatingLabel>
+                    </Form.Floating>
+
+                    <Row className="justify-content-center">
+
+                        <FloatingStateOptionList state={state} onChangeState={onChangeState} />
+
+                        <Form.Floating as={Col} sm={6} className="mb-3 justify-content-center">
                             <FloatingLabel
-                                controlId="floatingUserId"
-                                label="User Name">
+                                controlId="floatingZip"
+                                label="Zip">
                                 <Form.Control
                                     type="text"
-                                    placeholder="User Name"
-                                    required
-                                    value={userName}
-                                    onChange={onChangeUserName}
-                                    maxLength="40"
+                                    placeholder="Zip"
+                                    value={zip}
+                                    onChange={onChangeZip}
+                                    maxLength="5"
+                                    pattern="[0-9]*"
                                 />
                             </FloatingLabel>
                         </Form.Floating>
+                    </Row>
 
-                        <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel
-                                controlId="floatingFirstName"
-                                label="First Name">
-                                <Form.Control
-                                    type="text"
-                                    placeholder="User Name"
-                                    value={firstName}
-                                    onChange={onChangeFirstName}
-                                    maxLength="35"
-                                />
-                            </FloatingLabel>
-                        </Form.Floating>
+                    <Form.Floating className="mb-3 justify-content-center">
+                        <FloatingLabel
+                            controlId="floatingEmail"
+                            label="Email">
+                            <Form.Control
+                                type="email"
+                                placeholder="Email"
+                                required
+                                value={email}
+                                onChange={onChangeEmail}
+                                maxLength="40"
+                            />
+                        </FloatingLabel>
+                    </Form.Floating>
 
-                        <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel
-                                controlId="floatingLastName"
-                                label="Last Name">
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Last Name"
-                                    value={lastName}
-                                    onChange={onChangeLastName}
-                                    maxLength="35"
-                                />
-                            </FloatingLabel>
-                        </Form.Floating>
+                    {displayPasswordFields()}
 
-                        <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel
-                                controlId="floatingAddress"
-                                label="Address">
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Address"
-                                    value={address}
-                                    onChange={onChangeAddress}
-                                    maxLength="38"
-                                />
-                            </FloatingLabel>
-                        </Form.Floating>
+                    {displaySubmitButton()}
+                    {errorMessage && <Alert className="mb-0 text-center" variant="danger">{errorMessage}</Alert>}
+                </Form>
 
-                        <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel
-                                controlId="floatingCity"
-                                label="City">
-                                <Form.Control
-                                    type="text"
-                                    placeholder="City"
-                                    value={city}
-                                    onChange={onChangeCity}
-                                    maxLength="20"
-                                />
-                            </FloatingLabel>
-                        </Form.Floating>
-
-                        <Row className="justify-content-center">
-
-                            <FloatingStateOptionList state={state} onChangeState={onChangeState} />
-
-                            <Form.Floating as={Col} sm={6} className="mb-3 justify-content-center">
-                                <FloatingLabel
-                                    controlId="floatingZip"
-                                    label="Zip">
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Zip"
-                                        value={zip}
-                                        onChange={onChangeZip}
-                                        maxLength="5"
-                                        pattern="[0-9]*"
-                                    />
-                                </FloatingLabel>
-                            </Form.Floating>
-                        </Row>
-
-                        <Form.Floating className="mb-3 justify-content-center">
-                            <FloatingLabel
-                                controlId="floatingEmail"
-                                label="Email">
-                                <Form.Control
-                                    type="email"
-                                    placeholder="Email"
-                                    required
-                                    value={email}
-                                    onChange={onChangeEmail}
-                                    maxLength="40"
-                                />
-                            </FloatingLabel>
-                        </Form.Floating>
-
-                        {displayPasswordFields()}
-
-                        {displaySubmitButton()}
-                        {errorMessage && <Alert className="mb-0 text-center"variant="danger">{errorMessage}</Alert>}
-                    </Form>
-                )}
             </Container>
             <ModalConfirmation
                 show={showClearFormConfirm}

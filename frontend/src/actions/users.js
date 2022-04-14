@@ -20,6 +20,7 @@
 //  the database)
 //  (DAB, 4/04/2022, Added in isLoading dispatch for findByUserNameThunk, findByUserIdThunk)
 //  (DAB, 4/04/2022, Organized code)
+//  (CPD, 4/12/2022, Modified updateUserThunk to return values depending on results)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -397,19 +398,31 @@ export const updatePermissionThunk = (userId, data) => async dispatch => {
         })
 }
 
-
+/**
+ * Redux action to update the user info on the backend and update state on the frontend
+ * 
+ * @param {*} id 
+ * @param {*} data 
+ * @returns 
+ */
 export const updateUserThunk = (id, data) => async dispatch => {
     /**
      * Call and await the user data service update method, passing the id and data
      */
-    await UserDataService.update(id, data)
+    return await UserDataService.update(id, data)
         .then(res => {
-            const result = { id, ...data }
 
-            dispatch(updateUser(result))
+            if (res.data) {
+                const result = { id, ...data }
+                dispatch(updateUser(result))
+                return true;
+            } else {
+                return false;
+            }
         })
         .catch(err => {
             console.log(err)
+            return false;
         })
 }
 

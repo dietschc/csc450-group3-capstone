@@ -13,7 +13,7 @@
 //  (DAB, 3/27/2022, Added the friends table results to return with get as friendsOne)
 //  (DAB, 4/12/2022, Error Handling Audit - failed)
 //  (DAB, 4/12/2022, Double checked and added error handling to every query)
-
+//  (CPD, 4/12/2022, Refactored update method to check for existing usernames and clean up)
 
 const { authentication } = require("../models");
 const db = require("../models");
@@ -64,7 +64,7 @@ exports.create = async (req, res) => {
     // Debug code
     console.log("user name is: " + userNameAvailable);
 
-    // If the userName is available, procede with creating a new account
+    // If the userName is available, proceed with creating a new account
     if (userNameAvailable === "Available") {
 
         // Build parameters for address table insert
@@ -117,18 +117,17 @@ exports.create = async (req, res) => {
         }
 
         // Hashes the submitted password using BCrypt's minor a modal going through 2^10 rounds
-        if(authentication.userPassword)
-        {
+        if (authentication.userPassword) {
             // Attempting to encrypt the password
             try {
                 const salt = await bcrypt.genSaltSync(10, 'a');
                 authentication.userPassword = bcrypt.hashSync(authentication.userPassword, salt);
             }
             // Password was not encrypted so a console message is sent
-            catch(err) {
+            catch (err) {
                 console.log("Password not encrypted");
             }
-            
+
         }
 
         // Save Authentication in the database
@@ -190,7 +189,7 @@ exports.findOne = (req, res) => {
             // If there is data, it is sent 
             if (data) {
                 res.send(data);
-            } 
+            }
             // Else a 404 error message is sent
             else {
                 res.status(404).send({
@@ -217,74 +216,131 @@ exports.update = async (req, res) => {
         return;
     }
     const id = req.params.id;
+    const newName = req.body.userName;
 
-    // We find the associated addressId from the user table
-    const addressId = await User.findByPk(id)
-        .then(user => {
-            // If the user exists the data is updated
-            if (user) {
-                // Destructure address from the user
-                const { addressId } = user;
-                return addressId
-            } else {
-                // This negative value indicates there has been an error
-                return -1
+    // Check current user name
+    const { userName } = await Authentication.findOne(
+        {
+            where: {
+                userId: id,
             }
         })
         .catch(err => {
-            return -1;
+            return err;
         });
 
-    // Try to update users table
-    const userUpdateStatus = await User.update(req.body, {
-        where: { userId: id }
-    })
-        .then(status => {
-            return status;
-        })
-        .catch(err => {
-            return -1;
-        });
+    // Function to check for new username and check for duplicates
+    const newUserName = async () => {
+        // If the userName is different, this implies a change request
+        if (userName !== newName) {
 
-    // Binary hash the submitted password using BCrypt's minor A modal for 2^10 rounds
-    if(req.body.userPassword)
-    {
-        const salt = await bcrypt.genSaltSync(10, 'a');
-        req.body.userPassword = bcrypt.hashSync(req.body.userPassword, salt);
+            // Check username does not already exist
+            const userNameAvailable = await Authentication.findOne({
+                where: {
+                    userName: newName
+                }
+            })
+                .then(data => {
+                    // If where condition has a match the username already exists
+                    if (data) {
+                        console.log("Username not available");
+                        return false;
+                    } else {
+                        console.log("Available");
+                        return true;
+                    }
+                })
+                .catch(err => {
+                    return err;
+                });
+
+            // console.log("User name is: " + userNameAvailable);
+            return userNameAvailable;
+
+            // Else there was not a new userName given
+        } else {
+            console.log("User name not updated");
+            return true;
+        }
     }
 
-    // Try to update auth table
-    const authUpdateStatus = await Authentication.update(req.body, {
-        where: { userId: id }
-    })
-        .then(status => {
-            return status;
-        })
-        .catch(err => {
-            return -1;
-        });
+    // console.log("###################");
+    // console.log("update status: ", await newUserName());
 
-    // Try to update address table
-    const addressUpdateStatus = await Address.update(req.body, {
-        where: { addressId: addressId }
-    })
-        .then(status => {
-            return status;
-        })
-        .catch(err => {
-            return -1;
-        });
+    // If the userName is available, proceed with updating account
+    if (await newUserName()) {
+        // We find the associated addressId from the user table
+        const addressId = await User.findByPk(id)
+            .then(user => {
+                // If the user exists the data is updated
+                if (user) {
+                    // Destructure address from the user
+                    const { addressId } = user;
+                    return addressId
+                } else {
+                    // This negative value indicates there has been an error
+                    return -1
+                }
+            })
+            .catch(err => {
+                return -1;
+            });
 
-    // Any one of these values being equal to 1 indicates success updating a row
-    if (userUpdateStatus == 1 ||
-        authUpdateStatus == 1 ||
-        addressUpdateStatus == 1) {
-        res.send({
-            message: "User was updated successfully!"
-        });
+        // Try to update users table
+        const userUpdateStatus = await User.update(req.body, {
+            where: { userId: id }
+        })
+            .then(status => {
+                // This will contain a 1 if successful
+                return status;
+            })
+            .catch(err => {
+                // Return -1 to indicate an error occurred 
+                return -1;
+            });
+
+        // Try to update auth table if newUserName is available
+        const authUpdateStatus = await Authentication.update(req.body, {
+            where: { userId: id }
+        })
+            .then(status => {
+                // This will contain a 1 if successful
+                return status;
+            })
+            .catch(err => {
+                // Return -1 to indicate an error occurred 
+                return -1
+            });
+
+        // Try to update address table
+        const addressUpdateStatus = await Address.update(req.body, {
+            where: { addressId: addressId }
+        })
+            .then(status => {
+                // This will contain a 1 if successful
+                return status;
+            })
+            .catch(err => {
+                // Return -1 to indicate an error occurred 
+                return -1;
+            });
+
+        // Any one of these values being equal to 1 indicates success updating a row
+        if (userUpdateStatus == 1 ||
+            authUpdateStatus == 1 ||
+            addressUpdateStatus == 1) {
+            res.send({
+                message: "User was updated successfully!"
+            });
+        } else {
+            res.status(500).send({
+                message: `Cannot update user. Maybe user was not found!`
+            });
+        }
     } else {
-        res.status(500).send({
-            message: `Cannot update user. Maybe user was not found!`
+        // Else the userName already exists, do nothing
+        res.status(400).send({
+            message: "Username not available"
         });
     }
 };
@@ -320,7 +376,7 @@ exports.delete = async (req, res) => {
         .catch(err => {
             return "User not found";
         });
-        
+
 
     // console.log("deleted user: ", deletedUserStatus);
 
@@ -383,9 +439,9 @@ exports.addFriend = async (req, res) => {
             friendTwoId: friendTwoId
         }
     })
-    .catch(err => {
-        return false;
-    });
+        .catch(err => {
+            return false;
+        });
 
     // console.log("already friend!", alreadyFriends);
 
