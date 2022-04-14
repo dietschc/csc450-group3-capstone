@@ -8,6 +8,7 @@
 //	(DAB, 3/13/2022, Added in a deleteRestaurantsDirectory which will delete all 
 //	restaurant images in that directory from the cloud)
 //  (DAB, 4/12/2022, Error Handling Audit - Passed)
+//  (CPD, 4/13/2022, Fix image upload error messages)
 
 const db = require("../models");
 const Image = db.image;
@@ -40,8 +41,10 @@ exports.upload = async (req, res) => {
 			location: req.file.location
 		});
 	} catch (err) {
+		// log console errors
+		console.log(err);
 		res.status(500).send({
-			message: `Could not upload the file`
+			message: `Could not upload the file ${err}`
 		});
 	}
 }

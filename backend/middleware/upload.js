@@ -3,6 +3,7 @@
 // Restaurant Club - upload.js
 // March 9, 2022
 // Last Edited (Initials, Date, Edits):
+// (CPD, 4/13/2022, Increase max file upload size)
 
 const util = require("util");
 const aws = require('aws-sdk');
@@ -22,8 +23,8 @@ const s3 = new aws.S3({
     endpoint: spacesEndpoint
 });
 
-// Max upload file size 2MB
-const maxSize = 2 * 1024 * 1024;
+// Max upload file size 5MB
+const maxSize = 5 * 1024 * 1024;
 
 // Digital Ocean spaces cloud storage using s3 api
 let storage = multerS3({
