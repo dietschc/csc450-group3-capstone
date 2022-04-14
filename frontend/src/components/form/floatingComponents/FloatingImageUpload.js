@@ -19,13 +19,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
  * allow CRUD operations to be performed on a file image with
  * the specified ext's.
  *
- * @param { onChangeFile, formErrorList } props
+ * @param { onChangeFile, formError } props
  * @returns
  */
 function FloatingImageUpload(props) {
     // The form component specific props will be assigned and
     // used to process the form element
-    const { onChangeFile, formErrorList } = props;
+    const { onChangeFile, formError } = props;
 
     return (
         <Form.Floating className="mb-3 justify-content-center">
@@ -39,10 +39,10 @@ function FloatingImageUpload(props) {
                 type="file"
                 onChange={onChangeFile}
                 accept=".jpg,.png,.jpeg,.gif"
-                isInvalid={ !!formErrorList?.file}
+                isInvalid={ !!formError?.file}
             />
             <Form.Control.Feedback type="invalid">
-                {formErrorList?.file}
+                {formError?.file}
             </Form.Control.Feedback>
         </Form.Floating>
     );

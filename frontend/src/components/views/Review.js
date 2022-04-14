@@ -233,6 +233,9 @@ function Review(props) {
             const tempFileUrl = URL.createObjectURL(file);
             setTempFileUrl(tempFileUrl);
         }
+        else {
+            setTempFileUrl("");
+        }
 
         // If the form had an error it is reset
         if (formError.file) {
@@ -558,7 +561,7 @@ function Review(props) {
                             <div className="mt-1">
                                 <FloatingImageUpload
                                     onChangeFile={onChangeFile}
-                                    formErrorList={formError}
+                                    formError={formError}
                                 />
                             </div>
                         </div>
