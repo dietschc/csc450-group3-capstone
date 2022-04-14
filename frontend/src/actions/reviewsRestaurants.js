@@ -10,6 +10,7 @@
 //  needs in the userDashboard)
 //  (DAB, 4/04/2022, Added in isLoading dispatch for findAllReviewsRestaurantsOrderedThunk)
 //  (DAB, 4/04/2022, Organized code)
+//  (DAB, 4/14/2022, Reversed order in findAuthorByIdThunk to populate newest to oldest)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -140,7 +141,7 @@ export const findByAuthorIdThunk = (userId) => async dispatch => {
             // for redux and added to state
             if (res) {
                 // Iterating through the review data
-                await res.data.map(review => {
+                await res.data.reverse().map(review => {
                     // Formatting the database data so it matches redux
                     const reviewData = formatDBReviewFind(review);
 
