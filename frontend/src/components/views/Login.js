@@ -14,10 +14,9 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react';
+import React, { useState, Spinner } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button, Form, Container, FloatingLabel, Alert } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css'
 import { connect } from 'react-redux';
 import { loginThunk, deleteAllUsers } from '../../actions/users';
 import { Link } from 'react-router-dom';
@@ -33,8 +32,12 @@ import FormContainer from '../template/FormContainer';
  */
 function Login(props) {
     // Destructuring needed state and functions from props
-    const { users } = props;
-    const { loginThunk, deleteAllUsers } = props;
+    const {
+        users,
+        isLoading,
+        loginThunk,
+        deleteAllUsers
+    } = props;
 
     // Setting local state variables
     const [isSubmitted, setSubmitted] = useState(false)
@@ -222,7 +225,8 @@ function Login(props) {
 // Mapping the redux store states to props
 const mapStateToProps = state =>
 ({
-    users: [...state.users]
+    users: [...state.users],
+    isLoading: { ...state.isLoading }
 });
 
 // Exporting the component

@@ -46,8 +46,13 @@ import ModalConfirmation from '../modal/ModalCancelConfirm';
  */
 function EditAccount(props) {
     // Destructuring out needed state and actions
-    const { users } = props;
-    const { findByUserIdThunk, deleteUser, addUserThunk, updateUserThunk } = props;
+    const {
+        users,
+        findByUserIdThunk,
+        deleteUser,
+        addUserThunk,
+        updateUserThunk
+    } = props;
 
     // Destructuring out the param if there is one
     const { userId } = useParams();
@@ -61,14 +66,30 @@ function EditAccount(props) {
     const [showClearFormConfirm, setShowClearFormConfirm] = useState(false);
 
     // Form field state
-    const [userName, setUserName] = useState(users.length > 0 ? users[0].auth.userName : "");
-    const [firstName, setFirstName] = useState(users.length > 0 ? users[0].firstName : "");
-    const [lastName, setLastName] = useState(users.length > 0 ? users[0].lastName : "");
-    const [address, setAddress] = useState(users.length > 0 ? users[0].address.address : "");
-    const [city, setCity] = useState(users.length > 0 ? users[0].address.city : "");
-    const [zip, setZip] = useState(users.length > 0 ? users[0].address.zip : "");
-    const [state, setState] = useState(users.length > 0 ? users[0].address.state : "");
-    const [email, setEmail] = useState(users.length > 0 ? users[0].email : "");
+    const [userName, setUserName] = useState(
+        users.length > 0 ? users[0].auth.userName : ""
+    );
+    const [firstName, setFirstName] = useState(
+        users.length > 0 ? users[0].firstName : ""
+    );
+    const [lastName, setLastName] = useState(
+        users.length > 0 ? users[0].lastName : ""
+    );
+    const [address, setAddress] = useState(
+        users.length > 0 ? users[0].address.address : ""
+    );
+    const [city, setCity] = useState(
+        users.length > 0 ? users[0].address.city : ""
+    );
+    const [zip, setZip] = useState(
+        users.length > 0 ? users[0].address.zip : ""
+    );
+    const [state, setState] = useState(
+        users.length > 0 ? users[0].address.state : ""
+    );
+    const [email, setEmail] = useState(
+        users.length > 0 ? users[0].email : ""
+    );
     // Password no longer stored in state so set to blank
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -126,11 +147,11 @@ function EditAccount(props) {
     // save account depending on if the account is being edited 
     // or created
     const handleSubmit = (e) => {
+        // Preventing default form submission
+        e.preventDefault();
+
         // As long as submitted is still false
         if (!submitted) {
-            // Preventing default form submission
-            e.preventDefault();
-
             // If editing the account is updated in 
             // the database
             if (isEditing) {
