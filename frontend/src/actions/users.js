@@ -230,6 +230,11 @@ export const findByUserNameThunk = (offset, limit, userName) => async (dispatch,
  * @returns 
  */
 export const loginThunk = (userName, userPassword) => async dispatch => {
+    // Setting isLoadingUsers state to true
+    await dispatch(await startLoadingUsers());
+    // This variable will return true if update was successful and false if not
+    let isSuccess = false;
+
     /**
      * Call and await the user data service login method, passing the parameters and storing the 
      * results in res
@@ -284,6 +289,17 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
 
             // Dispatch login parameters to login state action
             return dispatch(login(id, accessToken, refreshToken));
+        })
+        .then((res) => {
+            // If the result was successful true is set to isSuccess
+            if (res) {
+                isSuccess = true;
+                // Setting isLoadingUsers state to false
+                dispatch(endLoadingUsers());
+
+                // Returning result of the request
+                return isSuccess;
+            }
         })
         .catch(err => {
             console.log(err)

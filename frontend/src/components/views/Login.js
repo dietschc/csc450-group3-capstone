@@ -14,9 +14,9 @@
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState, Spinner } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Button, Form, Container, FloatingLabel, Alert } from 'react-bootstrap';
+import { Button, Form, Container, FloatingLabel, Alert, Spinner } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { loginThunk, deleteAllUsers } from '../../actions/users';
 import { Link } from 'react-router-dom';
@@ -86,14 +86,37 @@ function Login(props) {
                             <Button
                                 className="my-1"
                                 style={{ minWidth: "10rem" }}
-                                type="submit">
-                                Login
+                                type="submit"
+                            >
+                                {isLoading.isLoadingUsers ? (
+                                    <Spinner
+                                        as="span"
+                                        variant="light"
+                                        size="sm"
+                                        role="status"
+                                        aria-hidden="true"
+                                        animation="border" />
+                                ) : (
+                                    "Login"
+                                )}
                             </Button>
+
                             <Button
                                 className="my-1"
                                 style={{ minWidth: "10rem" }}
-                                onClick={createAccountHandler}>
-                                Create Account
+                                onClick={createAccountHandler}
+                            >
+                                {isLoading.isLoadingUsers ? (
+                                    <Spinner
+                                        as="span"
+                                        variant="light"
+                                        size="sm"
+                                        role="status"
+                                        aria-hidden="true"
+                                        animation="border" />
+                                ) : (
+                                    "Create Account"
+                                )}
                             </Button>
                         </div>
                         <div>
@@ -118,34 +141,32 @@ function Login(props) {
 
     const loginAccount = async (e) => {
         e.preventDefault();
-        // login(1);
-        // logout(1);
 
-        // console.log("Users: ", users);
-        // console.log("Users: " + users[1].isLoggedIn);
+        // If there is not a current submission request loading
+        if (!isLoading.isLoadingUsers) {
 
-        // Call login thunk function which tries to authenticate against the backend
-        await loginThunk(userName, password)
-            .then(res => {
-                // console.log("Results: ", res);
+            // Call login thunk function which tries to authenticate against the backend
+            await loginThunk(userName, password)
+                .then(res => {
+                    // If res was successful
+                    if (res) {
+                        // console.log("LOGIN SUCCESS");
 
-                if (res.isLoggedIn === true) {
-                    // console.log("LOGIN SUCCESS");
+                        // setSubmitted(true);
+                        setShowSuccess(true);
 
-                    // setSubmitted(true);
-                    setShowSuccess(true);
-
-                    // Navigate to previous page or dashboard after .5 seconds
-                    setTimeout(() => { navigate(state?.path || "../userDashboard") }, 500)
-                } else {
-                    clearForm();
-                    setShowError(true);
-                    // console.log("LOGIN FAIL");
-                }
-            })
-            .catch(err => {
-                console.log(err)
-            })
+                        // Navigate to previous page or dashboard
+                        navigate(state?.path || "../userDashboard");
+                    } else {
+                        clearForm();
+                        setShowError(true);
+                        // console.log("LOGIN FAIL");
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
     }
 
     const logoutAccount = () => {
