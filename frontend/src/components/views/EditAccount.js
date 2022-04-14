@@ -418,7 +418,7 @@ function EditAccount(props) {
     const displaySubmitButton = () => (
         <div className="d-flex flex-column flex-sm-row justify-content-around pt-2">
             <Button className="m-1" style={{ minWidth: "4.4rem" }} type="submit">
-                {isLoading.isLoadingReviews ? (
+                {isLoading.isLoadingUsers ? (
                     <Spinner
                         as="span"
                         variant="light"
