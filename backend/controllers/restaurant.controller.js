@@ -11,6 +11,8 @@
 //  foreign key errors when creating a restaurant)
 //  (DAB, 4/12/2022, Error Handling Audit - failed)
 //  (DAB, 4/12/2022, Double checked and added error handling to every query
+//  (DAB, 4/13/2022, Crash Report found multiple sends in create, fixed)
+//  (DAB, 4/13/2022, PASSED -- Audited for exception handling)
 
 const { authentication } = require("../models");
 const db = require("../models");
@@ -43,10 +45,7 @@ exports.create = async (req, res) => {
         .then(res => res)
         .catch(err => {
             // If there is an error, a response is sent to notify the requester
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while creating the User."
-            });
+            console.log(err);
         });
 
     // If there is a user in the database the query will run
@@ -88,10 +87,7 @@ exports.create = async (req, res) => {
             })
             .catch(err => {
                 // If there is an error, a response is sent to notify the requester
-                res.status(500).send({
-                    message:
-                        err.message || "Some error occurred while creating the Address."
-                });
+                console.log(err);
             });
 
         // Wait for the image to be created, then copy to a const
@@ -104,10 +100,7 @@ exports.create = async (req, res) => {
             })
             .catch(err => {
                 // If there is an error, a response is sent to notify the requester
-                res.status(500).send({
-                    message:
-                        err.message || "Some error occurred while creating the Image."
-                });
+                console.log(err);
             });
 
         // Wait for the rating to be created, then copy to a const
@@ -118,10 +111,7 @@ exports.create = async (req, res) => {
             })
             .catch(err => {
                 // If there is an error, a response is sent to notify the requester
-                res.status(500).send({
-                    message:
-                        err.message || "Some error occurred while creating the Rating."
-                });
+                console.log(err);
             });
 
         // Save Restaurant in the database

@@ -7,6 +7,7 @@
 //  BAN_USER_PERMISSION)
 //  (DAB, 4/03/2022, Added in UN_BAN_USER_PERMISSION)
 //  (DAB, 4/11/2022, Added in UN_ADMIN_USER_PERMISSION and ADMIN_USER_PERMISSION)
+//  (DAB, 4/13/2022, Added friends to isLoggedIn constants)
 
 // These constants ensure that there will be no 
 // spelling errors when working with static variables
@@ -60,6 +61,8 @@ const constants = {
     END_LOADING_REVIEWS: "END_LOADING_REVIEWS",
     START_LOADING_MESSAGES: "START_LOADING_MESSAGES",
     END_LOADING_MESSAGES: "END_LOADING_MESSAGES",
+    START_LOADING_FRIENDS: "START_LOADING_FRIENDS",
+    END_LOADING_FRIENDS: "END_LOADING_FRIENDS",
 
 
     BAN_USER_PERMISSION: {

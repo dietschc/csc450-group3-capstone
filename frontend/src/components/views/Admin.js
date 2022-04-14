@@ -13,6 +13,7 @@
 //  search button does not activate if there is already an html request in)
 //  (DAB, 04/11/2022, Adding the ability for an admin to grant and remove admin 
 //  privileges to other admins)
+//  (DAB, 04/13/2022, Restricted restaurant delete button to one request at a time)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -222,19 +223,22 @@ function Admin(props) {
 
     // The deleteRestaurant method will delete a restaurant from both state and 
     // the database
-    const deleteRestaurant = () => {
+    const deleteRestaurant = async () => {
         // Deleting the restaurant from state and the database
-        deleteRestaurantThunk(currentRestaurantId);
+        await deleteRestaurantThunk(currentRestaurantId);
     }
 
 
     // The deleteRestaurantHandler will display a modal verifying 
     // if the restaurant should be deleted
     const deleteRestaurantHandler = (restaurantId) => {
-        // Setting the current id and showing the modal 
-        // before allowing the action
-        setCurrentRestaurantId(restaurantId);
-        showDeleteRestaurantHandler();
+        // If the restaurant delete does not already have a request in
+        if (!isLoading.isLoadingRestaurants) {
+            // Setting the current id and showing the modal 
+            // before allowing the action
+            setCurrentRestaurantId(restaurantId);
+            showDeleteRestaurantHandler();
+        } 
     }
 
 
@@ -366,6 +370,7 @@ function Admin(props) {
                         <RestaurantEditItem
                             key={restaurant.id}
                             restaurant={restaurant}
+                            isLoading={isLoading}
                             viewRestaurantHandler={viewRestaurantHandler}
                             editRestaurantHandler={editRestaurantHandler}
                             deleteRestaurantHandler={deleteRestaurantHandler}
