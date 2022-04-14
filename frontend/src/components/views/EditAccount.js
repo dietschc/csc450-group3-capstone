@@ -96,6 +96,9 @@ function EditAccount(props) {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    // The formError local state will hold any errors found in the
+    // form and their error message
+    const [formError, setFormError] = useState({});
 
     // Check if user is logged in
     const isEditing = checkLogin(users);
@@ -145,6 +148,24 @@ function EditAccount(props) {
     const closeClearFormHandler = () => setShowClearFormConfirm(false);
 
 
+    // The formErrorCheck will hold the logic for checking the
+    // form for errors and return them as an object
+    const formErrorCheck = () => {
+        // Initial empty currentError object
+        const currentError = {};
+
+        // If the file size is greater than allowed a max file error
+        // will be returned
+        if (password !== confirmPassword) {
+            currentError.password = `Passwords must match!`;
+            currentError.confirmPassword = `Passwords must match!`;
+        }
+
+        // Returning the error found object to the caller
+        return currentError;
+    };
+
+
     // The handleSubmit method will call either update account or 
     // save account depending on if the account is being edited 
     // or created
@@ -155,15 +176,24 @@ function EditAccount(props) {
 
         // As long as submitted or isLoading is still false
         if (!submitted || !isLoading.isLoadingUsers) {
-            // If editing the account is updated in 
-            // the database
-            if (isEditing) {
-                updateAccount();
+            // Checking if the form has any errors
+            const currentFormError = formErrorCheck();
+
+            // If the form has errors, the error messages are displayed
+            if (Object.keys(currentFormError).length > 0) {
+                setFormError(currentFormError);
             }
-            // If not updating the account is saved 
-            // to the database
             else {
-                saveAccount();
+                // If editing the account is updated in 
+                // the database
+                if (isEditing) {
+                    updateAccount();
+                }
+                // If not updating the account is saved 
+                // to the database
+                else {
+                    saveAccount();
+                }
             }
         } else {
             setErrorMessage(`Submit button already pressed!`)
@@ -226,6 +256,15 @@ function EditAccount(props) {
         const { value, maxLength } = e.target;
         const password = value.slice(0, maxLength);
         setConfirmPassword(password);
+
+        // If the form had an error it is reset
+        if (formError.confirmPassword) {
+            setFormError({
+                ...formError,
+                password: null,
+                confirmPassword: null,
+            });
+        }
     }
 
 
@@ -258,6 +297,15 @@ function EditAccount(props) {
         const { value, maxLength } = e.target;
         const password = value.slice(0, maxLength);
         setPassword(password);
+
+        // If the form had an error it is reset
+        if (formError.password) {
+            setFormError({
+                ...formError,
+                password: null,
+                confirmPassword: null
+            });
+        }
     }
 
 
@@ -273,6 +321,18 @@ function EditAccount(props) {
         const { value, maxLength } = e.target;
         const userName = value.slice(0, maxLength);
         setUserName(userName);
+
+        if (errorMessage) {
+            setErrorMessage(``)
+        }
+
+        // If the form had an error it is reset
+        if (formError.userName) {
+            setFormError({
+                ...formError,
+                userName: null,
+            });
+        }
     }
 
 
@@ -333,7 +393,11 @@ function EditAccount(props) {
             // If the account was not created, the user is notified in the error message
             else {
 
-                setErrorMessage(`${userName} is already taken, try another!`)
+                setErrorMessage(`${userName} is already taken, try another!`);
+                setFormError({
+                    ...formError,
+                    userName: `${userName} is already taken, try another!`
+                });
             }
 
         }
@@ -406,6 +470,10 @@ function EditAccount(props) {
         // If the account was not created, the user is notified in the error message
         else {
             setErrorMessage(`${userName} is already taken, try another!`)
+            setFormError({
+                ...formError,
+                userName: `${userName} is already taken, try another!`
+            });
         }
     }
 
@@ -417,7 +485,7 @@ function EditAccount(props) {
     // associated handlers so the correct operations can be performed
     const displaySubmitButton = () => (
         <div className="d-flex flex-column flex-sm-row justify-content-around pt-2">
-            <Button className="m-1" style={{ minWidth: "4.4rem" }} type="submit">
+            <Button className="m-1" style={{ minWidth: "10rem" }} type="submit">
                 {isLoading.isLoadingUsers ? (
                     <Spinner
                         as="span"
@@ -433,7 +501,7 @@ function EditAccount(props) {
                 )}
             </Button>
 
-            <Button className="m-1" style={{ minWidth: "4.4rem" }} onClick={showClearFormHandler}>
+            <Button className="m-1" style={{ minWidth: "10rem" }} onClick={showClearFormHandler}>
                 Clear
             </Button>
         </div>
@@ -455,7 +523,11 @@ function EditAccount(props) {
                             value={password}
                             onChange={onChangePassword}
                             maxLength="64"
+                            isInvalid={!!formError?.password}
                         />
+                        <Form.Control.Feedback type="invalid">
+                                {formError?.password}
+                            </Form.Control.Feedback>
                     </FloatingLabel>
                 </Form.Floating>
 
@@ -470,11 +542,13 @@ function EditAccount(props) {
                             value={confirmPassword}
                             onChange={onChangeConfirmPassword}
                             maxLength="64"
+                            isInvalid={!!formError?.confirmPassword}
                         />
+                        <Form.Control.Feedback type="invalid">
+                                {formError?.confirmPassword}
+                            </Form.Control.Feedback>
                     </FloatingLabel>
                 </Form.Floating>
-
-                {/* <div className="text-danger">{errorMessage}</div> */}
             </div>)
 
     )
@@ -499,7 +573,11 @@ function EditAccount(props) {
                                 value={userName}
                                 onChange={onChangeUserName}
                                 maxLength="40"
+                                isInvalid={!!formError?.userName}
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {formError?.userName}
+                            </Form.Control.Feedback>
                         </FloatingLabel>
                     </Form.Floating>
 
@@ -572,7 +650,8 @@ function EditAccount(props) {
                                     placeholder="Zip"
                                     value={zip}
                                     onChange={onChangeZip}
-                                    maxLength="5"
+                                    maxLength={5}
+                                    minLength={5}
                                     pattern="[0-9]*"
                                 />
                             </FloatingLabel>
@@ -597,7 +676,7 @@ function EditAccount(props) {
                     {displayPasswordFields()}
 
                     {displaySubmitButton()}
-                    {errorMessage && <Alert className="mb-0 text-center" variant="danger">{errorMessage}</Alert>}
+                    {errorMessage && <Alert className="mb-0 text-center mt-1" variant="danger">{errorMessage}</Alert>}
                 </Form>
 
             </Container>

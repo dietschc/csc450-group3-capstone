@@ -6,6 +6,7 @@
 //  (DAB, 4/02/2022, Added in confirm password and implemented the functionality
 //  for admins to edit passwords)
 //  (CPD, 4/14/2022, Added isLoading state and spinner code to the submit button)
+//  (DAB, 4/14/2022, Added form validation)
 
 // Using React library in order to build components
 // for the app and importing needed components such as State where variables are stored
@@ -49,13 +50,10 @@ function EditPassword(props) {
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
     const [updateErrorMessage, setUpdateErrorMessage] = useState("");
     // The formError local state will hold any errors found in the
     // form and their error message
     const [formError, setFormError] = useState({});
-    // Username to match the update pulled from the user array
-    const userName = useState(users.length > 0 ? users[0].auth.userName : "");
 
     // Navigate command for shorthand
     const navigate = useNavigate();
@@ -77,40 +75,6 @@ function EditPassword(props) {
         return currentError;
     };
 
-    // Dynamically update the oldPassword variable as entry typed in
-    const onChangeOldPassword = (e) => {
-        const { value, maxLength } = e.target;
-        const oldPassword = value.slice(0, maxLength);
-        setOldPassword(oldPassword);
-    };
-
-    // Dynamically update the newPassword variable as entry typed in
-    const onChangeNewPassword = (e) => {
-        const { value, maxLength } = e.target;
-        const newPassword = value.slice(0, maxLength);
-        setNewPassword(newPassword);
-        // If the form had an error it is reset
-        if (formError.newPassword) {
-            setFormError({
-                ...formError,
-                newPassword: null,
-            });
-        }
-    };
-
-    // Dynamically update the confirmPassword variable as entry typed in
-    const onChangeConfirmPassword = (e) => {
-        const { value, maxLength } = e.target;
-        const newPassword = value.slice(0, maxLength);
-        setConfirmPassword(newPassword);
-        // If the form had an error it is reset
-        if (formError.confirmPassword) {
-            setFormError({
-                ...formError,
-                confirmPassword: null,
-            });
-        }
-    };
 
     // The handleSubmit function will verify the data is there to
     // update the passwords and attempt to update them
@@ -121,79 +85,129 @@ function EditPassword(props) {
         // If there is not a current submission request loading
         if (!isLoading.isLoadingUsers) {
             // Checking if the form has any errors
-            const currentFormErrorList = formErrorCheck();
+            const currentFormError = formErrorCheck();
 
             // If the form has errors, the error messages are displayed
-            if (Object.keys(currentFormErrorList).length > 0) {
-                setFormError(currentFormErrorList);
+            if (Object.keys(currentFormError).length > 0) {
+                setFormError(currentFormError);
             }
             // Else the form does not have errors so it
             // will submit
             else {
-                // If the password is confirmed to match, an attempt to update it in the
-                // database will be made
-                if (passwordConfirmation()) {
-                    // If there is not a userId param, then the logged in user password
-                    // will be updated if they match
-                    if (!userId) {
-                        // Attempting to update the password
-                        const isPasswordUpdated =
-                            await updatePasswordSecureThunk(
-                                users[0].id,
-                                oldPassword,
-                                newPassword
-                            );
-
-                        if (isPasswordUpdated) {
-                            // Successful update, navigating to dashboard
-                            navigate("/userDashboard");
-                        } else {
-                            // do something update failed
-                            setUpdateErrorMessage(
-                                "Password failed to update, check current password"
-                            );
-                        }
-                    }
-                    // Else, an admin is logged in so the password will be updated
-                    // without providing the old password
-                    else {
-                        // Attempting to update the password
-                        const isPasswordUpdated = await updatePasswordThunk(
-                            userId,
+                // If there is not a userId param, then the logged in user password
+                // will be updated if they match
+                if (!userId) {
+                    // Attempting to update the password
+                    const isPasswordUpdated =
+                        await updatePasswordSecureThunk(
+                            users[0].id,
+                            oldPassword,
                             newPassword
                         );
 
-                        if (isPasswordUpdated) {
-                            // Successful update, navigating to dashboard
-                            navigate(`/userDashboard/${userId}`);
-                        } else {
-                            // do something, update failed
-                            setUpdateErrorMessage(
-                                "Password failed to update, check userId"
-                            );
-                        }
+                    if (isPasswordUpdated) {
+                        // Successful update, navigating to dashboard
+                        navigate("/userDashboard");
+                    } else {
+                        // Update failed. Though the error cannot be pinpointed 
+                        // the user is given the most probable issues
+                        setUpdateErrorMessage(
+                            "Password failed to update, check current password"
+                        );
+                        setFormError({
+                            ...formError,
+                            oldPassword: `Verify you have entered the correct password`
+                        });
+                    }
+                }
+                // Else, an admin is logged in so the password will be updated
+                // without providing the old password
+                else {
+                    // Attempting to update the password
+                    const isPasswordUpdated = await updatePasswordThunk(
+                        userId,
+                        newPassword
+                    );
+
+                    if (isPasswordUpdated) {
+                        // Successful update, navigating to dashboard
+                        navigate(`/userDashboard/${userId}`);
+                    } else {
+                        // do something, update failed
+                        setUpdateErrorMessage(
+                            "Password failed to update, check userId"
+                        );
                     }
                 }
             }
         }
     };
 
-    // The passwordConfirmation method checks to see that the two
-    // passwords match, if they do not an error message is set and
-    // false is returned. If they do, no message is set and true
-    // is returned
-    const passwordConfirmation = () => {
-        // If the passwords do not match and error message is set
-        // and false is returned
-        if (newPassword !== confirmPassword) {
-            setErrorMessage("Passwords must match!");
-            return false;
+
+    // Dynamically update the oldPassword variable as entry typed in
+    const onChangeOldPassword = (e) => {
+        // Getting old password off the form, formatting it, and 
+        // assigning to oldPassword
+        const { value, maxLength } = e.target;
+        const oldPassword = value.slice(0, maxLength);
+        setOldPassword(oldPassword);
+
+        // If there was an error message, the message is reset
+        if (updateErrorMessage) {
+            setUpdateErrorMessage("");
         }
-        // If the passwords match, error message is set to empty string
-        // and true is returned
-        else {
-            setErrorMessage("");
-            return true;
+
+        // If the form had an error it is reset
+        if (formError.oldPassword) {
+            setFormError({
+                ...formError,
+                oldPassword: null,
+            });
+        }
+    };
+
+
+    // Dynamically update the newPassword variable as entry typed in
+    const onChangeNewPassword = (e) => {
+        const { value, maxLength } = e.target;
+        const newPassword = value.slice(0, maxLength);
+        setNewPassword(newPassword);
+
+        // If there was an error message, the message is reset
+        if (updateErrorMessage) {
+            setUpdateErrorMessage("");
+        }
+
+        // If the form had an error it is reset
+        if (formError.newPassword) {
+            setFormError({
+                ...formError,
+                newPassword: null,
+                confirmPassword: null,
+            });
+        }
+    };
+
+
+    // Dynamically update the confirmPassword variable as entry typed in
+    const onChangeConfirmPassword = (e) => {
+        const { value, maxLength } = e.target;
+        const newPassword = value.slice(0, maxLength);
+        setConfirmPassword(newPassword);
+
+        // If there was an error message, the message is reset
+        if (updateErrorMessage) {
+            setUpdateErrorMessage("");
+        }
+        
+        // If the form had an error it is reset
+        if (formError.confirmPassword) {
+            setFormError({
+                ...formError,
+                newPassword: null,
+                confirmPassword: null,
+
+            });
         }
     };
 
@@ -221,7 +235,11 @@ function EditPassword(props) {
                                     value={oldPassword}
                                     maxLength="64"
                                     onChange={onChangeOldPassword}
+                                    isInvalid={!!formError.oldPassword}
                                 />
+                                <Form.Control.Feedback type="invalid">
+                                    {formError?.oldPassword}
+                                </Form.Control.Feedback>
                             </FloatingLabel>
                         </Form.Floating>
                     )}
@@ -251,21 +269,21 @@ function EditPassword(props) {
                         >
                             <Form.Control
                                 type="password"
-                                placeholder="New"
+                                placeholder="Confirm"
                                 required
                                 value={confirmPassword}
                                 maxLength="64"
                                 onChange={onChangeConfirmPassword}
-                                isInvalid={!!formError.newPassword}
+                                isInvalid={!!formError.confirmPassword}
                             />
                             <Form.Control.Feedback type="invalid">
-                            {formError?.confirmPassword}
-                        </Form.Control.Feedback>
+                                {formError?.confirmPassword}
+                            </Form.Control.Feedback>
                         </FloatingLabel>
                     </Form.Floating>
                     <Form.Floating className="mb-3 justify-content-center">
                         <div className="d-flex flex-column flex-sm-row justify-content-center pt-3">
-                            <Button type="submit">
+                            <Button type="submit" style={{ minWidth: "10rem" }}>
                                 {isLoading.isLoadingUsers ? (
                                     <Spinner
                                         as="span"
@@ -281,13 +299,8 @@ function EditPassword(props) {
                             </Button>
                         </div>
                     </Form.Floating>
-                    {errorMessage && (
-                        <Alert className="mb-0 text-center" variant="danger">
-                            {errorMessage}
-                        </Alert>
-                    )}
                     {updateErrorMessage && (
-                        <Alert className="mb-0 text-center" variant="danger">
+                        <Alert className="mb-0 text-center mt-1" variant="danger">
                             {updateErrorMessage}
                         </Alert>
                     )}

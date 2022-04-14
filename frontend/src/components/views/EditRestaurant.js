@@ -9,6 +9,7 @@
 //  form in upload or create mode. Also added in useEffects that will 
 //  upload the form from a database query)
 //  (DAB, 3/10/2022, Added in comments and cleaned up debug statements)
+//  (DAB, 4/14/2022, Added in better form validation)
 
 // Using React library in order to build components 
 // for the app and importing needed components

@@ -21,6 +21,7 @@
 //  the user know the request is processing and not let them resubmit
 //  form until the request is complete)
 //  (DAB, 4/14/2022, Adjusted form star layout to fit flex box)
+//  (DAB, 4/14/2022, Added in better form validation)
 
 // Using React library in order to build components
 // for the app and importing needed components

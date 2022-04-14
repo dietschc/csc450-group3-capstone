@@ -107,17 +107,7 @@ function Login(props) {
                                 style={{ minWidth: "10rem" }}
                                 onClick={createAccountHandler}
                             >
-                                {isLoading.isLoadingUsers ? (
-                                    <Spinner
-                                        as="span"
-                                        variant="light"
-                                        size="sm"
-                                        role="status"
-                                        aria-hidden="true"
-                                        animation="border" />
-                                ) : (
-                                    "Create Account"
-                                )}
+                                Create Account
                             </Button>
                         </div>
                         <div>
@@ -151,8 +141,6 @@ function Login(props) {
                 .then(res => {
                     // If res was successful
                     if (res) {
-                        // console.log("LOGIN SUCCESS");
-
                         // setSubmitted(true);
                         setShowSuccess(true);
 
@@ -161,7 +149,6 @@ function Login(props) {
                     } else {
                         clearForm();
                         setShowError(true);
-                        // console.log("LOGIN FAIL");
                     }
                 })
                 .catch(err => {

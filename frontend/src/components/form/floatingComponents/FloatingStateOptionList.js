@@ -3,6 +3,7 @@
 // Restaurant Club - FloatingStateOptionList.js
 // February 3, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 4/14/2022, Added form validation required)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -39,8 +40,9 @@ function FloatingStateOptionList(props) {
                 aria-label="select state options"
                 value={state}
                 required
+                aria-invalid="false"
                 onChange={onChangeState}>
-                    <option>Select</option>
+                    <option value="" selected>Select</option>
                     {stateOptions}
                 </Form.Select>
             </FloatingLabel>
