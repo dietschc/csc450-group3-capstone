@@ -18,14 +18,15 @@
 //  (DAB, 4/10/2022, Button are now responsive and follow expanding theme)
 //  (DAB, 4/10/2022, Adjusted form Char limits to googles maximum values)
 //  (CPD, 4/12/2022, Modified updateAccount to handle duplicate username error from backend)
-//  (CPD, 4/12/2022, Re-added logic for admin redirect and remove edited user from state) 
+//  (CPD, 4/13/2022, Re-added logic for admin redirect and remove edited user from state) 
+//  (CPD, 4/14/2022, Added isLoading state and spinner code to the submit buttons)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Row, Col, Form, Container, Button, FloatingLabel, Alert } from 'react-bootstrap';
+import { Row, Col, Form, Container, Button, FloatingLabel, Alert, Spinner } from 'react-bootstrap';
 import FormContainer from '../template/FormContainer';
 import { formatZipCode } from '../../helperFunction/FormatString';
 import { addUserThunk, updateUserThunk, findByUserIdThunk, deleteUser } from '../../actions/users';
@@ -51,7 +52,8 @@ function EditAccount(props) {
         findByUserIdThunk,
         deleteUser,
         addUserThunk,
-        updateUserThunk
+        updateUserThunk,
+        isLoading
     } = props;
 
     // Destructuring out the param if there is one
@@ -150,8 +152,9 @@ function EditAccount(props) {
         // Preventing default form submission
         e.preventDefault();
 
-        // As long as submitted is still false
-        if (!submitted) {
+
+        // As long as submitted or isLoading is still false
+        if (!submitted || !isLoading.isLoadingUsers) {
             // If editing the account is updated in 
             // the database
             if (isEditing) {
@@ -414,15 +417,22 @@ function EditAccount(props) {
     // associated handlers so the correct operations can be performed
     const displaySubmitButton = () => (
         <div className="d-flex flex-column flex-sm-row justify-content-around pt-2">
-            {isEditing ? (
-                <Button className="m-1" style={{ minWidth: "4.4rem" }} type="submit">
-                    Update
-                </Button>
-            ) : (
-                <Button className="m-1" style={{ minWidth: "4.4rem" }} type="submit">
-                    Submit
-                </Button>
-            )}
+            <Button className="m-1" style={{ minWidth: "4.4rem" }} type="submit">
+                {isLoading.isLoadingReviews ? (
+                    <Spinner
+                        as="span"
+                        variant="light"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                        animation="border" />
+                ) : isEditing ? (
+                    "Update"
+                ) : (
+                    "Submit"
+                )}
+            </Button>
+
             <Button className="m-1" style={{ minWidth: "4.4rem" }} onClick={showClearFormHandler}>
                 Clear
             </Button>
@@ -602,7 +612,8 @@ function EditAccount(props) {
 // Mapping the redux store states to props
 const mapStateToProps = state =>
 ({
-    users: [...state.users]
+    users: [...state.users],
+    isLoading: { ...state.isLoading }
 });
 
 // Exporting the connect Wrapped EditAccount Component

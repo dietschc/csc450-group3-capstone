@@ -11,6 +11,7 @@
 //  (TJI, 04/02/2022, Removed call to password from state)
 //  (DAB, 4/10/2022, Added comments)
 //  (DAB, 4/10/2022, Button are now responsive and follow expanding theme)
+//  (CPD, 4/14/2022, Added isLoading state and spinner code to the submit buttons)
 
 // Using React library in order to build components 
 // for the app and importing needed components

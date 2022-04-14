@@ -5,6 +5,7 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 4/02/2022, Added in confirm password and implemented the functionality 
 //  for admins to edit passwords)
+//  (CPD, 4/14/2022, Added isLoading state and spinner code to the submit button)
 
 // Using React library in order to build components 
 // for the app and importing needed components such as State where variables are stored

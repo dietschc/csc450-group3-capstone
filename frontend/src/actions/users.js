@@ -21,6 +21,8 @@
 //  (DAB, 4/04/2022, Added in isLoading dispatch for findByUserNameThunk, findByUserIdThunk)
 //  (DAB, 4/04/2022, Organized code)
 //  (CPD, 4/12/2022, Modified updateUserThunk to return values depending on results)
+//  (CPD, 4/13/2022, Added isLoading state to updatePasswordSecureThunk)
+//  (CPD, 4/14/2022, Added isLoading state to loginThunk, addUserThunk, and updateThunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -53,11 +55,16 @@ import { endLoadingUsers, startLoadingUsers } from './isLoading';
 export const addUserThunk = (
     userName, firstName, lastName, address,
     city, state, zip, userEmail, userPassword) => async dispatch => {
+        // Setting isLoadingUsers state to true
+        await dispatch(await startLoadingUsers());
+        // This variable will return true if update was successful and false if not
+        let isSuccess = false;
+
         /**
          * Call and await the user data service create method, passing the parameters and storing the 
          * results in a constant.
          */
-        return await UserDataService.create({
+        await UserDataService.create({
             userName, firstName, lastName, address, city, state, zip, userEmail, userPassword
         })
             .then(res => {
@@ -71,19 +78,23 @@ export const addUserThunk = (
                     dispatch(addUser(result));
 
                     // User added, returning true
-                    return true;
+                    isSuccess = true;
                 }
                 // User was not created, false is returned
                 else {
-                    return false;
+                    isSuccess = false;
                 }
 
             })
             .catch(err => {
                 // There is an error, it is logged and false is returned
                 console.log(err);
-                return false;
             })
+        // Setting isLoadingUsers state to false
+        dispatch(endLoadingUsers());
+
+        // Returning result of the request
+        return isSuccess;
     }
 
 
@@ -433,24 +444,34 @@ export const updatePermissionThunk = (userId, data) => async dispatch => {
  * @returns 
  */
 export const updateUserThunk = (id, data) => async dispatch => {
+    // Setting isLoadingUsers state to true
+    await dispatch(await startLoadingUsers());
+    // This variable will return true if update was successful and false if not
+    let isSuccess = false;
+
     /**
      * Call and await the user data service update method, passing the id and data
      */
-    return await UserDataService.update(id, data)
+    await UserDataService.update(id, data)
         .then(res => {
 
             if (res.data) {
                 const result = { id, ...data }
                 dispatch(updateUser(result))
-                return true;
+                isSuccess = true;
             } else {
-                return false;
+                isSuccess = false;
             }
         })
         .catch(err => {
             console.log(err)
-            return false;
+            isSuccess = false;
         })
+    // Setting isLoadingUsers state to false
+    dispatch(endLoadingUsers());
+
+    // Returning result of the request
+    return isSuccess;
 }
 
 
