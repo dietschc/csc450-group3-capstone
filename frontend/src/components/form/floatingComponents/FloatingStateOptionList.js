@@ -42,7 +42,7 @@ function FloatingStateOptionList(props) {
                 required
                 aria-invalid="false"
                 onChange={onChangeState}>
-                    <option value="" selected>Select</option>
+                    <option value="">Select</option>
                     {stateOptions}
                 </Form.Select>
             </FloatingLabel>
