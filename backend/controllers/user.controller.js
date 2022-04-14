@@ -7,7 +7,7 @@
 //  (CPD, 2/27, re-wrote the update handler to hopefully give correct response now)
 //  (CPD, 2/28, Removed historyId in create because history table is going away)
 //  (CPD, 2/28, Added friend methods to users controller)
-//  (DAB, 3/06/2022, Added in findByNameOffsetLimit that returns the needed user attributes)
+//  (DAB, 3/06/2022, Added in findByNameOffsetLimit that returns the needed user attributes
 //  to load a state into redux. Safe data with no passwords)
 //  (TJI, 03/28/2022 - Added in password hashing)
 //  (DAB, 3/27/2022, Added the friends table results to return with get as friendsOne)
@@ -267,7 +267,7 @@ exports.update = async (req, res) => {
     // console.log("###################");
     // console.log("update status: ", await newUserName());
 
-    // If the userName is available, proceed with creating a new account
+    // If the userName is available, proceed with updating account
     if (await newUserName()) {
         // We find the associated addressId from the user table
         const addressId = await User.findByPk(id)
