@@ -18,14 +18,15 @@
 //  (DAB, 4/10/2022, Button are now responsive and follow expanding theme)
 //  (DAB, 4/10/2022, Adjusted form Char limits to googles maximum values)
 //  (CPD, 4/12/2022, Modified updateAccount to handle duplicate username error from backend)
-//  (CPD, 4/12/2022, Re-added logic for admin redirect and remove edited user from state) 
+//  (CPD, 4/13/2022, Re-added logic for admin redirect and remove edited user from state) 
+//  (CPD, 4/14/2022, Added isLoading state and spinner code to the submit buttons)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Row, Col, Form, Container, Button, FloatingLabel, Alert } from 'react-bootstrap';
+import { Row, Col, Form, Container, Button, FloatingLabel, Alert, Spinner } from 'react-bootstrap';
 import FormContainer from '../template/FormContainer';
 import { formatZipCode } from '../../helperFunction/FormatString';
 import { addUserThunk, updateUserThunk, findByUserIdThunk, deleteUser } from '../../actions/users';
@@ -46,8 +47,14 @@ import ModalConfirmation from '../modal/ModalCancelConfirm';
  */
 function EditAccount(props) {
     // Destructuring out needed state and actions
-    const { users } = props;
-    const { findByUserIdThunk, deleteUser, addUserThunk, updateUserThunk } = props;
+    const {
+        users,
+        findByUserIdThunk,
+        deleteUser,
+        addUserThunk,
+        updateUserThunk,
+        isLoading
+    } = props;
 
     // Destructuring out the param if there is one
     const { userId } = useParams();
@@ -61,14 +68,30 @@ function EditAccount(props) {
     const [showClearFormConfirm, setShowClearFormConfirm] = useState(false);
 
     // Form field state
-    const [userName, setUserName] = useState(users.length > 0 ? users[0].auth.userName : "");
-    const [firstName, setFirstName] = useState(users.length > 0 ? users[0].firstName : "");
-    const [lastName, setLastName] = useState(users.length > 0 ? users[0].lastName : "");
-    const [address, setAddress] = useState(users.length > 0 ? users[0].address.address : "");
-    const [city, setCity] = useState(users.length > 0 ? users[0].address.city : "");
-    const [zip, setZip] = useState(users.length > 0 ? users[0].address.zip : "");
-    const [state, setState] = useState(users.length > 0 ? users[0].address.state : "");
-    const [email, setEmail] = useState(users.length > 0 ? users[0].email : "");
+    const [userName, setUserName] = useState(
+        users.length > 0 ? users[0].auth.userName : ""
+    );
+    const [firstName, setFirstName] = useState(
+        users.length > 0 ? users[0].firstName : ""
+    );
+    const [lastName, setLastName] = useState(
+        users.length > 0 ? users[0].lastName : ""
+    );
+    const [address, setAddress] = useState(
+        users.length > 0 ? users[0].address.address : ""
+    );
+    const [city, setCity] = useState(
+        users.length > 0 ? users[0].address.city : ""
+    );
+    const [zip, setZip] = useState(
+        users.length > 0 ? users[0].address.zip : ""
+    );
+    const [state, setState] = useState(
+        users.length > 0 ? users[0].address.state : ""
+    );
+    const [email, setEmail] = useState(
+        users.length > 0 ? users[0].email : ""
+    );
     // Password no longer stored in state so set to blank
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -126,11 +149,12 @@ function EditAccount(props) {
     // save account depending on if the account is being edited 
     // or created
     const handleSubmit = (e) => {
-        // As long as submitted is still false
-        if (!submitted) {
-            // Preventing default form submission
-            e.preventDefault();
+        // Preventing default form submission
+        e.preventDefault();
 
+
+        // As long as submitted or isLoading is still false
+        if (!submitted || !isLoading.isLoadingUsers) {
             // If editing the account is updated in 
             // the database
             if (isEditing) {
@@ -393,15 +417,22 @@ function EditAccount(props) {
     // associated handlers so the correct operations can be performed
     const displaySubmitButton = () => (
         <div className="d-flex flex-column flex-sm-row justify-content-around pt-2">
-            {isEditing ? (
-                <Button className="m-1" style={{ minWidth: "4.4rem" }} type="submit">
-                    Update
-                </Button>
-            ) : (
-                <Button className="m-1" style={{ minWidth: "4.4rem" }} type="submit">
-                    Submit
-                </Button>
-            )}
+            <Button className="m-1" style={{ minWidth: "4.4rem" }} type="submit">
+                {isLoading.isLoadingUsers ? (
+                    <Spinner
+                        as="span"
+                        variant="light"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                        animation="border" />
+                ) : isEditing ? (
+                    "Update"
+                ) : (
+                    "Submit"
+                )}
+            </Button>
+
             <Button className="m-1" style={{ minWidth: "4.4rem" }} onClick={showClearFormHandler}>
                 Clear
             </Button>
@@ -581,7 +612,8 @@ function EditAccount(props) {
 // Mapping the redux store states to props
 const mapStateToProps = state =>
 ({
-    users: [...state.users]
+    users: [...state.users],
+    isLoading: { ...state.isLoading }
 });
 
 // Exporting the connect Wrapped EditAccount Component

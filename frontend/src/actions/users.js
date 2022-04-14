@@ -21,6 +21,9 @@
 //  (DAB, 4/04/2022, Added in isLoading dispatch for findByUserNameThunk, findByUserIdThunk)
 //  (DAB, 4/04/2022, Organized code)
 //  (CPD, 4/12/2022, Modified updateUserThunk to return values depending on results)
+//  (CPD, 4/13/2022, Added isLoading state to updatePasswordSecureThunk)
+//  (CPD, 4/14/2022, Added isLoading state to loginThunk, addUserThunk, updateThunk, 
+//  and deleteUserThunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -53,11 +56,16 @@ import { endLoadingUsers, startLoadingUsers } from './isLoading';
 export const addUserThunk = (
     userName, firstName, lastName, address,
     city, state, zip, userEmail, userPassword) => async dispatch => {
+        // Setting isLoadingUsers state to true
+        await dispatch(await startLoadingUsers());
+        // This variable will return true if update was successful and false if not
+        let isSuccess = false;
+
         /**
          * Call and await the user data service create method, passing the parameters and storing the 
          * results in a constant.
          */
-        return await UserDataService.create({
+        await UserDataService.create({
             userName, firstName, lastName, address, city, state, zip, userEmail, userPassword
         })
             .then(res => {
@@ -71,19 +79,23 @@ export const addUserThunk = (
                     dispatch(addUser(result));
 
                     // User added, returning true
-                    return true;
+                    isSuccess = true;
                 }
                 // User was not created, false is returned
                 else {
-                    return false;
+                    isSuccess = false;
                 }
 
             })
             .catch(err => {
                 // There is an error, it is logged and false is returned
                 console.log(err);
-                return false;
             })
+        // Setting isLoadingUsers state to false
+        dispatch(endLoadingUsers());
+
+        // Returning result of the request
+        return isSuccess;
     }
 
 
@@ -95,11 +107,18 @@ export const addUserThunk = (
 * @returns 
 */
 export const deleteUserThunk = (userId) => async dispatch => {
+    // Setting isLoadingUsers state to true
+    await dispatch(await startLoadingUsers());
+    // This variable will return true if update was successful and false if not
+    let isSuccess = false;
+
     // Making the call to the service to request the deletion of the user
     await UserDataService.delete(userId)
         .then(res => {
             // If there is a response the state will be updated
             if (res) {
+
+                isSuccess = true;
 
                 // Dispatching the action to delete the user from state
                 dispatch(deleteUser(userId));
@@ -109,6 +128,11 @@ export const deleteUserThunk = (userId) => async dispatch => {
             // If there is an error it will be logged
             console.log(err)
         })
+    // Setting isLoadingUsers state to false
+    dispatch(endLoadingUsers());
+
+    // Returning result of the request
+    return isSuccess;
 }
 
 
@@ -230,11 +254,16 @@ export const findByUserNameThunk = (offset, limit, userName) => async (dispatch,
  * @returns 
  */
 export const loginThunk = (userName, userPassword) => async dispatch => {
+    // Setting isLoadingUsers state to true
+    await dispatch(await startLoadingUsers());
+    // This variable will return true if update was successful and false if not
+    let isSuccess = false;
+
     /**
      * Call and await the user data service login method, passing the parameters and storing the 
      * results in res
      */
-    return await UserDataService.login({ userName, userPassword })
+    await UserDataService.login({ userName, userPassword })
         .then(res => {
             // Delete the current users in the Users state array
             dispatch(deleteAllUsers());
@@ -258,7 +287,7 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
             // console.log("IN USERS FRIENDS", friends)
 
             // Return an array that contains the response from addUser in res[0]
-            // and a copy of the friends array in res[1]
+            // and a copy of the friends array in res[1], and tokens in res[2]
             return [dispatch(addUser(result)), friends, tokens];
         })
         .then(res => {
@@ -285,10 +314,21 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
             // Dispatch login parameters to login state action
             return dispatch(login(id, accessToken, refreshToken));
         })
+        .then((res) => {
+            // If the result was successful true is set to isSuccess
+            if (res) {
+                isSuccess = true;
+            }
+        })
         .catch(err => {
             console.log(err)
-            return err;
         })
+
+    // Setting isLoadingUsers state to false
+    dispatch(endLoadingUsers());
+
+    // Returning result of the request
+    return isSuccess;
 }
 
 
@@ -339,6 +379,11 @@ export const updatePasswordThunk = (userId, newPassword) => async dispatch => {
  * @returns 
  */
 export const updatePasswordSecureThunk = (userId, userPassword, newPassword) => async dispatch => {
+    // Setting isLoadingUsers state to true
+    await dispatch(await startLoadingUsers());
+    // This variable will return true if update was successful and false if not
+    let isSuccess = false;
+
     // Packaging the password in data to be used in the request body
     const data = {
         userPassword: userPassword,
@@ -347,24 +392,30 @@ export const updatePasswordSecureThunk = (userId, userPassword, newPassword) => 
 
     // Sending a request to update the password in the database. Will 
     // return true if successful and false if not
-    return await AuthenticationDataService.updatePasswordSecure(userId, data)
+    await AuthenticationDataService.updatePasswordSecure(userId, data)
         .then(res => {
             // If there is a result, the password is updated and 
             // true is returned
             if (res) {
-                return true;
+                isSuccess = true;
             }
             // If there is not a result, the password was not updated 
             // and false is returned
             else {
-                return false;
+                isSuccess = false;
             }
         })
         .catch(err => {
             // Errors will be caught, logged, and false is returned
             console.log(err)
-            return false;
+            isSuccess = false;
         })
+
+    // Setting isLoadingUsers to false
+    dispatch(endLoadingUsers());
+
+    // Returning result of the request
+    return isSuccess;
 }
 
 
@@ -406,24 +457,34 @@ export const updatePermissionThunk = (userId, data) => async dispatch => {
  * @returns 
  */
 export const updateUserThunk = (id, data) => async dispatch => {
+    // Setting isLoadingUsers state to true
+    await dispatch(await startLoadingUsers());
+    // This variable will return true if update was successful and false if not
+    let isSuccess = false;
+
     /**
      * Call and await the user data service update method, passing the id and data
      */
-    return await UserDataService.update(id, data)
+    await UserDataService.update(id, data)
         .then(res => {
 
             if (res.data) {
                 const result = { id, ...data }
                 dispatch(updateUser(result))
-                return true;
+                isSuccess = true;
             } else {
-                return false;
+                isSuccess = false;
             }
         })
         .catch(err => {
             console.log(err)
-            return false;
+            isSuccess = false;
         })
+    // Setting isLoadingUsers state to false
+    dispatch(endLoadingUsers());
+
+    // Returning result of the request
+    return isSuccess;
 }
 
 
