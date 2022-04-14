@@ -117,9 +117,9 @@ export const deleteUserThunk = (userId) => async dispatch => {
         .then(res => {
             // If there is a response the state will be updated
             if (res) {
-                if (res) {
-                    isSuccess = true;
-                }
+
+                isSuccess = true;
+
                 // Dispatching the action to delete the user from state
                 dispatch(deleteUser(userId));
             }
@@ -263,7 +263,7 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
      * Call and await the user data service login method, passing the parameters and storing the 
      * results in res
      */
-    return await UserDataService.login({ userName, userPassword })
+    await UserDataService.login({ userName, userPassword })
         .then(res => {
             // Delete the current users in the Users state array
             dispatch(deleteAllUsers());
@@ -287,7 +287,7 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
             // console.log("IN USERS FRIENDS", friends)
 
             // Return an array that contains the response from addUser in res[0]
-            // and a copy of the friends array in res[1]
+            // and a copy of the friends array in res[1], and tokens in res[2]
             return [dispatch(addUser(result)), friends, tokens];
         })
         .then(res => {
@@ -318,17 +318,17 @@ export const loginThunk = (userName, userPassword) => async dispatch => {
             // If the result was successful true is set to isSuccess
             if (res) {
                 isSuccess = true;
-                // Setting isLoadingUsers state to false
-                dispatch(endLoadingUsers());
-
-                // Returning result of the request
-                return isSuccess;
             }
         })
         .catch(err => {
             console.log(err)
-            return err;
         })
+
+    // Setting isLoadingUsers state to false
+    dispatch(endLoadingUsers());
+
+    // Returning result of the request
+    return isSuccess;
 }
 
 
