@@ -24,7 +24,7 @@
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Row, Col, Form, Container, Button, FloatingLabel, Alert, Spinner } from 'react-bootstrap';
 import FormContainer from '../template/FormContainer';

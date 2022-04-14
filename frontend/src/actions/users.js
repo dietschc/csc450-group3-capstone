@@ -22,7 +22,8 @@
 //  (DAB, 4/04/2022, Organized code)
 //  (CPD, 4/12/2022, Modified updateUserThunk to return values depending on results)
 //  (CPD, 4/13/2022, Added isLoading state to updatePasswordSecureThunk)
-//  (CPD, 4/14/2022, Added isLoading state to loginThunk, addUserThunk, and updateThunk)
+//  (CPD, 4/14/2022, Added isLoading state to loginThunk, addUserThunk, updateThunk, 
+//  and deleteUserThunk)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -106,12 +107,19 @@ export const addUserThunk = (
 * @returns 
 */
 export const deleteUserThunk = (userId) => async dispatch => {
+    // Setting isLoadingUsers state to true
+    await dispatch(await startLoadingUsers());
+    // This variable will return true if update was successful and false if not
+    let isSuccess = false;
+
     // Making the call to the service to request the deletion of the user
     await UserDataService.delete(userId)
         .then(res => {
             // If there is a response the state will be updated
             if (res) {
-
+                if (res) {
+                    isSuccess = true;
+                }
                 // Dispatching the action to delete the user from state
                 dispatch(deleteUser(userId));
             }
@@ -120,6 +128,11 @@ export const deleteUserThunk = (userId) => async dispatch => {
             // If there is an error it will be logged
             console.log(err)
         })
+    // Setting isLoadingUsers state to false
+    dispatch(endLoadingUsers());
+
+    // Returning result of the request
+    return isSuccess;
 }
 
 
