@@ -20,6 +20,8 @@
 //  (DAB, 4/13/2022, addReview, updateReview, deleteReview Thunks now have 
 //  success true/false return value as well as isLoadingReview dispatch 
 //  actions to monitor request process)
+//  (DAB, 4/14/2022, fixed but where file.size would crash the function. Added 
+//  a file not undefined/null check)
 
 // Using React library in order to build components
 // for the app and importing needed components
@@ -71,7 +73,7 @@ export const addReviewThunk =
             let isSuccess = false;
 
             // If file exists, upload to cloud and add location to the new review
-            if (file.size > 0) {
+            if (file && file.size > 0) {
                 // Parameters for user subdirectories
                 const id = userId;
                 const type = "users";
@@ -402,7 +404,7 @@ export const updateReviewThunk =
             let isSuccess = false;
 
             // If input file exists, upload to cloud and add location to the new review
-            if (file.size > 0) {
+            if (file && file.size > 0) {
                 // Delete old image from cloud if it exists
                 if (imageLocation !== "") {
                     const oldLocation = imageLocation;

@@ -12,6 +12,8 @@
 //  (DAB, 3/5/2022, findByRestaurantAuthorIdOffsetLimit added to allow for 
 //  retrieval of reviews using both the author and restaurant Ids)
 //  (DAB, 4/12/2022, Error Handling Audit - Passed)
+//  (DAB, 4/14/2022, Updated findByAuthorId to return ordered newest modified to 
+//  oldest modified)
 
 const db = require("../models");
 const { Op } = db.Sequelize;
@@ -451,7 +453,11 @@ exports.findByAuthorId = async (req, res) => {
             }
         ],
         where: { userId: userCreatorId },
-        order: [[Restaurant, 'restaurantName', 'ASC'], [User, Authentication, 'userName', 'ASC']]
+        order: [
+            [History, 'modified', 'DESC'], 
+            [Restaurant, 'restaurantName', 'ASC'], 
+            [User, Authentication, 'userName', 'ASC']
+        ]
     })
         .then(review => {
             // If reviews are found they are sent back to the requester

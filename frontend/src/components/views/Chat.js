@@ -18,6 +18,8 @@
 //  (DAB, 4/07/2022, Organized code)
 //  (DAB, 4/10/2022, Fixed WAVE error of message chat contrast)
 //  (TJI 04/14/2022 - Removed extra line breaks between messages)
+//  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
+//  up any skipped load ins)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -33,7 +35,9 @@ import {
     deleteAllMessages,
     sendMessageThunk
 } from '../../actions/messages';
+import { endLoadingAll } from '../../actions/isLoading';
 import ThemedSpinner from '../subComponent/ThemedSpinner';
+
 
 /**
  * The Chat View will allow friends to talk to one another via text 
@@ -50,7 +54,8 @@ function Chat(props) {
         deleteAllMessages,
         findByConversationIdOffsetLimitThunk,
         findAllByIdOffsetLimitThunk,
-        sendMessageThunk
+        sendMessageThunk,
+        endLoadingAll
     } = props;
 
     // The chatMessage will hold the state of the message text area
@@ -101,6 +106,8 @@ function Chat(props) {
             return () => clearInterval(interval);
         }
 
+        // Ending any unfinished load ins
+        endLoadingAll();
     }, []);
 
 
@@ -297,5 +304,6 @@ export default connect(mapStateToProps, {
     findByConversationIdOffsetLimitThunk,
     findAllByIdOffsetLimitThunk,
     deleteAllMessages,
-    sendMessageThunk
+    sendMessageThunk,
+    endLoadingAll
 })(Chat);

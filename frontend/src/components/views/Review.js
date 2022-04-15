@@ -17,9 +17,13 @@
 //  (DAB, 4/12/2022, More layout fine tuning
 //  (DAB, 4/12/2022, BUG FIX --- Now when an admin updates a review that they are not the author
 //  of, the original author will not change)
-//  (DAB, 4/13/2022, Added in action spinner in button that will let 
-//  the user know the request is processing and not let them resubmit 
+//  (DAB, 4/13/2022, Added in action spinner in button that will let
+//  the user know the request is processing and not let them resubmit
 //  form until the request is complete)
+//  (DAB, 4/14/2022, Adjusted form star layout to fit flex box)
+//  (DAB, 4/14/2022, Added in better form validation)
+//  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
+//  up any skipped load ins)
 //  (TJI, 04/14/2022 - Trim the review text to remove extra whitespace)
 
 // Using React library in order to build components
@@ -41,6 +45,7 @@ import { addReviewThunk, updateReviewThunk } from "../../actions/reviews";
 import { findByRestaurantIdThunk } from "../../actions/restaurants";
 import XLContainer from "../template/XLContainer";
 import C from "../../constants";
+import { endLoadingAll } from "../../actions/isLoading";
 
 /**
  * The Review View will allow a user to create and edit restaurant reviews. The
@@ -53,8 +58,12 @@ import C from "../../constants";
 function Review(props) {
     // Destructuring the needed arrays and data functions from props
     const { users, reviews, restaurants, isLoading } = props;
-    const { addReviewThunk, updateReviewThunk, findByRestaurantIdThunk } =
-        props;
+    const { 
+        addReviewThunk, 
+        updateReviewThunk, 
+        findByRestaurantIdThunk, 
+        endLoadingAll 
+    } = props;
     const starFont = { color: "gold" };
 
     // Extract IDs from URL as parameters
@@ -96,6 +105,9 @@ function Review(props) {
     );
     const [file, setFile] = useState("");
     const [tempFileUrl, setTempFileUrl] = useState("");
+    // The formError local state will hold any errors found in the 
+    // form and their error message
+    const [formError, setFormError] = useState({});
 
     // The navigate reference will allow redirecting users to appropriate pages if needed
     const navigate = useNavigate();
@@ -112,7 +124,11 @@ function Review(props) {
                 getRestaurant();
             }
         }
+
+        // Ending any unfinished load ins
+        endLoadingAll();
     }, []);
+
 
     // This useEffect runs every time the restaurants state is changed
     useEffect(() => {
@@ -131,6 +147,47 @@ function Review(props) {
         }
     }, [restaurants]);
 
+
+    // The clearForm function will clear the form data
+    const clearForm = () => {
+        setTasteRating("3");
+        setServiceRating("3");
+        setCleanRating("3");
+        setOverallRating("3");
+        setReviewTitle("");
+        setReviewText("");
+
+        // We are not allowing to replace review photos at this time
+        // The review must be deleted to delete the current photo
+        // setFile("cleared");
+        // setTempFileUrl(window.location.origin + '/reviewImages/3/stock-illustration-retro-diner.jpg');
+    };
+
+
+    // The close handler will close the clear form modal
+    const closeClearFormHandler = () => setShowClearFormConfirm(false);
+
+
+    // The formErrorCheck will hold the logic for checking the 
+    // form for errors and return them as an object
+    const formErrorCheck = () => {
+        // Initial empty currentError object
+        const currentError = {};
+
+        // If the file size is greater than allowed a max file error 
+        // will be returned
+        if (file?.size > C.MAX_UPLOAD_SIZE) {
+            console.log("In error check", file?.size > C.MAX_UPLOAD_SIZE);
+            currentError.file = `Max file size is ${
+                C.MAX_UPLOAD_SIZE / 1024 / 1024
+            }MB!`;
+        }
+
+        // Returning the error found object to the caller
+        return currentError;
+    };
+
+
     // The getRestaurant method will search the database for the restaurant in the restaurantId.
     // If it exists it will add it to state otherwise it will navigate the user to the search
     // page to look for a different restaurant
@@ -145,6 +202,7 @@ function Review(props) {
         }
     };
 
+
     // The handleSubmit method will handle the initial form submission
     const handleSubmit = async (e) => {
         // Preventing default form submission action
@@ -152,11 +210,22 @@ function Review(props) {
 
         // If there is not a current review request loading
         if (!isLoading.isLoadingReviews) {
-            // If the form is in update mode the review will be updated
-            // else it will save a new review
-            isUpdate ? await updateReview() : await saveReview();
+            // Checking if the form has any errors
+            const currentFormErrorList = formErrorCheck();
+
+            // If the form has errors, the error messages are displayed
+            if (Object.keys(currentFormErrorList).length > 0) {
+                setFormError(currentFormErrorList);
+            }
+            // Else there are no errors and the form is sent 
+            else {
+                // If the form is in update mode the review will be updated
+                // else it will save a new review
+                isUpdate ? await updateReview() : await saveReview();
+            }
         }
     };
+
 
     // Handles the clean rating form input
     const onChangeCleanRating = (e) => {
@@ -164,15 +233,31 @@ function Review(props) {
         setCleanRating(cleanRating);
     };
 
+
     // Handles the file form input
     const onChangeFile = (e) => {
         const file = e.target.files[0];
-        setFile(file);
+        setFile(file || null);
 
-        // Create temporary URL for image preview
-        const tempFileUrl = URL.createObjectURL(file);
-        setTempFileUrl(tempFileUrl);
+        // Create temporary URL for image preview if there is 
+        // a file
+        if (file) {
+            const tempFileUrl = URL.createObjectURL(file);
+            setTempFileUrl(tempFileUrl);
+        }
+        else {
+            setTempFileUrl("");
+        }
+
+        // If the form had an error it is reset
+        if (formError.file) {
+            setFormError({
+                ...formError,
+                file: null,
+            });
+        }
     };
+
 
     // Handles the overall rating form input
     const onChangeOverallRating = (e) => {
@@ -180,12 +265,14 @@ function Review(props) {
         setOverallRating(overallRating);
     };
 
+
     // Handles the review text form input
     const onChangeReviewText = (e) => {
         const { value, maxLength } = e.target;
         const reviewText = value.slice(0, maxLength);
         setReviewText(reviewText);
     };
+
 
     // Handles the review title form input
     // Reduces user input to maxLength of input field which copies database's limit.
@@ -195,17 +282,20 @@ function Review(props) {
         setReviewTitle(reviewTitle);
     };
 
+
     // Handles the service rating form input
     const onChangeServiceRating = (e) => {
         const serviceRating = e.target.value;
         setServiceRating(serviceRating);
     };
 
+
     // Handles the taste rating form input
     const onChangeTasteRating = (e) => {
         const tasteRating = e.target.value;
         setTasteRating(tasteRating);
     };
+
 
     // The saveReview method will save the new review to the database then navigate the
     // user to the dashboard
@@ -232,6 +322,11 @@ function Review(props) {
         isSuccess && navigate("../userDashboard");
     };
 
+
+    // The show handler will show the close form modal
+    const showClearFormHandler = () => setShowClearFormConfirm(true);
+
+
     // The updateReview function will update an existing review. It if
     // functional with both admin and non admin users. If an admin
     // updates the review, the original author will not change
@@ -251,7 +346,7 @@ function Review(props) {
             // Setting the userId to use in the review update
             const userId = paramReview?.author?.id;
 
-            // Pass parameters to add review thunk action and return 
+            // Pass parameters to add review thunk action and return
             // success true or false
             const isSuccess = await updateReviewThunk(
                 reviewId,
@@ -266,7 +361,7 @@ function Review(props) {
                 imageLocation
             );
 
-            // Bring admin back to the users dashboard they are editing if 
+            // Bring admin back to the users dashboard they are editing if
             // update is successful
             isSuccess && navigate(`../userDashboard/${userId}`);
         }
@@ -295,7 +390,9 @@ function Review(props) {
         }
     };
 
+
     //*************************** RENDER FUNCTIONS  *********************************/
+
 
     /**
      * This will display the existing image if you are editing, or else it will display
@@ -328,26 +425,6 @@ function Review(props) {
         </div>
     );
 
-    // The clearForm function will clear the form data
-    const clearForm = () => {
-        setTasteRating("1");
-        setServiceRating("1");
-        setCleanRating("1");
-        setOverallRating("1");
-        setReviewTitle("");
-        setReviewText("");
-
-        // We are not allowing to replace review photos at this time
-        // The review must be deleted to delete the current photo
-        // setFile("cleared");
-        // setTempFileUrl(window.location.origin + '/reviewImages/3/stock-illustration-retro-diner.jpg');
-    };
-
-    // The close handler will close the clear form modal
-    const closeClearFormHandler = () => setShowClearFormConfirm(false);
-
-    // The show handler will show the close form modal
-    const showClearFormHandler = () => setShowClearFormConfirm(true);
 
     return (
         <XLContainer>
@@ -421,7 +498,7 @@ function Review(props) {
 
                             <div
                                 className="d-flex flex-shrink-0 flex-column justify-content-between m-1"
-                                style={{ maxWidth: "5.5rem" }}
+                                style={{ maxWidth: "5.65rem" }}
                             >
                                 <Form.Floating className="mb-1 p-0">
                                     <FloatingLabel
@@ -498,6 +575,7 @@ function Review(props) {
                             <div className="mt-1">
                                 <FloatingImageUpload
                                     onChangeFile={onChangeFile}
+                                    formError={formError}
                                 />
                             </div>
                         </div>
@@ -545,12 +623,13 @@ function Review(props) {
                         >
                             {isLoading.isLoadingReviews ? (
                                 <Spinner
-                                as="span"
-                                variant="light"
-                                size="sm"
-                                role="status"
-                                aria-hidden="true"
-                                animation="border"/>
+                                    as="span"
+                                    variant="light"
+                                    size="sm"
+                                    role="status"
+                                    aria-hidden="true"
+                                    animation="border"
+                                />
                             ) : isUpdate ? (
                                 "Update"
                             ) : (
@@ -581,7 +660,7 @@ const mapStateToProps = (state) => ({
     reviews: [...state.reviews],
     restaurants: [...state.restaurants],
     users: [...state.users],
-    isLoading: {...state.isLoading}
+    isLoading: { ...state.isLoading },
 });
 
 // Exporting the connect Wrapped EditAccount Component
@@ -589,4 +668,5 @@ export default connect(mapStateToProps, {
     addReviewThunk,
     updateReviewThunk,
     findByRestaurantIdThunk,
+    endLoadingAll
 })(Review);

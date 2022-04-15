@@ -22,6 +22,8 @@
 //  (DAB, 04/13/2022, isLoading state control added to delete friend and review. 
 //  users can only send one of each corresponding request in at a time to 
 //  prevent duplicate requests)
+//  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
+//  up any skipped load ins)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -40,6 +42,7 @@ import { deleteAllReviews, deleteReviewThunk } from '../../actions/reviews';
 import { deleteAllRestaurants } from '../../actions/restaurants';
 import { deleteUser, findByUserIdThunk } from '../../actions/users';
 import ThemedSpinner from '../subComponent/ThemedSpinner';
+import { endLoadingAll } from '../../actions/isLoading';
 
 /**
  * The UserDashboard View will allow the user to view their account
@@ -63,7 +66,8 @@ function UserDashboard(props) {
         deleteAllRestaurants,
         deleteReviewThunk,
         findByUserIdThunk,
-        deleteUser
+        deleteUser,
+        endLoadingAll
     } = props;
 
     // Destructuring out the param if there is one
@@ -91,6 +95,8 @@ function UserDashboard(props) {
     useEffect(() => {
         // loading in the current state to start up the page
         loadState();
+        // Ending any unfinished load ins
+        endLoadingAll();
     }, []);
 
 
@@ -363,5 +369,6 @@ export default connect(mapStateToProps, {
     deleteAllReviews,
     deleteReviewThunk,
     findByUserIdThunk,
-    deleteUser
+    deleteUser,
+    endLoadingAll
 })(UserDashboard);

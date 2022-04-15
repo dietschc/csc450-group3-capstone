@@ -12,10 +12,12 @@
 //  (DAB, 4/10/2022, Added comments)
 //  (DAB, 4/10/2022, Button are now responsive and follow expanding theme)
 //  (CPD, 4/14/2022, Added isLoading state and spinner code to the submit buttons)
+//  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
+//  up any skipped load ins)
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button, Form, Container, FloatingLabel, Alert, Spinner } from 'react-bootstrap';
 import { connect } from 'react-redux';
@@ -23,6 +25,7 @@ import { loginThunk, deleteAllUsers } from '../../actions/users';
 import { Link } from 'react-router-dom';
 import { checkLogin } from '../../helperFunction/CheckLogin'
 import FormContainer from '../template/FormContainer';
+import { endLoadingAll } from '../../actions/isLoading';
 
 /**
  * The Login Component will allow a user to either login to their 
@@ -37,7 +40,8 @@ function Login(props) {
         users,
         isLoading,
         loginThunk,
-        deleteAllUsers
+        deleteAllUsers,
+        endLoadingAll
     } = props;
 
     // Setting local state variables
@@ -52,6 +56,12 @@ function Login(props) {
     // Pulling state from useLocation to allow for the user to be redirected back to the page 
     // they were previously on before redirect
     const { state } = useLocation();
+
+    // Loading the database data into state on page load
+    useEffect(() => {
+        // Ending any unfinished load ins
+        endLoadingAll();
+    }, []);
 
     const onChangeUserName = e => {
         setShowError(false);
@@ -107,17 +117,7 @@ function Login(props) {
                                 style={{ minWidth: "10rem" }}
                                 onClick={createAccountHandler}
                             >
-                                {isLoading.isLoadingUsers ? (
-                                    <Spinner
-                                        as="span"
-                                        variant="light"
-                                        size="sm"
-                                        role="status"
-                                        aria-hidden="true"
-                                        animation="border" />
-                                ) : (
-                                    "Create Account"
-                                )}
+                                Create Account
                             </Button>
                         </div>
                         <div>
@@ -151,8 +151,6 @@ function Login(props) {
                 .then(res => {
                     // If res was successful
                     if (res) {
-                        // console.log("LOGIN SUCCESS");
-
                         // setSubmitted(true);
                         setShowSuccess(true);
 
@@ -161,7 +159,6 @@ function Login(props) {
                     } else {
                         clearForm();
                         setShowError(true);
-                        // console.log("LOGIN FAIL");
                     }
                 })
                 .catch(err => {
@@ -253,4 +250,4 @@ const mapStateToProps = state =>
 
 // Exporting the component
 // export default Login;
-export default connect(mapStateToProps, { loginThunk, deleteAllUsers })(Login);
+export default connect(mapStateToProps, { loginThunk, deleteAllUsers, endLoadingAll })(Login);

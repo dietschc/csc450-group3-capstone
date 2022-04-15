@@ -3,7 +3,7 @@
 // Restaurant Club - upload.js
 // March 9, 2022
 // Last Edited (Initials, Date, Edits):
-// (CPD, 4/13/2022, Increase max file upload size)
+// (CPD, 4/13/2022, Increase max file upload size to 5MB)
 
 const util = require("util");
 const aws = require('aws-sdk');
