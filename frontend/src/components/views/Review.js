@@ -20,6 +20,7 @@
 //  (DAB, 4/13/2022, Added in action spinner in button that will let 
 //  the user know the request is processing and not let them resubmit 
 //  form until the request is complete)
+//  (TJI, 04/14/2022 - Trim the review text to remove extra whitespace)
 
 // Using React library in order to build components
 // for the app and importing needed components
@@ -213,11 +214,13 @@ function Review(props) {
         const userId = users[0].id;
 
         // Pass parameters to add review thunk action
+        // ReviewText => Remove leading and following whitespace then...
+        //  remove extra spaces then remove extra linebreaks beyond 2
         const isSuccess = await addReviewThunk(
             userId,
             restaurantId,
             reviewTitle,
-            reviewText,
+            reviewText.trim().split(/ +/).join(' ').split(/\n\n+/).join('\n\n'),
             Number(tasteRating),
             Number(serviceRating),
             Number(cleanRating),
