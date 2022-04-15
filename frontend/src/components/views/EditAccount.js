@@ -163,7 +163,7 @@ function EditAccount(props) {
 
         // If the file size is greater than allowed a max file error
         // will be returned
-        if (password !== confirmPassword) {
+        if (!isEditing && password !== confirmPassword) {
             currentError.password = `Passwords must match!`;
             currentError.confirmPassword = `Passwords must match!`;
         }
