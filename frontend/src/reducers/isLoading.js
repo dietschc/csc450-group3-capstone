@@ -4,6 +4,7 @@
 // April 4, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 4/13/2022, Added in Friends isLoading reducer)
+//  (DAB, 4/14/2022, Added End Loading All)
 
 // Importing constants so there is no mistype
 import C from '../constants';
@@ -60,6 +61,15 @@ export const isLoading = (state = {}, action) => {
         case C.END_LOADING_FRIENDS:
             return {
                 ...state,
+                isLoadingFriends: action.isLoadingFriends
+            }
+        case C.END_LOADING_ALL:
+            return {
+                ...state,
+                isLoadingUsers: action.isLoadingUsers,
+                isLoadingRestaurants: action.isLoadingRestaurants,
+                isLoadingReviews: action.isLoadingReviews,
+                isLoadingMessages: action.isLoadingMessages,
                 isLoadingFriends: action.isLoadingFriends
             }
         default:

@@ -10,6 +10,8 @@
 //  (DAB, 04/05/2022, Users can no longer friend themselves)
 //  (DAB, 04/13/2022, isLoading monitoring added to add friend. Only one 
 //  friend html request can be made at a time to prevent duplicates)
+//  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
+//  up any skipped load ins)
 
 // Using React library in order to build components
 // for the app and importing needed components
@@ -30,6 +32,7 @@ import {
 } from "../../actions/restaurants";
 import { findAllReviewsRestaurantsOrderedThunk } from "../../actions/reviewsRestaurants";
 import { addFriendThunk } from "../../actions/friend";
+import { endLoadingAll } from "../../actions/isLoading";
 import ThemedSpinner from "../subComponent/ThemedSpinner";
 
 /**
@@ -49,6 +52,7 @@ function Main(props) {
         deleteAllRestaurants,
         findAllReviewsRestaurantsOrderedThunk,
         addFriendThunk,
+        endLoadingAll
     } = props;
 
     // navigate will allow navigation between the Views
@@ -64,7 +68,10 @@ function Main(props) {
 
     // Loading the database data into state on page load
     useEffect(() => {
+        // Loading in initial state
         loadState();
+        // Ending any unfinished load ins
+        endLoadingAll();
     }, []);
 
 
@@ -156,4 +163,5 @@ export default connect(mapStateToProps, {
     deleteAllRestaurants,
     deleteAllReviews,
     addFriendThunk,
+    endLoadingAll
 })(Main);

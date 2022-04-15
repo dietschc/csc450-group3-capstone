@@ -29,8 +29,7 @@ exports.create = async (req, res) => {
     // Validate request
     if (!req.body.restaurantWebsite ||
         !req.body.userCreatorId ||
-        !req.body.restaurantName ||
-        !req.body.restaurantDigiContact) {
+        !req.body.restaurantName) {
         res.status(400).send({
             message: "Content can not be empty!"
         });

@@ -14,10 +14,12 @@
 //  (DAB, 04/11/2022, Adding the ability for an admin to grant and remove admin 
 //  privileges to other admins)
 //  (DAB, 04/13/2022, Restricted restaurant delete button to one request at a time)
+//  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
+//  up any skipped load ins)
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from "react-redux";
 import XLContainer from '../template/XLContainer';
@@ -34,6 +36,7 @@ import {
     updatePermissionThunk,
     deleteUserThunk
 } from '../../actions/users';
+import { endLoadingAll } from '../../actions/isLoading';
 import C from '../../constants';
 import BanUserConfirm from '../modal/BanUserConfirm';
 import UnBanUserConfirm from '../modal/UnBanUserConfirm';
@@ -43,6 +46,7 @@ import DeleteUserConfirm from '../modal/DeleteUserConfirm';
 import DeleteRestaurantConfirm from '../modal/DeleteRestaurantConfirm';
 import AdminSearchForm from '../form/AdminSearchForm';
 import ThemedSpinner from '../subComponent/ThemedSpinner';
+
 
 /**
  * The Admin View allows users with admin permission to perform CRUD 
@@ -59,7 +63,7 @@ function Admin(props) {
         findByRestaurantNameThunk, deleteAllRestaurants,
         deleteRestaurantThunk, findByUserNameThunk,
         deleteAdditionalUsers, updatePermissionThunk,
-        deleteUserThunk
+        deleteUserThunk, endLoadingAll
     } = props;
 
     // Component specific states
@@ -95,6 +99,13 @@ function Admin(props) {
     const closeUnBanUserHandler = () => setShowUnBanUserConfirm(false);
     const showDeleteRestaurantHandler = () => setShowDeleteRestaurantConfirm(true);
     const closeDeleteRestaurantHandler = () => setShowDeleteRestaurantConfirm(false);
+
+
+    // Loading the database data into state on page load
+    useEffect(() => {
+        // Ending any unfinished load ins
+        endLoadingAll();
+    }, []);
 
 
     /****************************** USER METHODS ******************************************/
@@ -480,5 +491,5 @@ export default connect(mapStateToProps, {
     findByRestaurantNameThunk, deleteAllRestaurants,
     findByUserNameThunk, deleteAdditionalUsers,
     updatePermissionThunk, deleteUserThunk,
-    deleteRestaurantThunk
+    deleteRestaurantThunk, endLoadingAll
 })(Admin);

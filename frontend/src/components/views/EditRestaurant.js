@@ -9,6 +9,9 @@
 //  form in upload or create mode. Also added in useEffects that will 
 //  upload the form from a database query)
 //  (DAB, 3/10/2022, Added in comments and cleaned up debug statements)
+//  (DAB, 4/14/2022, Added in better form validation)
+//  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
+//  up any skipped load ins)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -19,6 +22,7 @@ import FormContainer from '../template/FormContainer';
 import { useParams } from "react-router-dom";
 import { connect } from 'react-redux';
 import { findByRestaurantIdThunk } from '../../actions/restaurants';
+import { endLoadingAll } from '../../actions/isLoading';
 
 /**
  * The EditRestaurant View will allow a user to either create or update a restaurant
@@ -30,7 +34,8 @@ import { findByRestaurantIdThunk } from '../../actions/restaurants';
  */
 function EditRestaurant(props) {
     // Loading in needed state and functions from redux
-    const { restaurants, findByRestaurantIdThunk } = props;
+    const { restaurants } = props;
+    const { findByRestaurantIdThunk, endLoadingAll } = props;
     // Saving the param Id
     const { restaurantId } = useParams();
     // The isUpdate state will keep track of whether this is an update or create 
@@ -54,6 +59,9 @@ function EditRestaurant(props) {
                 findByRestaurantIdThunk(restaurantId)
             }
         }
+
+        // Ending any unfinished load ins
+        endLoadingAll();
     }, []);
 
     // This useEffect will reRender when the restaurants state changes. It will check if the restaurant 
@@ -116,4 +124,4 @@ const mapStateToProps = state =>
 
 
 // Exporting the connect Wrapped EditRestaurant Component
-export default connect(mapStateToProps, { findByRestaurantIdThunk })(EditRestaurant);
+export default connect(mapStateToProps, { findByRestaurantIdThunk, endLoadingAll })(EditRestaurant);

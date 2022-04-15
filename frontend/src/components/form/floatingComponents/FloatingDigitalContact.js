@@ -32,7 +32,6 @@ function FloatingDigitalContact(props) {
                     <Form.Control
                         type="text"
                         placeholder="Digital Contact"
-                        required
                         value={digitalContact}
                         onChange={onChangeDigitalContact}
                         maxLength="255"
