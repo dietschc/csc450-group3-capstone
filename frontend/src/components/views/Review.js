@@ -24,6 +24,7 @@
 //  (DAB, 4/14/2022, Added in better form validation)
 //  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
 //  up any skipped load ins)
+//  (DAB, 04/16/2022, Error console.log removed)
 
 // Using React library in order to build components
 // for the app and importing needed components
@@ -176,7 +177,6 @@ function Review(props) {
         // If the file size is greater than allowed a max file error 
         // will be returned
         if (file?.size > C.MAX_UPLOAD_SIZE) {
-            console.log("In error check", file?.size > C.MAX_UPLOAD_SIZE);
             currentError.file = `Max file size is ${
                 C.MAX_UPLOAD_SIZE / 1024 / 1024
             }MB!`;
