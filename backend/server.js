@@ -32,29 +32,29 @@ app.use(express.urlencoded({ extended: true }));
 const db = require("./models");
 
 // Always Test DB connection
-const testConnection = (async () => {
-  try {
-    await db.sequelize.authenticate();
-    console.log('Connection has been established successfully.');
-  } catch (error) {
-    console.error('Unable to connect to the database:', error);
-  }
-})();
+// const testConnection = (async () => {
+//   try {
+//     await db.sequelize.authenticate();
+//     console.log('Connection has been established successfully.');
+//   } catch (error) {
+//     console.error('Unable to connect to the database:', error);
+//   }
+// })();
 
-// Create tables from sequelize models if they do not exist
-db.sequelize.sync()
+// // Create tables from sequelize models if they do not exist
+// db.sequelize.sync()
 
 // USEFUL DEVELOPMENT CODE -- Comment out the above db.sequelize.sync() to use the code below
 // Because the database quickly fills up with junk during testing we drop and re-sync on express start
-// db.sequelize.sync({ force: true })
-// .then(() => {
-//   console.log("Database has been dropped and re-synced.");
-//   console.log(`Server is running on port ${PORT}.`);
-// })
-// .then(() => {
-//   // Loading test data into database
-//    testData.loadTestData();
-// });
+db.sequelize.sync({ force: true })
+.then(() => {
+  console.log("Database has been dropped and re-synced.");
+  console.log(`Server is running on port ${PORT}.`);
+})
+.then(() => {
+  // Loading test data into database
+   testData.loadTestData();
+});
 
 // Set welcome message for application
 app.get("/", (req, res) => {

@@ -209,7 +209,7 @@ exports.findOne = (req, res) => {
 // Update a User by the id in the request
 exports.update = async (req, res) => {
     // Validate request
-    if (!req.body) {
+    if (!req.body ) {
         res.status(400).send({
             message: "Content body can not be empty!"
         });
@@ -217,22 +217,27 @@ exports.update = async (req, res) => {
     }
     const id = req.params.id;
     const newName = req.body.userName;
+    let userName = false;
 
     // Check current user name
-    const { userName } = await Authentication.findOne(
+    await Authentication.findOne(
         {
             where: {
                 userId: id,
             }
         })
+        .then(res => {
+            userName = res.dataValues.userName;
+        })
         .catch(err => {
             return err;
         });
 
+
     // Function to check for new username and check for duplicates
     const newUserName = async () => {
         // If the userName is different, this implies a change request
-        if (userName !== newName) {
+        if (userName && userName !== newName) {
 
             // Check username does not already exist
             const userNameAvailable = await Authentication.findOne({

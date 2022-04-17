@@ -79,7 +79,7 @@ function RestaurantDetail(props) {
                         Phone:
                     </div>
                     <div className="mr-auto">
-                        <a href={`tel:${formatPhoneNumber(restaurant?.phone)}`}>{formatPhoneNumber(restaurant.phone)}</a>
+                        <a href={`tel:${formatPhoneNumber(restaurant?.phone)}`}>{formatPhoneNumber(restaurant?.phone)}</a>
                     </div>
                 </ListGroup.Item>
                 <ListGroup.Item as="li"
