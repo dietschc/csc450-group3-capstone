@@ -279,6 +279,7 @@ function MainNav(props) {
             expanded={navExpanded}
             expand="md">
             <Navbar.Brand>
+            <LinkContainer to="/">
                 <img
                     src={window.location.origin + '/logo.gif'}
                     width="124px"
@@ -286,6 +287,7 @@ function MainNav(props) {
                     className="flex-begin rounded"
                     alt="Main Logo"
                 />
+            </LinkContainer>
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end flex-shrink-1" >
