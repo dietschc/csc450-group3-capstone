@@ -55,11 +55,6 @@ db.authentication.belongsTo(db.permission, { foreignKey: 'permissionId' });
 db.conversation.hasMany(db.message, { foreignKey: 'conversationId' });
 db.message.belongsTo(db.conversation, { foreignKey: 'conversationId' });
 
-// History table soon to be removed
-// History to Authentication Association
-// db.history.hasOne(db.authentication, { foreignKey: 'historyId', onDelete: 'RESTRICT' })
-// db.authentication.belongsTo(db.history, { foreignKey: 'historyId' })
-
 // History to Review Association
 db.history.hasOne(db.review, { foreignKey: 'historyId', onDelete: 'RESTRICT' })
 db.review.belongsTo(db.history, { foreignKey: 'historyId' })
@@ -81,8 +76,8 @@ db.restaurants.hasMany(db.review, { foreignKey: 'restaurantId' });
 db.review.belongsTo(db.restaurants, { foreignKey: 'restaurantId' });
 
 // Restaurant to User Association
-db.users.hasOne(db.restaurants, { as: 'userCreator', foreignKey: { name: 'userCreatorId', onDelete: 'SET NULL' } });
-db.users.hasOne(db.restaurants, { as: 'userOwner', foreignKey: { name: 'userOwnerId', onDelete: 'SET NULL' } });
+db.users.hasOne(db.restaurants, { as: 'userCreator', foreignKey: { name: 'userCreatorId' }, onDelete: 'SET NULL' });
+db.users.hasOne(db.restaurants, { as: 'userOwner', foreignKey: { name: 'userOwnerId' }, onDelete: 'SET NULL' });
 db.restaurants.belongsTo(db.users, { as: 'userCreator', foreignKey: { name: 'userCreatorId' } });
 db.restaurants.belongsTo(db.users, { as: 'userOwner', foreignKey: { name: 'userOwnerId' } });
 
