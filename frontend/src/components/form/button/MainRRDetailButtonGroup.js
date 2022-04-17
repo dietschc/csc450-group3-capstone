@@ -10,6 +10,8 @@
 //  already friends with the author)
 //  (DAB, 4/10/2022, Current user will not have friend buttons on
 //  either)
+//  (DAB, 4/16/2022, Added margin to the buttons for small and above 
+//  views)
 
 // Using React library in order to build components
 // for the app and importing needed components
@@ -63,14 +65,14 @@ function MainRRDetailButtonGroup(props) {
       flex-column 
       flex-sm-row 
       flex-wrap 
-      px-0 mb-1 
+      px-0 mb-1
       justify-content-center 
       justify-content-sm-center 
       justify-content-md-end"
             style={{ minWidth: "100%" }}>
             
             {users?.length > 0 && !isFriend() && <Button
-                className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
+                className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center mx-sm-2"
                 style={{ minWidth: "8rem" }}
                 onClick={() => {
                     friendHandler(review.author.id);
@@ -79,7 +81,7 @@ function MainRRDetailButtonGroup(props) {
                 Friend
             </Button>}
             <Button
-                className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
+                className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center mx-sm-2"
                 style={{ minWidth: "8rem" }}
                 onClick={() => {
                     moreHandler(review.author.id, review.restaurant.id);
@@ -88,7 +90,7 @@ function MainRRDetailButtonGroup(props) {
                 More
             </Button>
             <Button
-                className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
+                className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center mx-sm-2"
                 style={{ minWidth: "8rem" }}
                 onClick={() => {
                     restaurantHandler(review.restaurant.id);

@@ -117,10 +117,10 @@ function ReviewTextCardBody(props) {
     )
 
     return (
-        <Card.Body>
+        <Card.Body className="pt-2 px-2 px-sm-3">
             <span className="p-0 m-0" ref={autoScroll} />
             <Card.Title className="text-center">
-                {review.reviewTitle}
+                {review?.reviewTitle}
             </Card.Title>
             {reviewText()}
         </Card.Body>
