@@ -6,12 +6,14 @@
 //  (DAB, 4/03/2022, Added in a "showMore/showLess" button for when the 
 //  review is over 250 characters only)
 //  (DAB, 4/07/2022, Review Text will now show white space)
+//  (DAB, 4/16/2022, Added padding to the card wrapper in small and above 
+//  views)
 
 // Using React library in order to build components 
 // for the app and importing needed components
 import React, { useState, useRef } from 'react'
 import { Card, Button } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 /**
  * The ReviewTextCardBody is wrapped in a Card.Body and will 
