@@ -14,6 +14,8 @@
 //  (DAB, 4/12/2022, Error Handling Audit - failed)
 //  (DAB, 4/12/2022, Double checked and added error handling to every query)
 //  (CPD, 4/12/2022, Refactored update method to check for existing usernames and clean up)
+//  (DAB, 4/17/2022, fixed a uncaught error where a destructure was causing the backend to 
+//  crash in update)
 
 const { authentication } = require("../models");
 const db = require("../models");

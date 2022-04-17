@@ -5,6 +5,8 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 3/03/2022, Added in formatDBFriendFind)
 //  (DAB, 3/07/2022, Added in formatDBRestaurantCreate)
+//  (DAB, 4/17/2022, Added in error handling for userId being null
+//  if the restaurant author was deleted)
 
 /**
  * The helper function will nicely format the data retrieved from a find 
