@@ -28,7 +28,7 @@ function FloatingDigitalContact(props) {
         <Form.Floating className="mb-3 justify-content-center">
             <FloatingLabel
                 controlId="floatingDigitalContact" 
-                label="DigitalContact">
+                label="Digital Contact">
                     <Form.Control
                         type="text"
                         placeholder="Digital Contact"
