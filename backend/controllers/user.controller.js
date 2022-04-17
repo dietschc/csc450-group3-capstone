@@ -17,7 +17,7 @@
 //  (DAB, 4/17/2022, fixed a uncaught error where a destructure was causing the backend to 
 //  crash in update)
 
-const { authentication } = require("../models");
+const { authentication, review } = require("../models");
 const db = require("../models");
 const { Op } = db.Sequelize;
 const User = db.users;
@@ -25,6 +25,9 @@ const Authentication = db.authentication;
 const Permission = db.permission;
 const Address = db.address;
 const Friend = db.friend;
+const Review = db.review;
+const Rating = db.rating;
+const Restaurant = db.restaurants;
 
 // Password hashing utility
 const bcrypt = require('bcrypt');
@@ -211,7 +214,7 @@ exports.findOne = (req, res) => {
 // Update a User by the id in the request
 exports.update = async (req, res) => {
     // Validate request
-    if (!req.body ) {
+    if (!req.body) {
         res.status(400).send({
             message: "Content body can not be empty!"
         });
@@ -355,15 +358,18 @@ exports.update = async (req, res) => {
 // Delete a User with the specified id in the request
 exports.delete = async (req, res) => {
     const id = req.params.id;
+    let addressId = "";
 
     // We find the associated addressId from the user table
-    const addressId = await User.findByPk(id)
+    const currentUser = await User.findByPk(id)
         .then(user => {
             // If the user exists the data is updated
             if (user) {
                 // Destructure address from the user
-                const { addressId } = user;
-                return addressId
+                // const { addressId } = user;
+                console.log("IN DELETE USER", user);
+                addressId = user.dataValues.addressId;
+                return user;
             } else {
                 return "User not found";
             }
@@ -372,51 +378,184 @@ exports.delete = async (req, res) => {
             return "User not found";
         });
 
+    if (currentUser) {
+        let reviewData1 = []
+        const userReviews = await Review.findAll({
+            include: [Rating],
+            where: { userId: currentUser.userId }
+        })
+            .then(reviews => {
+                if (reviews) {
+
+                    // const { review } = reviews;
+
+                    console.log(review);
+
+                    console.log(reviews.dataValues);
+
+                    console.log("TOTAL REVIEWS", reviews.length)
+                    reviewData1 = []
+
+
+                    reviews.map(review => {
+                        const { restaurantId } = review;
+                        const reviewDataValues = review.dataValues;
+                        const ratingDataValues = review.dataValues.rating.dataValues;
+                        // console.log("IN REVIEW MAP, REVIEW VALUE", reviewDataValues);
+                        // console.log("IN REVIEW MAP, RATING VALUE", ratingDataValues);
+                        let tempData = [];
+                        // console.log(ratingDataValues)
+                        // console.log(reviewDataValues)
+                        console.log(restaurantId)
+
+                        const index = reviewData1.findIndex(test111 => test111.restaurantId === restaurantId);
+                        if (index > -1) {
+                            const currentReview = reviewData1[index];
+                            reviewData1[index] = {
+                                ...reviewData1[index],
+                                reviewTotals: {
+                                    totalReviews: currentReview.reviewTotals.totalReviews + 1,
+                                    tasteRating: currentReview.reviewTotals.tasteRating + ratingDataValues.tasteRating,
+                                    serviceRating: currentReview.reviewTotals.serviceRating + ratingDataValues.serviceRating,
+                                    cleanlinessRating: currentReview.reviewTotals.cleanlinessRating + ratingDataValues.cleanlinessRating,
+                                    overallRating: currentReview.reviewTotals.overallRating + ratingDataValues.overallRating
+                                }
+                            }
+                        }
+                        else {
+                            reviewData1.push(
+                                {
+                                    restaurantId: restaurantId,
+                                    reviewTotals: {
+                                        totalReviews: 1,
+                                        tasteRating: ratingDataValues?.tasteRating,
+                                        serviceRating: ratingDataValues?.serviceRating,
+                                        cleanlinessRating: ratingDataValues?.cleanlinessRating,
+                                        overallRating: ratingDataValues?.overallRating
+                                    }
+                                })
+                        }
+                    })
+                }
+                console.log("FINISHED REVIEWDATA LIST", reviewData1)
+                // console.log("REVIEW TOTAL OF FINISHED LIST", reviewData1[0])
+            })
+            .catch(err => console.log(err));
+
+        if (reviewData1 && reviewData1?.length > 0) {
+            console.log("REVIEWS ARE IN", reviewData1)
+
+            await reviewData1.forEach(async data => {
+                const restaurantId = data.restaurantId;
+                const reviewCount = data.reviewTotals.totalReviews;
+
+                const currentRestaurant = await Restaurant.findByPk(restaurantId)
+                
+
+
+                const ratingId = currentRestaurant.ratingId;
+
+                const currentRating = await Rating.findByPk(ratingId)
+                console.log("CURRENT RATING", currentRating.ratingId);
+                console.log("REVIEW COUNT", reviewCount)
+
+                // Destructuring the existing review ratings
+                const {
+                    tasteRating: reviewTasteRating,
+                    serviceRating: reviewServiceRating,
+                    cleanlinessRating: reviewCleanlinessRating,
+                    overallRating: reviewOverallRating
+                } = currentRating;
+                // Destructuring the existing restaurant review ratings
+                const {
+                    tasteRating: restaurantTasteRating,
+                    serviceRating: restaurantServiceRating,
+                    cleanlinessRating: restaurantCleanlinessRating,
+                    overallRating: restaurantOverallRating
+                } = data.reviewTotals;
+
+                // Calculating the new restaurant rating based off the new review rating values
+                const newRestaurantTasteRating = reviewTasteRating - restaurantTasteRating;
+                const newRestaurantServiceRating = reviewServiceRating - restaurantServiceRating;
+                const newRestaurantCleanlinessRating = reviewCleanlinessRating - restaurantCleanlinessRating;
+                const newRestaurantOverallRating = reviewOverallRating - restaurantOverallRating;
+
+                console.log({
+                    taste: newRestaurantTasteRating,
+                    service: newRestaurantServiceRating, 
+                    cleanliness: newRestaurantCleanlinessRating,
+                    overall: newRestaurantOverallRating
+                })
+
+                // console.log("RESTAURANT FOUND IS", currentRestaurant)
+                console.log("RATING ID IS", ratingId)
+
+
+
+                // // Updating the restaurant's rating table
+                // await Rating.update({
+                //     tasteRating: newRestaurantTasteRating,
+                //     serviceRating: newRestaurantServiceRating,
+                //     cleanlinessRating: newRestaurantCleanlinessRating,
+                //     overallRating: newRestaurantOverallRating
+                // }, {
+                //     where: { ratingId: ratingId }
+                // });
+
+                // // Decrementing the restaurants reviewCount by 1 since there is one less review
+                // await Restaurant.decrement('reviewCount', { by: reviewCount, where: { restaurantId: restaurantId } });
+            })
+        }
+    }
+
     // console.log("address id: ", addressId);
 
-    const deletedUserStatus = await User.destroy({
-        where: { userId: id }
-    })
-        .then(deletedStatus => {
-            return deletedStatus;
-        })
-        .catch(err => {
-            return "User not found";
-        });
+    // const deletedUserStatus = await User.destroy({
+    //     where: { userId: id }
+    // })
+    //     .then(deletedStatus => {
+    //         return deletedStatus;
+    //     })
+    //     .catch(err => {
+    //         return "User not found";
+    //     });
 
 
-    // console.log("deleted user: ", deletedUserStatus);
+    // // console.log("deleted user: ", deletedUserStatus);
 
-    // If a user was deleted without errors, also delete the address
-    if (deletedUserStatus == 1) {
-        Address.destroy({
-            where: { addressId: addressId }
-        })
-            .then(num => {
-                // If there was no error in the deleting the success response is sent back
-                if (num == 1) {
-                    res.send({
-                        message: "User was deleted successfully!"
-                    });
-                }
-                // If there was an error, a response is sent to notify the requester
-                else {
-                    res.status(500).send({
-                        message: `Cannot delete user. Maybe user was not found!`
-                    });
-                }
-            })
-            .catch(err => {
-                // If there is an error, a response is sent to notify the requester
-                res.status(500).send({
-                    message: err.message || `Could not delete user with id=${id}.`
-                });
-            });
-    } else {
-        res.status(500).send({
-            message: `Cannot delete user. Maybe user was not found!`
-        });
-    }
+    // // If a user was deleted without errors, also delete the address
+    // if (deletedUserStatus == 1) {
+    //     await Address.destroy({
+    //         where: { addressId: addressId }
+    //     })
+    //         .then(num => {
+    //             // If there was no error in the deleting the success response is sent back
+    //             if (num == 1) {
+    //                 res.send({
+    //                     message: "User was deleted successfully!"
+    //                 });
+    //             }
+    //             // If there was an error, a response is sent to notify the requester
+    //             else {
+    //                 res.status(500).send({
+    //                     message: `Cannot delete user. Maybe user was not found!`
+    //                 });
+    //             }
+    //         })
+    //         .catch(err => {
+    //             // If there is an error, a response is sent to notify the requester
+    //             res.status(500).send({
+    //                 message: err.message || `Could not delete user with id=${id}.`
+    //             });
+    //         });
+    // } else {
+    //     res.status(500).send({
+    //         message: `Cannot delete user. Maybe user was not found!`
+    //     });
+    // }
+
+    //*****DEBUG DELETE */
+    res.status(500).send()
 };
 
 // Create and Save a new Friend in the req.body for the user specified in the req.params.id
