@@ -44,7 +44,7 @@ export const formatDBRestaurantCreate = (restaurant) => {
     if (restaurant) {
         return {
             restaurantId: restaurant.restaurantId,
-            userCreatorId: restaurant.userCreatorId,
+            userCreatorId: restaurant.userCreatorId || "",
             restaurantDigiContact: restaurant.restaurantDigiContact,
             restaurantName: restaurant.restaurantName,
             restaurantPhone: restaurant.restaurantPhone,
@@ -76,15 +76,15 @@ export const formatDBRestaurantFind = (restaurant) => {
     if (restaurant) {
         return {
             restaurantId: restaurant.restaurantId,
-            userCreatorId: restaurant.userCreator.userId,
-            restaurantDigiContact: restaurant.restaurantDigiContact,
+            userCreatorId: restaurant.userCreator?.userId || "",
+            restaurantDigiContact: restaurant?.restaurantDigiContact || "",
             restaurantName: restaurant.restaurantName,
             restaurantPhone: restaurant.restaurantPhone,
             restaurantWebsite: restaurant.restaurantWebsite,
             ...restaurant.address,
             ...restaurant.image,
             reviewCount: restaurant.reviewCount,  
-            ...restaurant.userCreator.authentication,
+            ...restaurant.userCreator?.authentication,
             ratingId: restaurant.rating.ratingId,
             tasteRating: restaurant.rating.tasteRating/restaurant.reviewCount || 0,
             serviceRating: restaurant.rating.serviceRating/restaurant.reviewCount || 0,
