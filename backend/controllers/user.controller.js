@@ -14,8 +14,12 @@
 //  (DAB, 4/12/2022, Error Handling Audit - failed)
 //  (DAB, 4/12/2022, Double checked and added error handling to every query)
 //  (CPD, 4/12/2022, Refactored update method to check for existing usernames and clean up)
+//  (DAB, 4/17/2022, fixed a uncaught error where a destructure was causing the backend to 
+//  crash in update)
+//  (DAB, 4/17/2022, Fixed a bug in the delete call where the restaurant data was not 
+//  being updated when a user and their reviews were deleted)
 
-const { authentication } = require("../models");
+const { authentication, review } = require("../models");
 const db = require("../models");
 const { Op } = db.Sequelize;
 const User = db.users;
@@ -23,6 +27,9 @@ const Authentication = db.authentication;
 const Permission = db.permission;
 const Address = db.address;
 const Friend = db.friend;
+const Review = db.review;
+const Rating = db.rating;
+const Restaurant = db.restaurants;
 
 // Password hashing utility
 const bcrypt = require('bcrypt');
@@ -209,7 +216,7 @@ exports.findOne = (req, res) => {
 // Update a User by the id in the request
 exports.update = async (req, res) => {
     // Validate request
-    if (!req.body ) {
+    if (!req.body) {
         res.status(400).send({
             message: "Content body can not be empty!"
         });
@@ -350,18 +357,21 @@ exports.update = async (req, res) => {
     }
 };
 
-// Delete a User with the specified id in the request
+// Delete a User with the specified id in the request and adjusting 
+// the restaurant table to account for their deleted reviews
 exports.delete = async (req, res) => {
     const id = req.params.id;
+    let addressId = "";
 
     // We find the associated addressId from the user table
-    const addressId = await User.findByPk(id)
+    const currentUser = await User.findByPk(id)
         .then(user => {
             // If the user exists the data is updated
             if (user) {
                 // Destructure address from the user
-                const { addressId } = user;
-                return addressId
+                // const { addressId } = user;
+                addressId = user.dataValues.addressId;
+                return user;
             } else {
                 return "User not found";
             }
@@ -370,8 +380,148 @@ exports.delete = async (req, res) => {
             return "User not found";
         });
 
-    // console.log("address id: ", addressId);
+    // If a user was found in the query, all the reviews 
+    // they have written are added to an array so they can 
+    // be removed from the restaurant data
+    if (currentUser) {
+        // The users review data will be saved in the array
+        let userReviewData = []
 
+        // Querying the database for all the reviews associated 
+        // with the user
+        await Review.findAll({
+            include: [Rating],
+            where: { userId: currentUser.userId }
+        })
+            .then(reviews => {
+                // If there are reviews, ones with the 
+                // same restaurantId are added up into 
+                // one object for the restaurant update
+                if (reviews) {
+                    // Iterating through the review results and organizing them 
+                    // into relative objects
+                    reviews.map(review => {
+                        // The data values that will be used in the iterations are 
+                        // declared here for easy reference
+                        const { restaurantId } = review;
+                        const reviewDataValues = review.dataValues;
+                        const ratingDataValues = review.dataValues.rating.dataValues;
+
+                        // The index will hold the index of the restaurantId in the 
+                        // userReviewData list
+                        const index = userReviewData.findIndex(current => current.restaurantId === restaurantId);
+
+                        // If the index was returned, the data is added to the current 
+                        // elements
+                        if (index > -1) {
+                            // The currentReview references the data in the current review
+                            const currentReview = userReviewData[index];
+
+                            // Updating the userReviewData with the current data
+                            userReviewData[index] = {
+                                ...userReviewData[index],
+                                reviewTotals: {
+                                    totalReviews: currentReview.reviewTotals.totalReviews + 1,
+                                    tasteRating: currentReview.reviewTotals.tasteRating + ratingDataValues.tasteRating,
+                                    serviceRating: currentReview.reviewTotals.serviceRating + ratingDataValues.serviceRating,
+                                    cleanlinessRating: currentReview.reviewTotals.cleanlinessRating + ratingDataValues.cleanlinessRating,
+                                    overallRating: currentReview.reviewTotals.overallRating + ratingDataValues.overallRating
+                                }
+                            }
+                        }
+                        // Else the index was not returned so a fresh element is added to the list
+                        else {
+                            userReviewData.push(
+                                {
+                                    restaurantId: restaurantId,
+                                    reviewTotals: {
+                                        totalReviews: 1,
+                                        tasteRating: ratingDataValues?.tasteRating,
+                                        serviceRating: ratingDataValues?.serviceRating,
+                                        cleanlinessRating: ratingDataValues?.cleanlinessRating,
+                                        overallRating: ratingDataValues?.overallRating
+                                    }
+                                }
+                            )
+                        }
+                    })
+                }
+            })
+            .catch(err => console.log(err));
+
+        try {
+            // If the user had review data it will be removed from the corresponding 
+            // restaurant entries
+            if (userReviewData && userReviewData?.length > 0) {
+                // Iterating through the userReviewData and updating the 
+                // restaurants one at a time
+                await userReviewData.forEach(async data => {
+                    // Important update data are assigned to their own 
+                    // variables
+                    const restaurantId = data?.restaurantId;
+                    const reviewCount = data?.reviewTotals?.totalReviews;
+
+                    // Querying the restaurant data so the correct ratingId
+                    // can be used
+                    const currentRestaurant = await Restaurant.findByPk(restaurantId)
+                        .catch(err => console.log(err));
+
+                    // Assigning the ratingId to its own variable to prevent errors
+                    const ratingId = currentRestaurant?.ratingId;
+
+                    const currentRating = await Rating.findByPk(ratingId)
+                        .catch(err => console.log(err));
+
+                    // Destructuring the existing review ratings
+                    const {
+                        tasteRating: reviewTasteRating,
+                        serviceRating: reviewServiceRating,
+                        cleanlinessRating: reviewCleanlinessRating,
+                        overallRating: reviewOverallRating
+                    } = currentRating;
+
+                    // Destructuring the existing restaurant review ratings
+                    const {
+                        tasteRating: restaurantTasteRating,
+                        serviceRating: restaurantServiceRating,
+                        cleanlinessRating: restaurantCleanlinessRating,
+                        overallRating: restaurantOverallRating
+                    } = data.reviewTotals;
+
+                    // Calculating the new restaurant rating based off the new review rating values
+                    const newRestaurantTasteRating = reviewTasteRating - restaurantTasteRating;
+                    const newRestaurantServiceRating = reviewServiceRating - restaurantServiceRating;
+                    const newRestaurantCleanlinessRating = reviewCleanlinessRating - restaurantCleanlinessRating;
+                    const newRestaurantOverallRating = reviewOverallRating - restaurantOverallRating;
+
+                    // Updating the restaurant's rating table
+                    await Rating.update({
+                        tasteRating: newRestaurantTasteRating,
+                        serviceRating: newRestaurantServiceRating,
+                        cleanlinessRating: newRestaurantCleanlinessRating,
+                        overallRating: newRestaurantOverallRating
+                    }, {
+                        where: { ratingId: ratingId }
+                    })
+                        .catch(err => console.log(err));
+
+                    // Decrementing the restaurants reviewCount by reviewCount since 
+                    // the users reviews are to be deleted
+                    await Restaurant.decrement('reviewCount', {
+                        by: reviewCount,
+                        where: { restaurantId: restaurantId }
+                    })
+                        .catch(err => console.log(err));
+                })
+            }
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+    // Attempting to delete the user now that all their other data was 
+    // removed
     const deletedUserStatus = await User.destroy({
         where: { userId: id }
     })
@@ -382,12 +532,9 @@ exports.delete = async (req, res) => {
             return "User not found";
         });
 
-
-    // console.log("deleted user: ", deletedUserStatus);
-
     // If a user was deleted without errors, also delete the address
     if (deletedUserStatus == 1) {
-        Address.destroy({
+        await Address.destroy({
             where: { addressId: addressId }
         })
             .then(num => {

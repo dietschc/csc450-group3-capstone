@@ -56,10 +56,10 @@ db.sequelize.sync()
 //    testData.loadTestData();
 // });
 
-// Set welcome message for application
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to the Restaurant Club backend application." });
-});
+// // Set welcome message for application
+// app.get("/", (req, res) => {
+//   res.json({ message: "Welcome to the Restaurant Club backend application." });
+// });
 
 // Set app routes
 require("./routes/user.routes")(app);
