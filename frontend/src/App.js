@@ -34,6 +34,7 @@ import AuthLoggedIn from './components/auth/AuthLoggedIn';
 import AuthReview from './components/auth/AuthReview';
 import AuthChat from './components/auth/AuthChat';
 import EditPassword from './components/views/EditPassword';
+import Welcome from './components/views/Welcome';
 
 /**
  * The App Component handles all the navigation and security for the 
@@ -103,6 +104,7 @@ function App(props) {
                     <AuthAdmin>
                         <UserDashboard />
                     </AuthAdmin>} />
+                <Route path="/welcome" element={<Welcome />} />
                 <Route path='/admin' element={
                     <AuthAdmin>
                         <Admin />
