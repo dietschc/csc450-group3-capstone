@@ -16,6 +16,8 @@
 //  (CPD, 4/12/2022, Refactored update method to check for existing usernames and clean up)
 //  (DAB, 4/17/2022, fixed a uncaught error where a destructure was causing the backend to 
 //  crash in update)
+//  (DAB, 4/17/2022, Fixed a bug in the delete call where the restaurant data was not 
+//  being updated when a user and their reviews were deleted)
 
 const { authentication, review } = require("../models");
 const db = require("../models");
@@ -355,7 +357,8 @@ exports.update = async (req, res) => {
     }
 };
 
-// Delete a User with the specified id in the request
+// Delete a User with the specified id in the request and adjusting 
+// the restaurant table to account for their deleted reviews
 exports.delete = async (req, res) => {
     const id = req.params.id;
     let addressId = "";
@@ -367,7 +370,6 @@ exports.delete = async (req, res) => {
             if (user) {
                 // Destructure address from the user
                 // const { addressId } = user;
-                console.log("IN DELETE USER", user);
                 addressId = user.dataValues.addressId;
                 return user;
             } else {
@@ -378,41 +380,46 @@ exports.delete = async (req, res) => {
             return "User not found";
         });
 
+    // If a user was found in the query, all the reviews 
+    // they have written are added to an array so they can 
+    // be removed from the restaurant data
     if (currentUser) {
-        let reviewData1 = []
-        const userReviews = await Review.findAll({
+        // The users review data will be saved in the array
+        let userReviewData = []
+
+        // Querying the database for all the reviews associated 
+        // with the user
+        await Review.findAll({
             include: [Rating],
             where: { userId: currentUser.userId }
         })
             .then(reviews => {
+                // If there are reviews, ones with the 
+                // same restaurantId are added up into 
+                // one object for the restaurant update
                 if (reviews) {
-
-                    // const { review } = reviews;
-
-                    console.log(review);
-
-                    console.log(reviews.dataValues);
-
-                    console.log("TOTAL REVIEWS", reviews.length)
-                    reviewData1 = []
-
-
+                    // Iterating through the review results and organizing them 
+                    // into relative objects
                     reviews.map(review => {
+                        // The data values that will be used in the iterations are 
+                        // declared here for easy reference
                         const { restaurantId } = review;
                         const reviewDataValues = review.dataValues;
                         const ratingDataValues = review.dataValues.rating.dataValues;
-                        // console.log("IN REVIEW MAP, REVIEW VALUE", reviewDataValues);
-                        // console.log("IN REVIEW MAP, RATING VALUE", ratingDataValues);
-                        let tempData = [];
-                        // console.log(ratingDataValues)
-                        // console.log(reviewDataValues)
-                        console.log(restaurantId)
 
-                        const index = reviewData1.findIndex(test111 => test111.restaurantId === restaurantId);
+                        // The index will hold the index of the restaurantId in the 
+                        // userReviewData list
+                        const index = userReviewData.findIndex(current => current.restaurantId === restaurantId);
+
+                        // If the index was returned, the data is added to the current 
+                        // elements
                         if (index > -1) {
-                            const currentReview = reviewData1[index];
-                            reviewData1[index] = {
-                                ...reviewData1[index],
+                            // The currentReview references the data in the current review
+                            const currentReview = userReviewData[index];
+
+                            // Updating the userReviewData with the current data
+                            userReviewData[index] = {
+                                ...userReviewData[index],
                                 reviewTotals: {
                                     totalReviews: currentReview.reviewTotals.totalReviews + 1,
                                     tasteRating: currentReview.reviewTotals.tasteRating + ratingDataValues.tasteRating,
@@ -422,8 +429,9 @@ exports.delete = async (req, res) => {
                                 }
                             }
                         }
+                        // Else the index was not returned so a fresh element is added to the list
                         else {
-                            reviewData1.push(
+                            userReviewData.push(
                                 {
                                     restaurantId: restaurantId,
                                     reviewTotals: {
@@ -433,129 +441,127 @@ exports.delete = async (req, res) => {
                                         cleanlinessRating: ratingDataValues?.cleanlinessRating,
                                         overallRating: ratingDataValues?.overallRating
                                     }
-                                })
+                                }
+                            )
                         }
                     })
                 }
-                console.log("FINISHED REVIEWDATA LIST", reviewData1)
-                // console.log("REVIEW TOTAL OF FINISHED LIST", reviewData1[0])
             })
             .catch(err => console.log(err));
 
-        if (reviewData1 && reviewData1?.length > 0) {
-            console.log("REVIEWS ARE IN", reviewData1)
+        try {
+            // If the user had review data it will be removed from the corresponding 
+            // restaurant entries
+            if (userReviewData && userReviewData?.length > 0) {
+                // Iterating through the userReviewData and updating the 
+                // restaurants one at a time
+                await userReviewData.forEach(async data => {
+                    // Important update data are assigned to their own 
+                    // variables
+                    const restaurantId = data?.restaurantId;
+                    const reviewCount = data?.reviewTotals?.totalReviews;
 
-            await reviewData1.forEach(async data => {
-                const restaurantId = data.restaurantId;
-                const reviewCount = data.reviewTotals.totalReviews;
+                    // Querying the restaurant data so the correct ratingId
+                    // can be used
+                    const currentRestaurant = await Restaurant.findByPk(restaurantId)
+                        .catch(err => console.log(err));
 
-                const currentRestaurant = await Restaurant.findByPk(restaurantId)
-                
+                    // Assigning the ratingId to its own variable to prevent errors
+                    const ratingId = currentRestaurant?.ratingId;
 
+                    const currentRating = await Rating.findByPk(ratingId)
+                        .catch(err => console.log(err));
 
-                const ratingId = currentRestaurant.ratingId;
+                    // Destructuring the existing review ratings
+                    const {
+                        tasteRating: reviewTasteRating,
+                        serviceRating: reviewServiceRating,
+                        cleanlinessRating: reviewCleanlinessRating,
+                        overallRating: reviewOverallRating
+                    } = currentRating;
 
-                const currentRating = await Rating.findByPk(ratingId)
-                console.log("CURRENT RATING", currentRating.ratingId);
-                console.log("REVIEW COUNT", reviewCount)
+                    // Destructuring the existing restaurant review ratings
+                    const {
+                        tasteRating: restaurantTasteRating,
+                        serviceRating: restaurantServiceRating,
+                        cleanlinessRating: restaurantCleanlinessRating,
+                        overallRating: restaurantOverallRating
+                    } = data.reviewTotals;
 
-                // Destructuring the existing review ratings
-                const {
-                    tasteRating: reviewTasteRating,
-                    serviceRating: reviewServiceRating,
-                    cleanlinessRating: reviewCleanlinessRating,
-                    overallRating: reviewOverallRating
-                } = currentRating;
-                // Destructuring the existing restaurant review ratings
-                const {
-                    tasteRating: restaurantTasteRating,
-                    serviceRating: restaurantServiceRating,
-                    cleanlinessRating: restaurantCleanlinessRating,
-                    overallRating: restaurantOverallRating
-                } = data.reviewTotals;
+                    // Calculating the new restaurant rating based off the new review rating values
+                    const newRestaurantTasteRating = reviewTasteRating - restaurantTasteRating;
+                    const newRestaurantServiceRating = reviewServiceRating - restaurantServiceRating;
+                    const newRestaurantCleanlinessRating = reviewCleanlinessRating - restaurantCleanlinessRating;
+                    const newRestaurantOverallRating = reviewOverallRating - restaurantOverallRating;
 
-                // Calculating the new restaurant rating based off the new review rating values
-                const newRestaurantTasteRating = reviewTasteRating - restaurantTasteRating;
-                const newRestaurantServiceRating = reviewServiceRating - restaurantServiceRating;
-                const newRestaurantCleanlinessRating = reviewCleanlinessRating - restaurantCleanlinessRating;
-                const newRestaurantOverallRating = reviewOverallRating - restaurantOverallRating;
+                    // Updating the restaurant's rating table
+                    await Rating.update({
+                        tasteRating: newRestaurantTasteRating,
+                        serviceRating: newRestaurantServiceRating,
+                        cleanlinessRating: newRestaurantCleanlinessRating,
+                        overallRating: newRestaurantOverallRating
+                    }, {
+                        where: { ratingId: ratingId }
+                    })
+                        .catch(err => console.log(err));
 
-                console.log({
-                    taste: newRestaurantTasteRating,
-                    service: newRestaurantServiceRating, 
-                    cleanliness: newRestaurantCleanlinessRating,
-                    overall: newRestaurantOverallRating
+                    // Decrementing the restaurants reviewCount by reviewCount since 
+                    // the users reviews are to be deleted
+                    await Restaurant.decrement('reviewCount', {
+                        by: reviewCount,
+                        where: { restaurantId: restaurantId }
+                    })
+                        .catch(err => console.log(err));
                 })
-
-                // console.log("RESTAURANT FOUND IS", currentRestaurant)
-                console.log("RATING ID IS", ratingId)
-
-
-
-                // // Updating the restaurant's rating table
-                // await Rating.update({
-                //     tasteRating: newRestaurantTasteRating,
-                //     serviceRating: newRestaurantServiceRating,
-                //     cleanlinessRating: newRestaurantCleanlinessRating,
-                //     overallRating: newRestaurantOverallRating
-                // }, {
-                //     where: { ratingId: ratingId }
-                // });
-
-                // // Decrementing the restaurants reviewCount by 1 since there is one less review
-                // await Restaurant.decrement('reviewCount', { by: reviewCount, where: { restaurantId: restaurantId } });
-            })
+            }
+        }
+        catch (err) {
+            console.log(err)
         }
     }
 
-    // console.log("address id: ", addressId);
+    // Attempting to delete the user now that all their other data was 
+    // removed
+    const deletedUserStatus = await User.destroy({
+        where: { userId: id }
+    })
+        .then(deletedStatus => {
+            return deletedStatus;
+        })
+        .catch(err => {
+            return "User not found";
+        });
 
-    // const deletedUserStatus = await User.destroy({
-    //     where: { userId: id }
-    // })
-    //     .then(deletedStatus => {
-    //         return deletedStatus;
-    //     })
-    //     .catch(err => {
-    //         return "User not found";
-    //     });
-
-
-    // // console.log("deleted user: ", deletedUserStatus);
-
-    // // If a user was deleted without errors, also delete the address
-    // if (deletedUserStatus == 1) {
-    //     await Address.destroy({
-    //         where: { addressId: addressId }
-    //     })
-    //         .then(num => {
-    //             // If there was no error in the deleting the success response is sent back
-    //             if (num == 1) {
-    //                 res.send({
-    //                     message: "User was deleted successfully!"
-    //                 });
-    //             }
-    //             // If there was an error, a response is sent to notify the requester
-    //             else {
-    //                 res.status(500).send({
-    //                     message: `Cannot delete user. Maybe user was not found!`
-    //                 });
-    //             }
-    //         })
-    //         .catch(err => {
-    //             // If there is an error, a response is sent to notify the requester
-    //             res.status(500).send({
-    //                 message: err.message || `Could not delete user with id=${id}.`
-    //             });
-    //         });
-    // } else {
-    //     res.status(500).send({
-    //         message: `Cannot delete user. Maybe user was not found!`
-    //     });
-    // }
-
-    //*****DEBUG DELETE */
-    res.status(500).send()
+    // If a user was deleted without errors, also delete the address
+    if (deletedUserStatus == 1) {
+        await Address.destroy({
+            where: { addressId: addressId }
+        })
+            .then(num => {
+                // If there was no error in the deleting the success response is sent back
+                if (num == 1) {
+                    res.send({
+                        message: "User was deleted successfully!"
+                    });
+                }
+                // If there was an error, a response is sent to notify the requester
+                else {
+                    res.status(500).send({
+                        message: `Cannot delete user. Maybe user was not found!`
+                    });
+                }
+            })
+            .catch(err => {
+                // If there is an error, a response is sent to notify the requester
+                res.status(500).send({
+                    message: err.message || `Could not delete user with id=${id}.`
+                });
+            });
+    } else {
+        res.status(500).send({
+            message: `Cannot delete user. Maybe user was not found!`
+        });
+    }
 };
 
 // Create and Save a new Friend in the req.body for the user specified in the req.params.id
