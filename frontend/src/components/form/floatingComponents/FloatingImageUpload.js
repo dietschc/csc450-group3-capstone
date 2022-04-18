@@ -37,12 +37,12 @@ function FloatingImageUpload(props) {
                 aria-label="Image Upload"
                 className="pt-3 ps-3"
                 type="file"
-                onChange={onChangeFile}
+                onChange={ onChangeFile }
                 accept=".jpg,.png,.jpeg,.gif"
-                isInvalid={ !!formError?.file}
+                isInvalid={ !!formError?.file }
             />
             <Form.Control.Feedback type="invalid">
-                {formError?.file}
+                { formError?.file }
             </Form.Control.Feedback>
         </Form.Floating>
     );

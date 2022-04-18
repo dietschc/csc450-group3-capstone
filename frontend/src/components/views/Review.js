@@ -24,6 +24,8 @@
 //  (DAB, 4/14/2022, Added in better form validation)
 //  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
 //  up any skipped load ins)
+//  (DAB, 04/16/2022, Error console.log removed)
+//  (DAB, 04/16/2022, Adjusted maxWidth of disabled star inputs)
 
 // Using React library in order to build components
 // for the app and importing needed components
@@ -176,7 +178,6 @@ function Review(props) {
         // If the file size is greater than allowed a max file error 
         // will be returned
         if (file?.size > C.MAX_UPLOAD_SIZE) {
-            console.log("In error check", file?.size > C.MAX_UPLOAD_SIZE);
             currentError.file = `Max file size is ${
                 C.MAX_UPLOAD_SIZE / 1024 / 1024
             }MB!`;
@@ -438,7 +439,7 @@ function Review(props) {
                 <Form className="p-0 m-0" onSubmit={handleSubmit}>
                     <div className="d-flex flex-column flex-sm-row p-0 m-0">
                         <div className="d-flex flex-row flex-fill mb-2">
-                            <div className="d-flex flex-fill m-1">
+                            <div className="d-flex flex-fill m-sm-1">
                                 <Form.Group className="d-flex flex-column justify-content-between flex-fill">
                                     <div>
                                         <Form.Label>Taste</Form.Label>
@@ -495,7 +496,7 @@ function Review(props) {
 
                             <div
                                 className="d-flex flex-shrink-0 flex-column justify-content-between m-1"
-                                style={{ maxWidth: "5.65rem" }}
+                                style={{ maxWidth: "6rem" }}
                             >
                                 <Form.Floating className="mb-1 p-0">
                                     <FloatingLabel

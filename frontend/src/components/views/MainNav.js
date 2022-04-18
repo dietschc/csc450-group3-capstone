@@ -15,6 +15,7 @@
 //  code)
 //  (DAB, 4/09/2022, Changed MainNav so that Search Input does not get 
 //  cut off on smaller devices)
+//  (GROUP, 04/14/2022, Search bar now placeholder "Search Restaurants")
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -310,9 +311,9 @@ function MainNav(props) {
                         name="searchInput"
                         value={searchInput}
                         onInput={e => setSearchInput(e.target.value)}
-                        placeholder="Search"
+                        placeholder="Search Restaurants"
                         className="me-2"
-                        aria-label="Search"
+                        aria-label="Search Restaurants"
                     />
                     <Button type="submit" variant={buttonTheme} >
                         Search

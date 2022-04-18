@@ -14,6 +14,7 @@
 //  (CPD, 4/14/2022, Added isLoading state and spinner code to the submit buttons)
 //  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
 //  up any skipped load ins)
+//  (GROUP, 04/14/2022, Login now originally reroutes to main page)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -155,7 +156,7 @@ function Login(props) {
                         setShowSuccess(true);
 
                         // Navigate to previous page or dashboard
-                        navigate(state?.path || "../userDashboard");
+                        navigate(state?.path || "../");
                     } else {
                         clearForm();
                         setShowError(true);
