@@ -13,6 +13,7 @@
 //  (DAB, 04/13/2022, Added multiple request protection and spinner for adding
 //  restaurants)
 //  (DAB, 04/14/2022, Added in form validation for max size files)
+//  (DAB, 04/16/2022, Added validation for external URL form entries)
 
 // Using React library in order to build components
 // for the app and importing needed components
@@ -133,10 +134,32 @@ function EditRestaurantForm(props) {
         // If the file size is greater than allowed a max file error
         // will be returned
         if (file?.size > C.MAX_UPLOAD_SIZE) {
-            console.log("In error check", file?.size > C.MAX_UPLOAD_SIZE);
-            currentError.file = `Max file size is ${
-                C.MAX_UPLOAD_SIZE / 1024 / 1024
-            }MB!`;
+            currentError.file = `Max file size is ${C.MAX_UPLOAD_SIZE / 1024 / 1024
+                }MB!`;
+        }
+
+        // If the digitalContact is blank nothing will be checked
+        if (digitalContact?.length < 1) {
+            // No error, field is empty
+        }
+        // If the entry does not have .com it will fail validation
+        else if (!digitalContact.match(/.com/gi)) {
+            currentError.digitalContact = `Entry must contain .com`;
+        }
+        // Else if either http:// or https:// is in the entry it 
+        // will fail validation
+        else if (digitalContact.match(/https?:\/\//gi)) {
+            currentError.digitalContact = `Do not include the http`;
+        }
+
+        // If the entry does not have .com it will fail validation
+        if (!website.match(/.com/gi)) {
+            currentError.website = `Entry must contain .com`;
+        }
+        // Else if either http:// or https:// is in the entry it 
+        // will fail validation
+        else if (website.match(/https?:\/\//gi)) {
+            currentError.website = `Do not include the http`;
         }
 
         // Returning the error found object to the caller
@@ -187,6 +210,14 @@ function EditRestaurantForm(props) {
         const { value, maxLength } = e.target;
         const digitalContact = value.slice(0, maxLength);
         setDigitalContact(digitalContact);
+
+        // If the form had an error it is reset
+        if (formError?.digitalContact) {
+            setFormError({
+                ...formError,
+                digitalContact: null,
+            });
+        }
     };
 
     // Change handler for the function file specific form input
@@ -208,7 +239,7 @@ function EditRestaurantForm(props) {
         }
 
         // If the form had an error it is reset
-        if (formError.file) {
+        if (formError?.file) {
             setFormError({
                 ...formError,
                 file: null,
@@ -241,6 +272,14 @@ function EditRestaurantForm(props) {
         const { value, maxLength } = e.target;
         const website = value.slice(0, maxLength);
         setWebsite(website);
+
+        // If the form had an error it is reset
+        if (formError?.website) {
+            setFormError({
+                ...formError,
+                website: null,
+            });
+        }
     };
 
     // Change handler for the function name specific form input
@@ -264,7 +303,7 @@ function EditRestaurantForm(props) {
             // If the form has errors, the error messages are displayed
             if (Object.keys(currentFormErrorList).length > 0) {
                 setFormError(currentFormErrorList);
-            } 
+            }
             // Else the form does not have errors so it 
             // will submit
             else {
@@ -316,7 +355,7 @@ function EditRestaurantForm(props) {
                                 console.log("Restaurant was not updated.");
                             }
                         })
-                        .catch(err => console.log(err));
+                            .catch(err => console.log(err));
                     }
                 }
                 // Else there is no restaurant and a new one will be created
@@ -359,7 +398,7 @@ function EditRestaurantForm(props) {
                                 );
                             }
                         })
-                        .catch(err => console.log(err));
+                            .catch(err => console.log(err));
                     }
                 }
             }
@@ -389,10 +428,12 @@ function EditRestaurantForm(props) {
             />
             <FloatingPhone phone={phone} onChangePhone={onChangePhone} />
             <FloatingDigitalContact
+                formError={formError}
                 digitalContact={digitalContact}
                 onChangeDigitalContact={onChangeDigitalContact}
             />
             <FloatingWebsite
+                formError={formError}
                 website={website}
                 onChangeWebsite={onChangeWebsite}
             />
