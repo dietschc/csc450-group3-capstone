@@ -6,6 +6,8 @@
 //  (DAB, 4/03/2022, Added in phone number for Restaurant 
 //  info)
 //  (DAB, 4/10/2022, Now responsive and follow expanding theme)
+//  (DAB, 4/16/2022, Append "https://" to URL's so they know to 
+//  reference external links. Forms are validated to allow this)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -86,12 +88,21 @@ function RestaurantDetail(props) {
                     className={`${listGroupClass} border-bottom-1`}
                 >
                     <div style={{ minWidth: "5rem" }} >
-                        <a href={restaurant.website} target="_blank">Website</a>
+                        <a
+                            href={'https://' + restaurant.website}
+                            target="_blank">
+                            Website
+                        </a>
                     </div>
                     <div className="pe-2" >
-                        <a href={restaurant.digitalContact} target="_blank">Digital Contact</a>
+                        {restaurant?.digitalContact !== "" &&
+                            <a
+                                href={'https://' + restaurant.digitalContact}
+                                target="_blank">
+                                Digital Contact
+                            </a>
+                        }
                     </div>
-
                 </ListGroup.Item>
             </ListGroup>
 

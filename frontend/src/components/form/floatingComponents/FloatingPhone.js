@@ -36,8 +36,7 @@ function FloatingPhone(props) {
                         required
                         value={phone}
                         onChange={onChangePhone}
-                        maxLength={15}
-                        minLength={14}
+                        pattern=".{14,14}"
                     />
                 </FloatingLabel>
         </Form.Floating>

@@ -4,6 +4,8 @@
 // February 7, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 4/09/2022, Removed "visited" from "Date visited:")
+//  (DAB, 4/16/2022, Added some margin to the Row and shifted 
+//  date to the end for small and larger)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -28,10 +30,10 @@ function FullStarRatingRow(props) {
     const { review } = props;
 
     return (
-        <Row>
+        <Row style={{ margin: ".01rem"}}> 
             <FullStarRatingCol rating={review.rating} />
             <Col className="d-flex justify-content-center justify-content-sm-end align-items-end">
-                <span className="text-center" style={{ minWidth: "12rem" }}>
+                <span className="text-center text-sm-end" style={{ minWidth: "12rem" }}>
                     Date: {formatTimeMMddYYYY(review.history.created)}
                 </span>
             </Col>
