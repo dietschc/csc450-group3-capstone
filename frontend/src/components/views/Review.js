@@ -311,7 +311,7 @@ function Review(props) {
             userId,
             restaurantId,
             reviewTitle,
-            reviewText.trim().split(/ +/).join(' ').split(/\n\n+/).join('\n\n'),
+            reviewText.trimEnd().split(/ +/).join(' ').split(/\n\n+/).join('\n\n'),
             Number(tasteRating),
             Number(serviceRating),
             Number(cleanRating),
