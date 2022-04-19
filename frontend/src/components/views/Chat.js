@@ -191,7 +191,7 @@ function Chat(props) {
         // Easy to understand variables to be used in adding the message to memory
         const userToId = friendId;
         const userFromId = user?.id;
-        const message = chatMessage;
+        const message = chatMessage.trimEnd();
 
         // If there is no text in the chatMessage it will not be added to the database or state
         if (message) {
@@ -258,13 +258,13 @@ function Chat(props) {
                         <span key={index} style={{ color: "darkblue", whiteSpace: "pre-wrap" }}>
                             {`${userName}[${formatTimeCalendar(message.timeStamp)}]: `}
                             <span style={{ color: "blue" }}>
-                                {message.message + "\n"}
+                                {message.message + "\n\n"}
                             </span></span>
                     ) : (
                         <span key={index} style={{ color: "#5c1010", whiteSpace: "pre-wrap" }}>
                             {`${friendName}[${formatTimeCalendar(message.timeStamp)}]: `}
                             <span style={{ color: "#B30505" }}>
-                                {message.message + "\n"}
+                                {message.message + "\n\n"}
                             </span></span>
                     )
             ))}
