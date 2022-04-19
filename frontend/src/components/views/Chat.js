@@ -141,7 +141,7 @@ function Chat(props) {
     // The database is queried for new messages that may exist in the database, 
     // the state is only updated if data is found
     const loadNewMessages = async () => {
-        await findAllByIdOffsetLimitThunk(updateMessageIdRef.current, user.id, friendId, 0, 15)
+        await findAllByIdOffsetLimitThunk(updateMessageIdRef.current, user?.id, friendId, 0, 15)
             .then(res => {
                 // If results were returned from the database query, isQueried is set to true to update the 
                 // newest messageId
@@ -155,7 +155,7 @@ function Chat(props) {
     // The loadState method will load the initial Chat state from the database
     const loadState = async () => {
         // New messages are queried from the database
-        await findByConversationIdOffsetLimitThunk(user.id, friendId, 0, 15);
+        await findByConversationIdOffsetLimitThunk(user?.id, friendId, 0, 15);
 
         // If there are messages found, the most recent messageId is filtered from messages
         if (messages && messages.length > 0) {
@@ -191,7 +191,7 @@ function Chat(props) {
         // Easy to understand variables to be used in adding the message to memory
         const userToId = friendId;
         const userFromId = user?.id;
-        const message = chatMessage.trimEnd();
+        const message = chatMessage?.trimEnd();
 
         // If there is no text in the chatMessage it will not be added to the database or state
         if (message) {
@@ -252,19 +252,19 @@ function Chat(props) {
     // The result will be an easy to read text display
     const formatMessages = () => (
         <>
-            {messages.map((message, index) => (
-                (message.userMessage.from === user.id)
+            {messages && messages.map((message, index) => (
+                (message?.userMessage.from === user?.id)
                     ? (
                         <span key={index} style={{ color: "darkblue", whiteSpace: "pre-wrap" }}>
-                            {`${userName}[${formatTimeCalendar(message.timeStamp)}]: `}
+                            {`${userName}[${formatTimeCalendar(message?.timeStamp)}]: `}
                             <span style={{ color: "blue" }}>
-                                {message.message + "\n\n"}
+                                {message?.message + "\n\n"}
                             </span></span>
                     ) : (
                         <span key={index} style={{ color: "#5c1010", whiteSpace: "pre-wrap" }}>
-                            {`${friendName}[${formatTimeCalendar(message.timeStamp)}]: `}
+                            {`${friendName}[${formatTimeCalendar(message?.timeStamp)}]: `}
                             <span style={{ color: "#B30505" }}>
-                                {message.message + "\n\n"}
+                                {message?.message + "\n\n"}
                             </span></span>
                     )
             ))}
