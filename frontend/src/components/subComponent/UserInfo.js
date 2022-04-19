@@ -27,7 +27,7 @@ function UserInfo(props) {
 
     return (
         <Card>
-            <Card.Title className="text-center mt-3">
+            <Card.Title className="text-center mt-2">
                 User Information
             </Card.Title>
             <Card.Body className="border-0 p-2">
