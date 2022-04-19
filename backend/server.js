@@ -41,7 +41,7 @@ const testConnection = (async () => {
   }
 })();
 
-// Create tables from sequelize models if they do not exist
+/// Create tables from sequelize models if they do not exist
 db.sequelize.sync()
 
 // USEFUL DEVELOPMENT CODE -- Comment out the above db.sequelize.sync() to use the code below
