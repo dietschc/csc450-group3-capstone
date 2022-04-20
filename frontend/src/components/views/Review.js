@@ -24,6 +24,7 @@
 //  (DAB, 4/14/2022, Added in better form validation)
 //  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
 //  up any skipped load ins)
+//  (TJI, 04/14/2022 - Trim the review text to remove extra whitespace)
 //  (DAB, 04/16/2022, Error console.log removed)
 //  (DAB, 04/16/2022, Adjusted maxWidth of disabled star inputs)
 
@@ -304,11 +305,13 @@ function Review(props) {
         const userId = users[0].id;
 
         // Pass parameters to add review thunk action
+        // ReviewText => Remove leading and following whitespace then...
+        //  remove extra spaces then remove extra linebreaks beyond 2
         const isSuccess = await addReviewThunk(
             userId,
             restaurantId,
             reviewTitle,
-            reviewText,
+            reviewText.trimEnd(),
             Number(tasteRating),
             Number(serviceRating),
             Number(cleanRating),
@@ -350,7 +353,7 @@ function Review(props) {
                 reviewId,
                 userId,
                 reviewTitle,
-                reviewText,
+                reviewText.trimEnd(),
                 Number(tasteRating),
                 Number(serviceRating),
                 Number(cleanRating),
@@ -374,7 +377,7 @@ function Review(props) {
                 reviewId,
                 userId,
                 reviewTitle,
-                reviewText,
+                reviewText.trimEnd(),
                 Number(tasteRating),
                 Number(serviceRating),
                 Number(cleanRating),
