@@ -104,7 +104,10 @@ function App(props) {
                     <AuthAdmin>
                         <UserDashboard />
                     </AuthAdmin>} />
-                <Route path="/welcome" element={<Welcome />} />
+                <Route path="/welcome" element={
+                    <AuthLoggedIn>
+                        <Welcome />
+                    </AuthLoggedIn>} />
                 <Route path='/admin' element={
                     <AuthAdmin>
                         <Admin />
