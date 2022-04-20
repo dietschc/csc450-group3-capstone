@@ -13,6 +13,7 @@
 //  (DAB, 4/02/2022, Wrapped editPassword in the appropriate authentication wrappers)
 //  (DAB, 4/03/2022, Removed connect wrapper from App)
 //  (DAB, 4/09/2022, Adjusted content for footer to hug bottom of page)
+//  (DAB, 4/19/2022, Wrapped Welcome component in a AuthLoggedIn component for reroute)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -34,6 +35,7 @@ import AuthLoggedIn from './components/auth/AuthLoggedIn';
 import AuthReview from './components/auth/AuthReview';
 import AuthChat from './components/auth/AuthChat';
 import EditPassword from './components/views/EditPassword';
+import Welcome from './components/views/Welcome';
 
 /**
  * The App Component handles all the navigation and security for the 
@@ -103,6 +105,10 @@ function App(props) {
                     <AuthAdmin>
                         <UserDashboard />
                     </AuthAdmin>} />
+                <Route path="/welcome" element={
+                    <AuthLoggedIn>
+                        <Welcome />
+                    </AuthLoggedIn>} />
                 <Route path='/admin' element={
                     <AuthAdmin>
                         <Admin />
