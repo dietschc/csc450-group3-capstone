@@ -35,7 +35,8 @@ function FloatingImageUpload(props) {
             <Form.Control
                 id="floatingImageUpload"
                 aria-label="Image Upload"
-                className="pt-3"
+                className="ps-3"
+                style={{ paddingTop: "1.17rem"}}
                 type="file"
                 onChange={ onChangeFile }
                 accept=".jpg,.png,.jpeg,.gif"
