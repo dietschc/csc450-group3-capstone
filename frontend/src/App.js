@@ -13,6 +13,7 @@
 //  (DAB, 4/02/2022, Wrapped editPassword in the appropriate authentication wrappers)
 //  (DAB, 4/03/2022, Removed connect wrapper from App)
 //  (DAB, 4/09/2022, Adjusted content for footer to hug bottom of page)
+//  (DAB, 4/19/2022, Wrapped Welcome component in a AuthLoggedIn component for reroute)
 
 // Using React library in order to build components 
 // for the app and importing needed components

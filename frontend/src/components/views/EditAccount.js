@@ -395,7 +395,7 @@ function EditAccount(props) {
                 setSubmitted(true);
 
                 // Send the new user to their new dashboard
-                navigate("/welcome");
+                navigate("../welcome");
             }
             // If the account was not created, the user is notified in the error message
             else {

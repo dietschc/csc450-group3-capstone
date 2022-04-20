@@ -1,16 +1,33 @@
+// Initially Created by: Tyler Irvin
+// CSC450 Capstone
+// Restaurant Club - EditPassword.js
+// April 2, 2022
+// Last Edited (Initials, Date, Edits):
+//  (DAB, 4/19/2022, Made page responsive, added in component author,
+//  removed unneeded components)
+
+// Importing in needed modules
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { useNavigate, Link } from "react-router-dom";
-import { Container, Button } from 'react-bootstrap';
+import { Link } from "react-router-dom";
+import { Container } from 'react-bootstrap';
 import XLContainer from "../template/XLContainer";
 import Image from 'react-bootstrap/Image';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { endLoadingAll } from '../../actions/isLoading';
 
+/**
+ * The Welcome component give the user a brief run down of how 
+ * to use the Restaurant Club application.
+ * 
+ * @param {*} props 
+ * @returns 
+ */
 function Welcome(props) {
-    const navigate = useNavigate();
-    const { isLoading, endLoadingAll } = props;
+    // Loading in needed state and functions
+    const { endLoadingAll } = props;
 
+    // This useEffect only runs once on load in
     useEffect(() => {
         // Ending any unfinished load ins
         endLoadingAll();
@@ -78,11 +95,7 @@ function Welcome(props) {
     )
 }
 
-const mapStateToProps = state =>
-({
-    isLoading: { ...state.isLoading }
-});
-
-export default connect(mapStateToProps, {
+// Exporting connect wrapped component
+export default connect(null, {
     endLoadingAll
 })(Welcome);
