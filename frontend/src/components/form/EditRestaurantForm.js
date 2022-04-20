@@ -142,23 +142,15 @@ function EditRestaurantForm(props) {
         if (digitalContact?.length < 1) {
             // No error, field is empty
         }
-        // If the entry does not have .com it will fail validation
-        else if (!digitalContact.match(/.com/gi)) {
-            currentError.digitalContact = `Entry must contain .com`;
-        }
         // Else if either http:// or https:// is in the entry it 
         // will fail validation
         else if (digitalContact.match(/https?:\/\//gi)) {
             currentError.digitalContact = `Do not include the http`;
         }
 
-        // If the entry does not have .com it will fail validation
-        if (!website.match(/.com/gi)) {
-            currentError.website = `Entry must contain .com`;
-        }
         // Else if either http:// or https:// is in the entry it 
         // will fail validation
-        else if (website.match(/https?:\/\//gi)) {
+        if (website.match(/https?:\/\//gi)) {
             currentError.website = `Do not include the http`;
         }
 
