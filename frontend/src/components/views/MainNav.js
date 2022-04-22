@@ -193,7 +193,7 @@ function MainNav(props) {
         if (navExpanded) {
             setToggle();
         }
-        
+
         // console.log("logout button pressed");
         showLogoutHandler();
     }
@@ -270,8 +270,8 @@ function MainNav(props) {
             onToggle={setToggle}
             className="px-2 rounded-bottom"
             style={showNav ?
-                { position: "responsive" } :
-                { position: "sticky", top: "0", bottom: "0", zIndex: "1" }
+                { position: "responsive", top: "-120px", transition: 'top 0.6s' } :
+                { position: "sticky", top: "0", bottom: "0", zIndex: "1", transition: 'top 0.6s' }
             }
             bg={backgroundTheme}
             variant={variantTheme}
@@ -305,7 +305,7 @@ function MainNav(props) {
                     </Nav.Item>
                     {showLoginControls()}
                 </Nav>
-                <Form onSubmit={searchHandler} className="d-flex" style={{ minWidth: "10rem"}}>
+                <Form onSubmit={searchHandler} className="d-flex" style={{ minWidth: "10rem" }}>
                     <FormControl
                         type="search"
                         name="searchInput"
