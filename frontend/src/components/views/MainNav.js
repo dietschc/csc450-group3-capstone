@@ -270,7 +270,7 @@ function MainNav(props) {
             onToggle={setToggle}
             className="px-2 rounded-bottom"
             style={showNav ?
-                { position: "responsive", top: "-120px", transition: 'top 0.6s' } :
+                { position: "responsive", top: "-120px", zIndex: "1", transition: 'top 0.6s' } :
                 { position: "sticky", top: "0", bottom: "0", zIndex: "1", transition: 'top 0.6s' }
             }
             bg={backgroundTheme}
