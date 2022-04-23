@@ -161,7 +161,7 @@ export const addRestaurantThunk = (
 
         // Dispatching to set isLoading Restaurants to false
         dispatch(endLoadingRestaurants());
-            
+
         // Returning weather or not the create was a success
         return isSuccess;
     }
@@ -193,8 +193,8 @@ export const deleteRestaurantThunk = (restaurantId) => async dispatch => {
             console.log(err)
         })
 
-        // Dispatching to set isLoading Restaurants to false
-        dispatch(endLoadingRestaurants());
+    // Dispatching to set isLoading Restaurants to false
+    dispatch(endLoadingRestaurants());
 }
 
 
@@ -241,9 +241,12 @@ export const findAllRestaurantsOrderedThunk = (offset, limit) => async dispatch 
  * @returns 
  */
 export const findByRestaurantIdThunk = (restaurantId) => async dispatch => {
+    // Dispatching to set isLoadingRestaurants to true
+    await dispatch(await startLoadingRestaurants());
+
     // The restaurant database will be queried for all restaurants within the 
     // parameter offset/limit that are like the restaurantName
-    return await RestaurantDataService.get(restaurantId)
+    const isRestaurant = await RestaurantDataService.get(restaurantId)
         .then(async res => {
             // If there is data in the query it is added to redux state
             if (res) {
@@ -269,6 +272,12 @@ export const findByRestaurantIdThunk = (restaurantId) => async dispatch => {
             console.log(err)
             return false;
         })
+
+    // Dispatching to set isLoading Restaurants to false
+    dispatch(endLoadingRestaurants());
+
+    // Returning results of restaurant query
+    return isRestaurant;
 }
 
 
@@ -521,7 +530,7 @@ export const updateRestaurantThunk = (restaurantId,
 
         // Dispatching to set isLoading Restaurants to false
         dispatch(endLoadingRestaurants());
-            
+
         // Returning weather or not the create was a success
         return isSuccess;
     }

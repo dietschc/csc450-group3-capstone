@@ -15,6 +15,7 @@
 //  (DAB, 04/12/2022, Adjusted layout and set fixed WxH for images)
 //  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
 //  up any skipped load ins)
+//  (DAB, 04/22/2022, restaurant page can now be bookmarked)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -35,6 +36,7 @@ import RestaurantDetail from '../subComponent/RestaurantDetail';
 import ReviewCard from '../subComponent/ReviewCard';
 import ThemedSpinner from '../subComponent/ThemedSpinner';
 import { endLoadingAll } from '../../actions/isLoading';
+import { deleteAllRestaurants, findByRestaurantIdThunk } from '../../actions/restaurants';
 
 /**
  * The Restaurant Component will display the Restaurant details and 
@@ -51,6 +53,8 @@ function Restaurant(props) {
         deleteAllReviews,
         findReviewByAuthorRestaurantThunk,
         findReviewByRestaurantThunk,
+        deleteAllRestaurants,
+        findByRestaurantIdThunk,
         endLoadingAll
     } = props;
     const navigate = useNavigate();
@@ -61,19 +65,30 @@ function Restaurant(props) {
         (restaurant) => (restaurantId === restaurant.id.toString())) : [];
 
     // Loading in the initial data from the database
-    const loadData = () => {
-        // On load in current reviews in state are deleted
-        deleteAllReviews();
+    const loadData = async () => {
+        // On load in current reviews and restaurants in state are deleted
+        await deleteAllReviews();
+        await deleteAllRestaurants();
 
-        // If the authorId and restaurantId have values the page 
-        // will display all reviews from the author for the 
-        // selected restaurant
-        if (authorId && restaurantId) {
-            findReviewByAuthorRestaurantThunk(0, 25, authorId, restaurantId)
-        }
-        // Else the page will display all reviews for a selected restaurant
-        else if (restaurantId) {
-            findReviewByRestaurantThunk(0, 25, restaurantId);
+        // Checking if there is a restaurantId
+        if (restaurantId) {
+            // If there is the restaurant is queried in the database and if found added 
+            // to state
+            const isRestaurant = await findByRestaurantIdThunk(restaurantId);
+
+            // If restaurants were found the reviews are fetched next
+            if (isRestaurant) {
+                // If the authorId and restaurantId have values the page 
+                // will display all reviews from the author for the 
+                // selected restaurant
+                if (authorId && restaurantId) {
+                    await findReviewByAuthorRestaurantThunk(0, 25, authorId, restaurantId)
+                }
+                // Else the page will display all reviews for a selected restaurant
+                else if (restaurantId) {
+                    await findReviewByRestaurantThunk(0, 25, restaurantId);
+                }
+            }
         }
     }
 
@@ -180,9 +195,11 @@ const mapStateToProps = state =>
 });
 
 // Exporting the connect Wrapped Restaurant Component
-export default connect(mapStateToProps, { 
-    deleteAllReviews, 
-    findReviewByAuthorRestaurantThunk, 
-    findReviewByRestaurantThunk, 
-    endLoadingAll 
+export default connect(mapStateToProps, {
+    deleteAllReviews,
+    findReviewByAuthorRestaurantThunk,
+    findReviewByRestaurantThunk,
+    deleteAllRestaurants,
+    findByRestaurantIdThunk,
+    endLoadingAll
 })(Restaurant);
