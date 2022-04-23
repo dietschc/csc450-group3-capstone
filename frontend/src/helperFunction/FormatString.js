@@ -4,6 +4,7 @@
 // February 11, 2022
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 3/05/2022, Added in formatTimeMMddYYYY)
+//  (DAB, 4/03/2022, Added in formatZipCode)
 
 // Importing needed packages/modules
 import moment from 'moment';
@@ -60,6 +61,31 @@ export const formatPhoneNumber = (rawNumber) => {
 
     // The formatted 10 digit number is returned
     return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+}
+
+/**
+ * This function will format a zip code to be all numeric and 5 digits.
+ * 
+ * @param {*} rawNumber 
+ * @returns 
+ */
+export const formatZipCode = (rawNumber) => {
+    // Checks if there is a number to format. If there is not it is returned
+    if (!rawNumber) return rawNumber;
+
+    // Cleanse the input to be only numbers
+    let zip = rawNumber.replace(/[^\d]/g, "");
+
+    // Reads the length of the raw number
+    const zipLength = zip.length;
+
+    // If the phone number is less than 4 is will return the numbers
+    if (zipLength < 5) {
+        return zip;
+    }
+
+    // The formatted 10 digit number is returned
+    return zip.slice(0, 5);
 }
 
 /**

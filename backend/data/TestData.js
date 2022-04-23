@@ -5,6 +5,8 @@
 // Last Edited (Initials, Date, Edits):
 // (CPD, 3/5/2022, Added friend test data and functions)
 //  (DAB, 03/13/2022, Added in messages and more friends)
+// (TJI) Fixed a typo in a state field
+//  (TJI, 03/29/2022, hashing passwords as they're put in to match authentication)
 
 const db = require("../models");
 const Sequelize = require("sequelize");
@@ -22,7 +24,11 @@ const ReviewImage = db.reviewImage;
 const Message = db.message;
 const Conversation = db.conversation;
 
+// Sets up binary hashing using BCrypt's minor a schema for 2^10 rounds
+const bcrypt = require('bcrypt');
+const salt = bcrypt.genSaltSync(10, 'a');
 
+let password = bcrypt.hashSync("test", salt);
 const user1Data = {
     address: "1742 Nicolett St NW",
     city: "Carlson",
@@ -32,9 +38,10 @@ const user1Data = {
     lastName: "jones",
     userEmail: "email1@yahoo.com",
     userName: "test",
-    userPassword: "test"
+    userPassword: password
 }
 
+password = bcrypt.hashSync("banana", salt);
 const user2Data = {
     address: "1742 Evergreen Terrace",
     city: "Springfield",
@@ -44,9 +51,10 @@ const user2Data = {
     lastName: "apples",
     userEmail: "apples",
     userName: "orange",
-    userPassword: "banana"
+    userPassword: password
 }
 
+password = bcrypt.hashSync("apples", salt);
 const user3Data = {
     address: "1742 Evergreen Terrace",
     city: "Springfield",
@@ -56,9 +64,10 @@ const user3Data = {
     lastName: "Heart",
     userEmail: "apples",
     userName: "AppleEater",
-    userPassword: "apples"
+    userPassword: password
 }
 
+password = bcrypt.hashSync("apples", salt);
 const user4Data = {
     address: "5000 Evergreen Terrace",
     city: "Williston",
@@ -68,9 +77,10 @@ const user4Data = {
     lastName: "caramel",
     userEmail: "apples",
     userName: "spiderman",
-    userPassword: "apples"
+    userPassword: password
 }
 
+password = bcrypt.hashSync("admin", salt);
 const user5Data = {
     address: "12754 Happy St NW",
     city: "Tampico",
@@ -80,8 +90,10 @@ const user5Data = {
     lastName: "Nistrator",
     userEmail: "boss@admin.com",
     userName: "admin",
-    userPassword: "admin"
+    userPassword: password
 }
+
+
 const restaurant1Data = {
     userCreatorId: 1,
     address: "Happy Day St",
@@ -112,7 +124,7 @@ const restaurant3Data = {
     userCreatorId: 3,
     address: "209 Radio Dr",
     city: "Woodbury",
-    state: "state",
+    state: "MN",
     zip: "55125",
     imageLocation: "/reviewImages/1/roadhouse.jpg",
     restaurantName: "Texas Roadhouse",
@@ -428,12 +440,20 @@ loadTestData = async () => {
     await addUser(user4Data)
     await addUser(user5Data)
 
+    // Set user 5 to admin permission
     const data = {
         userId: 5,
         permissionId: 4
     }
 
+    // Set user 2 to owner permission
+    const data2 = {
+        userId: 2,
+        permissionId: 2
+    }
+
     await updatePermission(data);
+    await updatePermission(data2);
 
     console.log("Loading in Restaurants")
     await addRestaurant(restaurant1Data)

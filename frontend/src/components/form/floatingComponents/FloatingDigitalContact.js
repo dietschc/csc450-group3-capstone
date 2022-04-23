@@ -3,6 +3,8 @@
 // Restaurant Club - FloatingDigitalContact.js
 // February 3, 2022
 // Last Edited (Initials, Date, Edits):
+//  (TJI, 03/29/2022 - Added in character limits to match database)
+//  (DAB, 04/16/2022, Added in input validation)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -15,29 +17,33 @@ import 'bootstrap/dist/css/bootstrap.min.css'
  * returned with all needed basic functionality. It will 
  * allow CRUD operations to be performed on a digital contact.
  * 
- * @param { digitalContact, onChangeDigitalContact } props 
+ * @param { digitalContact, onChangeDigitalContact, formError } props 
  * @returns 
  */
 function FloatingDigitalContact(props) {
     // The form component specific props will be assigned and 
     // used to process the form element
-    const { digitalContact, onChangeDigitalContact } = props;
+    const { digitalContact, onChangeDigitalContact, formError } = props;
 
     return (
         <Form.Floating className="mb-3 justify-content-center">
             <FloatingLabel
-                controlId="floatingDigitalContact" 
-                label="DigitalContact">
-                    <Form.Control
-                        type="text"
-                        placeholder="Digital Contact"
-                        required
-                        value={digitalContact}
-                        onChange={onChangeDigitalContact}
-                    />
-                </FloatingLabel>
+                controlId="floatingDigitalContact"
+                label="Digital Contact">
+                <Form.Control
+                    type="text"
+                    placeholder="Digital Contact"
+                    value={digitalContact}
+                    onChange={onChangeDigitalContact}
+                    maxLength="255"
+                    isInvalid={ !!formError?.digitalContact }
+                />
+                <Form.Control.Feedback type="invalid">
+                    { formError?.digitalContact }
+                </Form.Control.Feedback>
+            </FloatingLabel>
         </Form.Floating>
-    )  
+    )
 }
 
 // Exporting the component

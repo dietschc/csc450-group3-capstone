@@ -8,10 +8,22 @@
 //  (DAB, 03/14/2022, Chat now works with interval chat on 15 sec delay)
 //  (DAB, 03/14/2022, Added comments)
 //  (DAB, 03/15/2022, Fixed logic for interval database retrieval)
+//  (DAB, 03/28/2022, Interval is no longer async, it was causing issues)
+//  (DAB, 3/28/2022, Updated the name for findAllAfterDateOffsetLimit 
+//  to describe its behavior of findAllByIdOffsetLimit)
+//  (TJI, 03/29/2022 - Added in character limits to match database)
+//  (DAB, 04/04/2022, Added Spinners for database load in, fixed some 
+//  button styling issues. Buttons now expand on smaller screen sizes)
+//  (DAB, 4/07/2022, Chat Text will now show white space)
+//  (DAB, 4/07/2022, Organized code)
+//  (DAB, 4/10/2022, Fixed WAVE error of message chat contrast)
+//  (TJI 04/14/2022 - Removed extra line breaks between messages)
+//  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
+//  up any skipped load ins)
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Row, Col, Form, Button, Card } from 'react-bootstrap';
 import FormContainer from '../template/XLContainer';
@@ -19,10 +31,13 @@ import { connect } from 'react-redux';
 import { formatTimeCalendar } from '../../helperFunction/FormatString';
 import {
     findByConversationIdOffsetLimitThunk,
-    findAllAfterDateOffsetLimitThunk,
+    findAllByIdOffsetLimitThunk,
     deleteAllMessages,
     sendMessageThunk
 } from '../../actions/messages';
+import { endLoadingAll } from '../../actions/isLoading';
+import ThemedSpinner from '../subComponent/ThemedSpinner';
+
 
 /**
  * The Chat View will allow friends to talk to one another via text 
@@ -32,13 +47,15 @@ import {
  * @returns 
  */
 function Chat(props) {
+    // Destructuring state and functions from props
+    const { messages, users } = props;
     const {
-        messages,
-        users,
+        isLoading,
         deleteAllMessages,
         findByConversationIdOffsetLimitThunk,
-        findAllAfterDateOffsetLimitThunk,
-        sendMessageThunk
+        findAllByIdOffsetLimitThunk,
+        sendMessageThunk,
+        endLoadingAll
     } = props;
 
     // The chatMessage will hold the state of the message text area
@@ -62,34 +79,11 @@ function Chat(props) {
     const userName = user?.auth?.userName;
     const friendName = paramFriend?.userName;
 
-
-    // The loadState method will load the initial Chat state from the database
-    const loadState = async () => {
+    // Deleting old state before the DOM is painted
+    useLayoutEffect(() => {
         // All old messages are deleted
         deleteAllMessages();
-
-        // New messages are queried from the database
-        await findByConversationIdOffsetLimitThunk(user.id, friendId, 0, 15);
-
-        // If there are messages found, the most recent messageId is filtered from messages
-        if (messages && messages.length > 0) {
-            updateMessageIdRef.current = messagesRef.current.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0);
-        }
-    }
-
-
-    // The database is queried for new messages that may exist in the database, 
-    // the state is only updated if data is found
-    const loadNewMessages = async () => {
-        await findAllAfterDateOffsetLimitThunk(updateMessageIdRef.current, user.id, friendId, 0, 15)
-            .then(res => {
-                // If results were returned from the database query, isQueried is set to true to update the 
-                // newest messageId
-                if (res) {
-                    isQueriedRef.current = true;
-                }
-            })
-    }
+    }, []);
 
 
     // The use effect will rerender only once initially and will only load state 
@@ -103,15 +97,17 @@ function Chat(props) {
             loadState();
 
             // Setting an interval to query the database and retrieve new messages
-            const interval = setInterval(async () => {
+            const interval = setInterval(() => {
                 // Calling loadNewMessages to check and possibly load in new messages
-                await loadNewMessages();
+                loadNewMessages();
             }, 8000);
 
             // The interval is cleared when the component is unmounted
             return () => clearInterval(interval);
         }
 
+        // Ending any unfinished load ins
+        endLoadingAll();
     }, []);
 
 
@@ -136,38 +132,35 @@ function Chat(props) {
     }, [messages]);
 
 
-    // This function will set chatMessage state with the new message
-    const onChangeMessage = (e) => {
-        const chatMessage = e.target.value
-        setChatMessage(chatMessage);
-    }
-
-
-    // The sendMessageHandler will sent the message to be added to both the database 
-    // and state
-    const sendMessageHandler = (e) => {
-        // Preventing default form action
-        e.preventDefault();
-
-        // Easy to understand variables to be used in adding the message to memory
-        const userToId = friendId;
-        const userFromId = user?.id;
-        const message = chatMessage;
-
-        // If there is no text in the chatMessage it will not be added to the database or state
-        if (message) {
-            // Call thunk and pass message parameters
-            user?.id && sendMessageThunk(userToId, userFromId, message);
-        }
-
-        // Clear form after you send each message
-        clearForm();
-    }
-
-
     // Clears the chatMessage text input after each new chat message
     const clearForm = () => {
         setChatMessage("");
+    }
+
+
+    // The database is queried for new messages that may exist in the database, 
+    // the state is only updated if data is found
+    const loadNewMessages = async () => {
+        await findAllByIdOffsetLimitThunk(updateMessageIdRef.current, user?.id, friendId, 0, 15)
+            .then(res => {
+                // If results were returned from the database query, isQueried is set to true to update the 
+                // newest messageId
+                if (res) {
+                    isQueriedRef.current = true;
+                }
+            })
+    }
+
+
+    // The loadState method will load the initial Chat state from the database
+    const loadState = async () => {
+        // New messages are queried from the database
+        await findByConversationIdOffsetLimitThunk(user?.id, friendId, 0, 15);
+
+        // If there are messages found, the most recent messageId is filtered from messages
+        if (messages && messages.length > 0) {
+            updateMessageIdRef.current = messagesRef.current.reduce((previous, current) => (previous > current.id) ? previous : current.id, 0);
+        }
     }
 
 
@@ -181,24 +174,98 @@ function Chat(props) {
     }
 
 
+    // This function will set chatMessage state with the new message
+    const onChangeMessage = (e) => {
+        const { value, maxLength } = e.target;
+        const chatMessage = value.slice(0, maxLength);
+        setChatMessage(chatMessage);
+    }
+
+
+    // The sendMessageHandler will sent the message to be added to both the database 
+    // and state
+    const sendMessageHandler = (e) => {
+        // Preventing default form action
+        e.preventDefault();
+
+        // Easy to understand variables to be used in adding the message to memory
+        const userToId = friendId;
+        const userFromId = user?.id;
+        const message = chatMessage?.trimEnd();
+
+        // If there is no text in the chatMessage it will not be added to the database or state
+        if (message) {
+            // Call thunk and pass message parameters
+            user?.id && sendMessageThunk(userToId, userFromId, message);
+        }
+
+        // Clear form after you send each message
+        clearForm();
+    }
+
+
+    /*********************************** RENDER FUNCTIONS **************************************/
+
+
+    // The messageUI displays the UI for the Chat page
+    const messageUI = () => (
+        <Card>
+            <Card.Title className="text-center mt-2 mb-0">
+                {userName} chatting with {friendName}
+            </Card.Title>
+            <Card.Text
+                className="border m-3 p-2 "
+                style={{ minHeight: "10rem", maxHeight: "15rem", overflow: "auto" }}>
+                {formatMessages()}
+                <span className="p-0 m-0" ref={messageScrollTo} />
+            </Card.Text>
+            <Card.Body>
+                <Form onSubmit={sendMessageHandler} className="">
+                    <Row>
+                        <Col></Col>
+                        <Col sm={6}>
+                            <Form.Group className="mb-3" controlId="formMessageInput" >
+                                <Form.Label className="visually-hidden">Message</Form.Label>
+                                <Form.Control as="textarea"
+                                    className="p-2" rows={3}
+                                    value={chatMessage}
+                                    onChange={onChangeMessage}
+                                    maxLength="255" />
+                            </Form.Group>
+                            <div className="d-flex">
+                                <Button
+                                    type="submit"
+                                    className="d-flex flex-grow-1 flex-sm-grow-0 ms-auto justify-content-center"
+                                    style={{ minWidth: "5rem" }}>
+                                    Send
+                                </Button>
+                            </div>
+                        </Col>
+                    </Row>
+                </Form>
+            </Card.Body>
+        </Card>
+    )
+
+
     // The formatMessages method will format all the new messages to display based off to or from users. 
     // The result will be an easy to read text display
     const formatMessages = () => (
         <>
-            {messages.map((message, index) => (
-                (message.userMessage.from === user.id)
+            {messages && messages.map((message, index) => (
+                (message?.userMessage.from === user?.id)
                     ? (
-                        <span key={index} style={{ color: "darkblue" }}>
-                            {`${userName}[${formatTimeCalendar(message.timeStamp)}]: `}
+                        <span key={index} style={{ color: "darkblue", whiteSpace: "pre-wrap" }}>
+                            {`${userName}[${formatTimeCalendar(message?.timeStamp)}]: `}
                             <span style={{ color: "blue" }}>
-                                {message.message}
-                            </span><br /><br /></span>
+                                {message?.message + "\n\n"}
+                            </span></span>
                     ) : (
-                        <span key={index} style={{ color: "darkred" }}>
-                            {`${friendName}[${formatTimeCalendar(message.timeStamp)}]: `}
-                            <span style={{ color: "red" }}>
-                                {message.message + "\n"}
-                            </span><br /><br /></span>
+                        <span key={index} style={{ color: "#5c1010", whiteSpace: "pre-wrap" }}>
+                            {`${friendName}[${formatTimeCalendar(message?.timeStamp)}]: `}
+                            <span style={{ color: "#B30505" }}>
+                                {message?.message + "\n\n"}
+                            </span></span>
                     )
             ))}
         </>
@@ -211,34 +278,13 @@ function Chat(props) {
             <h1>
                 Chat
             </h1>
-            <Card className="" style={{}}>
-                <Card.Title className="text-center mt-2 mb-0">
-                    {userName} chatting with {friendName}
-                </Card.Title>
-                <Card.Text className="border m-3 p-2 " style={{ minHeight: "10rem", maxHeight: "15rem", overflow: "auto" }}>
-                    {formatMessages()}
-                    <span className="p-0 m-0" ref={messageScrollTo} />
-                </Card.Text>
-                <Card.Body>
-                    <Form onSubmit={sendMessageHandler} className="">
-                        <Row>
-                            <Col></Col>
-                            <Col sm={12} md={6}>
-                                <Form.Group className="mb-3" controlId="formMessageInput" >
-                                    <Form.Label className="visually-hidden">Message</Form.Label>
-                                    <Form.Control as="textarea"
-                                        className="p-2" rows={3}
-                                        value={chatMessage}
-                                        onChange={onChangeMessage} />
-                                </Form.Group>
-                                <Button type="submit"
-                                    className="d-flex ms-auto justify-content-center"
-                                    style={{ width: "5rem" }}>Send</Button>
-                            </Col>
-                        </Row>
-                    </Form>
-                </Card.Body>
-            </Card>
+            {isLoading?.isLoadingMessages ?
+                (
+                    <ThemedSpinner />
+                ) : (
+                    messageUI()
+                )
+            }
         </FormContainer>
     )
 }
@@ -248,14 +294,16 @@ const mapStateToProps = state =>
 ({
     reviews: [...state.reviews],
     users: [...state.users],
-    messages: [...state.messages]
+    messages: [...state.messages],
+    isLoading: { ...state.isLoading }
 });
 
 
 // Exporting the connect Wrapped Chat Component
 export default connect(mapStateToProps, {
     findByConversationIdOffsetLimitThunk,
-    findAllAfterDateOffsetLimitThunk,
+    findAllByIdOffsetLimitThunk,
     deleteAllMessages,
-    sendMessageThunk
+    sendMessageThunk,
+    endLoadingAll
 })(Chat);

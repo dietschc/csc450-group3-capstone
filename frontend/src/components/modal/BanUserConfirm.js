@@ -33,7 +33,7 @@ function BanUserConfirm(props) {
     return (
         <Modal show={show} onHide={closeHandler}>
             <Modal.Header closeButton>
-                <Modal.Title>Ban user</Modal.Title>
+                <Modal.Title>Ban User</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 Are you sure you want to ban this user?

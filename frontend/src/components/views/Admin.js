@@ -7,10 +7,19 @@
 //  (DAB, 02/12/2022, Refactored variables to match altered JSON array)
 //  (DAB, 03/06/2022, Added redux connect, state to props, and Searches functional)
 //  (DAB, 03/07/2022, Confirm modals are added for all crit operations)
+//  (DAB, 04/03/2022, Added in unBan functionality for admins, and took out the 
+//  ability for admins to ban other admins)
+//  (DAB, 04/04/2022, Added Spinners for database load in and changed it so that 
+//  search button does not activate if there is already an html request in)
+//  (DAB, 04/11/2022, Adding the ability for an admin to grant and remove admin 
+//  privileges to other admins)
+//  (DAB, 04/13/2022, Restricted restaurant delete button to one request at a time)
+//  (DAB, 04/14/2022, added endLoadingAll action to page load in to clean 
+//  up any skipped load ins)
 
 // Using React library in order to build components 
 // for the app and importing needed components
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { connect } from "react-redux";
 import XLContainer from '../template/XLContainer';
@@ -27,11 +36,17 @@ import {
     updatePermissionThunk,
     deleteUserThunk
 } from '../../actions/users';
+import { endLoadingAll } from '../../actions/isLoading';
 import C from '../../constants';
 import BanUserConfirm from '../modal/BanUserConfirm';
+import UnBanUserConfirm from '../modal/UnBanUserConfirm';
+import AdminUserConfirm from '../modal/AdminUserConfirm';
+import UnAdminUserConfirm from '../modal/UnAdminUserConfirm';
 import DeleteUserConfirm from '../modal/DeleteUserConfirm';
 import DeleteRestaurantConfirm from '../modal/DeleteRestaurantConfirm';
 import AdminSearchForm from '../form/AdminSearchForm';
+import ThemedSpinner from '../subComponent/ThemedSpinner';
+
 
 /**
  * The Admin View allows users with admin permission to perform CRUD 
@@ -43,12 +58,12 @@ import AdminSearchForm from '../form/AdminSearchForm';
  */
 function Admin(props) {
     // Destructuring the data and functions to be used in the search
-    const { users, restaurants } = props;
+    const { users, restaurants, isLoading } = props;
     const {
         findByRestaurantNameThunk, deleteAllRestaurants,
         deleteRestaurantThunk, findByUserNameThunk,
         deleteAdditionalUsers, updatePermissionThunk,
-        deleteUserThunk
+        deleteUserThunk, endLoadingAll
     } = props;
 
     // Component specific states
@@ -59,7 +74,10 @@ function Admin(props) {
     // Modal specific states that allow the the modals to be hidden or displayed as 
     // well as the data in the modal to be stored in temp state for CRUD operations
     const [showDeleteUserConfirm, setShowDeleteUserConfirm] = useState(false);
+    const [showAdminUserConfirm, setShowAdminUserConfirm] = useState(false);
+    const [showUnAdminUserConfirm, setShowUnAdminUserConfirm] = useState(false);
     const [showBanUserConfirm, setShowBanUserConfirm] = useState(false);
+    const [showUnBanUserConfirm, setShowUnBanUserConfirm] = useState(false);
     const [showDeleteRestaurantConfirm, setShowDeleteRestaurantConfirm] = useState(false);
     const [currentUserId, setCurrentUserId] = useState();
     const [currentRestaurantId, setCurrentRestaurantId] = useState()
@@ -71,12 +89,47 @@ function Admin(props) {
     // modals
     const showDeleteUserHandler = () => setShowDeleteUserConfirm(true);
     const closeDeleteUserHandler = () => setShowDeleteUserConfirm(false);
+    const showAdminUserHandler = () => setShowAdminUserConfirm(true);
+    const showUnAdminUserHandler = () => setShowUnAdminUserConfirm(true);
+    const closeAdminUserHandler = () => setShowAdminUserConfirm(false);
+    const closeUnAdminUserHandler = () => setShowUnAdminUserConfirm(false);
     const showBanUserHandler = () => setShowBanUserConfirm(true);
+    const showUnBanUserHandler = () => setShowUnBanUserConfirm(true);
     const closeBanUserHandler = () => setShowBanUserConfirm(false);
+    const closeUnBanUserHandler = () => setShowUnBanUserConfirm(false);
     const showDeleteRestaurantHandler = () => setShowDeleteRestaurantConfirm(true);
     const closeDeleteRestaurantHandler = () => setShowDeleteRestaurantConfirm(false);
 
+
+    // Loading the database data into state on page load
+    useEffect(() => {
+        // Ending any unfinished load ins
+        endLoadingAll();
+    }, []);
+
+
     /****************************** USER METHODS ******************************************/
+
+
+    // The adminHandler will display a modal verifying 
+    // if the user should get admin privileges
+    const adminHandler = (userId) => {
+        // Setting the current id and showing the modal 
+        // before allowing the action
+        setCurrentUserId(userId);
+        showAdminUserHandler();
+    }
+
+
+    // The adminUser method will update a users permission to admin in both state 
+    // and the database
+    const adminUser = () => {
+        // Giving the user admin permissions in both state and the database with the 
+        // ADMIN_USER_PERMISSION constant that holds the correct permissionId and 
+        // permissionName
+        updatePermissionThunk(currentUserId, C.ADMIN_USER_PERMISSION);
+    }
+
 
     // The banHandler will display a modal verifying 
     // if the user should be banned
@@ -87,6 +140,7 @@ function Admin(props) {
         showBanUserHandler();
     }
 
+
     // The banUser method will update a users permission to banned in both state 
     // and the database
     const banUser = () => {
@@ -94,6 +148,7 @@ function Admin(props) {
         // constant that holds the correct permissionId and permissionName
         updatePermissionThunk(currentUserId, C.BAN_USER_PERMISSION);
     }
+
 
     // The dashboardHandler will navigate the user to the dashboard 
     // for the selected userId
@@ -103,10 +158,51 @@ function Admin(props) {
         navigate(`../userDashboard/${userId}`);
     }
 
+
     // The deleteUser method will delete a user from both state and the database
     const deleteUser = () => {
         deleteUserThunk(currentUserId);
     }
+
+
+    // The unAdminHandler will display a modal verifying 
+    // if the user should have their admin privileges removed
+    const unAdminHandler = (userId) => {
+        // Setting the current id and showing the modal 
+        // before allowing the action
+        setCurrentUserId(userId);
+        showUnAdminUserHandler();
+    }
+
+
+    // The unAdminUser method will update a users permission to member in both state 
+    // and the database
+    const unAdminUser = () => {
+        // Removing a users admin permission in both state and the database 
+        // with the UN_ADMIN_USER_PERMISSION constant that holds the correct \
+        // permissionId and permissionName
+        updatePermissionThunk(currentUserId, C.UN_ADMIN_USER_PERMISSION);
+    }
+
+
+    // The unBanHandler will display a modal verifying 
+    // if the user should be unBanned
+    const unBanHandler = (userId) => {
+        // Setting the current id and showing the modal 
+        // before allowing the action
+        setCurrentUserId(userId);
+        showUnBanUserHandler();
+    }
+
+
+    // The unBanUser method will update a users permission to member in both state 
+    // and the database
+    const unBanUser = () => {
+        // UnBanning a user in both state and the database with the UN_BAN_USER_PERMISSION 
+        // constant that holds the correct permissionId and permissionName
+        updatePermissionThunk(currentUserId, C.UN_BAN_USER_PERMISSION);
+    }
+
 
     // The userDeleteHandler will display a modal verifying 
     // if the user should be deleted
@@ -117,36 +213,45 @@ function Admin(props) {
         showDeleteUserHandler();
     }
 
+
     // The userSearch method sets the Redux state to display search specific 
     // users
     const userSearch = async () => {
-        // All except the logged in user is deleted from state
-        await deleteAdditionalUsers();
-
         // If search input is not an empty string the database will be 
         // queried for users matching the searchInput
         if (searchInput !== "") {
+            // All except the logged in user is deleted from state
+            await deleteAdditionalUsers();
+
+            // Searching the database for the user name
             await findByUserNameThunk(0, 25, searchInput);
         }
     }
 
+
     /************************** RESTAURANT METHODS **************************************/
+
 
     // The deleteRestaurant method will delete a restaurant from both state and 
     // the database
-    const deleteRestaurant = () => {
+    const deleteRestaurant = async () => {
         // Deleting the restaurant from state and the database
-        deleteRestaurantThunk(currentRestaurantId);
+        await deleteRestaurantThunk(currentRestaurantId);
     }
+
 
     // The deleteRestaurantHandler will display a modal verifying 
     // if the restaurant should be deleted
     const deleteRestaurantHandler = (restaurantId) => {
-        // Setting the current id and showing the modal 
-        // before allowing the action
-        setCurrentRestaurantId(restaurantId);
-        showDeleteRestaurantHandler();
+        // If the restaurant delete does not already have a request in
+        if (!isLoading.isLoadingRestaurants) {
+            // Setting the current id and showing the modal 
+            // before allowing the action
+            setCurrentRestaurantId(restaurantId);
+            showDeleteRestaurantHandler();
+        } 
     }
+
 
     // The editRestaurantHandler will navigate the user to the edit restaurant
     // view for the selected restaurantId
@@ -156,18 +261,21 @@ function Admin(props) {
 
     }
 
+
     // The restaurantSearch method sets the Redux state to display search specific 
     // restaurants
     const restaurantSearch = async () => {
-        // Current restaurants are deleted from state
-        await deleteAllRestaurants();
-
         // If search input is not an empty string the database will be 
         // queried for restaurants matching the searchInput
         if (searchInput !== "") {
+            // Current restaurants are deleted from state
+            await deleteAllRestaurants();
+
+            // Searching the database for the restaurant name
             await findByRestaurantNameThunk(0, 25, searchInput);
         }
     }
+
 
     // The viewRestaurantHandler will navigate the user to the restaurant
     // for the selected restaurantId
@@ -176,7 +284,9 @@ function Admin(props) {
         navigate(`../restaurant/${restaurantId}`);
     }
 
+
     /************************** FORM HANDLERS **************************************/
+
 
     // The onChangeHandler handles the actions of the search bar radio buttons
     const onChangeHandler = (e) => {
@@ -185,6 +295,7 @@ function Admin(props) {
         // Setting the search results not to show
         setIsShowResults(false)
     }
+
 
     // This submit handler will handle the search form when submitted and assign the 
     // search input and search type to their respective state variables
@@ -196,21 +307,26 @@ function Admin(props) {
         setSearchInput(e.target.search.value)
         setIsShowResults(true);
 
-        // If the searchType is user the userSearch method 
-        // will be called
-        if (searchType === "user") {
-            userSearch(searchInput)
-        }
-        // Else the restaurantSearch method will be called
-        else {
-            restaurantSearch(searchInput)
-        }
+        // If there is already a search running the user has to wait
+        if (!isLoading?.isLoadingRestaurants && !isLoading?.isLoadingUsers) {
+            // If the searchType is user the userSearch method  
+            // will be called
+            if (searchType === "user") {
+                userSearch(searchInput)
+            }
+            // Else the restaurantSearch method will be called
+            else {
+                restaurantSearch(searchInput)
+            }
 
-        // Clearing the search input for added UX
-        setSearchInput("");
+            // Clearing the search input for added UX
+            setSearchInput("");
+        }
     }
 
+
     /************************** RENDER METHODS **************************************/
+
 
     // The searchList method will return either the User or Restaurant EditItem component 
     // based off the search input and search criteria. If there are no matches the user 
@@ -238,10 +354,11 @@ function Admin(props) {
                             key={user.id}
                             user={user}
                             dashboardHandler={dashboardHandler}
+                            adminHandler={adminHandler}
+                            unAdminHandler={unAdminHandler}
                             banHandler={banHandler}
-                            userDeleteHandler={userDeleteHandler}
-                            banUserButtonModal={banUserButtonModal}
-                            userDeleteButtonModal={userDeleteButtonModal} />
+                            unBanHandler={unBanHandler}
+                            userDeleteHandler={userDeleteHandler} />
                     ))
                 )
             }
@@ -264,6 +381,7 @@ function Admin(props) {
                         <RestaurantEditItem
                             key={restaurant.id}
                             restaurant={restaurant}
+                            isLoading={isLoading}
                             viewRestaurantHandler={viewRestaurantHandler}
                             editRestaurantHandler={editRestaurantHandler}
                             deleteRestaurantHandler={deleteRestaurantHandler}
@@ -272,10 +390,30 @@ function Admin(props) {
                 )
             }
         }
-        
+
     }
 
+
     /********************************** MODALS *******************************************/
+
+
+    // The modal will display before a user can be given admin privileges
+    const adminUserButtonModal = (
+        <AdminUserConfirm
+            show={showAdminUserConfirm}
+            adminUser={adminUser}
+            closeHandler={closeAdminUserHandler} />
+    )
+
+
+    // The modal will display before a user can have admin privileges removed
+    const unAdminUserButtonModal = (
+        <UnAdminUserConfirm
+            show={showUnAdminUserConfirm}
+            unAdminUser={unAdminUser}
+            closeHandler={closeUnAdminUserHandler} />
+    )
+
 
     // The modal will display before a user can be banned
     const banUserButtonModal = (
@@ -285,6 +423,16 @@ function Admin(props) {
             closeHandler={closeBanUserHandler} />
     )
 
+
+    // The modal will display before a user can be unBanned
+    const unBanUserButtonModal = (
+        <UnBanUserConfirm
+            show={showUnBanUserConfirm}
+            unBanUser={unBanUser}
+            closeHandler={closeUnBanUserHandler} />
+    )
+
+
     // The modal will display before a restaurant can be deleted
     const deleteRestaurantButtonModal = (
         <DeleteRestaurantConfirm
@@ -293,6 +441,7 @@ function Admin(props) {
             closeHandler={closeDeleteRestaurantHandler} />
     )
 
+
     // The modal will display before a user can be deleted
     const userDeleteButtonModal = (
         <DeleteUserConfirm
@@ -300,6 +449,7 @@ function Admin(props) {
             deleteUser={deleteUser}
             closeHandler={closeDeleteUserHandler} />
     )
+
 
     return (
         <XLContainer>
@@ -311,8 +461,18 @@ function Admin(props) {
                 setSearchInput={setSearchInput}
                 onChangeHandler={onChangeHandler}
                 searchInput={searchInput} />
-            {searchList()}
+            {isLoading?.isLoadingRestaurants || isLoading?.isLoadingUsers ?
+                (
+                    <ThemedSpinner />
+                ) :
+                (
+                    searchList()
+                )
+            }
+            {adminUserButtonModal}
+            {unAdminUserButtonModal}
             {banUserButtonModal}
+            {unBanUserButtonModal}
             {userDeleteButtonModal}
             {deleteRestaurantButtonModal}
         </XLContainer>
@@ -323,6 +483,7 @@ function Admin(props) {
 const mapStateToProps = (state) => ({
     restaurants: [...state.restaurants],
     users: [...state.users],
+    isLoading: { ...state.isLoading }
 });
 
 // Exporting the component
@@ -330,5 +491,5 @@ export default connect(mapStateToProps, {
     findByRestaurantNameThunk, deleteAllRestaurants,
     findByUserNameThunk, deleteAdditionalUsers,
     updatePermissionThunk, deleteUserThunk,
-    deleteRestaurantThunk
+    deleteRestaurantThunk, endLoadingAll
 })(Admin);

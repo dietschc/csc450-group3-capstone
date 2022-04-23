@@ -14,6 +14,9 @@
 //  (DAB, 3/13/2022, Both updateRestaurantThunk and addRestaurantThunk work with image 
 //  uploads and deletes. Fully functional by current models)
 //  (DAB, 3/13/2022, Added comments and arranged methods for better readability)
+//  (DAB, 4/04/2022, Organized code)
+//  (DAB, 4/13/2022, Added isLoading tracking to addRestaurant 
+//  and deleteRestaurant Thunks)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -21,6 +24,7 @@ import C from '../constants';
 import RestaurantDataService from "../services/restaurant.service";
 import ImageDataService from "../services/image.service";
 import { formatDBRestaurantFind, formatDBRestaurantCreate } from '../helperFunction/actionHelpers';
+import { endLoadingRestaurants, startLoadingRestaurants } from './isLoading';
 
 
 /************************************ REDUX THUNK ACTIONS ***********************************/
@@ -46,6 +50,12 @@ export const addRestaurantThunk = (
     userCreatorId, restaurantName, address, city, state,
     zip, restaurantPhone, restaurantDigiContact, restaurantWebsite,
     file) => async dispatch => {
+        // Setting isLoadingReview to true
+        await dispatch(await startLoadingRestaurants());
+
+        // Variable will hold if the update was a success or not
+        let isSuccess = false;
+
         // Defining imageLocation as an empty string for default
         let imageLocation = "";
 
@@ -56,7 +66,7 @@ export const addRestaurantThunk = (
             const type = "restaurants";
 
             // Call and await the image data service upload method, passing the file as a parameter
-            return await ImageDataService.upload(file, directory, type)
+            isSuccess = await ImageDataService.upload(file, directory, type)
                 .then(async res => {
                     // Upon result, either the newly created cloud server location or an empty 
                     // string will be used
@@ -106,13 +116,13 @@ export const addRestaurantThunk = (
 
                     // Failed to add/upload, false is returned
                     return false;
-                })
+                });
         }
         // Else there is not image to upload so the data is only updated in the database
         else {
             // Call and await the user data service create method, passing the parameters and storing the 
             // results in a constant
-            return await RestaurantDataService.create({
+            isSuccess = await RestaurantDataService.create({
                 userCreatorId, restaurantName, address, city, state,
                 zip, restaurantPhone, restaurantDigiContact, restaurantWebsite,
                 imageLocation
@@ -146,8 +156,14 @@ export const addRestaurantThunk = (
 
                     // Failed to update/upload, false is returned
                     return false;
-                })
+                });
         }
+
+        // Dispatching to set isLoading Restaurants to false
+        dispatch(endLoadingRestaurants());
+
+        // Returning weather or not the create was a success
+        return isSuccess;
     }
 
 
@@ -159,6 +175,9 @@ export const addRestaurantThunk = (
  * @returns 
  */
 export const deleteRestaurantThunk = (restaurantId) => async dispatch => {
+    // Setting isLoadingReview to true
+    await dispatch(await startLoadingRestaurants());
+
     // Making the call to the service to request the deletion of the restaurant
     await RestaurantDataService.delete(restaurantId)
         .then(res => {
@@ -173,6 +192,9 @@ export const deleteRestaurantThunk = (restaurantId) => async dispatch => {
             // If there is an error it will be logged
             console.log(err)
         })
+
+    // Dispatching to set isLoading Restaurants to false
+    dispatch(endLoadingRestaurants());
 }
 
 
@@ -219,32 +241,43 @@ export const findAllRestaurantsOrderedThunk = (offset, limit) => async dispatch 
  * @returns 
  */
 export const findByRestaurantIdThunk = (restaurantId) => async dispatch => {
+    // Dispatching to set isLoadingRestaurants to true
+    await dispatch(await startLoadingRestaurants());
+
     // The restaurant database will be queried for all restaurants within the 
     // parameter offset/limit that are like the restaurantName
-    await RestaurantDataService.get(restaurantId)
+    const isRestaurant = await RestaurantDataService.get(restaurantId)
         .then(async res => {
-            console.log(res);
             // If there is data in the query it is added to redux state
             if (res) {
-                console.log("RESULTS IN FIND BY RESTAURANT", res)
                 // The restaurant data is formatted to be added to redux state
                 const restaurantData = formatDBRestaurantFind(res.data);
 
                 // Adding the restaurant to redux state
                 dispatch(addRestaurant(restaurantData));
 
-                // Returning the restaurant data
-                return restaurantData;
+                // Returning true if data was added to the state
+                return true;
             }
+            // Else data was not found so false is returned
             else {
-                res.send({ message: "Restaurant not found" })
+                console.log("Restaurant not found");
+                return false;
             }
         }
         )
         .catch(err => {
-            // If there is an error it will be logged
+            // If there is an error it will be logged, and false 
+            // will be returned
             console.log(err)
+            return false;
         })
+
+    // Dispatching to set isLoading Restaurants to false
+    dispatch(endLoadingRestaurants());
+
+    // Returning results of restaurant query
+    return isRestaurant;
 }
 
 
@@ -258,11 +291,13 @@ export const findByRestaurantIdThunk = (restaurantId) => async dispatch => {
  * @returns 
  */
 export const findByRestaurantNameThunk = (offset, limit, restaurantName) => async dispatch => {
+    // Dispatching to set isLoadingRestaurants to true
+    await dispatch(await startLoadingRestaurants());
+
     // The restaurant database will be queried for all restaurants within the 
     // parameter offset/limit that are like the restaurantName
     await RestaurantDataService.findByNameOffsetLimit(offset, limit, restaurantName)
         .then(async res => {
-            console.log(res);
             // If there is data in the query it is added to redux state
             if (res) {
                 // Iterating through the restaurant data
@@ -282,6 +317,9 @@ export const findByRestaurantNameThunk = (offset, limit, restaurantName) => asyn
             // If there is an error it will be logged
             console.log(err)
         })
+
+    // Dispatching to set isLoading Restaurants to false
+    dispatch(endLoadingRestaurants());
 }
 
 
@@ -323,6 +361,12 @@ export const updateRestaurantThunk = (restaurantId,
         zip,
         file
     }) => async dispatch => {
+        // Setting isLoadingReview to true
+        await dispatch(await startLoadingRestaurants());
+
+        // Variable will hold if the update was a success or not
+        let isSuccess = false;
+
         // If file exists, upload to cloud and add location to the new review
         if (file && file.size > 0) {
             // The default directory and type to be used with restaurant image uploads
@@ -338,7 +382,7 @@ export const updateRestaurantThunk = (restaurantId,
                 });
 
             // Call and await the image data service upload method, passing the file as a parameter
-            return await ImageDataService.upload(file, directory, type)
+            isSuccess = await ImageDataService.upload(file, directory, type)
                 .then(async res => {
                     // Upon result, either the newly created cloud server location or an empty 
                     // string will be used
@@ -419,7 +463,7 @@ export const updateRestaurantThunk = (restaurantId,
         }
         else {
             // Making the call to the service to request an update to the database
-            return await RestaurantDataService.update(restaurantId,
+            isSuccess = await RestaurantDataService.update(restaurantId,
                 {
                     restaurantName,
                     restaurantDigiContact,
@@ -483,6 +527,12 @@ export const updateRestaurantThunk = (restaurantId,
                     return false;
                 })
         }
+
+        // Dispatching to set isLoading Restaurants to false
+        dispatch(endLoadingRestaurants());
+
+        // Returning weather or not the create was a success
+        return isSuccess;
     }
 
 
@@ -559,6 +609,7 @@ export const addRestaurant = ({ restaurantId, userCreatorId,
         ]
     })
 
+
 /**
  * React Redux reducer that will decrement the review count in state.
  * 
@@ -570,6 +621,7 @@ export const decrementRestaurantReviewCount = (restaurantId) => ({
     id: restaurantId
 })
 
+
 /**
  * React Redux reducer that will delete all restaurants from state.
  * 
@@ -578,6 +630,7 @@ export const decrementRestaurantReviewCount = (restaurantId) => ({
 export const deleteAllRestaurants = () => ({
     type: C.DELETE_ALL_RESTAURANTS
 })
+
 
 /**
  * React Redux reducer that will delete a restaurant from state.
@@ -589,6 +642,7 @@ export const deleteRestaurant = (restaurantId) => ({
     id: restaurantId
 })
 
+
 /**
  * React Redux reducer that will increment the review count in state.
  * 
@@ -599,6 +653,7 @@ export const incrementRestaurantReviewCount = (restaurantId) => ({
     type: C.INCREMENT_RESTAURANT_REVIEW_COUNT,
     id: restaurantId
 })
+
 
 /**
  * React Redux reducer that will update a restaurant owner Id in state 
@@ -613,6 +668,7 @@ export const updateRestaurantOwner = (restaurantId, ownerId) => ({
     id: restaurantId,
     ownerId: ownerId
 })
+
 
 /**
  * React Redux reducer that will update the restaurant in state.
@@ -651,6 +707,7 @@ export const updateRestaurant = ({ restaurantId, restaurantName, userCreatorId, 
         images: imageArray
     })
 
+
 /**
  * React Redux reducer that will update the restaurant rating in state for the 
  * param id restaurant.
@@ -673,6 +730,7 @@ export const updateRestaurantRating = (restaurantId, tasteRating, serviceRating,
             overallRating: overallRating
         }
     })
+
 
 /**
  * React Redux update the restaurant review count with a new number.

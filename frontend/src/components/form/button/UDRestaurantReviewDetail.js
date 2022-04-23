@@ -23,15 +23,35 @@ function UDRestaurantReviewDetail(props) {
     const { reviewEditHandler, deleteReviewHandler, review } = props;
 
     return (
-        <div>
-            <Button className="mx-1" style={{ width: "5rem" }} onClick={() => {reviewEditHandler(review)}}>
+        // <div className="d-flex px-0 mb-2 justify-content-center justify-content-sm-center justify-content-md-end  container-fluid">
+        <div
+            className="
+            d-flex 
+            flex-fill 
+            flex-column 
+            flex-sm-row 
+            flex-wrap 
+            px-0 mb-1 
+            justify-content-center 
+            justify-content-sm-center 
+            justify-content-md-end"
+            style={{ minWidth: "100%" }}>
+            <Button
+                className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
+                style={{ minWidth: "5rem" }}
+                onClick={() => { reviewEditHandler(review) }}
+            >
                 Edit
             </Button>
-            <Button className="mx-1" style={{ width: "5rem" }} onClick={() => {deleteReviewHandler(review)}}>
+            <Button
+                className="m-1 flex-grow-1 flex-sm-grow-0 align-self-sm-center"
+                style={{ minWidth: "5rem" }}
+                onClick={() => { deleteReviewHandler(review) }}
+            >
                 Delete
             </Button>
         </div>
-    )  
+    )
 }
 
 // Exporting the component

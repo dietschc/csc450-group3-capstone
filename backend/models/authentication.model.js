@@ -19,7 +19,7 @@ module.exports = (sequelize, Sequelize) => {
 			type: Sequelize.INTEGER
 		},
 		userName: {
-			type: Sequelize.STRING
+			type: Sequelize.STRING(64)
 		},
 		userPassword: {
 			type: Sequelize.STRING

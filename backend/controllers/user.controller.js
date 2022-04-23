@@ -9,9 +9,17 @@
 //  (CPD, 2/28, Added friend methods to users controller)
 //  (DAB, 3/06/2022, Added in findByNameOffsetLimit that returns the needed user attributes
 //  to load a state into redux. Safe data with no passwords)
+//  (TJI, 03/28/2022 - Added in password hashing)
+//  (DAB, 3/27/2022, Added the friends table results to return with get as friendsOne)
+//  (DAB, 4/12/2022, Error Handling Audit - failed)
+//  (DAB, 4/12/2022, Double checked and added error handling to every query)
+//  (CPD, 4/12/2022, Refactored update method to check for existing usernames and clean up)
+//  (DAB, 4/17/2022, fixed a uncaught error where a destructure was causing the backend to 
+//  crash in update)
+//  (DAB, 4/17/2022, Fixed a bug in the delete call where the restaurant data was not 
+//  being updated when a user and their reviews were deleted)
 
-
-const { authentication } = require("../models");
+const { authentication, review } = require("../models");
 const db = require("../models");
 const { Op } = db.Sequelize;
 const User = db.users;
@@ -19,13 +27,19 @@ const Authentication = db.authentication;
 const Permission = db.permission;
 const Address = db.address;
 const Friend = db.friend;
+const Review = db.review;
+const Rating = db.rating;
+const Restaurant = db.restaurants;
+
+// Password hashing utility
+const bcrypt = require('bcrypt');
 
 // Create and Save a new User
 // Asynchronous method to create a user with the parameters passed from the frontend.
 // Alters the user, address, and authentication tables (and eventually history)
 exports.create = async (req, res) => {
     // Validate request
-    if ((!req.body.userEmail) || (!req.body.userName)) {
+    if ((!req.body.userEmail) || (!req.body.userName) || !req.body.userPassword) {
         res.status(400).send({
             message: "Required fields are userEmail, address, and userName"
         });
@@ -34,7 +48,7 @@ exports.create = async (req, res) => {
 
     // Check username does not already exist
     const userName = req.body.userName;
-    const userNameAvaialble = await Authentication.findOne({
+    const userNameAvailable = await Authentication.findOne({
         where: {
             userName: userName
         }
@@ -55,10 +69,10 @@ exports.create = async (req, res) => {
             return "Error checking username";
         });
     // Debug code
-    console.log("user name is: " + userNameAvaialble);
+    console.log("user name is: " + userNameAvailable);
 
-    // If the userName is available, procede with creating a new account
-    if (userNameAvaialble === "Available") {
+    // If the userName is available, proceed with creating a new account
+    if (userNameAvailable === "Available") {
 
         // Build parameters for address table insert
         const address = {
@@ -106,8 +120,21 @@ exports.create = async (req, res) => {
             // Default permissionId level is 1 for members
             permissionId: 1, // FK constraint with Permission table
             userName: req.body.userName,
-            userPassword: req.body.userPassword,
-            // historyId: null, // FK constraing with History table
+            userPassword: req.body.userPassword
+        }
+
+        // Hashes the submitted password using BCrypt's minor a modal going through 2^10 rounds
+        if (authentication.userPassword) {
+            // Attempting to encrypt the password
+            try {
+                const salt = await bcrypt.genSaltSync(10, 'a');
+                authentication.userPassword = bcrypt.hashSync(authentication.userPassword, salt);
+            }
+            // Password was not encrypted so a console message is sent
+            catch (err) {
+                console.log("Password not encrypted");
+            }
+
         }
 
         // Save Authentication in the database
@@ -147,18 +174,38 @@ exports.findAll = (req, res) => {
 
 // Find a single User with an id
 exports.findOne = (req, res) => {
+    // Saving the userId to params
     const id = req.params.id;
-    User.findByPk((id), { include: [Address, Authentication] })
+
+    // Querying the database for the user with the param id
+    User.findByPk((id), {
+        include: [Address, Authentication,
+            {
+                model: Friend, as: "friendOne",
+                include: [{
+                    model: User, as: "friendTwo", attributes: ["userId"],
+                    include: {
+                        model: Authentication, attributes: ["userName"]
+                    }
+                },
+                ]
+            }
+        ]
+    })
         .then(data => {
+            // If there is data, it is sent 
             if (data) {
                 res.send(data);
-            } else {
+            }
+            // Else a 404 error message is sent
+            else {
                 res.status(404).send({
                     message: `Cannot find User with id=${id}.`
                 });
             }
         })
         .catch(err => {
+            // If there is another kind of error the requester is notified
             res.status(500).send({
                 message:
                     err.message || "Error retrieving User with id=" + id
@@ -176,92 +223,318 @@ exports.update = async (req, res) => {
         return;
     }
     const id = req.params.id;
+    const newName = req.body.userName;
+    let userName = false;
 
-    // We find the associated addressId from the user table
-    const addressId = await User.findByPk(id)
-        .then(user => {
-            // If the user exists the data is updated
-            if (user) {
-                // Destructure address from the user
-                const { addressId } = user;
-                return addressId
-            } else {
-                // This negative value indicates there has been an error
-                return -1
+    // Check current user name
+    await Authentication.findOne(
+        {
+            where: {
+                userId: id,
             }
         })
-
-    // Try to update users table
-    const userUpdateStatus = await User.update(req.body, {
-        where: { userId: id }
-    })
-        .then(status => {
-            return status;
+        .then(res => {
+            userName = res.dataValues.userName;
         })
-
-    // Try to update auth table
-    const authUpdateStatus = await Authentication.update(req.body, {
-        where: { userId: id }
-    })
-        .then(status => {
-            return status;
-        })
-
-    // Try to update address table
-    const addressUpdateStatus = await Address.update(req.body, {
-        where: { addressId: addressId }
-    })
-        .then(status => {
-            return status;
-        })
-
-    // Any one of these values being equal to 1 indicates success updating a row
-    if (userUpdateStatus == 1 ||
-        authUpdateStatus == 1 ||
-        addressUpdateStatus == 1) {
-        res.send({
-            message: "User was updated successfully!"
+        .catch(err => {
+            return err;
         });
-    } else {
-        res.status(500).send({
-            message: `Cannot update user. Maybe user was not found!`
-        });
+
+
+    // Function to check for new username and check for duplicates
+    const newUserName = async () => {
+        // If the userName is different, this implies a change request
+        if (userName && userName !== newName) {
+
+            // Check username does not already exist
+            const userNameAvailable = await Authentication.findOne({
+                where: {
+                    userName: newName
+                }
+            })
+                .then(data => {
+                    // If where condition has a match the username already exists
+                    if (data) {
+                        console.log("Username not available");
+                        return false;
+                    } else {
+                        console.log("Available");
+                        return true;
+                    }
+                })
+                .catch(err => {
+                    return err;
+                });
+
+            // console.log("User name is: " + userNameAvailable);
+            return userNameAvailable;
+
+            // Else there was not a new userName given
+        } else {
+            console.log("User name not updated");
+            return true;
+        }
     }
 
+    // console.log("###################");
+    // console.log("update status: ", await newUserName());
 
+    // If the userName is available, proceed with updating account
+    if (await newUserName()) {
+        // We find the associated addressId from the user table
+        const addressId = await User.findByPk(id)
+            .then(user => {
+                // If the user exists the data is updated
+                if (user) {
+                    // Destructure address from the user
+                    const { addressId } = user;
+                    return addressId
+                } else {
+                    // This negative value indicates there has been an error
+                    return -1
+                }
+            })
+            .catch(err => {
+                return -1;
+            });
+
+        // Try to update users table
+        const userUpdateStatus = await User.update(req.body, {
+            where: { userId: id }
+        })
+            .then(status => {
+                // This will contain a 1 if successful
+                return status;
+            })
+            .catch(err => {
+                // Return -1 to indicate an error occurred 
+                return -1;
+            });
+
+        // Try to update auth table if newUserName is available
+        const authUpdateStatus = await Authentication.update(req.body, {
+            where: { userId: id }
+        })
+            .then(status => {
+                // This will contain a 1 if successful
+                return status;
+            })
+            .catch(err => {
+                // Return -1 to indicate an error occurred 
+                return -1
+            });
+
+        // Try to update address table
+        const addressUpdateStatus = await Address.update(req.body, {
+            where: { addressId: addressId }
+        })
+            .then(status => {
+                // This will contain a 1 if successful
+                return status;
+            })
+            .catch(err => {
+                // Return -1 to indicate an error occurred 
+                return -1;
+            });
+
+        // Any one of these values being equal to 1 indicates success updating a row
+        if (userUpdateStatus == 1 ||
+            authUpdateStatus == 1 ||
+            addressUpdateStatus == 1) {
+            res.send({
+                message: "User was updated successfully!"
+            });
+        } else {
+            res.status(500).send({
+                message: `Cannot update user. Maybe user was not found!`
+            });
+        }
+    } else {
+        // Else the userName already exists, do nothing
+        res.status(400).send({
+            message: "Username not available"
+        });
+    }
 };
 
-// Delete a User with the specified id in the request
+// Delete a User with the specified id in the request and adjusting 
+// the restaurant table to account for their deleted reviews
 exports.delete = async (req, res) => {
     const id = req.params.id;
+    let addressId = "";
 
     // We find the associated addressId from the user table
-    const addressId = await User.findByPk(id)
+    const currentUser = await User.findByPk(id)
         .then(user => {
             // If the user exists the data is updated
             if (user) {
                 // Destructure address from the user
-                const { addressId } = user;
-                return addressId
+                // const { addressId } = user;
+                addressId = user.dataValues.addressId;
+                return user;
             } else {
-                return "User not found"
+                return "User not found";
             }
         })
+        .catch(err => {
+            return "User not found";
+        });
 
-    // console.log("address id: ", addressId);
+    // If a user was found in the query, all the reviews 
+    // they have written are added to an array so they can 
+    // be removed from the restaurant data
+    if (currentUser) {
+        // The users review data will be saved in the array
+        let userReviewData = []
 
+        // Querying the database for all the reviews associated 
+        // with the user
+        await Review.findAll({
+            include: [Rating],
+            where: { userId: currentUser.userId }
+        })
+            .then(reviews => {
+                // If there are reviews, ones with the 
+                // same restaurantId are added up into 
+                // one object for the restaurant update
+                if (reviews) {
+                    // Iterating through the review results and organizing them 
+                    // into relative objects
+                    reviews.map(review => {
+                        // The data values that will be used in the iterations are 
+                        // declared here for easy reference
+                        const { restaurantId } = review;
+                        const reviewDataValues = review.dataValues;
+                        const ratingDataValues = review.dataValues.rating.dataValues;
+
+                        // The index will hold the index of the restaurantId in the 
+                        // userReviewData list
+                        const index = userReviewData.findIndex(current => current.restaurantId === restaurantId);
+
+                        // If the index was returned, the data is added to the current 
+                        // elements
+                        if (index > -1) {
+                            // The currentReview references the data in the current review
+                            const currentReview = userReviewData[index];
+
+                            // Updating the userReviewData with the current data
+                            userReviewData[index] = {
+                                ...userReviewData[index],
+                                reviewTotals: {
+                                    totalReviews: currentReview.reviewTotals.totalReviews + 1,
+                                    tasteRating: currentReview.reviewTotals.tasteRating + ratingDataValues.tasteRating,
+                                    serviceRating: currentReview.reviewTotals.serviceRating + ratingDataValues.serviceRating,
+                                    cleanlinessRating: currentReview.reviewTotals.cleanlinessRating + ratingDataValues.cleanlinessRating,
+                                    overallRating: currentReview.reviewTotals.overallRating + ratingDataValues.overallRating
+                                }
+                            }
+                        }
+                        // Else the index was not returned so a fresh element is added to the list
+                        else {
+                            userReviewData.push(
+                                {
+                                    restaurantId: restaurantId,
+                                    reviewTotals: {
+                                        totalReviews: 1,
+                                        tasteRating: ratingDataValues?.tasteRating,
+                                        serviceRating: ratingDataValues?.serviceRating,
+                                        cleanlinessRating: ratingDataValues?.cleanlinessRating,
+                                        overallRating: ratingDataValues?.overallRating
+                                    }
+                                }
+                            )
+                        }
+                    })
+                }
+            })
+            .catch(err => console.log(err));
+
+        try {
+            // If the user had review data it will be removed from the corresponding 
+            // restaurant entries
+            if (userReviewData && userReviewData?.length > 0) {
+                // Iterating through the userReviewData and updating the 
+                // restaurants one at a time
+                await userReviewData.forEach(async data => {
+                    // Important update data are assigned to their own 
+                    // variables
+                    const restaurantId = data?.restaurantId;
+                    const reviewCount = data?.reviewTotals?.totalReviews;
+
+                    // Querying the restaurant data so the correct ratingId
+                    // can be used
+                    const currentRestaurant = await Restaurant.findByPk(restaurantId)
+                        .catch(err => console.log(err));
+
+                    // Assigning the ratingId to its own variable to prevent errors
+                    const ratingId = currentRestaurant?.ratingId;
+
+                    const currentRating = await Rating.findByPk(ratingId)
+                        .catch(err => console.log(err));
+
+                    // Destructuring the existing review ratings
+                    const {
+                        tasteRating: reviewTasteRating,
+                        serviceRating: reviewServiceRating,
+                        cleanlinessRating: reviewCleanlinessRating,
+                        overallRating: reviewOverallRating
+                    } = currentRating;
+
+                    // Destructuring the existing restaurant review ratings
+                    const {
+                        tasteRating: restaurantTasteRating,
+                        serviceRating: restaurantServiceRating,
+                        cleanlinessRating: restaurantCleanlinessRating,
+                        overallRating: restaurantOverallRating
+                    } = data.reviewTotals;
+
+                    // Calculating the new restaurant rating based off the new review rating values
+                    const newRestaurantTasteRating = reviewTasteRating - restaurantTasteRating;
+                    const newRestaurantServiceRating = reviewServiceRating - restaurantServiceRating;
+                    const newRestaurantCleanlinessRating = reviewCleanlinessRating - restaurantCleanlinessRating;
+                    const newRestaurantOverallRating = reviewOverallRating - restaurantOverallRating;
+
+                    // Updating the restaurant's rating table
+                    await Rating.update({
+                        tasteRating: newRestaurantTasteRating,
+                        serviceRating: newRestaurantServiceRating,
+                        cleanlinessRating: newRestaurantCleanlinessRating,
+                        overallRating: newRestaurantOverallRating
+                    }, {
+                        where: { ratingId: ratingId }
+                    })
+                        .catch(err => console.log(err));
+
+                    // Decrementing the restaurants reviewCount by reviewCount since 
+                    // the users reviews are to be deleted
+                    await Restaurant.decrement('reviewCount', {
+                        by: reviewCount,
+                        where: { restaurantId: restaurantId }
+                    })
+                        .catch(err => console.log(err));
+                })
+            }
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+    // Attempting to delete the user now that all their other data was 
+    // removed
     const deletedUserStatus = await User.destroy({
         where: { userId: id }
     })
         .then(deletedStatus => {
             return deletedStatus;
         })
-
-    // console.log("deleted user: ", deletedUserStatus);
+        .catch(err => {
+            return "User not found";
+        });
 
     // If a user was deleted without errors, also delete the address
     if (deletedUserStatus == 1) {
-        Address.destroy({
+        await Address.destroy({
             where: { addressId: addressId }
         })
             .then(num => {
@@ -318,6 +591,9 @@ exports.addFriend = async (req, res) => {
             friendTwoId: friendTwoId
         }
     })
+        .catch(err => {
+            return false;
+        });
 
     // console.log("already friend!", alreadyFriends);
 
@@ -442,15 +718,15 @@ exports.findByNameOffsetLimit = async (req, res) => {
                 model: Friend, as: 'friendOne'
             },
             {
-                model: Authentication, attributes: [ 
-                    'authId', 'userName', 'createdAt', 'updatedAt' 
+                model: Authentication, attributes: [
+                    'authId', 'userName', 'createdAt', 'updatedAt'
                 ],
                 include: {
                     model: Permission
                 }
             }
         ],
-        where: { '$Authentication.userName$': { [Op.like]: `%${searchName}%` } },
+        where: { '$authentication.userName$': { [Op.like]: `%${searchName}%` } },
         order: [[Authentication, 'userName', 'ASC']],
         offset: searchOffset,
         limit: searchLimit

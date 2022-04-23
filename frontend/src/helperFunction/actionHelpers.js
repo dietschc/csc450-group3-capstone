@@ -5,6 +5,8 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 3/03/2022, Added in formatDBFriendFind)
 //  (DAB, 3/07/2022, Added in formatDBRestaurantCreate)
+//  (DAB, 4/17/2022, Added in error handling for userId being null
+//  if the restaurant author was deleted)
 
 /**
  * The helper function will nicely format the data retrieved from a find 
@@ -44,7 +46,7 @@ export const formatDBRestaurantCreate = (restaurant) => {
     if (restaurant) {
         return {
             restaurantId: restaurant.restaurantId,
-            userCreatorId: restaurant.userCreatorId,
+            userCreatorId: restaurant.userCreatorId || "",
             restaurantDigiContact: restaurant.restaurantDigiContact,
             restaurantName: restaurant.restaurantName,
             restaurantPhone: restaurant.restaurantPhone,
@@ -76,15 +78,15 @@ export const formatDBRestaurantFind = (restaurant) => {
     if (restaurant) {
         return {
             restaurantId: restaurant.restaurantId,
-            userCreatorId: restaurant.userCreator.userId,
-            restaurantDigiContact: restaurant.restaurantDigiContact,
+            userCreatorId: restaurant.userCreator?.userId || "",
+            restaurantDigiContact: restaurant?.restaurantDigiContact || "",
             restaurantName: restaurant.restaurantName,
             restaurantPhone: restaurant.restaurantPhone,
             restaurantWebsite: restaurant.restaurantWebsite,
             ...restaurant.address,
             ...restaurant.image,
             reviewCount: restaurant.reviewCount,  
-            ...restaurant.userCreator.authentication,
+            ...restaurant.userCreator?.authentication,
             ratingId: restaurant.rating.ratingId,
             tasteRating: restaurant.rating.tasteRating/restaurant.reviewCount || 0,
             serviceRating: restaurant.rating.serviceRating/restaurant.reviewCount || 0,
@@ -151,7 +153,6 @@ export const formatDBUserFind = (user) => {
             ...user.address,
             ...user.authentication,
             ...user.authentication.permission
-
         }
     }
     // Else it will just return the parameter

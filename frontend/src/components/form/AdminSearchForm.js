@@ -3,6 +3,7 @@
 // Restaurant Club - AdminSearchForm.js
 // March 6, 2022
 // Last Edited (Initials, Date, Edits):
+//  (DAB, 4/10/2022, Fixed WAVE label errors in radio buttons)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -58,7 +59,7 @@ function AdminSearchForm(props) {
                         name="searchOption"
                         type="radio"
                         value="restaurant"
-                        id="searchOptionRadio1"
+                        id="searchOptionRadio2"
                     />
                 </ButtonGroup>
             </Row>

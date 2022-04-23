@@ -5,6 +5,10 @@
 // Last Edited (Initials, Date, Edits):
 //  (DAB, 3/06/2022, Added in DELETE_ADDITIONAL_USERS and 
 //  BAN_USER_PERMISSION)
+//  (DAB, 4/03/2022, Added in UN_BAN_USER_PERMISSION)
+//  (DAB, 4/11/2022, Added in UN_ADMIN_USER_PERMISSION and ADMIN_USER_PERMISSION)
+//  (DAB, 4/13/2022, Added friends to isLoggedIn constants)
+//  (DAB, 4/14/2022, Added MAX_UPLOAD_SIZE)
 
 // These constants ensure that there will be no 
 // spelling errors when working with static variables
@@ -16,6 +20,8 @@ const constants = {
         "NH", "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "RI", "SC",  
         "SD", "TN", "TX", "UT", "VA", "VT", "WA", "WI", "WV", "WY"
     ],
+
+    MAX_UPLOAD_SIZE: 5 * 1024 * 1024,
 
     ADD_USER: "ADD_USER",
     UPDATE_USER: "UPDATE_USER",
@@ -29,6 +35,7 @@ const constants = {
     LOGIN: "LOGIN",
     LOGOUT: "LOGOUT",
     UPDATE_PERMISSION: "UPDATE_PERMISSION",
+    REFRESH_TOKEN: "REFRESH_TOKEN",
 
     ADD_RESTAURANT: "ADD_RESTAURANT",
     DECREMENT_RESTAURANT_REVIEW_COUNT: "DECREMENT_RESTAURANT_REVIEW_COUNT",
@@ -49,9 +56,34 @@ const constants = {
     DELETE_MESSAGE: "DELETE MESSAGE",
     DELETE_ALL_MESSAGES: "DELETE_ALL_MESSAGES",
 
+    START_LOADING_USERS: "START_LOADING_USERS",
+    END_LOADING_USERS: "END_LOADING_USERS",
+    START_LOADING_RESTAURANTS: "START_LOADING_RESTAURANTS",
+    END_LOADING_RESTAURANTS: "END_LOADING_RESTAURANTS",
+    START_LOADING_REVIEWS: "START_LOADING_REVIEWS",
+    END_LOADING_REVIEWS: "END_LOADING_REVIEWS",
+    START_LOADING_MESSAGES: "START_LOADING_MESSAGES",
+    END_LOADING_MESSAGES: "END_LOADING_MESSAGES",
+    START_LOADING_FRIENDS: "START_LOADING_FRIENDS",
+    END_LOADING_FRIENDS: "END_LOADING_FRIENDS",
+    END_LOADING_ALL: "END_LOADING_ALL",
+
+
     BAN_USER_PERMISSION: {
         permissionId: 3,
         permissionName: "banned"
+    },
+    UN_BAN_USER_PERMISSION: {
+        permissionId: 1,
+        permissionName: "member"
+    },
+    ADMIN_USER_PERMISSION: {
+        permissionId: 4,
+        permissionName: "admin"
+    },
+    UN_ADMIN_USER_PERMISSION: {
+        permissionId: 1,
+        permissionName: "member"
     }
 }
 

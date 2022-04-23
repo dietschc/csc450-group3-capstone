@@ -6,6 +6,9 @@
 //  (DAB, 2/28/2022, Added in comments)
 //  (DAB, 3/14/2022, Added findAllAfterDateOffsetLimit method to 
 //  query all post createdAt times)
+//  (DAB, 3/28/2022, Updated the service name for findAllAfterDateOffsetLimit 
+//  to describe its behavior of findAllByIdOffsetLimit)
+//  (DAB, 4/12/2022, Error Handling Audit - Passed)
 
 const db = require("../models");
 const { Op } = db.Sequelize;
@@ -211,7 +214,7 @@ exports.findByConversationIdOffsetLimit = async (req, res) => {
  * @param {*} req 
  * @param {*} res 
  */
-exports.findAllAfterDateOffsetLimit = async (req, res) => {
+exports.findAllByIdOffsetLimit = async (req, res) => {
     // Checking that offset and limit are numbers, if not a default value will be used
     const searchOffset = isNaN(req.params.offset) ? 0 : parseInt(req.params.offset);
     const searchLimit = isNaN(req.params.limit) ? 999999999999 : parseInt(req.params.limit);

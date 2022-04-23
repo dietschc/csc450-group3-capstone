@@ -3,6 +3,8 @@
 // Restaurant Club - FloatingPhone.js
 // February 3, 2022
 // Last Edited (Initials, Date, Edits):
+//  (TJI, 03/29/2022 - Added in character limits to match database)
+//  (DAB, 04/14/2022, Added in minLength so phone numbers are the correct length)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -34,6 +36,7 @@ function FloatingPhone(props) {
                         required
                         value={phone}
                         onChange={onChangePhone}
+                        pattern=".{14,14}"
                     />
                 </FloatingLabel>
         </Form.Floating>
