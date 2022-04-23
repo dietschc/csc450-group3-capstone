@@ -16,6 +16,9 @@
 //  (DAB, 4/09/2022, Changed MainNav so that Search Input does not get 
 //  cut off on smaller devices)
 //  (GROUP, 04/14/2022, Search bar now placeholder "Search Restaurants")
+//  (CPD, 4/22/22, Add transition animations when scrolling to hide/show nav)
+//  (CPD, 4/23/22, Fixed position property bug causing nav to vanish when 
+//  loading page form URL)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -193,7 +196,7 @@ function MainNav(props) {
         if (navExpanded) {
             setToggle();
         }
-        
+
         // console.log("logout button pressed");
         showLogoutHandler();
     }
@@ -269,9 +272,10 @@ function MainNav(props) {
             id="mainNav"
             onToggle={setToggle}
             className="px-2 rounded-bottom"
-            style={showNav ?
-                { position: "responsive" } :
-                { position: "sticky", top: "0", bottom: "0", zIndex: "1" }
+
+            style={showNav ? 
+                { position: "sticky", top: "-120px", zIndex: "1", transition: 'top 0.6s' } :
+                { position: "sticky", top: "0", bottom: "0", zIndex: "1", transition: 'top 0.6s' }
             }
             bg={backgroundTheme}
             variant={variantTheme}
@@ -305,7 +309,7 @@ function MainNav(props) {
                     </Nav.Item>
                     {showLoginControls()}
                 </Nav>
-                <Form onSubmit={searchHandler} className="d-flex" style={{ minWidth: "10rem"}}>
+                <Form onSubmit={searchHandler} className="d-flex" style={{ minWidth: "10rem" }}>
                     <FormControl
                         type="search"
                         name="searchInput"
