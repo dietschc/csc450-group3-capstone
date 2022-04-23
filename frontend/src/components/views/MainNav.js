@@ -16,6 +16,9 @@
 //  (DAB, 4/09/2022, Changed MainNav so that Search Input does not get 
 //  cut off on smaller devices)
 //  (GROUP, 04/14/2022, Search bar now placeholder "Search Restaurants")
+//  (CPD, 4/22/22, Add transition animations when scrolling to hide/show nav)
+//  (CPD, 4/23/22, Fixed position property bug causing nav to vanish when 
+//  loading page form URL)
 
 // Using React library in order to build components 
 // for the app and importing needed components
@@ -263,7 +266,7 @@ function MainNav(props) {
         </>
     )
 
-    
+
     return (
         <Navbar
             id="mainNav"
